@@ -1,0 +1,8 @@
+<odoo>
+    <record id="seq_boq_template_adv" model="ir.sequence">
+        <field name="name">BOQ Template Advanced</field>
+        <field name="code">boq.template</field>
+        <field name="prefix">BOQ/</field>
+        <field name="padding">5</field>
+    </record>
+</odoo>

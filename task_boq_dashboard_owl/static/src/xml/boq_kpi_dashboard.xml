@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="task_boq_dashboard_owl.BoqKpiDashboard">
+        <div class="o_boq_kpi_dashboard p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                <div><h1 class="mb-1">BOQ KPI Dashboard</h1><div class="text-muted">Executive control panel</div></div>
+                <div class="d-flex gap-2"><button class="btn btn-primary" t-on-click="loadData">Refresh</button><button class="btn btn-secondary" t-on-click="openKpiList">Open KPI List</button><button class="btn btn-outline-success" t-on-click="exportExcel">Export Excel</button><button class="btn btn-outline-danger" t-on-click="exportPdf">Export PDF</button></div>
+            </div>
+            <div class="o_boq_filter_bar mb-4">
+                <div class="row g-3">
+                    <div class="col-12 col-md-3"><label class="form-label">Company</label><select class="form-select" t-on-change="(ev) => onFilterChange(ev, 'company_id')"><t t-foreach="state.options.companies" t-as="company" t-key="company.id"><option t-att-value="company.id" t-att-selected="state.filters.company_id == company.id ? true : undefined"><t t-esc="company.name"/></option></t></select></div>
+                    <div class="col-12 col-md-3"><label class="form-label">Project</label><select class="form-select" t-on-change="(ev) => onFilterChange(ev, 'project_id')"><option value="">All Projects</option><t t-foreach="state.options.projects" t-as="project" t-key="project.id"><option t-att-value="project.id" t-att-selected="state.filters.project_id == project.id ? true : undefined"><t t-esc="project.name"/></option></t></select></div>
+                    <div class="col-12 col-md-2"><label class="form-label">Date From</label><input type="date" class="form-control" t-att-value="state.filters.date_from || ''" t-on-change="(ev) => onFilterChange(ev, 'date_from')"/></div>
+                    <div class="col-12 col-md-2"><label class="form-label">Date To</label><input type="date" class="form-control" t-att-value="state.filters.date_to || ''" t-on-change="(ev) => onFilterChange(ev, 'date_to')"/></div>
+                    <div class="col-12 col-md-2 d-flex align-items-end"><button class="btn btn-outline-secondary w-100" t-on-click="clearFilters">Clear Filters</button></div>
+                </div>
+            </div>
+            <t t-if="state.loading"><div class="alert alert-info">Loading dashboard data...</div></t>
+            <t t-else="">
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-md-6 col-xl-3"><div class="o_boq_card o_boq_card_primary"><div class="o_boq_card_title">Total Projects</div><div class="o_boq_card_value"><t t-esc="state.data.total_projects"/></div></div></div>
+                    <div class="col-12 col-md-6 col-xl-3"><div class="o_boq_card o_boq_card_primary"><div class="o_boq_card_title">Total Tasks</div><div class="o_boq_card_value"><t t-esc="state.data.total_tasks"/></div></div></div>
+                    <div class="col-12 col-md-6 col-xl-3"><div class="o_boq_card o_boq_card_money"><div class="o_boq_card_title">Planned Cost</div><div class="o_boq_card_value"><t t-esc="formatAmount(state.data.total_cost_planned)"/></div></div></div>
+                    <div class="col-12 col-md-6 col-xl-3"><div class="o_boq_card o_boq_card_money"><div class="o_boq_card_title">Actual Cost</div><div class="o_boq_card_value"><t t-esc="formatAmount(state.data.total_cost_actual)"/></div></div></div>
+                </div>
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-md-6 col-xl-3"><div class="o_boq_card o_boq_card_sale"><div class="o_boq_card_title">Planned Sale</div><div class="o_boq_card_value"><t t-esc="formatAmount(state.data.total_sale_planned)"/></div></div></div>
+                    <div class="col-12 col-md-6 col-xl-3"><div class="o_boq_card o_boq_card_profit"><div class="o_boq_card_title">Planned Profit</div><div class="o_boq_card_value"><t t-esc="formatAmount(state.data.total_profit_planned)"/></div></div></div>
+                    <div class="col-12 col-md-6 col-xl-3"><div class="o_boq_card o_boq_card_profit"><div class="o_boq_card_title">Actual Profit</div><div class="o_boq_card_value"><t t-esc="formatAmount(state.data.total_profit_actual)"/></div></div></div>
+                    <div class="col-12 col-md-6 col-xl-3"><div class="o_boq_card o_boq_card_margin"><div class="o_boq_card_title">Actual Margin</div><div class="o_boq_card_value"><t t-esc="formatPercent(state.data.avg_actual_margin)"/></div></div></div>
+                </div>
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-md-6 col-xl-3"><div class="o_boq_card o_boq_card_danger clickable" t-on-click="() => openExecutiveDashboard('over_budget')"><div class="o_boq_card_title">Over Budget Tasks</div><div class="o_boq_card_value"><t t-esc="state.data.over_budget_tasks"/></div></div></div>
+                    <div class="col-12 col-md-6 col-xl-3"><div class="o_boq_card o_boq_card_warning clickable" t-on-click="() => openExecutiveDashboard('delayed')"><div class="o_boq_card_title">Delayed Tasks</div><div class="o_boq_card_value"><t t-esc="state.data.delayed_tasks"/></div></div></div>
+                    <div class="col-12 col-md-6 col-xl-3"><div class="o_boq_card o_boq_card_warning clickable" t-on-click="() => openExecutiveDashboard('low_margin')"><div class="o_boq_card_title">Low Margin Tasks</div><div class="o_boq_card_value"><t t-esc="state.data.low_margin_tasks"/></div></div></div>
+                    <div class="col-12 col-md-6 col-xl-3"><div class="o_boq_card o_boq_card_alert clickable" t-on-click="() => openExecutiveDashboard('alerts')"><div class="o_boq_card_title">AI Alerts</div><div class="o_boq_card_value"><t t-esc="state.data.ai_alerts"/></div></div></div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

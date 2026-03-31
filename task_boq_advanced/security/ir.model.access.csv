@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_boq_template_adv,access.boq.template.adv,model_boq_template,project.group_project_user,1,1,1,1
+access_boq_template_line_adv,access.boq.template.line.adv,model_boq_template_line,project.group_project_user,1,1,1,1
+access_project_task_boq_line_adv,access.project.task.boq.line.adv,model_project_task_boq_line,project.group_project_user,1,1,1,1
+access_ai_controller_rule,access.ai.controller.rule,model_ai_controller_rule,project.group_project_manager,1,1,1,1
+access_ai_controller_alert,access.ai.controller.alert,model_ai_controller_alert,project.group_project_user,1,1,1,0

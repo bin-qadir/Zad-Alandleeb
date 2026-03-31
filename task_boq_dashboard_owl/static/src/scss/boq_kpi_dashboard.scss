@@ -1,0 +1,9 @@
+.o_boq_kpi_dashboard {
+  .o_boq_card,.o_boq_panel,.o_boq_filter_bar {background:#fff;border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+  .o_boq_card {padding:20px;min-height:140px;display:flex;flex-direction:column;justify-content:space-between}
+  .o_boq_filter_bar {padding:18px}
+  .o_boq_card_title{font-size:14px;opacity:.85}
+  .o_boq_card_value{font-size:32px;font-weight:700;line-height:1.2}
+  .clickable{cursor:pointer;transition:transform .15s ease-in-out}.clickable:hover{transform:translateY(-3px)}
+  .o_boq_card_primary{border-inline-start:6px solid #556ee6}.o_boq_card_money{border-inline-start:6px solid #2b8a3e}.o_boq_card_sale{border-inline-start:6px solid #1c7ed6}.o_boq_card_profit{border-inline-start:6px solid #099268}.o_boq_card_margin{border-inline-start:6px solid #7048e8}.o_boq_card_danger{border-inline-start:6px solid #e03131}.o_boq_card_warning{border-inline-start:6px solid #f08c00}.o_boq_card_alert{border-inline-start:6px solid #c2255c}
+}

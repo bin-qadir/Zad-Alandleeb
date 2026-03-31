@@ -1,0 +1,10 @@
+<odoo>
+    <record id="mail_template_boq_dashboard_snapshot" model="mail.template">
+        <field name="name">BOQ Dashboard Snapshot</field>
+        <field name="model_id" ref="model_boq_dashboard_mail_config"/>
+        <field name="subject">{{ object.subject or 'BOQ Dashboard Snapshot' }}</field>
+        <field name="email_from">{{ user.email_formatted }}</field>
+        <field name="body_html" type="html"><div><p>Hello,</p><p>Please find attached the latest BOQ Dashboard Snapshot.</p><p><strong>Configuration:</strong> <t t-out="ctx.get('dashboard_config_name')"/></p><p><strong>Scope:</strong> <t t-out="ctx.get('dashboard_scope')"/></p><div t-if="ctx.get('dashboard_note')"><strong>Note:</strong><div t-out="ctx.get('dashboard_note')"/></div></div><p>Regards.</p></div></field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+</odoo>

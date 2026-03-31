@@ -1,0 +1,6 @@
+<odoo>
+    <record id="action_boq_kpi_owl_dashboard" model="ir.actions.client">
+        <field name="name">BOQ Owl Dashboard</field>
+        <field name="tag">task_boq_dashboard_owl.kpi_dashboard_action</field>
+    </record>
+</odoo>

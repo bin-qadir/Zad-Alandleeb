@@ -1,0 +1,12 @@
+<odoo>
+    <record id="ir_cron_boq_dashboard_mail" model="ir.cron">
+        <field name="name">Send BOQ Dashboard Snapshots</field>
+        <field name="model_id" ref="model_boq_dashboard_mail_config"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_send_dashboard_snapshots()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active">False</field>
+    </record>
+</odoo>

@@ -1,0 +1,13 @@
+<odoo>
+    <record id="stock_move_form_boq" model="ir.ui.view">
+        <field name="name">stock.move.form.boq</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group" position="inside">
+                <field name="boq_task_id"/>
+                <field name="task_boq_line_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

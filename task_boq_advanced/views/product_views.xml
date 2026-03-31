@@ -1,0 +1,20 @@
+<odoo>
+    <record id="product_template_form_boq" model="ir.ui.view">
+        <field name="name">product.template.form.boq</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="BOQ">
+                    <group>
+                        <field name="boq_type"/>
+                        <field name="default_vendor_id"/>
+                        <field name="labor_employee_id"/>
+                        <field name="default_waste_percent"/>
+                        <field name="boq_track_in_stock"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

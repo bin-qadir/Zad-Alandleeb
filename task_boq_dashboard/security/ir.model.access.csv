@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_boq_dashboard_report_user,access.boq.dashboard.report.user,model_boq_dashboard_report,project.group_project_user,1,0,0,0
+access_boq_dashboard_kpi_user,access.boq.dashboard.kpi.user,model_boq_dashboard_kpi,project.group_project_user,1,0,0,0

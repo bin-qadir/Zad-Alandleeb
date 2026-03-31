@@ -1,0 +1,10 @@
+<odoo>
+    <record id="action_report_boq_dashboard_snapshot" model="ir.actions.report">
+        <field name="name">BOQ Dashboard Snapshot</field>
+        <field name="model">boq.dashboard.report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">task_boq_dashboard_owl.report_boq_dashboard_snapshot</field>
+        <field name="report_file">task_boq_dashboard_owl.report_boq_dashboard_snapshot</field>
+        <field name="print_report_name">'BOQ Dashboard Snapshot'</field>
+    </record>
+</odoo>

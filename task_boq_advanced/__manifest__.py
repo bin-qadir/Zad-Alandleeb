@@ -1,0 +1,22 @@
+{
+    'name': 'Task BOQ Advanced',
+    'version': '18.0.1.0.0',
+    'summary': 'Advanced BOQ, costing, profitability, stock, timesheets, and AI controller for Odoo 18',
+    'depends': ['project', 'purchase', 'product', 'account', 'stock', 'hr_timesheet', 'mail'],
+    'data': [
+        'security/ir.model.access.csv',
+        'data/sequence.xml',
+        'data/ai_cron.xml',
+        'views/product_views.xml',
+        'views/boq_template_views.xml',
+        'views/task_views.xml',
+        'views/purchase_views.xml',
+        'views/stock_views.xml',
+        'views/timesheet_views.xml',
+        'views/ai_controller_views.xml',
+        'views/menu.xml',
+    ],
+    'installable': True,
+    'application': True,
+    'license': 'LGPL-3',
+}

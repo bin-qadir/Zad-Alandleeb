@@ -1,0 +1,74 @@
+<odoo>
+    <record id="action_boq_template" model="ir.actions.act_window">
+        <field name="name">BOQ Templates</field>
+        <field name="res_model">boq.template</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="boq_template_list_adv" model="ir.ui.view">
+        <field name="name">boq.template.list.adv</field>
+        <field name="model">boq.template</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="division_works"/>
+                <field name="subdivision"/>
+                <field name="grand_total_cost"/>
+                <field name="grand_total_sale"/>
+                <field name="expected_profit"/>
+                <field name="profit_margin_percent"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+    <record id="boq_template_form_adv" model="ir.ui.view">
+        <field name="name">boq.template.form.adv</field>
+        <field name="model">boq.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="code" readonly="1"/>
+                        <field name="division_works"/>
+                        <field name="subdivision"/>
+                        <field name="company_id"/>
+                    </group>
+                    <notebook>
+                        <page string="Lines">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="section_type"/>
+                                    <field name="product_id"/>
+                                    <field name="description"/>
+                                    <field name="uom_id"/>
+                                    <field name="quantity"/>
+                                    <field name="waste_percent"/>
+                                    <field name="unit_cost"/>
+                                    <field name="unit_sale"/>
+                                    <field name="total_cost"/>
+                                    <field name="total_sale"/>
+                                    <field name="purchase_required"/>
+                                    <field name="vendor_id"/>
+                                    <field name="employee_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Summary">
+                            <group>
+                                <field name="material_cost_total"/>
+                                <field name="labor_cost_total"/>
+                                <field name="overhead_cost_total"/>
+                                <field name="grand_total_cost"/>
+                                <field name="grand_total_sale"/>
+                                <field name="expected_profit"/>
+                                <field name="profit_margin_percent"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

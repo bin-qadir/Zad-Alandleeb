@@ -1,0 +1,68 @@
+<odoo>
+    <record id="view_project_task_form_inherit_boq_adv" model="ir.ui.view">
+        <field name="name">project.task.form.inherit.boq.adv</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_view_purchases" type="object" class="oe_stat_button" icon="fa-shopping-cart"><field name="purchase_count" widget="statinfo" string="Purchases"/></button>
+                <button name="action_view_stock_moves" type="object" class="oe_stat_button" icon="fa-cubes"><field name="stock_move_count" widget="statinfo" string="Stock"/></button>
+                <button name="action_view_timesheets" type="object" class="oe_stat_button" icon="fa-clock-o"><field name="timesheet_count" widget="statinfo" string="Timesheets"/></button>
+                <button name="action_view_ai_alerts" type="object" class="oe_stat_button" icon="fa-exclamation-triangle"><field name="ai_alert_count" widget="statinfo" string="AI Alerts"/></button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="BOQ / Analysis">
+                    <group>
+                        <group><field name="boq_template_id"/></group>
+                        <group>
+                            <button name="action_load_template" type="object" string="Load Template" class="btn-primary"/>
+                            <button name="action_create_rfq" type="object" string="Create RFQ"/>
+                            <button name="ai_run_rules" type="object" string="Run AI Analysis"/>
+                        </group>
+                    </group>
+                    <field name="boq_line_ids">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="section_type"/>
+                            <field name="product_id"/>
+                            <field name="description"/>
+                            <field name="quantity_planned"/>
+                            <field name="quantity_actual"/>
+                            <field name="unit_cost_planned"/>
+                            <field name="unit_cost_actual"/>
+                            <field name="unit_sale_planned"/>
+                            <field name="total_cost_planned"/>
+                            <field name="total_cost_actual"/>
+                            <field name="qty_reserved"/>
+                            <field name="qty_issued"/>
+                            <field name="qty_to_procure"/>
+                            <field name="employee_id"/>
+                            <field name="timesheet_hours"/>
+                            <field name="purchase_required"/>
+                            <field name="vendor_id"/>
+                        </list>
+                    </field>
+                    <group string="Planned">
+                        <field name="material_cost_planned"/>
+                        <field name="labor_cost_planned"/>
+                        <field name="overhead_cost_planned"/>
+                        <field name="total_cost_planned"/>
+                        <field name="total_sale_planned"/>
+                        <field name="total_profit_planned"/>
+                        <field name="planned_margin_percent"/>
+                    </group>
+                    <group string="Actual">
+                        <field name="material_cost_actual"/>
+                        <field name="labor_cost_actual"/>
+                        <field name="overhead_cost_actual"/>
+                        <field name="total_cost_actual"/>
+                        <field name="total_profit_actual"/>
+                        <field name="actual_margin_percent"/>
+                        <field name="budget_variance"/>
+                        <field name="budget_variance_percent"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

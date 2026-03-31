@@ -1,0 +1,5 @@
+<odoo>
+    <menuitem id="menu_boq_dashboard_root" name="BOQ Dashboard" parent="project.menu_main_pm" sequence="95"/>
+    <menuitem id="menu_boq_kpi_dashboard" name="KPI Dashboard" parent="menu_boq_dashboard_root" action="action_boq_kpi_dashboard" sequence="5"/>
+    <menuitem id="menu_boq_executive_dashboard" name="Executive Dashboard" parent="menu_boq_dashboard_root" action="action_boq_executive_dashboard" sequence="10"/>
+</odoo>
