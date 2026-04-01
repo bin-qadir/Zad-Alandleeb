@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_task_boq_line_user,access.task.boq.line.user,model_task_boq_line,task_boq_advanced.group_boq_user,1,1,1,0
+access_task_boq_line_manager,access.task.boq.line.manager,model_task_boq_line,task_boq_advanced.group_boq_manager,1,1,1,1
+access_task_boq_resource_line_user,access.task.boq.resource.line.user,model_task_boq_resource_line,task_boq_advanced.group_boq_user,1,1,1,0
+access_task_boq_resource_line_manager,access.task.boq.resource.line.manager,model_task_boq_resource_line,task_boq_advanced.group_boq_manager,1,1,1,1
+access_task_ai_alert_user,access.task.ai.alert.user,model_task_ai_alert,task_boq_advanced.group_boq_user,1,1,1,0
+access_task_ai_alert_manager,access.task.ai.alert.manager,model_task_ai_alert,task_boq_advanced.group_ai_controller_manager,1,1,1,1
