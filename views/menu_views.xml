@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_task_boq_root" name="BOQ Management" sequence="40"/>
+
+    <menuitem id="menu_task_boq_lines"
+              name="BOQ Lines"
+              parent="menu_task_boq_root"
+              action="action_task_boq_line"
+              sequence="10"/>
+
+    <menuitem id="menu_task_ai_alerts"
+              name="AI Alerts"
+              parent="menu_task_boq_root"
+              action="action_task_ai_alert"
+              sequence="20"/>
+
+</odoo>
