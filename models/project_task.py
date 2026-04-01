@@ -19,4 +19,14 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 #############################################################################
-from . import models
+from odoo import fields, models
+
+
+class ProjectTask(models.Model):
+    """Inherits 'project.task' and adds a field for select project phases."""
+    _inherit = 'project.task'
+
+    project_phase_id = fields.Many2one('project.phase',
+                                       string="Project Phase",
+                                       help="Select any project phase "
+                                            "from the list.")

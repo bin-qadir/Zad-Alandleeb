@@ -19,4 +19,6 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 #############################################################################
-from . import models
+from . import project
+from . import project_phase
+from . import project_task

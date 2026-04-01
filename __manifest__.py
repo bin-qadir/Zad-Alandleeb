@@ -1,102 +1,47 @@
+# -*- coding: utf-8 -*-
+#############################################################################
+#
+#    Cybrosys Technologies Pvt. Ltd.
+#
+#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Author: Gayathri V  (Contact : odoo@cybrosys.com)
+#
+#    You can modify it under the terms of the GNU AFFERO
+#    GENERAL PUBLIC LICENSE (AGPL v3), Version 3.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU AFFERO GENERAL PUBLIC LICENSE (AGPL v3) for more details.
+#
+#    You should have received a copy of the GNU AFFERO GENERAL PUBLIC LICENSE
+#    (AGPL v3) along with this program.
+#    If not, see <http://www.gnu.org/licenses/>.
+#
+#############################################################################
 {
-    'name': 'Solar Energy Systems',
-    'version': '1.0',
-    'category': 'Construction',
-    'depends': [
-        'account_followup',
-        'helpdesk_account',
-        'helpdesk_fsm',
-        'helpdesk_repair',
-        'industry_fsm_sale_report',
-        'industry_fsm_stock',
-        'mrp_account',
-        'product_expiry',
-        'project_sms',
-        'sale_crm',
-        'sale_purchase',
-        'stock_landed_costs',
-        'web_studio',
-        'website_crm',
-        'website_helpdesk_knowledge',
-        'website_livechat',
-    ],
+    'name': "Project Phases",
+    'version': '18.0.1.0.0',
+    'category': 'Project',
+    'summary': """A Module For Managing Different Phases of Project.""",
+    'description': 'Using Project By Phases,you can manage different phases '
+                   'of project.',
+    'author': 'Cybrosys Techno Solutions',
+    'company': 'Cybrosys Techno Solutions',
+    'maintainer': 'Cybrosys Techno Solutions',
+    'website': "https://www.cybrosys.com",
+    'depends': ['project'],
     'data': [
-        'data/res_config_settings.xml',
-        'data/base_automation.xml',
-        'data/ir_actions_server.xml',
-        'data/helpdesk_config.xml',
-        'data/ir_attachment_pre.xml',
-        'data/ir_model.xml',
-        'data/ir_model_fields.xml',
-        'data/ir_ui_view.xml',
-        'data/qweb_view.xml',
-        'data/ir_actions_act_window.xml',
-        'data/ir_model_access.xml',
-        'data/ir_rule.xml',
-        'data/project_task_type.xml',
-        'data/product_category.xml',
-        'data/worksheet_template.xml',
-        'data/project_project.xml',
-        'data/product_template.xml',
-        'data/product_product.xml',
-        'data/sale_order_template.xml',
-        'data/sale_order_template_line.xml',
-        'data/knowledge_cover.xml',
-        'data/knowledge_article.xml',
-        'data/knowledge_article_favorite.xml',
-        'data/mail_message.xml',
-        'data/mrp_bom.xml',
-        'data/mrp_bom_line.xml',
-        'data/crm_stage.xml',
-        'data/crm_team.xml',
-        'data/website_view.xml',
-        'data/website_page.xml',
-        'data/website_menu.xml',
-        'data/knowledge_tour.xml',
+        'security/ir.model.access.csv',
+        'views/project_phase_views.xml',
+        'views/project_task_views.xml',
+        'views/project_views.xml',
     ],
-    'demo': [
-        'demo/res_partner.xml',
-        'demo/crm_tag.xml',
-        'demo/crm_lead.xml',
-        'demo/account_analytic_plan.xml',
-        'demo/account_analytic_account.xml',
-        'demo/project_project.xml',
-        'demo/product_supplierinfo.xml',
-        'demo/stock_lot.xml',
-        'demo/purchase_order.xml',
-        'demo/purchase_order_line.xml',
-        'demo/purchase_order_post.xml',
-        'demo/sale_order.xml',
-        'demo/sale_order_line.xml',
-        'demo/sale_order_post.xml',
-        'demo/project_task.xml',
-        'demo/project_task_post.xml',
-        'demo/im_livechat_channel.xml',
-        'demo/im_livechat_channel_rule.xml',
-        'demo/website_ir_attachment.xml',
-        'demo/website_view.xml',
-        'demo/website_theme_apply.xml',
-        'demo/helpdesk_ticket.xml',
-        'demo/repair_order.xml',
-        'demo/repair_order_confirm.xml',
-        'demo/stock_picking_return.xml',
-        'demo/ir_attachment_post.xml',
-        'demo/x_project_task_worksheet.xml',
-        'demo/website.xml',
+    'images': [
+        'static/description/banner.png',
     ],
-    'license': 'OEEL-1',
-    'assets': {
-        'web.assets_backend': [
-            'solar_installation/static/src/js/my_tour.js',
-        ]
-    },
-    'author': 'Odoo S.A.',
-    "cloc_exclude": [
-        "data/qweb_view.xml",
-        "data/knowledge_article.xml",
-        "data/website_view.xml",
-        "static/src/js/my_tour.js",
-        "demo/website_view.xml",
-    ],
-    'images': ['images/main.png'],
+    'license': 'AGPL-3',
+    'installable': True,
+    'auto_install': False,
+    'application': False,
 }
