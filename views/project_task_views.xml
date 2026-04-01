@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_project_task_form_inherit_boq_advanced" model="ir.ui.view">
+        <field name="name">project.task.form.inherit.boq.advanced</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button type="object" name="action_open_boq_lines" class="oe_stat_button" icon="fa-list-alt">
+                    <field name="boq_line_count" widget="statinfo" string="BOQ Lines"/>
+                </button>
+                <button type="object" name="action_open_ai_alerts" class="oe_stat_button" icon="fa-exclamation-triangle">
+                    <field name="ai_alert_count" widget="statinfo" string="AI Alerts"/>
+                </button>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="BOQ / Costing">
+                    <group string="Summary" col="4">
+                        <field name="budget_total" readonly="1"/>
+                        <field name="actual_cost_total" readonly="1"/>
+                        <field name="sale_total" readonly="1"/>
+                        <field name="profit_total" readonly="1"/>
+                        <field name="profit_percent" readonly="1"/>
+                        <field name="ai_risk_level" readonly="1"/>
+                        <field name="ai_status" readonly="1"/>
+                        <field name="need_procurement" readonly="1"/>
+                        <field name="over_budget" readonly="1"/>
+                        <field name="delayed_flag" readonly="1"/>
+                    </group>
+
+                    <field name="boq_line_ids" context="{'default_task_id': id, 'default_project_id': project_id}">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="division"/>
+                            <field name="subdivision"/>
+                            <field name="qty"/>
+                            <field name="product_uom_id"/>
+                            <field name="total_cost" readonly="1"/>
+                            <field name="sale_total" readonly="1"/>
+                            <field name="profit_amount" readonly="1"/>
+                            <field name="procurement_state"/>
+                            <field name="execution_state"/>
+                        </list>
+                    </field>
+                </page>
+
+                <page string="AI Alerts">
+                    <field name="ai_alert_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="alert_type"/>
+                            <field name="severity"/>
+                            <field name="state"/>
+                            <field name="boq_line_id"/>
+                            <field name="assigned_user_id"/>
+                            <field name="create_date"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
