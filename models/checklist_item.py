@@ -19,4 +19,21 @@
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 ################################################################################
-from . import models
+from odoo import fields, models
+
+
+class ChecklistItem(models.Model):
+    """
+    Model for check list items
+    """
+    _name = 'checklist.item'
+    _description = "Checklist Item"
+
+    name = fields.Char(string="Name", required=True,
+                       help="Name of the checklist item")
+    sequence = fields.Integer(string="Sequence", default=1,
+                              help="Sequence number")
+    description = fields.Char(string="Description",
+                              help="Description of the check list item")
+    checklist_id = fields.Many2one('task.checklist', string="Checklist",
+                                   help="Checklist")

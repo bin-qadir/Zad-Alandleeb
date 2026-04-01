@@ -2,30 +2,32 @@
     :target: https://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 
-Project Phases
-==============
-Using Project By Phases,you can manage different phases of project.
+Project Task Checklist
+======================
+This module allows to To manage the Project's tasks, subtasks checklists.
 
-
-License
--------
-GNU AFFERO GENERAL PUBLIC LICENSE v3.0 (AGPL-3)
-(https://www.gnu.org/licenses/agpl-3.0-standalone.html)
+Configuration
+=============
+* No additional configurations needed
 
 Company
 -------
 * `Cybrosys Techno Solutions <https://cybrosys.com/>`__
 
+License
+=======
+General Public License, version 3 (AGPL v3).
+(https://www.gnu.org/licenses/agpl-3.0-standalone.html)
+
 Credits
 -------
-* Developer:V16 Anagha C
-            V17 Gayathri V
-            V18 Gayathri V
-Contact : odoo@cybrosys.com
+Developer : (V18) Dhanya B,
+Contact: odoo@cybrosys.com
 
 Contacts
 --------
 * Mail Contact : odoo@cybrosys.com
+* Website : https://cybrosys.com
 
 Bug Tracker
 -----------

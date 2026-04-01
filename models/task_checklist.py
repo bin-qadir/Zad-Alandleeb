@@ -19,4 +19,21 @@
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 ################################################################################
-from . import models
+from odoo import fields, models
+
+
+class TaskChecklist(models.Model):
+    """
+    Model representing a task checklist.
+    """
+    _name = 'task.checklist'
+    _description = 'Task checklist'
+
+    name = fields.Char(string='Name', help='Name of the checklist')
+    description = fields.Char(string='Description',
+                              help='Description of the checklist')
+    task_id = fields.Many2one('project.task', string='Task',
+                              help='Name of the Task')
+    checklist_ids = fields.One2many('checklist.item', 'checklist_id',
+                                    string='CheckList Items', required=True,
+                                    help='Items of checklist')
