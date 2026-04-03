@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- MQTT Broker list -->
+    <record id="view_farm_mqtt_broker_list" model="ir.ui.view">
+        <field name="name">farm.mqtt.broker.list</field>
+        <field name="model">farm.mqtt.broker</field>
+        <field name="arch" type="xml">
+            <list string="MQTT Brokers" decoration-success="state == 'connected'" decoration-danger="state == 'error'" decoration-muted="not active">
+                <field name="name"/><field name="host"/><field name="port"/>
+                <field name="base_topic"/><field name="sensor_count" string="Sensors"/>
+                <field name="state" widget="badge" decoration-success="state == 'connected'" decoration-warning="state == 'disconnected'" decoration-danger="state == 'error'"/>
+                <field name="last_connected"/><field name="active" widget="boolean_toggle"/>
+                <button name="action_test_connection" type="object" string="Test" icon="fa-plug" class="btn-sm btn-secondary"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- MQTT Broker form -->
+    <record id="view_farm_mqtt_broker_form" model="ir.ui.view">
+        <field name="name">farm.mqtt.broker.form</field>
+        <field name="model">farm.mqtt.broker</field>
+        <field name="arch" type="xml">
+            <form string="MQTT Broker">
+                <header>
+                    <button name="action_test_connection" string="Test Connection" type="object" class="btn-secondary" icon="fa-plug"/>
+                    <button name="action_start_listener"  string="Start Listener"  type="object" class="btn-primary"   icon="fa-play"
+                            invisible="state == 'connected'"/>
+                    <button name="action_stop_listener"   string="Stop Listener"   type="object" class="btn-warning"   icon="fa-stop"
+                            invisible="state != 'connected'"/>
+                    <button name="action_service_info" string="Service Status" type="object"
+                            class="btn-info" icon="fa-info-circle"/>
+                    <field name="active" widget="boolean_button" options="{'terminology': {'string_true': 'Active', 'string_false': 'Disabled'}}"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_sensors" type="object" class="oe_stat_button" icon="fa-microchip" invisible="sensor_count == 0">
+                            <field name="sensor_count" widget="statinfo" string="Sensors"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/><h1><field name="name" placeholder="Broker name..."/></h1>
+                    </div>
+                    <group>
+                        <group string="Connection">
+                            <field name="host"/><field name="port"/><field name="use_tls"/>
+                            <field name="keepalive"/><field name="client_id"/>
+                        </group>
+                        <group string="Auth &amp; Topics">
+                            <field name="username"/><field name="password" password="True"/>
+                            <field name="base_topic"/>
+                        </group>
+                    </group>
+                    <group string="Status" invisible="state == 'disconnected'">
+                        <field name="state" readonly="1"/><field name="last_connected" readonly="1"/>
+                        <field name="last_error" readonly="1" invisible="not last_error"/>
+                    </group>
+                    <div class="alert alert-info" role="alert" style="margin-top:12px">
+                        <b>Message format:</b>
+                        Per-metric: <code>&lt;base_topic&gt;/&lt;sensor_id&gt;/temperature</code> → <code>28.5</code> |
+                        JSON: <code>&lt;base_topic&gt;/&lt;sensor_id&gt;</code> → <code>{"temperature":28.5,"humidity":65.2,"co2":420}</code>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_farm_mqtt_broker" model="ir.actions.act_window">
+        <field name="name">MQTT Brokers</field><field name="res_model">farm.mqtt.broker</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html"><p class="o_view_nocontent_smiling_face">Configure your first MQTT broker!</p></field>
+    </record>
+
+    <!-- Sensor list -->
+    <record id="view_farm_sensor_list" model="ir.ui.view">
+        <field name="name">farm.sensor.list</field>
+        <field name="model">farm.sensor</field>
+        <field name="arch" type="xml">
+            <list string="Sensors" decoration-success="status == 'ok'" decoration-warning="status == 'warning'" decoration-danger="status == 'critical'" decoration-muted="status == 'offline' or not active">
+                <field name="name"/><field name="sensor_id"/><field name="sensor_type"/>
+                <field name="farm_id"/><field name="field_id"/>
+                <field name="last_temperature" optional="show" string="Temp °C" digits="[6,1]"/>
+                <field name="last_humidity"    optional="show" string="Humidity %" digits="[6,1]"/>
+                <field name="last_co2"         optional="show" string="CO₂ ppm" digits="[8,0]"/>
+                <field name="last_reading_at" string="Last Reading"/>
+                <field name="reading_count" string="Readings"/>
+                <field name="alert_count" string="Alerts" decoration-danger="alert_count &gt; 0"/>
+                <field name="status" widget="badge" decoration-success="status == 'ok'" decoration-warning="status == 'warning'" decoration-danger="status == 'critical'" decoration-muted="status == 'offline'"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Sensor form -->
+    <record id="view_farm_sensor_form" model="ir.ui.view">
+        <field name="name">farm.sensor.form</field>
+        <field name="model">farm.sensor</field>
+        <field name="arch" type="xml">
+            <form string="Sensor Device">
+                <header>
+                    <field name="status" widget="statusbar" statusbar_visible="offline,ok,warning,critical" readonly="1"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_readings" type="object" class="oe_stat_button" icon="fa-bar-chart">
+                            <field name="reading_count" widget="statinfo" string="Readings"/>
+                        </button>
+                        <button name="action_view_alerts" type="object" class="oe_stat_button" icon="fa-bell" invisible="alert_count == 0">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value"><field name="alert_count"/></span>
+                                <span class="o_stat_text">Open Alerts</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Sensor name..."/></h1>
+                        <h4 class="text-muted"><i class="fa fa-rss"/> <field name="mqtt_topic" readonly="1"/></h4>
+                    </div>
+                    <group>
+                        <group string="Identification">
+                            <field name="sensor_id"/><field name="sensor_type"/><field name="broker_id"/>
+                        </group>
+                        <group string="Location">
+                            <field name="farm_id"/><field name="field_id" domain="[('farm_id','=',farm_id)]"/><field name="task_id"/>
+                        </group>
+                    </group>
+                    <!-- Live readings -->
+                    <group string="Live Readings" invisible="status == 'offline'">
+                        <div class="row text-center">
+                            <div class="col-sm-4 p-3">
+                                <div class="small fw-bold text-muted">TEMPERATURE</div>
+                                <div class="fs-2 fw-bold" style="color:#16a34a" invisible="not last_temperature"><field name="last_temperature" readonly="1"/>°C</div>
+                            </div>
+                            <div class="col-sm-4 p-3">
+                                <div class="small fw-bold text-muted">HUMIDITY</div>
+                                <div class="fs-2 fw-bold" style="color:#2563eb" invisible="not last_humidity"><field name="last_humidity" readonly="1"/>%</div>
+                            </div>
+                            <div class="col-sm-4 p-3">
+                                <div class="small fw-bold text-muted">CO₂</div>
+                                <div class="fs-2 fw-bold" style="color:#d97706" invisible="not last_co2"><field name="last_co2" readonly="1"/> ppm</div>
+                            </div>
+                        </div>
+                        <field name="last_reading_at" readonly="1" string="As of"/>
+                    </group>
+                    <notebook>
+                        <page string="Thresholds" icon="fa-sliders">
+                            <group>
+                                <group string="Temperature (°C)" invisible="sensor_type not in ('temperature','multi')">
+                                    <field name="temp_min"/><field name="temp_max"/>
+                                </group>
+                                <group string="Humidity (%)" invisible="sensor_type not in ('humidity','multi')">
+                                    <field name="humidity_min"/><field name="humidity_max"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="CO₂ (ppm)" invisible="sensor_type not in ('co2','multi')">
+                                    <field name="co2_warning" string="Warning Level (ppm)"/>
+                                    <field name="co2_max"     string="Critical Level (ppm)"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/><field name="activity_ids"/><field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_farm_sensor_search" model="ir.ui.view">
+        <field name="name">farm.sensor.search</field>
+        <field name="model">farm.sensor</field>
+        <field name="arch" type="xml">
+            <search string="Search Sensors">
+                <field name="name"/><field name="sensor_id"/><field name="farm_id"/><field name="field_id"/>
+                <filter name="ok"         string="OK"       domain="[('status','=','ok')]"/>
+                <filter name="warning"    string="Warning"  domain="[('status','=','warning')]"/>
+                <filter name="critical"   string="Critical" domain="[('status','=','critical')]"/>
+                <filter name="offline"    string="Offline"  domain="[('status','=','offline')]"/>
+                <filter name="has_alerts" string="Has Alerts" domain="[('alert_count','>',0)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="g_farm"   string="Farm"    context="{'group_by':'farm_id'}"/>
+                    <filter name="g_type"   string="Type"    context="{'group_by':'sensor_type'}"/>
+                    <filter name="g_status" string="Status"  context="{'group_by':'status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Sensor Data list/graph/pivot -->
+    <record id="view_farm_sensor_data_list" model="ir.ui.view">
+        <field name="name">farm.sensor.data.list</field>
+        <field name="model">farm.sensor.data</field>
+        <field name="arch" type="xml">
+            <list string="Sensor Readings" create="0" decoration-warning="status == 'warning'" decoration-danger="status == 'critical'">
+                <field name="reading_time"/><field name="sensor_id"/><field name="farm_id"/>
+                <field name="field_id" optional="show"/>
+                <field name="temperature" optional="show" string="Temp °C"/>
+                <field name="humidity"    optional="show" string="Humid %"/>
+                <field name="co2"         optional="show" string="CO₂ ppm"/>
+                <field name="source" optional="show"/>
+                <field name="status" widget="badge" decoration-success="status == 'ok'" decoration-warning="status == 'warning'" decoration-danger="status == 'critical'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_farm_sensor_data_graph" model="ir.ui.view">
+        <field name="name">farm.sensor.data.graph</field>
+        <field name="model">farm.sensor.data</field>
+        <field name="arch" type="xml">
+            <graph string="Sensor Readings" type="line">
+                <field name="reading_time" type="row"/>
+                <field name="temperature"  type="measure"/>
+                <field name="humidity"     type="measure"/>
+                <field name="co2"          type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_farm_sensor_data_search" model="ir.ui.view">
+        <field name="name">farm.sensor.data.search</field>
+        <field name="model">farm.sensor.data</field>
+        <field name="arch" type="xml">
+            <search string="Search Readings">
+                <field name="sensor_id"/><field name="farm_id"/>
+                <filter name="ok"       string="Normal"   domain="[('status','=','ok')]"/>
+                <filter name="warning"  string="Warning"  domain="[('status','=','warning')]"/>
+                <filter name="critical" string="Critical" domain="[('status','=','critical')]"/>
+                <filter name="today"    string="Today"    domain="[('reading_time','&gt;=', context_today().strftime('%Y-%m-%d 00:00:00'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="g_sensor" string="Sensor" context="{'group_by':'sensor_id'}"/>
+                    <filter name="g_farm"   string="Farm"   context="{'group_by':'farm_id'}"/>
+                    <filter name="g_day"    string="Day"    context="{'group_by':'reading_time:day'}"/>
+                    <filter name="g_hour"   string="Hour"   context="{'group_by':'reading_time:hour'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Sensor Alert list/form -->
+    <record id="view_farm_sensor_alert_list" model="ir.ui.view">
+        <field name="name">farm.sensor.alert.list</field>
+        <field name="model">farm.sensor.alert</field>
+        <field name="arch" type="xml">
+            <list string="Sensor Alerts" decoration-danger="severity == 'critical' and not resolved" decoration-warning="severity == 'warning' and not resolved" decoration-muted="resolved">
+                <field name="create_date" string="Time"/>
+                <field name="severity" widget="badge" decoration-warning="severity == 'warning'" decoration-danger="severity == 'critical'"/>
+                <field name="sensor_id"/><field name="farm_id"/>
+                <field name="field_id" optional="show"/><field name="task_id" optional="show"/>
+                <field name="metric"/><field name="message"/>
+                <field name="actual_value"    string="Value"     widget="float" digits="[8,2]"/>
+                <field name="threshold_value" string="Threshold" widget="float" digits="[8,2]"/>
+                <field name="metric_unit" string="Unit"/>
+                <field name="resolved" widget="boolean_toggle"/>
+                <field name="resolved_at" optional="show"/>
+                <button name="action_resolve" type="object" string="Resolve" class="btn-sm btn-success" invisible="resolved"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_farm_sensor_alert_form" model="ir.ui.view">
+        <field name="name">farm.sensor.alert.form</field>
+        <field name="model">farm.sensor.alert</field>
+        <field name="arch" type="xml">
+            <form string="Sensor Alert">
+                <header>
+                    <button name="action_resolve" string="Mark Resolved" type="object" class="btn-success" invisible="resolved"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="message" readonly="1"/></h1></div>
+                    <group>
+                        <group string="Source">
+                            <field name="sensor_id" readonly="1"/><field name="farm_id" readonly="1"/>
+                            <field name="field_id"  readonly="1"/><field name="task_id"  readonly="1"/>
+                        </group>
+                        <group string="Alert">
+                            <field name="metric" readonly="1"/><field name="severity" readonly="1"/>
+                            <field name="actual_value" readonly="1"/><field name="threshold_value" readonly="1"/>
+                            <field name="metric_unit"  readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Resolution" invisible="not resolved">
+                        <field name="resolved_at" readonly="1"/><field name="resolved_by" readonly="1"/>
+                        <field name="resolution_notes"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter"><field name="message_follower_ids"/><field name="message_ids"/></div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_farm_sensor_alert_search" model="ir.ui.view">
+        <field name="name">farm.sensor.alert.search</field>
+        <field name="model">farm.sensor.alert</field>
+        <field name="arch" type="xml">
+            <search string="Search Sensor Alerts">
+                <field name="sensor_id"/><field name="farm_id"/><field name="metric"/>
+                <filter name="open"     string="Open"     domain="[('resolved','=',False)]"/>
+                <filter name="resolved" string="Resolved" domain="[('resolved','=',True)]"/>
+                <filter name="critical" string="Critical" domain="[('severity','=','critical')]"/>
+                <filter name="warning"  string="Warning"  domain="[('severity','=','warning')]"/>
+                <filter name="today"    string="Today"    domain="[('create_date','&gt;=', context_today().strftime('%Y-%m-%d 00:00:00'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="g_sensor"   string="Sensor"   context="{'group_by':'sensor_id'}"/>
+                    <filter name="g_farm"     string="Farm"     context="{'group_by':'farm_id'}"/>
+                    <filter name="g_metric"   string="Metric"   context="{'group_by':'metric'}"/>
+                    <filter name="g_severity" string="Severity" context="{'group_by':'severity'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    
+    <!-- ================================================================
+         farm.sensor.alert — Kanban View (color coded by severity/state)
+    ================================================================ -->
+    <record id="view_farm_sensor_alert_kanban" model="ir.ui.view">
+        <field name="name">farm.sensor.alert.kanban</field>
+        <field name="model">farm.sensor.alert</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="severity" quick_create="false"
+                    class="o_kanban_small_column"
+                    group_delete="false" group_create="false">
+                <field name="sensor_id"/>
+                <field name="severity"/>
+                <field name="metric"/>
+                <field name="message"/>
+                <field name="actual_value"/>
+                <field name="threshold_value"/>
+                <field name="metric_unit"/>
+                <field name="resolved"/>
+                <field name="farm_id"/>
+                <field name="field_id"/>
+                <field name="create_date"/>
+                <templates>
+                    <t t-name="card">
+                        <t t-set="color"
+                           t-value="record.resolved.raw_value ? '#94a3b8' : (record.severity.raw_value == 'critical' ? '#ef4444' : '#f59e0b')"/>
+                        <div t-attf-style="border-left: 4px solid #{color}; border-radius: 6px; padding: 10px 12px; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.06);">
+                            <!-- Header row -->
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <span t-attf-class="badge {{ record.severity.raw_value == 'critical' ? 'text-bg-danger' : 'text-bg-warning' }}"
+                                      t-if="!record.resolved.raw_value">
+                                    <t t-esc="record.severity.value"/>
+                                </span>
+                                <span class="badge text-bg-secondary" t-else="">Resolved</span>
+                                <small class="text-muted" t-esc="record.create_date.value"/>
+                            </div>
+                            <!-- Sensor name -->
+                            <div class="fw-bold text-truncate" t-esc="record.sensor_id.value"/>
+                            <!-- Message -->
+                            <div class="small text-muted mt-1 text-truncate" t-esc="record.message.value"/>
+                            <!-- Value vs threshold -->
+                            <div class="d-flex gap-2 mt-2 small">
+                                <span class="fw-bold"
+                                      t-attf-style="color: #{color}">
+                                    <t t-esc="record.actual_value.value"/>
+                                    <t t-esc="record.metric_unit.value"/>
+                                </span>
+                                <span class="text-muted">
+                                    / threshold: <t t-esc="record.threshold_value.value"/>
+                                    <t t-esc="record.metric_unit.value"/>
+                                </span>
+                            </div>
+                            <!-- Farm / Field -->
+                            <div class="small text-muted mt-1">
+                                <i class="fa fa-map-marker"/>
+                                <t t-esc="record.farm_id.value"/>
+                                <t t-if="record.field_id.value"> / <t t-esc="record.field_id.value"/></t>
+                            </div>
+                            <!-- Resolve button -->
+                            <div class="mt-2" t-if="!record.resolved.raw_value">
+                                <button name="action_resolve" type="object"
+                                        class="btn btn-sm btn-outline-success w-100">
+                                    ✓ Resolve
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Update alert action to include kanban mode -->
+    <record id="action_farm_sensor_alert" model="ir.actions.act_window">
+        <field name="name">Sensor Alerts</field>
+        <field name="res_model">farm.sensor.alert</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_farm_sensor_alert_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No open sensor alerts — readings are normal!</p>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         farm.sensor.data — Pivot View (for analysis)
+    ================================================================ -->
+    <record id="view_farm_sensor_data_pivot" model="ir.ui.view">
+        <field name="name">farm.sensor.data.pivot</field>
+        <field name="model">farm.sensor.data</field>
+        <field name="arch" type="xml">
+            <pivot string="Sensor Data Analysis">
+                <field name="sensor_id"   type="row"/>
+                <field name="reading_time" type="col" interval="day"/>
+                <field name="temperature"  type="measure"/>
+                <field name="humidity"     type="measure"/>
+                <field name="co2"          type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Update data action to include pivot -->
+    <record id="action_farm_sensor_data" model="ir.actions.act_window">
+        <field name="name">Sensor Data</field>
+        <field name="res_model">farm.sensor.data</field>
+        <field name="view_mode">list,graph,pivot</field>
+        <field name="search_view_id" ref="view_farm_sensor_data_search"/>
+        <field name="context">{'search_default_today': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No sensor readings yet.</p>
+            <p>Readings appear automatically once sensors start publishing to MQTT.</p>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         project.task form — Sensors smart button (inherited)
+    ================================================================ -->
+    <record id="view_task_form_sensor_smartbtn" model="ir.ui.view">
+        <field name="name">project.task.form.sensor.smartbtn</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_task_sensors" type="object"
+                        class="oe_stat_button" icon="fa-wifi"
+                        invisible="task_sensor_count == 0">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value"><field name="task_sensor_count"/></span>
+                        <span class="o_stat_text">Sensors</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         farm.sensor — Kanban View (device status board)
+    ================================================================ -->
+    <record id="view_farm_sensor_kanban" model="ir.ui.view">
+        <field name="name">farm.sensor.kanban</field>
+        <field name="model">farm.sensor</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="status" quick_create="false"
+                    class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="sensor_id"/>
+                <field name="sensor_type"/>
+                <field name="status"/>
+                <field name="farm_id"/>
+                <field name="field_id"/>
+                <field name="last_temperature"/>
+                <field name="last_humidity"/>
+                <field name="last_co2"/>
+                <field name="last_reading_at"/>
+                <field name="alert_count"/>
+                <templates>
+                    <t t-name="card">
+                        <t t-set="color"
+                           t-value="{'ok':'#16a34a','warning':'#f59e0b','critical':'#ef4444','offline':'#94a3b8'}[record.status.raw_value] or '#94a3b8'"/>
+                        <div t-attf-style="border-top: 3px solid #{color}; border-radius:6px; padding:12px; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.06);">
+                            <!-- Status dot + name -->
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span t-attf-style="width:10px;height:10px;border-radius:50%;background:#{color};display:inline-block;flex-shrink:0"/>
+                                <span class="fw-bold text-truncate" t-esc="record.name.value"/>
+                            </div>
+                            <!-- Sensor ID / topic -->
+                            <div class="small text-muted mb-2">
+                                <i class="fa fa-rss"/> <t t-esc="record.sensor_id.value"/>
+                            </div>
+                            <!-- Live readings -->
+                            <div class="d-flex gap-3 mb-2" t-if="record.status.raw_value != 'offline'">
+                                <div t-if="record.last_temperature.raw_value">
+                                    <div class="text-muted" style="font-size:10px">TEMP</div>
+                                    <div class="fw-bold" style="color:#16a34a">
+                                        <t t-esc="record.last_temperature.value"/>°C
+                                    </div>
+                                </div>
+                                <div t-if="record.last_humidity.raw_value">
+                                    <div class="text-muted" style="font-size:10px">HUMID</div>
+                                    <div class="fw-bold" style="color:#2563eb">
+                                        <t t-esc="record.last_humidity.value"/>%
+                                    </div>
+                                </div>
+                                <div t-if="record.last_co2.raw_value">
+                                    <div class="text-muted" style="font-size:10px">CO₂</div>
+                                    <div class="fw-bold" style="color:#d97706">
+                                        <t t-esc="record.last_co2.value"/> ppm
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Offline badge -->
+                            <div t-if="record.status.raw_value == 'offline'" class="text-muted small mb-2">
+                                <i class="fa fa-wifi-slash"/> No recent readings
+                            </div>
+                            <!-- Farm / Field -->
+                            <div class="small text-muted">
+                                <i class="fa fa-map-marker"/>
+                                <t t-esc="record.farm_id.value"/>
+                                <t t-if="record.field_id.value"> / <t t-esc="record.field_id.value"/></t>
+                            </div>
+                            <!-- Alert badge -->
+                            <div class="mt-2" t-if="record.alert_count.raw_value > 0">
+                                <span class="badge text-bg-danger">
+                                    <i class="fa fa-bell"/> <t t-esc="record.alert_count.value"/> alert(s)
+                                </span>
+                            </div>
+                            <!-- Last reading time -->
+                            <div class="small text-muted mt-1" t-if="record.last_reading_at.value">
+                                Last: <t t-esc="record.last_reading_at.value"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Update sensor action to include kanban -->
+    <record id="action_farm_sensor" model="ir.actions.act_window">
+        <field name="name">Sensor Devices</field>
+        <field name="res_model">farm.sensor</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_farm_sensor_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register your first IoT sensor!</p>
+            <p>Connect temperature, humidity, and CO₂ sensors via MQTT.</p>
+        </field>
+    </record>
+
+
+</odoo>
