@@ -1,0 +1,89 @@
+/* ============================================================
+   Smart Farm Al Andleeb — Backend Styles
+   ============================================================ */
+
+/* ── Status badge color refinements ── */
+.o_field_badge .badge.text-bg-farm-active {
+    background-color: #28a745 !important;
+    color: #fff !important;
+}
+
+/* ── Stat buttons accent ── */
+.o_form_view .oe_button_box .oe_stat_button {
+    border-color: #4caf50;
+}
+
+.o_form_view .oe_button_box .oe_stat_button:hover {
+    background-color: #e8f5e9;
+}
+
+/* ── Kanban card farm theme ── */
+.o_kanban_view .o_kanban_record {
+    border-left: 4px solid #4caf50;
+}
+
+/* ── List row highlights ── */
+.o_list_view .o_data_row.text-success td {
+    font-weight: 600;
+}
+
+/* ── Form header farm color ── */
+.o_form_view .o_statusbar_status button.o_arrow_button_current {
+    background-color: #388e3c;
+    border-color: #388e3c;
+}
+
+/* ── Dashboard graph containers ── */
+.o_graph_view .o_graph_canvas_container {
+    padding: 16px;
+    background: #f9fbe7;
+    border-radius: 8px;
+}
+
+/* ============================================================
+   Cost Control Center — Task Form Styles
+   ============================================================ */
+
+/* Cost summary boxes */
+.o_farm_cost_box {
+    border: 1px solid #e0e0e0;
+    background: #fafafa;
+    transition: box-shadow 0.15s;
+}
+
+.o_farm_cost_box:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+
+.o_farm_cost_material {
+    border-top: 3px solid #1976d2;
+}
+
+.o_farm_cost_labor {
+    border-top: 3px solid #f57c00;
+}
+
+.o_farm_cost_overhead {
+    border-top: 3px solid #7b1fa2;
+}
+
+.o_farm_cost_total {
+    border-top: 3px solid #c62828;
+    background: #fff8f8;
+}
+
+/* Budget progress bar */
+.o_field_progressbar .o_progress {
+    height: 14px;
+    border-radius: 7px;
+}
+
+/* Inline editable list accent for material/labor */
+.o_form_view .o_field_one2many[name='material_line_ids'] .o_list_table {
+    border-left: 3px solid #1976d2;
+}
+
+.o_form_view .o_field_one2many[name='labor_line_ids'] .o_list_table {
+    border-left: 3px solid #f57c00;
+}
+

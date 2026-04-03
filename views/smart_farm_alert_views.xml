@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         smart.farm.alert.config — Form View
+    ================================================================ -->
+    <record id="view_sf_alert_config_form" model="ir.ui.view">
+        <field name="name">smart.farm.alert.config.form</field>
+        <field name="model">smart.farm.alert.config</field>
+        <field name="arch" type="xml">
+            <form string="Financial Alert Configuration">
+                <header>
+                    <button name="action_view_logs" type="object"
+                            string="View Alert Logs" class="btn-secondary"
+                            invisible="alert_count == 0"/>
+                    <field name="active" widget="boolean_button"
+                           options="{'terminology': {'string_true': 'Active', 'string_false': 'Disabled', 'hover_true': 'Disable alert', 'hover_false': 'Activate alert'}}"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_logs" type="object"
+                                class="oe_stat_button" icon="fa-bell"
+                                invisible="alert_count == 0">
+                            <field name="alert_count" widget="statinfo" string="Alerts Sent"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Alert name..."/></h1>
+                    </div>
+                    <group>
+                        <group string="Alert Trigger">
+                            <field name="alert_type" widget="radio"/>
+                            <field name="profit_margin_threshold"
+                                   invisible="alert_type != 'low_profit_margin'"
+                                   string="Minimum Margin (%)"/>
+                            <field name="material_cost_threshold" widget="monetary"
+                                   invisible="alert_type != 'material_threshold'"
+                                   string="Material Cost Limit"/>
+                            <field name="currency_id"
+                                   invisible="alert_type != 'material_threshold'"/>
+                            <field name="severity"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group string="Recipients">
+                            <field name="notify_project_manager"/>
+                            <field name="notify_admins"/>
+                            <field name="extra_partner_ids" widget="many2many_tags"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <group string="Note Template">
+                        <field name="note_template" nolabel="1"
+                               placeholder="Use {task}, {project}, {value}, {threshold} as placeholders..."/>
+                    </group>
+                    <group string="Status" invisible="not last_run">
+                        <field name="last_run" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         smart.farm.alert.config — List View
+    ================================================================ -->
+    <record id="view_sf_alert_config_list" model="ir.ui.view">
+        <field name="name">smart.farm.alert.config.list</field>
+        <field name="model">smart.farm.alert.config</field>
+        <field name="arch" type="xml">
+            <list string="Alert Configurations"
+                  decoration-muted="not active"
+                  decoration-danger="severity == 'danger'"
+                  decoration-warning="severity == 'warning'">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="alert_type"/>
+                <field name="severity" widget="badge"
+                       decoration-info="severity == 'info'"
+                       decoration-warning="severity == 'warning'"
+                       decoration-danger="severity == 'danger'"/>
+                <field name="notify_project_manager" string="PM"/>
+                <field name="notify_admins" string="Admins"/>
+                <field name="alert_count" string="Alerts"/>
+                <field name="last_run"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         smart.farm.alert.config — Search View
+    ================================================================ -->
+    <record id="view_sf_alert_config_search" model="ir.ui.view">
+        <field name="name">smart.farm.alert.config.search</field>
+        <field name="model">smart.farm.alert.config</field>
+        <field name="arch" type="xml">
+            <search string="Search Alert Configs">
+                <field name="name"/>
+                <field name="alert_type"/>
+                <filter name="active"   string="Active"   domain="[('active','=',True)]"/>
+                <filter name="inactive" string="Disabled" domain="[('active','=',False)]"/>
+                <separator/>
+                <filter name="warning" string="Warning"  domain="[('severity','=','warning')]"/>
+                <filter name="danger"  string="Critical" domain="[('severity','=','danger')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_type" string="Alert Type" context="{'group_by': 'alert_type'}"/>
+                    <filter name="group_sev"  string="Severity"   context="{'group_by': 'severity'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         smart.farm.alert.config — Action
+    ================================================================ -->
+    <record id="action_sf_alert_config" model="ir.actions.act_window">
+        <field name="name">Financial Alert Configuration</field>
+        <field name="res_model">smart.farm.alert.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_sf_alert_config_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No alert configurations yet.</p>
+            <p>Create financial alert rules to be notified when tasks exceed budget,
+               have low profit margins, or hit material cost thresholds.</p>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         smart.farm.alert.log — List View
+    ================================================================ -->
+    <record id="view_sf_alert_log_list" model="ir.ui.view">
+        <field name="name">smart.farm.alert.log.list</field>
+        <field name="model">smart.farm.alert.log</field>
+        <field name="arch" type="xml">
+            <list string="Alert Log"
+                  create="0" edit="0" delete="0"
+                  decoration-danger="severity == 'danger'"
+                  decoration-warning="severity == 'warning'"
+                  decoration-info="severity == 'info'">
+                <field name="create_date" string="Time"/>
+                <field name="severity" widget="badge"
+                       decoration-info="severity == 'info'"
+                       decoration-warning="severity == 'warning'"
+                       decoration-danger="severity == 'danger'"/>
+                <field name="alert_type"/>
+                <field name="task_id"/>
+                <field name="project_id"/>
+                <field name="summary"/>
+                <field name="triggered_value" string="Actual Value"
+                       widget="float" digits="[12,2]"/>
+                <field name="threshold_value" string="Threshold"
+                       widget="float" digits="[12,2]"/>
+                <field name="notified_user_ids" widget="many2many_avatar_user"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         smart.farm.alert.log — Form View
+    ================================================================ -->
+    <record id="view_sf_alert_log_form" model="ir.ui.view">
+        <field name="name">smart.farm.alert.log.form</field>
+        <field name="model">smart.farm.alert.log</field>
+        <field name="arch" type="xml">
+            <form string="Alert Log Entry" create="0">
+                <sheet>
+                    <group>
+                        <group string="Alert">
+                            <field name="config_id"  readonly="1"/>
+                            <field name="alert_type" readonly="1"/>
+                            <field name="severity"   readonly="1"/>
+                        </group>
+                        <group string="Source">
+                            <field name="task_id"    readonly="1"/>
+                            <field name="project_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Summary">
+                        <field name="summary" readonly="1" nolabel="1"/>
+                    </group>
+                    <group string="Details">
+                        <field name="body" readonly="1" nolabel="1" widget="html"/>
+                    </group>
+                    <group>
+                        <group string="Values">
+                            <field name="triggered_value" readonly="1"/>
+                            <field name="threshold_value" readonly="1"/>
+                        </group>
+                        <group string="Delivery">
+                            <field name="notified_user_ids" widget="many2many_tags" readonly="1"/>
+                            <field name="message_id" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         smart.farm.alert.log — Search View
+    ================================================================ -->
+    <record id="view_sf_alert_log_search" model="ir.ui.view">
+        <field name="name">smart.farm.alert.log.search</field>
+        <field name="model">smart.farm.alert.log</field>
+        <field name="arch" type="xml">
+            <search string="Search Alert Logs">
+                <field name="summary"/>
+                <field name="task_id"/>
+                <field name="project_id"/>
+                <field name="config_id"/>
+                <filter name="warning" string="Warning"  domain="[('severity','=','warning')]"/>
+                <filter name="danger"  string="Critical" domain="[('severity','=','danger')]"/>
+                <filter name="today"   string="Today"
+                        domain="[('create_date','&gt;=', context_today().strftime('%Y-%m-%d 00:00:00'))]"/>
+                <filter name="this_week" string="This Week"
+                        domain="[('create_date','&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_type"    string="Alert Type" context="{'group_by': 'alert_type'}"/>
+                    <filter name="group_project" string="Project"    context="{'group_by': 'project_id'}"/>
+                    <filter name="group_sev"     string="Severity"   context="{'group_by': 'severity'}"/>
+                    <filter name="group_day"     string="Day"        context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         smart.farm.alert.log — Action
+    ================================================================ -->
+    <record id="action_sf_alert_log" model="ir.actions.act_window">
+        <field name="name">Financial Alert Log</field>
+        <field name="res_model">smart.farm.alert.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_sf_alert_log_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No alerts have been fired yet.</p>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Manual "Run Alerts Now" server action (callable from UI)
+    ================================================================ -->
+    <record id="action_sf_run_alerts_now" model="ir.actions.server">
+        <field name="name">Run Financial Alerts Now</field>
+        <field name="model_id" ref="model_smart_farm_alert_engine"/>
+        <field name="binding_model_id" ref="model_smart_farm_alert_config"/>
+        <field name="state">code</field>
+        <field name="code">
+records.env['smart.farm.alert.engine'].evaluate_all()
+        </field>
+    </record>
+
+    <!-- ================================================================
+         project.task form — inline alert banner (inherited view)
+         Shows unresolved alerts at the top of the Cost Control tab
+    ================================================================ -->
+    <record id="view_task_form_alert_banner" model="ir.ui.view">
+        <field name="name">project.task.form.alert.banner</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <!-- Inject alert log count into chatter area button_box -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_task_alert_logs"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-bell"
+                        invisible="task_alert_count == 0">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="task_alert_count"/>
+                        </span>
+                        <span class="o_stat_text">Alerts</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,7 +1,136 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_task_boq_line_user,access.task.boq.line.user,model_task_boq_line,task_boq_advanced.group_boq_user,1,1,1,0
-access_task_boq_line_manager,access.task.boq.line.manager,model_task_boq_line,task_boq_advanced.group_boq_manager,1,1,1,1
-access_task_boq_resource_line_user,access.task.boq.resource.line.user,model_task_boq_resource_line,task_boq_advanced.group_boq_user,1,1,1,0
-access_task_boq_resource_line_manager,access.task.boq.resource.line.manager,model_task_boq_resource_line,task_boq_advanced.group_boq_manager,1,1,1,1
-access_task_ai_alert_user,access.task.ai.alert.user,model_task_ai_alert,task_boq_advanced.group_boq_user,1,1,1,0
-access_task_ai_alert_manager,access.task.ai.alert.manager,model_task_ai_alert,task_boq_advanced.group_ai_controller_manager,1,1,1,1
+access_farm_farm_user,farm.farm user,model_farm_farm,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_farm_manager,farm.farm manager,model_farm_farm,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_farm_admin,farm.farm admin,model_farm_farm,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_field_user,farm.field user,model_farm_field,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_field_manager,farm.field manager,model_farm_field,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_field_admin,farm.field admin,model_farm_field,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_crop_type_user,farm.crop.type user,model_farm_crop_type,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_crop_type_manager,farm.crop.type manager,model_farm_crop_type,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_crop_type_admin,farm.crop.type admin,model_farm_crop_type,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_crop_user,farm.crop user,model_farm_crop,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_crop_manager,farm.crop manager,model_farm_crop,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_crop_admin,farm.crop admin,model_farm_crop,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_livestock_category_user,farm.livestock.category user,model_farm_livestock_category,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_livestock_category_manager,farm.livestock.category manager,model_farm_livestock_category,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_livestock_category_admin,farm.livestock.category admin,model_farm_livestock_category,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_livestock_user,farm.livestock user,model_farm_livestock,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_livestock_manager,farm.livestock manager,model_farm_livestock,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_livestock_admin,farm.livestock admin,model_farm_livestock,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_harvest_user,farm.harvest user,model_farm_harvest,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_harvest_manager,farm.harvest manager,model_farm_harvest,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_harvest_admin,farm.harvest admin,model_farm_harvest,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_expense_user,farm.expense user,model_farm_expense,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_expense_manager,farm.expense manager,model_farm_expense,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_expense_admin,farm.expense admin,model_farm_expense,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_task_material_user,task.material user,model_task_material,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_task_material_manager,task.material manager,model_task_material,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_task_material_admin,task.material admin,model_task_material,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_task_labor_user,task.labor user,model_task_labor,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_task_labor_manager,task.labor manager,model_task_labor,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_task_labor_admin,task.labor admin,model_task_labor,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_sf_alert_config_user,smart.farm.alert.config user,model_smart_farm_alert_config,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_sf_alert_config_manager,smart.farm.alert.config manager,model_smart_farm_alert_config,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_sf_alert_config_admin,smart.farm.alert.config admin,model_smart_farm_alert_config,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_sf_alert_log_user,smart.farm.alert.log user,model_smart_farm_alert_log,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_sf_alert_log_manager,smart.farm.alert.log manager,model_smart_farm_alert_log,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_sf_alert_log_admin,smart.farm.alert.log admin,model_smart_farm_alert_log,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_sensor_user,farm.sensor user,model_farm_sensor,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_sensor_manager,farm.sensor manager,model_farm_sensor,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_sensor_admin,farm.sensor admin,model_farm_sensor,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_sensor_threshold_user,farm.sensor.threshold user,model_farm_sensor_threshold,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_sensor_threshold_manager,farm.sensor.threshold manager,model_farm_sensor_threshold,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_sensor_threshold_admin,farm.sensor.threshold admin,model_farm_sensor_threshold,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_sensor_data_user,farm.sensor.data user,model_farm_sensor_data,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_sensor_data_manager,farm.sensor.data manager,model_farm_sensor_data,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_sensor_data_admin,farm.sensor.data admin,model_farm_sensor_data,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_sensor_alert_user,farm.sensor.alert user,model_farm_sensor_alert,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_sensor_alert_manager,farm.sensor.alert manager,model_farm_sensor_alert,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_sensor_alert_admin,farm.sensor.alert admin,model_farm_sensor_alert,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_mqtt_broker_manager,farm.mqtt.broker manager,model_farm_mqtt_broker,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_mqtt_broker_admin,farm.mqtt.broker admin,model_farm_mqtt_broker,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_mqtt_broker_user,farm.mqtt.broker user,model_farm_mqtt_broker,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_mqtt_broker_manager,farm.mqtt.broker manager,model_farm_mqtt_broker,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_mqtt_broker_admin,farm.mqtt.broker admin,model_farm_mqtt_broker,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_sensor_user,farm.sensor user,model_farm_sensor,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_sensor_manager,farm.sensor manager,model_farm_sensor,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_sensor_admin,farm.sensor admin,model_farm_sensor,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_sensor_data_user,farm.sensor.data user,model_farm_sensor_data,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_sensor_data_manager,farm.sensor.data manager,model_farm_sensor_data,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_sensor_data_admin,farm.sensor.data admin,model_farm_sensor_data,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_sensor_alert_user,farm.sensor.alert user,model_farm_sensor_alert,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_sensor_alert_manager,farm.sensor.alert manager,model_farm_sensor_alert,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_sensor_alert_admin,farm.sensor.alert admin,model_farm_sensor_alert,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_sensor_cron_admin,farm.sensor.cron admin,model_farm_sensor_cron,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_mqtt_listener_service_admin,farm.mqtt.listener.service admin,model_farm_mqtt_listener_service,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+access_farm_mqtt_listener_service_manager,farm.mqtt.listener.service manager,model_farm_mqtt_listener_service,smart_farm_alandleeb.group_farm_manager,1,1,0,0
+
+access_farm_decision_rule_user,farm.decision.rule user,model_farm_decision_rule,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_decision_rule_manager,farm.decision.rule manager,model_farm_decision_rule,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_decision_rule_admin,farm.decision.rule admin,model_farm_decision_rule,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_decision_user,farm.decision user,model_farm_decision,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_decision_manager,farm.decision manager,model_farm_decision,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_decision_admin,farm.decision admin,model_farm_decision,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_decision_engine_admin,farm.decision.engine admin,model_farm_decision_engine,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+access_farm_decision_engine_manager,farm.decision.engine manager,model_farm_decision_engine,smart_farm_alandleeb.group_farm_manager,1,1,0,0
+
+access_farm_actuator_user,farm.actuator user,model_farm_actuator,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_actuator_manager,farm.actuator manager,model_farm_actuator,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_actuator_admin,farm.actuator admin,model_farm_actuator,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_actuator_mapping_user,farm.actuator.mapping user,model_farm_actuator_mapping,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_actuator_mapping_manager,farm.actuator.mapping manager,model_farm_actuator_mapping,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_actuator_mapping_admin,farm.actuator.mapping admin,model_farm_actuator_mapping,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_control_action_user,farm.control.action user,model_farm_control_action,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_control_action_manager,farm.control.action manager,model_farm_control_action,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_control_action_admin,farm.control.action admin,model_farm_control_action,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_control_log_user,farm.control.log user,model_farm_control_log,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_control_log_manager,farm.control.log manager,model_farm_control_log,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_control_log_admin,farm.control.log admin,model_farm_control_log,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_actuator_device_user,farm.actuator.device user,model_farm_actuator_device,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_actuator_device_manager,farm.actuator.device manager,model_farm_actuator_device,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_actuator_device_admin,farm.actuator.device admin,model_farm_actuator_device,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_actuator_action_type_user,farm.actuator.action.type user,model_farm_actuator_action_type,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_actuator_action_type_manager,farm.actuator.action.type manager,model_farm_actuator_action_type,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_actuator_action_type_admin,farm.actuator.action.type admin,model_farm_actuator_action_type,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_actuator_command_log_user,farm.actuator.command.log user,model_farm_actuator_command_log,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_actuator_command_log_manager,farm.actuator.command.log manager,model_farm_actuator_command_log,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_actuator_command_log_admin,farm.actuator.command.log admin,model_farm_actuator_command_log,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_control_actuator_bridge_manager,farm.control.action bridge manager,model_farm_control_action,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+
+access_farm_mqtt_publish_log_user,farm.mqtt.publish.log user,model_farm_mqtt_publish_log,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_mqtt_publish_log_manager,farm.mqtt.publish.log manager,model_farm_mqtt_publish_log,smart_farm_alandleeb.group_farm_manager,1,1,1,0
+access_farm_mqtt_publish_log_admin,farm.mqtt.publish.log admin,model_farm_mqtt_publish_log,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_mqtt_publisher_admin,farm.mqtt.publisher admin,model_farm_mqtt_publisher,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+access_farm_mqtt_publisher_manager,farm.mqtt.publisher manager,model_farm_mqtt_publisher,smart_farm_alandleeb.group_farm_manager,1,1,0,0
