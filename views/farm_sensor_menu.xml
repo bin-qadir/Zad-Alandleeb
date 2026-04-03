@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         Smart Farm → Sensors (parent submenu — sequence 35 to sit
+         between Livestock and Financials)
+    ================================================================ -->
+
+    <!-- Parent already defined in smart_farm_menus.xml as menu_smart_farm_sensors.
+         This file adds the leaf menu items so the two files are cleanly separated.
+         If the parent doesn't exist yet at load time Odoo 18 will fail silently;
+         both files are loaded in manifest order so we list smart_farm_menus.xml
+         BEFORE this file. -->
+
+    <!-- Devices -->
+    <menuitem
+        id="menu_iot_sensor_devices"
+        name="Devices"
+        parent="smart_farm_alandleeb.menu_smart_farm_sensors"
+        action="smart_farm_alandleeb.action_farm_sensor"
+        sequence="10"
+        groups="smart_farm_alandleeb.group_farm_user"/>
+
+    <!-- Readings / Data -->
+    <menuitem
+        id="menu_iot_sensor_data"
+        name="Data"
+        parent="smart_farm_alandleeb.menu_smart_farm_sensors"
+        action="smart_farm_alandleeb.action_farm_sensor_data"
+        sequence="20"
+        groups="smart_farm_alandleeb.group_farm_user"/>
+
+    <!-- Alerts (kanban + list) -->
+    <menuitem
+        id="menu_iot_sensor_alerts"
+        name="Alerts"
+        parent="smart_farm_alandleeb.menu_smart_farm_sensors"
+        action="smart_farm_alandleeb.action_farm_sensor_alert"
+        sequence="30"
+        groups="smart_farm_alandleeb.group_farm_manager"/>
+
+    <!-- MQTT Brokers (admin only) -->
+    <menuitem
+        id="menu_iot_mqtt_broker"
+        name="MQTT Brokers"
+        parent="smart_farm_alandleeb.menu_smart_farm_sensors"
+        action="smart_farm_alandleeb.action_farm_mqtt_broker"
+        sequence="40"
+        groups="smart_farm_alandleeb.group_farm_admin"/>
+
+</odoo>
