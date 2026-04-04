@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ================================================================
+             Cron 1: Start / reconnect MQTT listeners every hour
+             Uses the new dedicated service model
+        ================================================================ -->
+        <record id="cron_start_mqtt_listeners" model="ir.cron">
+            <field name="name">Smart Farm: Start MQTT Listeners</field>
+            <field name="model_id" ref="model_farm_mqtt_listener_service"/>
+            <field name="state">code</field>
+            <field name="code">model.start_all_listeners()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="active">True</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="priority">5</field>
+        </record>
+
+        <!-- ================================================================
+             Cron 2: Check for offline sensors every 30 minutes
+        ================================================================ -->
+        <record id="cron_check_offline_sensors" model="ir.cron">
+            <field name="name">Smart Farm: Check Offline Sensors</field>
+            <field name="model_id" ref="model_farm_sensor_cron"/>
+            <field name="state">code</field>
+            <field name="code">model.check_offline_sensors(timeout_minutes=30)</field>
+            <field name="interval_number">30</field>
+            <field name="interval_type">minutes</field>
+            <field name="active">True</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="priority">5</field>
+        </record>
+
+        <!-- ================================================================
+             Cron 3: Purge old sensor readings weekly (keep 90 days)
+        ================================================================ -->
+        <record id="cron_purge_sensor_data" model="ir.cron">
+            <field name="name">Smart Farm: Purge Old Sensor Readings (90 days)</field>
+            <field name="model_id" ref="model_farm_sensor_cron"/>
+            <field name="state">code</field>
+            <field name="code">model.purge_old_readings(days=90)</field>
+            <field name="interval_number">7</field>
+            <field name="interval_type">days</field>
+            <field name="active">True</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="priority">10</field>
+        </record>
+
+        <!-- ================================================================
+             Cron 4: Run Decision Engine every 5 minutes
+        ================================================================ -->
+        <record id="cron_run_decision_engine" model="ir.cron">
+            <field name="name">Smart Farm: Run Decision Engine</field>
+            <field name="model_id" ref="model_farm_decision_engine"/>
+            <field name="state">code</field>
+            <field name="code">model.run()</field>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
+            <field name="active">True</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="priority">5</field>
+        </record>
+
+    </data>
+</odoo>

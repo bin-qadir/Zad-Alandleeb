@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ================================================================
+             Default Alert Configurations
+             noupdate=1 so admins can tune thresholds without reset on upgrade
+        ================================================================ -->
+
+        <!-- Alert 1: Over Budget -->
+        <record id="alert_config_over_budget" model="smart.farm.alert.config">
+            <field name="name">Task Over Budget</field>
+            <field name="sequence">10</field>
+            <field name="active">True</field>
+            <field name="alert_type">over_budget</field>
+            <field name="severity">warning</field>
+            <field name="notify_project_manager">True</field>
+            <field name="notify_admins">True</field>
+            <field name="note_template">Task {task} in {project} has exceeded its budget. Current cost: {value} — Budget: {threshold}</field>
+        </record>
+
+        <!-- Alert 2: Low Profit Margin -->
+        <record id="alert_config_low_margin" model="smart.farm.alert.config">
+            <field name="name">Profit Margin Below 10%</field>
+            <field name="sequence">20</field>
+            <field name="active">True</field>
+            <field name="alert_type">low_profit_margin</field>
+            <field name="profit_margin_threshold">10.0</field>
+            <field name="severity">warning</field>
+            <field name="notify_project_manager">True</field>
+            <field name="notify_admins">True</field>
+            <field name="note_template">Task {task} has a profit margin of {value}% which is below the {threshold}% threshold.</field>
+        </record>
+
+        <!-- Alert 3: High Material Cost -->
+        <record id="alert_config_material_threshold" model="smart.farm.alert.config">
+            <field name="name">High Material Cost</field>
+            <field name="sequence">30</field>
+            <field name="active">True</field>
+            <field name="alert_type">material_threshold</field>
+            <field name="material_cost_threshold">50000.0</field>
+            <field name="severity">danger</field>
+            <field name="notify_project_manager">True</field>
+            <field name="notify_admins">True</field>
+            <field name="note_template">Material cost on task {task} has reached {value}, exceeding the threshold of {threshold}.</field>
+        </record>
+
+        <!-- ================================================================
+             Scheduled Action — Daily Alert Evaluation
+        ================================================================ -->
+        <record id="ir_cron_smart_farm_alerts" model="ir.cron">
+            <field name="name">Smart Farm: Evaluate Financial Alerts</field>
+            <field name="model_id" ref="model_smart_farm_alert_engine"/>
+            <field name="state">code</field>
+            <field name="code">model.evaluate_all()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active">True</field>
+            <field name="user_id" ref="base.user_root"/>
+        </record>
+
+    </data>
+</odoo>
