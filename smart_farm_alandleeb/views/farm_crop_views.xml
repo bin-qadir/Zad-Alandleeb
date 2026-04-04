@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Crop Type Views -->
+    <record id="view_farm_crop_type_list" model="ir.ui.view">
+        <field name="name">farm.crop.type.list</field>
+        <field name="model">farm.crop.type</field>
+        <field name="arch" type="xml">
+            <list string="Crop Types" editable="top">
+                <field name="name"/>
+                <field name="category"/>
+                <field name="average_duration"/>
+                <field name="product_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_farm_crop_type" model="ir.actions.act_window">
+        <field name="name">Crop Types</field>
+        <field name="res_model">farm.crop.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Crop Views -->
+    <record id="view_farm_crop_list" model="ir.ui.view">
+        <field name="name">farm.crop.list</field>
+        <field name="model">farm.crop</field>
+        <field name="arch" type="xml">
+            <list string="Crops" decoration-success="state == 'harvested'" decoration-danger="state == 'failed'">
+                <field name="name"/>
+                <field name="farm_id"/>
+                <field name="field_id"/>
+                <field name="crop_type_id"/>
+                <field name="variety"/>
+                <field name="planting_date"/>
+                <field name="expected_harvest_date"/>
+                <field name="area_planted"/>
+                <field name="expected_yield"/>
+                <field name="actual_yield"/>
+                <field name="harvest_count" string="Harvests"/>
+                <field name="responsible_id" widget="many2one_avatar_user"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_farm_crop_form" model="ir.ui.view">
+        <field name="name">farm.crop.form</field>
+        <field name="model">farm.crop</field>
+        <field name="arch" type="xml">
+            <form string="Crop">
+                <header>
+                    <button name="action_plant" string="Mark as Planted"
+                            type="object" class="btn-primary"
+                            invisible="state != 'planning'"/>
+                    <button name="action_start_growing" string="Start Growing"
+                            type="object" class="btn-primary"
+                            invisible="state != 'planted'"/>
+                    <button name="action_harvest" string="Mark Harvested"
+                            type="object" class="btn-success"
+                            invisible="state not in ('planted','growing')"/>
+                    <button name="action_fail" string="Mark Failed"
+                            type="object" class="btn-danger"
+                            invisible="state not in ('planted','growing')"/>
+                    <button name="action_cancel" string="Cancel"
+                            type="object"
+                            invisible="state in ('harvested','failed','cancelled')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="planning,planted,growing,harvested"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_harvests" type="object"
+                                class="oe_stat_button" icon="fa-shopping-basket">
+                            <field name="harvest_count" widget="statinfo" string="Harvests"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="True"/></h1>
+                    </div>
+                    <group>
+                        <group string="Location">
+                            <field name="farm_id"/>
+                            <field name="field_id" domain="[('farm_id','=',farm_id)]"/>
+                            <field name="responsible_id"/>
+                        </group>
+                        <group string="Crop">
+                            <field name="crop_type_id"/>
+                            <field name="variety"/>
+                            <field name="seed_product_id"/>
+                            <field name="seed_qty"/>
+                            <field name="seed_uom_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Dates">
+                            <field name="planting_date"/>
+                            <field name="expected_harvest_date"/>
+                            <field name="actual_harvest_date" readonly="True"/>
+                        </group>
+                        <group string="Yield">
+                            <field name="area_planted"/>
+                            <field name="expected_yield"/>
+                            <field name="actual_yield" readonly="True"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Harvest Records">
+                            <field name="harvest_ids" context="{'default_crop_id': id}">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="harvest_date"/>
+                                    <field name="quantity_harvested"/>
+                                    <field name="uom_id"/>
+                                    <field name="quality_grade"/>
+                                    <field name="total_value" widget="monetary"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Project">
+                            <group>
+                                <field name="project_task_id"/>
+                            </group>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_farm_crop_search" model="ir.ui.view">
+        <field name="name">farm.crop.search</field>
+        <field name="model">farm.crop</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="farm_id"/>
+                <field name="field_id"/>
+                <field name="crop_type_id"/>
+                <filter name="planning" string="Planning" domain="[('state','=','planning')]"/>
+                <filter name="active_crops" string="Active" domain="[('state','in',('planted','growing'))]"/>
+                <filter name="harvested" string="Harvested" domain="[('state','=','harvested')]"/>
+                <separator/>
+                <filter name="my_crops" string="My Crops" domain="[('responsible_id','=',uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_farm" string="Farm" context="{'group_by': 'farm_id'}"/>
+                    <filter name="group_crop_type" string="Crop Type" context="{'group_by': 'crop_type_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_month" string="Planting Month" context="{'group_by': 'planting_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_farm_crop_gantt" model="ir.ui.view">
+        <field name="name">farm.crop.gantt</field>
+        <field name="model">farm.crop</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="planting_date"/>
+                <field name="expected_harvest_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_farm_crop" model="ir.actions.act_window">
+        <field name="name">Crops</field>
+        <field name="res_model">farm.crop</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_farm_crop_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Plan your first crop!</p>
+        </field>
+    </record>
+
+</odoo>

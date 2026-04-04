@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         farm.farm — List View
+    ============================================================ -->
+    <record id="view_farm_farm_list" model="ir.ui.view">
+        <field name="name">farm.farm.list</field>
+        <field name="model">farm.farm</field>
+        <field name="arch" type="xml">
+            <list string="Farms" decoration-muted="state == 'inactive'" default_order="name asc">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="manager_id"/>
+                <field name="total_area"/>
+                <field name="cultivated_area"/>
+                <field name="field_count"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         farm.farm — Form View
+    ============================================================ -->
+    <record id="view_farm_farm_form" model="ir.ui.view">
+        <field name="name">farm.farm.form</field>
+        <field name="model">farm.farm</field>
+        <field name="arch" type="xml">
+            <form string="Farm">
+                <header>
+                    <button name="action_activate" string="Activate"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_deactivate" string="Deactivate"
+                            type="object" class="btn-secondary"
+                            invisible="state != 'active'"
+                            groups="smart_farm_alandleeb.group_farm_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,inactive"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_fields" type="object"
+                                class="oe_stat_button" icon="fa-map">
+                            <field name="field_count" widget="statinfo" string="Fields"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Farm Name..."/></h1>
+                        <h3><field name="code" readonly="True"/></h3>
+                    </div>
+                    <group>
+                        <group string="General Information">
+                            <field name="manager_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="partner_id"/>
+                            <field name="warehouse_id"/>
+                            <field name="project_id"/>
+                            <field name="analytic_account_id"/>
+                        </group>
+                        <group string="Area">
+                            <field name="total_area"/>
+                            <field name="cultivated_area"/>
+                        </group>
+                    </group>
+                    <group string="Location">
+                        <group>
+                            <field name="street"/>
+                            <field name="city"/>
+                            <field name="state_id"/>
+                            <field name="country_id"/>
+                            <field name="zip"/>
+                        </group>
+                        <group>
+                            <field name="latitude"/>
+                            <field name="longitude"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Fields" name="fields">
+                            <field name="field_ids" context="{'default_farm_id': id}">
+                                <list editable="bottom">
+                                    <field name="code" readonly="True"/>
+                                    <field name="name"/>
+                                    <field name="area"/>
+                                    <field name="soil_type"/>
+                                    <field name="irrigation_type"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Internal notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         farm.farm — Kanban View
+    ============================================================ -->
+    <record id="view_farm_farm_kanban" model="ir.ui.view">
+        <field name="name">farm.farm.kanban</field>
+        <field name="model">farm.farm</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="state"/>
+                <field name="manager_id"/>
+                <field name="total_area"/>
+                <field name="field_count"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title"><field name="name"/></strong>
+                                    <small class="o_kanban_record_subtitle text-muted"><field name="code"/></small>
+                                </div>
+                                <field name="state" widget="label_selection"
+                                       options="{'classes': {'active': 'success', 'draft': 'warning', 'inactive': 'danger'}}"/>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <div><i class="fa fa-user" title="Manager"/> <field name="manager_id"/></div>
+                                <div><i class="fa fa-map-marker"/> Area: <field name="total_area"/> Ha</div>
+                                <div><i class="fa fa-leaf"/> Fields: <field name="field_count"/></div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         farm.farm — Search View
+    ============================================================ -->
+    <record id="view_farm_farm_search" model="ir.ui.view">
+        <field name="name">farm.farm.search</field>
+        <field name="model">farm.farm</field>
+        <field name="arch" type="xml">
+            <search string="Search Farms">
+                <field name="name" string="Farm"/>
+                <field name="code"/>
+                <field name="manager_id"/>
+                <filter name="active_farms" string="Active" domain="[('state','=','active')]"/>
+                <filter name="draft_farms" string="Draft" domain="[('state','=','draft')]"/>
+                <separator/>
+                <filter name="my_farms" string="My Farms" domain="[('manager_id','=',uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_by_manager" string="Manager" context="{'group_by': 'manager_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         farm.farm — Action
+    ============================================================ -->
+    <record id="action_farm_farm" model="ir.actions.act_window">
+        <field name="name">Farms</field>
+        <field name="res_model">farm.farm</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_farm_farm_search"/>
+        <field name="context">{'search_default_active_farms': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add your first Farm!
+            </p>
+            <p>Create and manage your farms, fields, crops and livestock from one place.</p>
+        </field>
+    </record>
+
+</odoo>

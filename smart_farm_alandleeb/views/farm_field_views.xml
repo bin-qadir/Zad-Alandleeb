@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_farm_field_list" model="ir.ui.view">
+        <field name="name">farm.field.list</field>
+        <field name="model">farm.field</field>
+        <field name="arch" type="xml">
+            <list string="Fields" decoration-muted="state == 'maintenance'">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="farm_id"/>
+                <field name="area"/>
+                <field name="soil_type"/>
+                <field name="irrigation_type"/>
+                <field name="current_crop_id"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_farm_field_form" model="ir.ui.view">
+        <field name="name">farm.field.form</field>
+        <field name="model">farm.field</field>
+        <field name="arch" type="xml">
+            <form string="Field">
+                <header>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="available,planted,harvested,fallow"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Field Name..."/></h1>
+                        <h3><field name="code" readonly="True"/></h3>
+                    </div>
+                    <group>
+                        <group string="Farm Information">
+                            <field name="farm_id"/>
+                            <field name="current_crop_id" readonly="True"/>
+                        </group>
+                        <group string="Field Details">
+                            <field name="area"/>
+                            <field name="soil_type"/>
+                            <field name="irrigation_type"/>
+                        </group>
+                    </group>
+                    <group string="GPS Coordinates">
+                        <group>
+                            <field name="latitude"/>
+                            <field name="longitude"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Crop History">
+                            <field name="crop_ids" readonly="True">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="crop_type_id"/>
+                                    <field name="planting_date"/>
+                                    <field name="actual_harvest_date"/>
+                                    <field name="actual_yield"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_farm_field_search" model="ir.ui.view">
+        <field name="name">farm.field.search</field>
+        <field name="model">farm.field</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="farm_id"/>
+                <field name="soil_type"/>
+                <filter name="available" string="Available" domain="[('state','=','available')]"/>
+                <filter name="planted" string="Planted" domain="[('state','=','planted')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_farm" string="Farm" context="{'group_by': 'farm_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_soil" string="Soil Type" context="{'group_by': 'soil_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_farm_field" model="ir.actions.act_window">
+        <field name="name">Fields</field>
+        <field name="res_model">farm.field</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_farm_field_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first field!</p>
+        </field>
+    </record>
+
+</odoo>
