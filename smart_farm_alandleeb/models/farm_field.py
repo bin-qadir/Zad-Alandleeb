@@ -566,6 +566,24 @@ class FarmField(models.Model):
         'purchase.order', string='RFQ / Purchase Order', copy=False, ondelete='set null',
     )
 
+    # ── Sales Quotation integration ────────────────────────────────────────────
+    partner_id = fields.Many2one(
+        'res.partner', string='Customer', ondelete='set null', tracking=True,
+        help='Customer used when generating a Sales Quotation from BOQ items.',
+    )
+    sale_order_ids = fields.Many2many(
+        'sale.order', 'farm_field_sale_order_rel', 'field_id', 'sale_order_id',
+        string='Quotations', copy=False,
+    )
+    sale_order_count = fields.Integer(
+        string='Quotations', compute='_compute_sale_order_count',
+    )
+    include_detailed_lines = fields.Boolean(
+        string='Include Detailed Lines',
+        default=False,
+        help='When enabled, BOQ component lines are also added under each BOQ item in the quotation.',
+    )
+
     # ── Location / Notes ──────────────────────────────────────────────────────
     latitude = fields.Float(string='Latitude', digits=(10, 7))
     longitude = fields.Float(string='Longitude', digits=(10, 7))
@@ -1063,6 +1081,117 @@ class FarmField(models.Model):
             'res_model': 'purchase.order',
             'res_id': self.purchase_order_id.id,
             'view_mode': 'form',
+            'target': 'current',
+        }
+
+    # =========================================================================
+    # SALE ORDER (QUOTATION) — generated from BOQ Items with selling prices
+    # =========================================================================
+    def _compute_sale_order_count(self):
+        for rec in self:
+            rec.sale_order_count = len(rec.sale_order_ids)
+
+    def action_create_sale_order(self):
+        self.ensure_one()
+
+        # ── Gate: cost analysis must be approved ──────────────────────────────
+        if self.cost_analysis_state != 'approved':
+            raise UserError(_(
+                'The cost analysis must be approved before creating a Sales Quotation.\n'
+                'Current status: %s\n\n'
+                'Please approve the cost analysis first.',
+                dict(self._fields['cost_analysis_state'].selection).get(
+                    self.cost_analysis_state, self.cost_analysis_state
+                ),
+            ))
+
+        # ── Gate: customer required ────────────────────────────────────────────
+        if not self.partner_id:
+            raise UserError(_('Please select a customer on the field before creating a quotation.'))
+
+        # ── Collect BOQ items in section/sequence order ────────────────────────
+        boq_items = self.boq_item_ids.sorted(key=lambda i: (i.costing_section, i.sequence, i.id))
+        if not boq_items:
+            raise UserError(_('No BOQ items found on this field. Add BOQ items before creating a quotation.'))
+
+        # ── Create Sale Order ─────────────────────────────────────────────────
+        so = self.env['sale.order'].create({
+            'partner_id': self.partner_id.id,
+            'origin': f'{self.code} - {self.name}',
+            'note': _('Sales Quotation auto-generated from BOQ items of field: %s', self.name),
+        })
+
+        # ── Build order lines ─────────────────────────────────────────────────
+        current_section = None
+        section_labels = dict(
+            self.env['farm.boq.item']._fields['costing_section'].selection
+        )
+
+        for item in boq_items:
+            # Insert a section header when the costing section changes
+            if item.costing_section != current_section:
+                current_section = item.costing_section
+                self.env['sale.order.line'].create({
+                    'order_id': so.id,
+                    'display_type': 'line_section',
+                    'name': section_labels.get(current_section, current_section),
+                })
+
+            # Normal BOQ item line
+            self.env['sale.order.line'].create({
+                'order_id': so.id,
+                'display_type': False,
+                'name': item.name,
+                'product_id': item.product_id.id if item.product_id else False,
+                'product_uom_qty': item.qty_item,
+                'price_unit': item.total_sales_price_per_item,
+            })
+
+            # Optional: include component detail lines under the BOQ item
+            if self.include_detailed_lines:
+                normal_lines = item.line_ids.filtered(lambda l: not l.display_type)
+                for comp in normal_lines.sorted(key=lambda l: (l.sequence, l.id)):
+                    self.env['sale.order.line'].create({
+                        'order_id': so.id,
+                        'display_type': False,
+                        'name': f'  ↳ {comp.name or comp.product_id.display_name or _("Component")}',
+                        'product_id': comp.product_id.id if comp.product_id else False,
+                        'product_uom_qty': comp.qty_1,
+                        'price_unit': comp.cost_unit,
+                    })
+
+        # ── Link SO back to this field ────────────────────────────────────────
+        self.sale_order_ids = [(4, so.id)]
+        self.message_post(
+            body=_('Sales Quotation %s created from BOQ items.', so.name)
+        )
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Quotation'),
+            'res_model': 'sale.order',
+            'res_id': so.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+
+    def action_view_quotations(self):
+        self.ensure_one()
+        if self.sale_order_count == 1:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Quotation'),
+                'res_model': 'sale.order',
+                'res_id': self.sale_order_ids[0].id,
+                'view_mode': 'form',
+                'target': 'current',
+            }
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Quotations'),
+            'res_model': 'sale.order',
+            'view_mode': 'list,form',
+            'domain': [('id', 'in', self.sale_order_ids.ids)],
             'target': 'current',
         }
 

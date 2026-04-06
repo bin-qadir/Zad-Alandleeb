@@ -63,6 +63,11 @@
                     <button name="action_create_rfq"
                             string="Create RFQ" type="object"
                             invisible="purchase_order_id != False or field_costing_state != 'approved'"/>
+                    <!-- ── Create Quotation: only when cost analysis is approved ── -->
+                    <button name="action_create_sale_order"
+                            string="Create Quotation" type="object"
+                            class="btn-primary"
+                            invisible="cost_analysis_state != 'approved'"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="available,planted,harvested,fallow"/>
                 </header>
@@ -95,6 +100,14 @@
                                        options="{'no_open': True}"/>
                             </div>
                         </button>
+                        <button name="action_view_quotations" type="object"
+                                class="oe_stat_button" icon="fa-file-text-o"
+                                invisible="sale_order_count == 0">
+                            <div class="o_stat_info">
+                                <field name="sale_order_count" class="o_stat_value"/>
+                                <span class="o_stat_text">Quotations</span>
+                            </div>
+                        </button>
                     </div>
 
                     <div class="oe_title">
@@ -107,12 +120,14 @@
                         <group string="Farm Information">
                             <field name="farm_id"/>
                             <field name="current_crop_id" readonly="True"/>
+                            <field name="partner_id"/>
                         </group>
                         <group string="Field Details">
                             <field name="area"/>
                             <field name="area_ha" readonly="True"/>
                             <field name="soil_type_id"/>
                             <field name="irrigation_type_id"/>
+                            <field name="include_detailed_lines"/>
                         </group>
                     </group>
 
