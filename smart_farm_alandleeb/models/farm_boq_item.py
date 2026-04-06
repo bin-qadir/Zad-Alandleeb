@@ -1,0 +1,174 @@
+# -*- coding: utf-8 -*-
+from odoo import models, fields, api
+from .farm_cost_type import COSTING_SECTION_SELECTION
+
+
+class FarmBoqItem(models.Model):
+    """Transactional BOQ Item linked to a farm.field section.
+    Created either manually or by inserting a BOQ Item Template.
+    Contains component lines (farm.boq.item.line) with material/labor/overhead breakdown.
+    """
+    _name = 'farm.boq.item'
+    _description = 'Farm BOQ Item'
+    _order = 'field_id, costing_section, sequence, id'
+    _rec_name = 'name'
+
+    field_id = fields.Many2one(
+        'farm.field', string='Field', required=True, ondelete='cascade',
+    )
+    costing_section = fields.Selection(
+        COSTING_SECTION_SELECTION,
+        string='Section',
+        required=True,
+        default='civil',
+    )
+    sequence = fields.Integer(string='Sequence', default=10)
+    name = fields.Char(string='Item Name', required=True)
+    code = fields.Char(string='Item Code')
+    description = fields.Text(string='Description')
+    product_id = fields.Many2one(
+        'product.product', string='Product', ondelete='restrict',
+    )
+    unit_name = fields.Char(string='Unit')
+    qty_item = fields.Float(string='Qty / Item', digits=(16, 3), default=1.0)
+    profit_percent = fields.Float(string='Profit %', digits=(16, 2), default=0.0)
+
+    # Source template reference (informational)
+    source_template_id = fields.Many2one(
+        'farm.boq.item.template', string='Source Template',
+        ondelete='set null', copy=False, readonly=True,
+    )
+
+    line_ids = fields.One2many(
+        'farm.boq.item.line', 'boq_item_id', string='Component Lines',
+    )
+
+    # ── Computed totals ───────────────────────────────────────────────────────
+    material_total = fields.Float(
+        string='Material Total', digits=(16, 2),
+        compute='_compute_totals', store=True,
+    )
+    labor_total = fields.Float(
+        string='Labor Total', digits=(16, 2),
+        compute='_compute_totals', store=True,
+    )
+    overhead_total = fields.Float(
+        string='Overhead Total', digits=(16, 2),
+        compute='_compute_totals', store=True,
+    )
+    total_cost_per_item = fields.Float(
+        string='Total Cost / Item', digits=(16, 2),
+        compute='_compute_totals', store=True,
+    )
+    total_sales_price_qty_item = fields.Float(
+        string='Total Sales Price (qty)', digits=(16, 2),
+        compute='_compute_totals', store=True,
+    )
+    total_sales_price_per_item = fields.Float(
+        string='Sales Price / Unit', digits=(16, 2),
+        compute='_compute_totals', store=True,
+    )
+    profit_amount = fields.Float(
+        string='Profit Amount', digits=(16, 2),
+        compute='_compute_totals', store=True,
+    )
+    line_count = fields.Integer(
+        string='Lines', compute='_compute_totals', store=True,
+    )
+
+    @api.depends(
+        'line_ids.material_amount',
+        'line_ids.labor_amount',
+        'line_ids.overhead_amount',
+        'line_ids.display_type',
+        'qty_item',
+        'profit_percent',
+    )
+    def _compute_totals(self):
+        for rec in self:
+            normal = rec.line_ids.filtered(lambda l: not l.display_type)
+            mat = sum(normal.mapped('material_amount'))
+            lab = sum(normal.mapped('labor_amount'))
+            ovh = sum(normal.mapped('overhead_amount'))
+            cost = mat + lab + ovh
+            sales_qty = cost * (1.0 + rec.profit_percent / 100.0)
+            qty = rec.qty_item or 1.0
+            rec.material_total = mat
+            rec.labor_total = lab
+            rec.overhead_total = ovh
+            rec.total_cost_per_item = cost
+            rec.total_sales_price_qty_item = sales_qty
+            rec.total_sales_price_per_item = sales_qty / qty
+            rec.profit_amount = sales_qty - cost
+            rec.line_count = len(normal)
+
+
+class FarmBoqItemLine(models.Model):
+    """Component lines of a transactional BOQ Item.
+    Supports display_type (line_section, line_note) for visual grouping.
+    """
+    _name = 'farm.boq.item.line'
+    _description = 'Farm BOQ Item Line'
+    _order = 'boq_item_id, sequence, id'
+
+    boq_item_id = fields.Many2one(
+        'farm.boq.item', string='BOQ Item',
+        required=True, ondelete='cascade',
+    )
+    sequence = fields.Integer(string='Sequence', default=10)
+    line_no = fields.Char(string='Line No.')
+
+    display_type = fields.Selection([
+        ('line_section', 'Section'),
+        ('line_note', 'Note'),
+    ], default=False, string='Display Type')
+
+    name = fields.Char(string='Description')
+    product_id = fields.Many2one(
+        'product.product', string='Product', ondelete='restrict',
+    )
+    unit_name = fields.Char(string='Unit')
+    qty_1 = fields.Float(string='Quantity', digits=(16, 3), default=1.0)
+    cost_type_id = fields.Many2one(
+        'farm.cost.type', string='Cost Type', ondelete='restrict',
+    )
+    cost_unit = fields.Float(string='Unit Cost', digits=(16, 2))
+
+    # ── Computed amounts ──────────────────────────────────────────────────────
+    total_line_cost = fields.Float(
+        string='Total', digits=(16, 2),
+        compute='_compute_amounts', store=True,
+    )
+    material_amount = fields.Float(
+        string='Material', digits=(16, 2),
+        compute='_compute_amounts', store=True,
+    )
+    labor_amount = fields.Float(
+        string='Labor', digits=(16, 2),
+        compute='_compute_amounts', store=True,
+    )
+    overhead_amount = fields.Float(
+        string='Overhead', digits=(16, 2),
+        compute='_compute_amounts', store=True,
+    )
+    cost_category = fields.Selection(
+        related='cost_type_id.category',
+        string='Category',
+        store=False,
+    )
+
+    @api.depends('qty_1', 'cost_unit', 'cost_type_id', 'cost_type_id.category', 'display_type')
+    def _compute_amounts(self):
+        for rec in self:
+            if rec.display_type:
+                rec.total_line_cost = 0.0
+                rec.material_amount = 0.0
+                rec.labor_amount = 0.0
+                rec.overhead_amount = 0.0
+                continue
+            total = rec.qty_1 * rec.cost_unit
+            rec.total_line_cost = total
+            category = rec.cost_type_id.category if rec.cost_type_id else False
+            rec.material_amount = total if category == 'material' else 0.0
+            rec.labor_amount = total if category == 'labor' else 0.0
+            rec.overhead_amount = total if category == 'overhead' else 0.0

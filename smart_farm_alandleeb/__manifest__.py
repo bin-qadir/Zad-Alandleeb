@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Smart Farm - Al Andleeb',
-    'version': '18.0.2.6.0',
+    'version': '18.0.8.0.0',
     'category': 'Agriculture',
     'summary': 'Integrated Smart Farm Management System for Al Andleeb',
     'description': """
@@ -33,8 +33,17 @@ Smart Farm Al Andleeb
         'data/smart_farm_alert_data.xml',
         'data/farm_decision_data.xml',
         'data/farm_actuator_data.xml',
+        'data/farm_soil_type_data.xml',
+        'data/farm_cost_type_data.xml',
+        'data/farm_irrigation_type_data.xml',
         'data/cron.xml',
         'views/farm_farm_views.xml',
+        'views/farm_soil_type_views.xml',
+        'views/farm_cost_type_views.xml',
+        'views/farm_irrigation_type_views.xml',
+        'views/farm_boq_item_template_views.xml',
+        'views/farm_insert_boq_wizard_views.xml',
+        'views/farm_cost_analysis_wizard_views.xml',
         'views/farm_field_views.xml',
         'views/farm_crop_views.xml',
         'views/farm_livestock_views.xml',

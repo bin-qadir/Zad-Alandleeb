@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 from . import farm_farm
+from . import farm_soil_type
+from . import farm_irrigation_type
+from . import farm_cost_type
+from . import farm_cost_line
+from . import farm_cost_analysis_wizard
+from . import farm_boq_item_template
+from . import farm_boq_item
+from . import farm_insert_boq_wizard
 from . import farm_field
 from . import farm_crop
 from . import farm_livestock

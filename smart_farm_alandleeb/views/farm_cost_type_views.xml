@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_farm_cost_type_list" model="ir.ui.view">
+        <field name="name">farm.cost.type.list</field>
+        <field name="model">farm.cost.type</field>
+        <field name="arch" type="xml">
+            <list string="Cost Types">
+                <field name="name"/>
+                <field name="costing_section" widget="badge"
+                       decoration-info="costing_section == 'arch'"
+                       decoration-primary="costing_section == 'mechanical'"
+                       decoration-success="costing_section == 'electrical'"
+                       decoration-warning="costing_section == 'irrigation'"
+                       decoration-danger="costing_section == 'control_system'"
+                       decoration-muted="costing_section == 'other'"/>
+                <field name="category" widget="badge"
+                       decoration-success="category == 'material'"
+                       decoration-info="category == 'labor'"
+                       decoration-warning="category == 'overhead'"/>
+                <field name="description"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_farm_cost_type_form" model="ir.ui.view">
+        <field name="name">farm.cost.type.form</field>
+        <field name="model">farm.cost.type</field>
+        <field name="arch" type="xml">
+            <form string="Cost Type">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Cost Type Name..."/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="costing_section"/>
+                            <field name="category"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_farm_cost_type" model="ir.actions.act_window">
+        <field name="name">Cost Types</field>
+        <field name="res_model">farm.cost.type</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first cost type!</p>
+        </field>
+    </record>
+
+</odoo>

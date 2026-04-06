@@ -1,4 +1,20 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_farm_irrigation_type_user,farm.irrigation.type user,model_farm_irrigation_type,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_irrigation_type_manager,farm.irrigation.type manager,model_farm_irrigation_type,smart_farm_alandleeb.group_farm_manager,1,1,1,1
+access_farm_irrigation_type_admin,farm.irrigation.type admin,model_farm_irrigation_type,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_cost_type_user,farm.cost.type user,model_farm_cost_type,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_cost_type_manager,farm.cost.type manager,model_farm_cost_type,smart_farm_alandleeb.group_farm_manager,1,1,1,1
+access_farm_cost_type_admin,farm.cost.type admin,model_farm_cost_type,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_cost_line_user,farm.cost.line user,model_farm_cost_line,smart_farm_alandleeb.group_farm_user,1,1,1,0
+access_farm_cost_line_manager,farm.cost.line manager,model_farm_cost_line,smart_farm_alandleeb.group_farm_manager,1,1,1,1
+access_farm_cost_line_admin,farm.cost.line admin,model_farm_cost_line,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_soil_type_user,farm.soil.type user,model_farm_soil_type,smart_farm_alandleeb.group_farm_user,1,1,1,1
+access_farm_soil_type_manager,farm.soil.type manager,model_farm_soil_type,smart_farm_alandleeb.group_farm_manager,1,1,1,1
+access_farm_soil_type_admin,farm.soil.type admin,model_farm_soil_type,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
 access_farm_farm_user,farm.farm user,model_farm_farm,smart_farm_alandleeb.group_farm_user,1,0,0,0
 access_farm_farm_manager,farm.farm manager,model_farm_farm,smart_farm_alandleeb.group_farm_manager,1,1,1,0
 access_farm_farm_admin,farm.farm admin,model_farm_farm,smart_farm_alandleeb.group_farm_admin,1,1,1,1
@@ -130,3 +146,27 @@ access_farm_mqtt_publish_log_admin,farm.mqtt.publish.log admin,model_farm_mqtt_p
 
 access_farm_mqtt_publisher_admin,farm.mqtt.publisher admin,model_farm_mqtt_publisher,smart_farm_alandleeb.group_farm_admin,1,1,1,1
 access_farm_mqtt_publisher_manager,farm.mqtt.publisher manager,model_farm_mqtt_publisher,smart_farm_alandleeb.group_farm_manager,1,1,0,0
+
+access_farm_cost_analysis_wizard_user,farm.cost.analysis.wizard user,model_farm_cost_analysis_wizard,smart_farm_alandleeb.group_farm_user,1,1,1,1
+access_farm_cost_analysis_wizard_manager,farm.cost.analysis.wizard manager,model_farm_cost_analysis_wizard,smart_farm_alandleeb.group_farm_manager,1,1,1,1
+access_farm_cost_analysis_wizard_admin,farm.cost.analysis.wizard admin,model_farm_cost_analysis_wizard,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_boq_item_template_user,farm.boq.item.template user,model_farm_boq_item_template,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_boq_item_template_manager,farm.boq.item.template manager,model_farm_boq_item_template,smart_farm_alandleeb.group_farm_manager,1,1,1,1
+access_farm_boq_item_template_admin,farm.boq.item.template admin,model_farm_boq_item_template,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_boq_item_template_line_user,farm.boq.item.template.line user,model_farm_boq_item_template_line,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_boq_item_template_line_manager,farm.boq.item.template.line manager,model_farm_boq_item_template_line,smart_farm_alandleeb.group_farm_manager,1,1,1,1
+access_farm_boq_item_template_line_admin,farm.boq.item.template.line admin,model_farm_boq_item_template_line,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_boq_item_user,farm.boq.item user,model_farm_boq_item,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_boq_item_manager,farm.boq.item manager,model_farm_boq_item,smart_farm_alandleeb.group_farm_manager,1,1,1,1
+access_farm_boq_item_admin,farm.boq.item admin,model_farm_boq_item,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_boq_item_line_user,farm.boq.item.line user,model_farm_boq_item_line,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_boq_item_line_manager,farm.boq.item.line manager,model_farm_boq_item_line,smart_farm_alandleeb.group_farm_manager,1,1,1,1
+access_farm_boq_item_line_admin,farm.boq.item.line admin,model_farm_boq_item_line,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_insert_boq_wizard_user,farm.insert.boq.item.template.wizard user,model_farm_insert_boq_item_template_wizard,smart_farm_alandleeb.group_farm_user,1,1,1,1
+access_farm_insert_boq_wizard_manager,farm.insert.boq.item.template.wizard manager,model_farm_insert_boq_item_template_wizard,smart_farm_alandleeb.group_farm_manager,1,1,1,1
+access_farm_insert_boq_wizard_admin,farm.insert.boq.item.template.wizard admin,model_farm_insert_boq_item_template_wizard,smart_farm_alandleeb.group_farm_admin,1,1,1,1

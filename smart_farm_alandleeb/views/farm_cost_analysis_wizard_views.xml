@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_farm_cost_analysis_wizard_form" model="ir.ui.view">
+        <field name="name">farm.cost.analysis.wizard.form</field>
+        <field name="model">farm.cost.analysis.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Cost Analysis Report">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Cost Analysis Report</h1>
+                        <h3>
+                            <field name="field_name" readonly="1"/> —
+                            <field name="farm_name" readonly="1"/>
+                        </h3>
+                    </div>
+
+                    <!-- Current Status badge -->
+                    <group>
+                        <field name="cost_analysis_state" readonly="1" widget="badge"
+                               decoration-success="cost_analysis_state == 'approved'"
+                               decoration-warning="cost_analysis_state == 'under_review'"
+                               decoration-danger="cost_analysis_state == 'rejected'"
+                               decoration-muted="cost_analysis_state == 'draft'"
+                               string="Current Status"/>
+                    </group>
+
+                    <notebook>
+
+                        <!-- ══════════════════════════════════════════════════ -->
+                        <!--  PAGE 1 — BOQ SUMMARY                            -->
+                        <!-- ══════════════════════════════════════════════════ -->
+                        <page string="BOQ Summary" name="boq_summary">
+
+                            <!-- Field details -->
+                            <group string="Field Details">
+                                <group>
+                                    <field name="area" readonly="1"/>
+                                    <field name="area_ha" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="soil_type" readonly="1"/>
+                                    <field name="irrigation_type" readonly="1"/>
+                                </group>
+                            </group>
+
+                            <!-- Section Totals -->
+                            <group string="Section Totals">
+                                <group>
+                                    <field name="civil_total" readonly="1"/>
+                                    <field name="arch_total" readonly="1"/>
+                                    <field name="mechanical_total" readonly="1"/>
+                                    <field name="electrical_total" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="irrigation_cost_total" readonly="1"/>
+                                    <field name="control_system_total" readonly="1"/>
+                                    <field name="other_total" readonly="1"/>
+                                </group>
+                            </group>
+
+                            <!-- Category Totals -->
+                            <group string="Category Totals">
+                                <group>
+                                    <field name="material_total" readonly="1"/>
+                                    <field name="labor_total" readonly="1"/>
+                                    <field name="overhead_total" readonly="1"/>
+                                </group>
+                            </group>
+
+                            <!-- Analysis Indicators -->
+                            <group string="Analysis Indicators">
+                                <group>
+                                    <field name="cost_per_m2" readonly="1"/>
+                                    <field name="cost_line_count" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="material_line_count" readonly="1"/>
+                                    <field name="labor_line_count" readonly="1"/>
+                                    <field name="overhead_line_count" readonly="1"/>
+                                </group>
+                            </group>
+
+                            <!-- Grand Total -->
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="grand_total" readonly="1"
+                                       string="Grand Total"
+                                       class="oe_subtotal_footer_separator"/>
+                            </group>
+
+                        </page><!-- /BOQ Summary -->
+
+                        <!-- ══════════════════════════════════════════════════ -->
+                        <!--  PAGE 2 — BOQ BREAKDOWN (item-level by section)  -->
+                        <!-- ══════════════════════════════════════════════════ -->
+                        <page string="BOQ Breakdown" name="boq_breakdown">
+
+                            <!-- ── CIVIL ──────────────────────────────────── -->
+                            <separator string="Civil Costing" invisible="not has_civil_costing"/>
+
+                            <!-- BOQ Items -->
+                            <field name="civil_boq_item_ids" readonly="1" nolabel="1"
+                                   invisible="not has_civil_boq">
+                                <list string="Civil BOQ Items">
+                                    <field name="sequence" column_invisible="1"/>
+                                    <field name="code" string="Code" optional="show"/>
+                                    <field name="name" string="Item Name"/>
+                                    <field name="unit_name" string="Unit" optional="show"/>
+                                    <field name="qty_item" string="Qty"/>
+                                    <field name="material_total" string="Material" sum="Material"/>
+                                    <field name="labor_total" string="Labor" sum="Labor"/>
+                                    <field name="overhead_total" string="Overhead" sum="Overhead"/>
+                                    <field name="total_cost_per_item" string="Total Cost" sum="Total Cost"/>
+                                    <field name="profit_percent" string="Profit %" optional="show"/>
+                                    <field name="total_sales_price_qty_item" string="Sales Price" sum="Sales" optional="show"/>
+                                </list>
+                            </field>
+
+                            <!-- Flat cost lines -->
+                            <field name="civil_cost_line_ids" readonly="1" nolabel="1"
+                                   invisible="not has_civil_costing">
+                                <list string="Civil Cost Lines"
+                                      decoration-bf="display_type == 'line_section'"
+                                      decoration-it="display_type == 'line_note'">
+                                    <field name="sequence" widget="handle" column_invisible="1"/>
+                                    <field name="display_type" column_invisible="1"/>
+                                    <field name="name" string="Description"/>
+                                    <field name="product_id" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="cost_category" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="quantity" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="unit_cost" string="Unit Cost" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="total_cost" string="Total" invisible="display_type in ('line_section','line_note')" sum="Lines Total"/>
+                                </list>
+                            </field>
+                            <p invisible="has_civil_costing or has_civil_boq"
+                               class="text-muted fst-italic">No Civil costing entries.</p>
+                            <group class="oe_subtotal_footer oe_right"
+                                   invisible="not has_civil_costing and not has_civil_boq">
+                                <field name="civil_material_total" readonly="1" string="Material"/>
+                                <field name="civil_labor_total" readonly="1" string="Labor"/>
+                                <field name="civil_overhead_total" readonly="1" string="Overhead"/>
+                                <field name="civil_total" readonly="1" string="Civil Subtotal"
+                                       class="oe_subtotal_footer_separator"/>
+                            </group>
+
+                            <!-- ── ARCHITECTURE ───────────────────────────── -->
+                            <separator string="Architecture Costing" invisible="not has_arch_costing and not has_arch_boq"/>
+
+                            <field name="arch_boq_item_ids" readonly="1" nolabel="1"
+                                   invisible="not has_arch_boq">
+                                <list string="Architecture BOQ Items">
+                                    <field name="sequence" column_invisible="1"/>
+                                    <field name="code" string="Code" optional="show"/>
+                                    <field name="name" string="Item Name"/>
+                                    <field name="unit_name" string="Unit" optional="show"/>
+                                    <field name="qty_item" string="Qty"/>
+                                    <field name="material_total" string="Material" sum="Material"/>
+                                    <field name="labor_total" string="Labor" sum="Labor"/>
+                                    <field name="overhead_total" string="Overhead" sum="Overhead"/>
+                                    <field name="total_cost_per_item" string="Total Cost" sum="Total Cost"/>
+                                    <field name="profit_percent" string="Profit %" optional="show"/>
+                                    <field name="total_sales_price_qty_item" string="Sales Price" sum="Sales" optional="show"/>
+                                </list>
+                            </field>
+                            <field name="arch_cost_line_ids" readonly="1" nolabel="1"
+                                   invisible="not has_arch_costing">
+                                <list string="Architecture Cost Lines"
+                                      decoration-bf="display_type == 'line_section'"
+                                      decoration-it="display_type == 'line_note'">
+                                    <field name="sequence" widget="handle" column_invisible="1"/>
+                                    <field name="display_type" column_invisible="1"/>
+                                    <field name="name" string="Description"/>
+                                    <field name="product_id" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="cost_category" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="quantity" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="unit_cost" string="Unit Cost" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="total_cost" string="Total" invisible="display_type in ('line_section','line_note')" sum="Lines Total"/>
+                                </list>
+                            </field>
+                            <p invisible="has_arch_costing or has_arch_boq"
+                               class="text-muted fst-italic">No Architecture costing entries.</p>
+                            <group class="oe_subtotal_footer oe_right"
+                                   invisible="not has_arch_costing and not has_arch_boq">
+                                <field name="arch_material_total" readonly="1" string="Material"/>
+                                <field name="arch_labor_total" readonly="1" string="Labor"/>
+                                <field name="arch_overhead_total" readonly="1" string="Overhead"/>
+                                <field name="arch_total" readonly="1" string="Architecture Subtotal"
+                                       class="oe_subtotal_footer_separator"/>
+                            </group>
+
+                            <!-- ── MECHANICAL ─────────────────────────────── -->
+                            <separator string="Mechanical Costing" invisible="not has_mechanical_costing and not has_mechanical_boq"/>
+
+                            <field name="mechanical_boq_item_ids" readonly="1" nolabel="1"
+                                   invisible="not has_mechanical_boq">
+                                <list string="Mechanical BOQ Items">
+                                    <field name="sequence" column_invisible="1"/>
+                                    <field name="code" string="Code" optional="show"/>
+                                    <field name="name" string="Item Name"/>
+                                    <field name="unit_name" string="Unit" optional="show"/>
+                                    <field name="qty_item" string="Qty"/>
+                                    <field name="material_total" string="Material" sum="Material"/>
+                                    <field name="labor_total" string="Labor" sum="Labor"/>
+                                    <field name="overhead_total" string="Overhead" sum="Overhead"/>
+                                    <field name="total_cost_per_item" string="Total Cost" sum="Total Cost"/>
+                                    <field name="profit_percent" string="Profit %" optional="show"/>
+                                    <field name="total_sales_price_qty_item" string="Sales Price" sum="Sales" optional="show"/>
+                                </list>
+                            </field>
+                            <field name="mechanical_cost_line_ids" readonly="1" nolabel="1"
+                                   invisible="not has_mechanical_costing">
+                                <list string="Mechanical Cost Lines"
+                                      decoration-bf="display_type == 'line_section'"
+                                      decoration-it="display_type == 'line_note'">
+                                    <field name="sequence" widget="handle" column_invisible="1"/>
+                                    <field name="display_type" column_invisible="1"/>
+                                    <field name="name" string="Description"/>
+                                    <field name="product_id" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="cost_category" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="quantity" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="unit_cost" string="Unit Cost" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="total_cost" string="Total" invisible="display_type in ('line_section','line_note')" sum="Lines Total"/>
+                                </list>
+                            </field>
+                            <p invisible="has_mechanical_costing or has_mechanical_boq"
+                               class="text-muted fst-italic">No Mechanical costing entries.</p>
+                            <group class="oe_subtotal_footer oe_right"
+                                   invisible="not has_mechanical_costing and not has_mechanical_boq">
+                                <field name="mechanical_material_total" readonly="1" string="Material"/>
+                                <field name="mechanical_labor_total" readonly="1" string="Labor"/>
+                                <field name="mechanical_overhead_total" readonly="1" string="Overhead"/>
+                                <field name="mechanical_total" readonly="1" string="Mechanical Subtotal"
+                                       class="oe_subtotal_footer_separator"/>
+                            </group>
+
+                            <!-- ── ELECTRICAL ─────────────────────────────── -->
+                            <separator string="Electrical Costing" invisible="not has_electrical_costing and not has_electrical_boq"/>
+
+                            <field name="electrical_boq_item_ids" readonly="1" nolabel="1"
+                                   invisible="not has_electrical_boq">
+                                <list string="Electrical BOQ Items">
+                                    <field name="sequence" column_invisible="1"/>
+                                    <field name="code" string="Code" optional="show"/>
+                                    <field name="name" string="Item Name"/>
+                                    <field name="unit_name" string="Unit" optional="show"/>
+                                    <field name="qty_item" string="Qty"/>
+                                    <field name="material_total" string="Material" sum="Material"/>
+                                    <field name="labor_total" string="Labor" sum="Labor"/>
+                                    <field name="overhead_total" string="Overhead" sum="Overhead"/>
+                                    <field name="total_cost_per_item" string="Total Cost" sum="Total Cost"/>
+                                    <field name="profit_percent" string="Profit %" optional="show"/>
+                                    <field name="total_sales_price_qty_item" string="Sales Price" sum="Sales" optional="show"/>
+                                </list>
+                            </field>
+                            <field name="electrical_cost_line_ids" readonly="1" nolabel="1"
+                                   invisible="not has_electrical_costing">
+                                <list string="Electrical Cost Lines"
+                                      decoration-bf="display_type == 'line_section'"
+                                      decoration-it="display_type == 'line_note'">
+                                    <field name="sequence" widget="handle" column_invisible="1"/>
+                                    <field name="display_type" column_invisible="1"/>
+                                    <field name="name" string="Description"/>
+                                    <field name="product_id" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="cost_category" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="quantity" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="unit_cost" string="Unit Cost" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="total_cost" string="Total" invisible="display_type in ('line_section','line_note')" sum="Lines Total"/>
+                                </list>
+                            </field>
+                            <p invisible="has_electrical_costing or has_electrical_boq"
+                               class="text-muted fst-italic">No Electrical costing entries.</p>
+                            <group class="oe_subtotal_footer oe_right"
+                                   invisible="not has_electrical_costing and not has_electrical_boq">
+                                <field name="electrical_material_total" readonly="1" string="Material"/>
+                                <field name="electrical_labor_total" readonly="1" string="Labor"/>
+                                <field name="electrical_overhead_total" readonly="1" string="Overhead"/>
+                                <field name="electrical_total" readonly="1" string="Electrical Subtotal"
+                                       class="oe_subtotal_footer_separator"/>
+                            </group>
+
+                            <!-- ── IRRIGATION ─────────────────────────────── -->
+                            <separator string="Irrigation Costing" invisible="not has_irrigation_costing and not has_irrigation_boq"/>
+
+                            <field name="irrigation_boq_item_ids" readonly="1" nolabel="1"
+                                   invisible="not has_irrigation_boq">
+                                <list string="Irrigation BOQ Items">
+                                    <field name="sequence" column_invisible="1"/>
+                                    <field name="code" string="Code" optional="show"/>
+                                    <field name="name" string="Item Name"/>
+                                    <field name="unit_name" string="Unit" optional="show"/>
+                                    <field name="qty_item" string="Qty"/>
+                                    <field name="material_total" string="Material" sum="Material"/>
+                                    <field name="labor_total" string="Labor" sum="Labor"/>
+                                    <field name="overhead_total" string="Overhead" sum="Overhead"/>
+                                    <field name="total_cost_per_item" string="Total Cost" sum="Total Cost"/>
+                                    <field name="profit_percent" string="Profit %" optional="show"/>
+                                    <field name="total_sales_price_qty_item" string="Sales Price" sum="Sales" optional="show"/>
+                                </list>
+                            </field>
+                            <field name="irrigation_cost_line_ids" readonly="1" nolabel="1"
+                                   invisible="not has_irrigation_costing">
+                                <list string="Irrigation Cost Lines"
+                                      decoration-bf="display_type == 'line_section'"
+                                      decoration-it="display_type == 'line_note'">
+                                    <field name="sequence" widget="handle" column_invisible="1"/>
+                                    <field name="display_type" column_invisible="1"/>
+                                    <field name="name" string="Description"/>
+                                    <field name="product_id" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="cost_category" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="quantity" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="unit_cost" string="Unit Cost" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="total_cost" string="Total" invisible="display_type in ('line_section','line_note')" sum="Lines Total"/>
+                                </list>
+                            </field>
+                            <p invisible="has_irrigation_costing or has_irrigation_boq"
+                               class="text-muted fst-italic">No Irrigation costing entries.</p>
+                            <group class="oe_subtotal_footer oe_right"
+                                   invisible="not has_irrigation_costing and not has_irrigation_boq">
+                                <field name="irrigation_material_total" readonly="1" string="Material"/>
+                                <field name="irrigation_labor_total" readonly="1" string="Labor"/>
+                                <field name="irrigation_overhead_total" readonly="1" string="Overhead"/>
+                                <field name="irrigation_cost_total" readonly="1" string="Irrigation Subtotal"
+                                       class="oe_subtotal_footer_separator"/>
+                            </group>
+
+                            <!-- ── CONTROL SYSTEM ─────────────────────────── -->
+                            <separator string="Control System Costing" invisible="not has_control_system_costing and not has_control_system_boq"/>
+
+                            <field name="control_system_boq_item_ids" readonly="1" nolabel="1"
+                                   invisible="not has_control_system_boq">
+                                <list string="Control System BOQ Items">
+                                    <field name="sequence" column_invisible="1"/>
+                                    <field name="code" string="Code" optional="show"/>
+                                    <field name="name" string="Item Name"/>
+                                    <field name="unit_name" string="Unit" optional="show"/>
+                                    <field name="qty_item" string="Qty"/>
+                                    <field name="material_total" string="Material" sum="Material"/>
+                                    <field name="labor_total" string="Labor" sum="Labor"/>
+                                    <field name="overhead_total" string="Overhead" sum="Overhead"/>
+                                    <field name="total_cost_per_item" string="Total Cost" sum="Total Cost"/>
+                                    <field name="profit_percent" string="Profit %" optional="show"/>
+                                    <field name="total_sales_price_qty_item" string="Sales Price" sum="Sales" optional="show"/>
+                                </list>
+                            </field>
+                            <field name="control_system_cost_line_ids" readonly="1" nolabel="1"
+                                   invisible="not has_control_system_costing">
+                                <list string="Control System Cost Lines"
+                                      decoration-bf="display_type == 'line_section'"
+                                      decoration-it="display_type == 'line_note'">
+                                    <field name="sequence" widget="handle" column_invisible="1"/>
+                                    <field name="display_type" column_invisible="1"/>
+                                    <field name="name" string="Description"/>
+                                    <field name="product_id" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="cost_category" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="quantity" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="unit_cost" string="Unit Cost" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="total_cost" string="Total" invisible="display_type in ('line_section','line_note')" sum="Lines Total"/>
+                                </list>
+                            </field>
+                            <p invisible="has_control_system_costing or has_control_system_boq"
+                               class="text-muted fst-italic">No Control System costing entries.</p>
+                            <group class="oe_subtotal_footer oe_right"
+                                   invisible="not has_control_system_costing and not has_control_system_boq">
+                                <field name="control_system_material_total" readonly="1" string="Material"/>
+                                <field name="control_system_labor_total" readonly="1" string="Labor"/>
+                                <field name="control_system_overhead_total" readonly="1" string="Overhead"/>
+                                <field name="control_system_total" readonly="1" string="Control System Subtotal"
+                                       class="oe_subtotal_footer_separator"/>
+                            </group>
+
+                            <!-- ── OTHER ──────────────────────────────────── -->
+                            <separator string="Other Costing" invisible="not has_other_costing and not has_other_boq"/>
+
+                            <field name="other_boq_item_ids" readonly="1" nolabel="1"
+                                   invisible="not has_other_boq">
+                                <list string="Other BOQ Items">
+                                    <field name="sequence" column_invisible="1"/>
+                                    <field name="code" string="Code" optional="show"/>
+                                    <field name="name" string="Item Name"/>
+                                    <field name="unit_name" string="Unit" optional="show"/>
+                                    <field name="qty_item" string="Qty"/>
+                                    <field name="material_total" string="Material" sum="Material"/>
+                                    <field name="labor_total" string="Labor" sum="Labor"/>
+                                    <field name="overhead_total" string="Overhead" sum="Overhead"/>
+                                    <field name="total_cost_per_item" string="Total Cost" sum="Total Cost"/>
+                                    <field name="profit_percent" string="Profit %" optional="show"/>
+                                    <field name="total_sales_price_qty_item" string="Sales Price" sum="Sales" optional="show"/>
+                                </list>
+                            </field>
+                            <field name="other_cost_line_ids" readonly="1" nolabel="1"
+                                   invisible="not has_other_costing">
+                                <list string="Other Cost Lines"
+                                      decoration-bf="display_type == 'line_section'"
+                                      decoration-it="display_type == 'line_note'">
+                                    <field name="sequence" widget="handle" column_invisible="1"/>
+                                    <field name="display_type" column_invisible="1"/>
+                                    <field name="name" string="Description"/>
+                                    <field name="product_id" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="cost_category" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="quantity" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="unit_cost" string="Unit Cost" invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="total_cost" string="Total" invisible="display_type in ('line_section','line_note')" sum="Lines Total"/>
+                                </list>
+                            </field>
+                            <p invisible="has_other_costing or has_other_boq"
+                               class="text-muted fst-italic">No Other costing entries.</p>
+                            <group class="oe_subtotal_footer oe_right"
+                                   invisible="not has_other_costing and not has_other_boq">
+                                <field name="other_material_total" readonly="1" string="Material"/>
+                                <field name="other_labor_total" readonly="1" string="Labor"/>
+                                <field name="other_overhead_total" readonly="1" string="Overhead"/>
+                                <field name="other_total" readonly="1" string="Other Subtotal"
+                                       class="oe_subtotal_footer_separator"/>
+                            </group>
+
+                            <!-- ── GRAND TOTAL ─────────────────────────────── -->
+                            <separator string="Grand Total Summary"/>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="material_total" readonly="1" string="Total Material"/>
+                                <field name="labor_total" readonly="1" string="Total Labor"/>
+                                <field name="overhead_total" readonly="1" string="Total Overhead"/>
+                                <field name="grand_total" readonly="1" string="Grand Total"
+                                       class="oe_subtotal_footer_separator"/>
+                            </group>
+
+                        </page><!-- /BOQ Breakdown -->
+
+                        <!-- ══════════════════════════════════════════════════ -->
+                        <!--  PAGE 3 — ANALYSIS NOTES                         -->
+                        <!-- ══════════════════════════════════════════════════ -->
+                        <page string="Analysis Notes" name="analysis_notes">
+                            <group string="Analysis Notes / Comments">
+                                <field name="analysis_note" nolabel="1"
+                                       placeholder="Enter analysis notes or comments..."/>
+                            </group>
+                        </page>
+
+                    </notebook>
+                </sheet>
+
+                <footer>
+                    <!-- Submit: visible in Draft -->
+                    <button name="action_submit" string="Submit for Review"
+                            type="object" class="btn-primary"
+                            invisible="cost_analysis_state != 'draft'"/>
+                    <!-- Approve: visible in Under Review (manager/admin) -->
+                    <button name="action_approve" string="Approve"
+                            type="object" class="btn-success"
+                            groups="smart_farm_alandleeb.group_farm_manager"
+                            invisible="cost_analysis_state != 'under_review'"/>
+                    <!-- Reject: visible in Under Review (manager/admin) -->
+                    <button name="action_reject" string="Reject"
+                            type="object" class="btn-danger"
+                            groups="smart_farm_alandleeb.group_farm_manager"
+                            invisible="cost_analysis_state != 'under_review'"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+
+            </form>
+        </field>
+    </record>
+
+</odoo>

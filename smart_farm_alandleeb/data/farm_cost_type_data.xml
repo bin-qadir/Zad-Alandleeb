@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- ============================================================
+         GENERIC (Other section — legacy)
+    ============================================================ -->
+    <record id="cost_type_materials" model="farm.cost.type">
+        <field name="name">Materials</field>
+        <field name="costing_section">other</field>
+        <field name="category">material</field>
+    </record>
+
+    <record id="cost_type_labor" model="farm.cost.type">
+        <field name="name">Labor</field>
+        <field name="costing_section">other</field>
+        <field name="category">labor</field>
+    </record>
+
+    <record id="cost_type_overhead" model="farm.cost.type">
+        <field name="name">Overhead</field>
+        <field name="costing_section">other</field>
+        <field name="category">overhead</field>
+    </record>
+
+    <!-- ============================================================
+         CIVIL
+    ============================================================ -->
+    <record id="cost_type_civil_materials" model="farm.cost.type">
+        <field name="name">Civil Materials</field>
+        <field name="costing_section">civil</field>
+        <field name="category">material</field>
+    </record>
+
+    <record id="cost_type_civil_labor" model="farm.cost.type">
+        <field name="name">Civil Labor</field>
+        <field name="costing_section">civil</field>
+        <field name="category">labor</field>
+    </record>
+
+    <record id="cost_type_civil_overhead" model="farm.cost.type">
+        <field name="name">Civil Overhead</field>
+        <field name="costing_section">civil</field>
+        <field name="category">overhead</field>
+    </record>
+
+    <!-- ============================================================
+         ARCHITECTURE
+    ============================================================ -->
+    <record id="cost_type_arch_materials" model="farm.cost.type">
+        <field name="name">Arch Materials</field>
+        <field name="costing_section">arch</field>
+        <field name="category">material</field>
+    </record>
+
+    <record id="cost_type_arch_labor" model="farm.cost.type">
+        <field name="name">Arch Labor</field>
+        <field name="costing_section">arch</field>
+        <field name="category">labor</field>
+    </record>
+
+    <record id="cost_type_arch_overhead" model="farm.cost.type">
+        <field name="name">Arch Overhead</field>
+        <field name="costing_section">arch</field>
+        <field name="category">overhead</field>
+    </record>
+
+    <!-- ============================================================
+         MECHANICAL
+    ============================================================ -->
+    <record id="cost_type_mech_materials" model="farm.cost.type">
+        <field name="name">Mechanical Materials</field>
+        <field name="costing_section">mechanical</field>
+        <field name="category">material</field>
+    </record>
+
+    <record id="cost_type_mech_labor" model="farm.cost.type">
+        <field name="name">Mechanical Labor</field>
+        <field name="costing_section">mechanical</field>
+        <field name="category">labor</field>
+    </record>
+
+    <record id="cost_type_mech_overhead" model="farm.cost.type">
+        <field name="name">Mechanical Overhead</field>
+        <field name="costing_section">mechanical</field>
+        <field name="category">overhead</field>
+    </record>
+
+    <!-- ============================================================
+         ELECTRICAL
+    ============================================================ -->
+    <record id="cost_type_elec_materials" model="farm.cost.type">
+        <field name="name">Electrical Materials</field>
+        <field name="costing_section">electrical</field>
+        <field name="category">material</field>
+    </record>
+
+    <record id="cost_type_elec_labor" model="farm.cost.type">
+        <field name="name">Electrical Labor</field>
+        <field name="costing_section">electrical</field>
+        <field name="category">labor</field>
+    </record>
+
+    <record id="cost_type_elec_overhead" model="farm.cost.type">
+        <field name="name">Electrical Overhead</field>
+        <field name="costing_section">electrical</field>
+        <field name="category">overhead</field>
+    </record>
+
+    <!-- ============================================================
+         IRRIGATION
+    ============================================================ -->
+    <record id="cost_type_irr_materials" model="farm.cost.type">
+        <field name="name">Irrigation Materials</field>
+        <field name="costing_section">irrigation</field>
+        <field name="category">material</field>
+    </record>
+
+    <record id="cost_type_irr_labor" model="farm.cost.type">
+        <field name="name">Irrigation Labor</field>
+        <field name="costing_section">irrigation</field>
+        <field name="category">labor</field>
+    </record>
+
+    <record id="cost_type_irr_overhead" model="farm.cost.type">
+        <field name="name">Irrigation Overhead</field>
+        <field name="costing_section">irrigation</field>
+        <field name="category">overhead</field>
+    </record>
+
+    <!-- ============================================================
+         CONTROL SYSTEM
+    ============================================================ -->
+    <record id="cost_type_ctrl_materials" model="farm.cost.type">
+        <field name="name">Control System Materials</field>
+        <field name="costing_section">control_system</field>
+        <field name="category">material</field>
+    </record>
+
+    <record id="cost_type_ctrl_labor" model="farm.cost.type">
+        <field name="name">Control System Labor</field>
+        <field name="costing_section">control_system</field>
+        <field name="category">labor</field>
+    </record>
+
+    <record id="cost_type_ctrl_overhead" model="farm.cost.type">
+        <field name="name">Control System Overhead</field>
+        <field name="costing_section">control_system</field>
+        <field name="category">overhead</field>
+    </record>
+
+    <!-- ============================================================
+         OTHER
+    ============================================================ -->
+    <record id="cost_type_other_materials" model="farm.cost.type">
+        <field name="name">Other Materials</field>
+        <field name="costing_section">other</field>
+        <field name="category">material</field>
+    </record>
+
+    <record id="cost_type_other_labor" model="farm.cost.type">
+        <field name="name">Other Labor</field>
+        <field name="costing_section">other</field>
+        <field name="category">labor</field>
+    </record>
+
+    <record id="cost_type_other_overhead" model="farm.cost.type">
+        <field name="name">Other Overhead</field>
+        <field name="costing_section">other</field>
+        <field name="category">overhead</field>
+    </record>
+
+</odoo>

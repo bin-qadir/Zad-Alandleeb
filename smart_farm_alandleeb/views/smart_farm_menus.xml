@@ -167,6 +167,38 @@
         sequence="20"
         groups="smart_farm_alandleeb.group_farm_manager"/>
 
+    <menuitem
+        id="menu_farm_soil_type"
+        name="Soil Types"
+        parent="menu_smart_farm_config"
+        action="smart_farm_alandleeb.action_farm_soil_type"
+        sequence="30"
+        groups="smart_farm_alandleeb.group_farm_manager"/>
+
+    <menuitem
+        id="menu_farm_cost_type"
+        name="Cost Types"
+        parent="menu_smart_farm_config"
+        action="smart_farm_alandleeb.action_farm_cost_type"
+        sequence="40"
+        groups="smart_farm_alandleeb.group_farm_manager"/>
+
+    <menuitem
+        id="menu_farm_irrigation_type"
+        name="Irrigation Types"
+        parent="menu_smart_farm_config"
+        action="smart_farm_alandleeb.action_farm_irrigation_type"
+        sequence="50"
+        groups="smart_farm_alandleeb.group_farm_manager"/>
+
+    <menuitem
+        id="menu_farm_boq_item_template"
+        name="B.O.Q Item Templates"
+        parent="menu_smart_farm_config"
+        action="smart_farm_alandleeb.action_farm_boq_item_template"
+        sequence="60"
+        groups="smart_farm_alandleeb.group_farm_manager"/>
+
     <!-- ============================================================
          ALERTS
     ============================================================ -->

@@ -13,7 +13,7 @@
                 <field name="name"/>
                 <field name="manager_id"/>
                 <field name="total_area"/>
-                <field name="cultivated_area"/>
+                <field name="total_area_ha"/>
                 <field name="field_count"/>
                 <field name="state" widget="badge"/>
             </list>
@@ -60,8 +60,8 @@
                             <field name="analytic_account_id"/>
                         </group>
                         <group string="Area">
-                            <field name="total_area"/>
-                            <field name="cultivated_area"/>
+                            <field name="total_area" readonly="True"/>
+                            <field name="total_area_ha" readonly="True"/>
                         </group>
                     </group>
                     <group string="Location">
@@ -84,8 +84,9 @@
                                     <field name="code" readonly="True"/>
                                     <field name="name"/>
                                     <field name="area"/>
-                                    <field name="soil_type"/>
-                                    <field name="irrigation_type"/>
+                                    <field name="area_ha" readonly="True"/>
+                                    <field name="soil_type_id"/>
+                                    <field name="irrigation_type_id"/>
                                     <field name="state" widget="badge"/>
                                 </list>
                             </field>
@@ -127,7 +128,7 @@
                             </div>
                             <div class="o_kanban_record_body">
                                 <div><i class="fa fa-user" title="Manager"/> <field name="manager_id"/></div>
-                                <div><i class="fa fa-map-marker"/> Area: <field name="total_area"/> Ha</div>
+                                <div><i class="fa fa-map-marker"/> Area: <field name="total_area"/> m²</div>
                                 <div><i class="fa fa-leaf"/> Fields: <field name="field_count"/></div>
                             </div>
                         </div>

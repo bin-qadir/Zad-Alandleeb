@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="soil_type_coco_peat_perlite" model="farm.soil.type">
+        <field name="name">Coco Peat + Perlite</field>
+        <field name="description">A lightweight growing medium combining coco peat for water retention and perlite for aeration and drainage.</field>
+    </record>
+
+    <record id="soil_type_organic_mix" model="farm.soil.type">
+        <field name="name">Organic Mix</field>
+        <field name="description">A rich blend of organic matter including compost, vermicompost and natural soil amendments suitable for a wide range of crops.</field>
+    </record>
+
+    <record id="soil_type_hydroponic" model="farm.soil.type">
+        <field name="name">Hydroponic</field>
+        <field name="description">Soil-free growing medium for hydroponic systems. Plants are grown in nutrient-rich water solutions.</field>
+    </record>
+
+    <record id="soil_type_natural" model="farm.soil.type">
+        <field name="name">Soil Natural</field>
+        <field name="description">Natural untreated ground soil, suitable for open-field farming with good mineral content.</field>
+    </record>
+
+</odoo>

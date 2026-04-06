@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="irrigation_type_drip" model="farm.irrigation.type">
+        <field name="name">Drip</field>
+        <field name="description">Water is delivered directly to the root zone through a network of valves, pipes, tubing, and emitters. Highly efficient.</field>
+    </record>
+
+    <record id="irrigation_type_hydroponic" model="farm.irrigation.type">
+        <field name="name">Hydroponic</field>
+        <field name="description">Soil-free cultivation where plants are grown in nutrient-rich water solutions. Used in controlled environment agriculture.</field>
+    </record>
+
+    <record id="irrigation_type_sprinkler" model="farm.irrigation.type">
+        <field name="name">Sprinkler</field>
+        <field name="description">Water is distributed through a system of pipes and sprinkler heads that spray water over the crop area.</field>
+    </record>
+
+    <record id="irrigation_type_nft" model="farm.irrigation.type">
+        <field name="name">NFT</field>
+        <field name="description">Nutrient Film Technique — a thin film of nutrient solution flows continuously over the roots in shallow channels.</field>
+    </record>
+
+    <record id="irrigation_type_flood" model="farm.irrigation.type">
+        <field name="name">Flood</field>
+        <field name="description">The field is flooded with water and allowed to drain or percolate. Traditional method used for rice and similar crops.</field>
+    </record>
+
+</odoo>

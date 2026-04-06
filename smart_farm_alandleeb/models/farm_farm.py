@@ -52,9 +52,21 @@ class FarmFarm(models.Model):
     latitude = fields.Float(string='Latitude', digits=(10, 7))
     longitude = fields.Float(string='Longitude', digits=(10, 7))
 
-    # Dimensions
-    total_area = fields.Float(string='Total Area (Ha)', digits=(10, 2))
-    cultivated_area = fields.Float(string='Cultivated Area (Ha)', digits=(10, 2), compute='_compute_cultivated_area', store=True)
+    # Dimensions  (unit: m²)
+    total_area = fields.Float(
+        string='Total Area (m²)',
+        digits=(16, 2),
+        compute='_compute_total_area',
+        store=True,
+        help='Total area in square meters — auto-calculated from all registered fields.',
+    )
+    total_area_ha = fields.Float(
+        string='Total Area (Ha)',
+        digits=(10, 4),
+        compute='_compute_total_area',
+        store=True,
+        help='Total area converted to hectares (1 Ha = 10,000 m²).',
+    )
 
     # Relations
     field_ids = fields.One2many('farm.field', 'farm_id', string='Fields')
@@ -82,9 +94,10 @@ class FarmFarm(models.Model):
         return super().create(vals_list)
 
     @api.depends('field_ids', 'field_ids.area')
-    def _compute_cultivated_area(self):
+    def _compute_total_area(self):
         for rec in self:
-            rec.cultivated_area = sum(rec.field_ids.mapped('area'))
+            rec.total_area = sum(rec.field_ids.mapped('area'))
+            rec.total_area_ha = rec.total_area / 10000.0 if rec.total_area else 0.0
 
     @api.depends('field_ids')
     def _compute_field_count(self):
