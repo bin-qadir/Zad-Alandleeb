@@ -33,6 +33,14 @@ class FarmBoqItem(models.Model):
     qty_item = fields.Float(string='Qty / Item', digits=(16, 3), default=1.0)
     profit_percent = fields.Float(string='Profit %', digits=(16, 2), default=0.0)
 
+    work_type_id = fields.Many2one(
+        'farm.boq.work.type',
+        string='Work Type',
+        ondelete='set null',
+        domain="[('costing_section', '=', costing_section), ('active', '=', True)]",
+        help='Work type classification copied from the source template.',
+    )
+
     # Source template reference (informational)
     source_template_id = fields.Many2one(
         'farm.boq.item.template', string='Source Template',

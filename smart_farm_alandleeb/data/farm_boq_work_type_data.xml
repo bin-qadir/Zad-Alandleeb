@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Civil ──────────────────────────────────────────────────────── -->
+    <record id="boq_work_type_civil_earthwork" model="farm.boq.work.type">
+        <field name="name">Earthwork / Cleaning / Levelling</field>
+        <field name="code">CIV-01</field>
+        <field name="costing_section">civil</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="boq_work_type_civil_compaction" model="farm.boq.work.type">
+        <field name="name">Compaction Works</field>
+        <field name="code">CIV-02</field>
+        <field name="costing_section">civil</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="boq_work_type_civil_concrete" model="farm.boq.work.type">
+        <field name="name">Concrete Works</field>
+        <field name="code">CIV-03</field>
+        <field name="costing_section">civil</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <!-- ── Architecture ───────────────────────────────────────────────── -->
+    <record id="boq_work_type_arch_masonry" model="farm.boq.work.type">
+        <field name="name">Masonry Works</field>
+        <field name="code">ARCH-01</field>
+        <field name="costing_section">arch</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="boq_work_type_arch_plaster" model="farm.boq.work.type">
+        <field name="name">Plaster Works</field>
+        <field name="code">ARCH-02</field>
+        <field name="costing_section">arch</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- ── Mechanical ─────────────────────────────────────────────────── -->
+    <record id="boq_work_type_mech_hvac" model="farm.boq.work.type">
+        <field name="name">HVAC Works</field>
+        <field name="code">MECH-01</field>
+        <field name="costing_section">mechanical</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="boq_work_type_mech_pump" model="farm.boq.work.type">
+        <field name="name">Pump Installation</field>
+        <field name="code">MECH-02</field>
+        <field name="costing_section">mechanical</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- ── Electrical ─────────────────────────────────────────────────── -->
+    <record id="boq_work_type_elec_cabling" model="farm.boq.work.type">
+        <field name="name">Cabling Works</field>
+        <field name="code">ELEC-01</field>
+        <field name="costing_section">electrical</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="boq_work_type_elec_panel" model="farm.boq.work.type">
+        <field name="name">Panel Installation</field>
+        <field name="code">ELEC-02</field>
+        <field name="costing_section">electrical</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- ── Irrigation ─────────────────────────────────────────────────── -->
+    <record id="boq_work_type_irr_main" model="farm.boq.work.type">
+        <field name="name">Main Irrigation Network</field>
+        <field name="code">IRR-01</field>
+        <field name="costing_section">irrigation</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="boq_work_type_irr_drip" model="farm.boq.work.type">
+        <field name="name">Drip Irrigation Installation</field>
+        <field name="code">IRR-02</field>
+        <field name="costing_section">irrigation</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- ── Control System ─────────────────────────────────────────────── -->
+    <record id="boq_work_type_ctrl_sensors" model="farm.boq.work.type">
+        <field name="name">Sensors &amp; Controllers</field>
+        <field name="code">CTRL-01</field>
+        <field name="costing_section">control_system</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="boq_work_type_ctrl_automation" model="farm.boq.work.type">
+        <field name="name">Automation Panels</field>
+        <field name="code">CTRL-02</field>
+        <field name="costing_section">control_system</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- ── Other ──────────────────────────────────────────────────────── -->
+    <record id="boq_work_type_other_misc" model="farm.boq.work.type">
+        <field name="name">Miscellaneous Works</field>
+        <field name="code">OTH-01</field>
+        <field name="costing_section">other</field>
+        <field name="sequence">10</field>
+    </record>
+
+</odoo>

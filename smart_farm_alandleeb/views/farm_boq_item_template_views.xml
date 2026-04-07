@@ -12,6 +12,7 @@
                 <field name="code" optional="show"/>
                 <field name="name"/>
                 <field name="costing_section"/>
+                <field name="work_type_id" optional="show"/>
                 <field name="product_id" optional="show"/>
                 <field name="unit_name" optional="show"/>
                 <field name="qty_item"/>
@@ -44,6 +45,8 @@
                         <group string="Identification">
                             <field name="code"/>
                             <field name="costing_section"/>
+                            <field name="work_type_id"
+                                   domain="[('costing_section', '=', costing_section), ('active', '=', True)]"/>
                             <field name="active" widget="boolean_toggle"/>
                         </group>
                         <group string="Unit &amp; Quantity">

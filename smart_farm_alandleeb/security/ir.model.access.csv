@@ -1,4 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_farm_boq_work_type_user,farm.boq.work.type user,model_farm_boq_work_type,smart_farm_alandleeb.group_farm_user,1,0,0,0
+access_farm_boq_work_type_manager,farm.boq.work.type manager,model_farm_boq_work_type,smart_farm_alandleeb.group_farm_manager,1,1,1,1
+access_farm_boq_work_type_admin,farm.boq.work.type admin,model_farm_boq_work_type,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
 access_farm_irrigation_type_user,farm.irrigation.type user,model_farm_irrigation_type,smart_farm_alandleeb.group_farm_user,1,0,0,0
 access_farm_irrigation_type_manager,farm.irrigation.type manager,model_farm_irrigation_type,smart_farm_alandleeb.group_farm_manager,1,1,1,1
 access_farm_irrigation_type_admin,farm.irrigation.type admin,model_farm_irrigation_type,smart_farm_alandleeb.group_farm_admin,1,1,1,1

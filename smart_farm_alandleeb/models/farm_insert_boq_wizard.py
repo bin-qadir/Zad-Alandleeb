@@ -94,6 +94,7 @@ class FarmInsertBoqItemTemplateWizard(models.TransientModel):
             'qty_item': template.qty_item,
             'profit_percent': template.profit_percent,
             'source_template_id': template.id,
+            'work_type_id': template.work_type_id.id if template.work_type_id else False,
         })
 
         for tl in template.line_ids.sorted('sequence'):

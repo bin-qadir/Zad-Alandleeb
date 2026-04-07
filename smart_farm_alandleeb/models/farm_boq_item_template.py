@@ -21,6 +21,14 @@ class FarmBoqItemTemplate(models.Model):
         required=True,
         default='civil',
     )
+    work_type_id = fields.Many2one(
+        'farm.boq.work.type',
+        string='Work Type',
+        ondelete='set null',
+        domain="[('costing_section', '=', costing_section), ('active', '=', True)]",
+        help='Work type classification for this BOQ item template. '
+             'Only work types belonging to the selected section are shown.',
+    )
     description = fields.Text(string='Description')
     product_id = fields.Many2one(
         'product.product', string='Product', ondelete='set null',
@@ -65,6 +73,12 @@ class FarmBoqItemTemplate(models.Model):
         string='Profit Amount', digits=(16, 2),
         compute='_compute_totals', store=True,
     )
+
+    @api.onchange('costing_section')
+    def _onchange_costing_section_clear_work_type(self):
+        """Clear work_type_id when section changes so the domain is respected."""
+        if self.work_type_id and self.work_type_id.costing_section != self.costing_section:
+            self.work_type_id = False
 
     @api.depends(
         'line_ids.material_amount',

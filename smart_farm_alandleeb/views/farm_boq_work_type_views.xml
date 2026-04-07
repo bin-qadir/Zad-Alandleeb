@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =========================================================
+         BOQ Work Type — List View
+    ========================================================= -->
+    <record id="view_farm_boq_work_type_list" model="ir.ui.view">
+        <field name="name">farm.boq.work.type.list</field>
+        <field name="model">farm.boq.work.type</field>
+        <field name="arch" type="xml">
+            <list string="BOQ Work Types">
+                <field name="sequence" widget="handle"/>
+                <field name="code" optional="show"/>
+                <field name="name"/>
+                <field name="costing_section"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- =========================================================
+         BOQ Work Type — Form View
+    ========================================================= -->
+    <record id="view_farm_boq_work_type_form" model="ir.ui.view">
+        <field name="name">farm.boq.work.type.form</field>
+        <field name="model">farm.boq.work.type</field>
+        <field name="arch" type="xml">
+            <form string="BOQ Work Type">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Work type name..."/></h1>
+                    </div>
+                    <group>
+                        <group string="Classification">
+                            <field name="code"/>
+                            <field name="costing_section"/>
+                            <field name="sequence"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1"
+                               placeholder="Describe the scope of this work type..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- =========================================================
+         BOQ Work Type — Search View
+    ========================================================= -->
+    <record id="view_farm_boq_work_type_search" model="ir.ui.view">
+        <field name="name">farm.boq.work.type.search</field>
+        <field name="model">farm.boq.work.type</field>
+        <field name="arch" type="xml">
+            <search string="Search BOQ Work Types">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="costing_section"/>
+                <filter string="Active" name="active" domain="[('active','=',True)]"/>
+                <filter string="Archived" name="archived" domain="[('active','=',False)]"/>
+                <separator/>
+                <filter string="Civil" name="civil"
+                        domain="[('costing_section','=','civil')]"/>
+                <filter string="Architecture" name="arch"
+                        domain="[('costing_section','=','arch')]"/>
+                <filter string="Mechanical" name="mechanical"
+                        domain="[('costing_section','=','mechanical')]"/>
+                <filter string="Electrical" name="electrical"
+                        domain="[('costing_section','=','electrical')]"/>
+                <filter string="Irrigation" name="irrigation"
+                        domain="[('costing_section','=','irrigation')]"/>
+                <filter string="Control System" name="control_system"
+                        domain="[('costing_section','=','control_system')]"/>
+                <filter string="Other" name="other"
+                        domain="[('costing_section','=','other')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Section" name="by_section"
+                            context="{'group_by': 'costing_section'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- =========================================================
+         Action
+    ========================================================= -->
+    <record id="action_farm_boq_work_type" model="ir.actions.act_window">
+        <field name="name">B.O.Q Work Types</field>
+        <field name="res_model">farm.boq.work.type</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first BOQ Work Type</p>
+            <p>
+                Work types classify the kind of work performed within each costing section.
+                Example: Civil → Earthwork, Compaction Works.
+            </p>
+        </field>
+    </record>
+
+</odoo>

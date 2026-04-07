@@ -199,6 +199,14 @@
         sequence="60"
         groups="smart_farm_alandleeb.group_farm_manager"/>
 
+    <menuitem
+        id="menu_farm_boq_work_type"
+        name="B.O.Q Work Types"
+        parent="menu_smart_farm_config"
+        action="smart_farm_alandleeb.action_farm_boq_work_type"
+        sequence="65"
+        groups="smart_farm_alandleeb.group_farm_manager"/>
+
     <!-- ============================================================
          ALERTS
     ============================================================ -->
