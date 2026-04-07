@@ -22,7 +22,7 @@ class FarmCostLine(models.Model):
     # Section this line belongs to
     costing_section = fields.Selection(
         COSTING_SECTION_SELECTION,
-        string='Costing Section',
+        string='Works Division',
         required=True,
         default='other',
     )

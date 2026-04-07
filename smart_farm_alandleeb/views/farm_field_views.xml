@@ -490,7 +490,7 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="code" string="Code" optional="show"/>
                                     <field name="name" string="Item Name"/>
-                                    <field name="work_type_id" string="Work Type" optional="show"/>
+                                    <field name="work_type_id" string="Sub-division Works" optional="show"/>
                                     <field name="unit_name" string="Unit" optional="show"/>
                                     <field name="qty_item" string="Qty"/>
                                     <field name="material_total" string="Material" readonly="1"/>
@@ -687,7 +687,7 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="code" string="Code" optional="show"/>
                                     <field name="name" string="Item Name"/>
-                                    <field name="work_type_id" string="Work Type" optional="show"/>
+                                    <field name="work_type_id" string="Sub-division Works" optional="show"/>
                                     <field name="unit_name" string="Unit" optional="show"/>
                                     <field name="qty_item" string="Qty"/>
                                     <field name="material_total" string="Material" readonly="1"/>
@@ -880,7 +880,7 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="code" string="Code" optional="show"/>
                                     <field name="name" string="Item Name"/>
-                                    <field name="work_type_id" string="Work Type" optional="show"/>
+                                    <field name="work_type_id" string="Sub-division Works" optional="show"/>
                                     <field name="unit_name" string="Unit" optional="show"/>
                                     <field name="qty_item" string="Qty"/>
                                     <field name="material_total" string="Material" readonly="1"/>
@@ -1073,7 +1073,7 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="code" string="Code" optional="show"/>
                                     <field name="name" string="Item Name"/>
-                                    <field name="work_type_id" string="Work Type" optional="show"/>
+                                    <field name="work_type_id" string="Sub-division Works" optional="show"/>
                                     <field name="unit_name" string="Unit" optional="show"/>
                                     <field name="qty_item" string="Qty"/>
                                     <field name="material_total" string="Material" readonly="1"/>
@@ -1266,7 +1266,7 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="code" string="Code" optional="show"/>
                                     <field name="name" string="Item Name"/>
-                                    <field name="work_type_id" string="Work Type" optional="show"/>
+                                    <field name="work_type_id" string="Sub-division Works" optional="show"/>
                                     <field name="unit_name" string="Unit" optional="show"/>
                                     <field name="qty_item" string="Qty"/>
                                     <field name="material_total" string="Material" readonly="1"/>
@@ -1459,7 +1459,7 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="code" string="Code" optional="show"/>
                                     <field name="name" string="Item Name"/>
-                                    <field name="work_type_id" string="Work Type" optional="show"/>
+                                    <field name="work_type_id" string="Sub-division Works" optional="show"/>
                                     <field name="unit_name" string="Unit" optional="show"/>
                                     <field name="qty_item" string="Qty"/>
                                     <field name="material_total" string="Material" readonly="1"/>
@@ -1654,7 +1654,7 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="code" string="Code" optional="show"/>
                                     <field name="name" string="Item Name"/>
-                                    <field name="work_type_id" string="Work Type" optional="show"/>
+                                    <field name="work_type_id" string="Sub-division Works" optional="show"/>
                                     <field name="unit_name" string="Unit" optional="show"/>
                                     <field name="qty_item" string="Qty"/>
                                     <field name="material_total" string="Material" readonly="1"/>

@@ -30,7 +30,7 @@ class FarmCostType(models.Model):
     name = fields.Char(string='Cost Type', required=True, translate=True)
     costing_section = fields.Selection(
         COSTING_SECTION_SELECTION,
-        string='Costing Section',
+        string='Works Division',
         required=True,
         default='other',
     )

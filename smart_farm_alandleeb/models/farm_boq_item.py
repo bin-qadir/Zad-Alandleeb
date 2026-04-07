@@ -18,7 +18,7 @@ class FarmBoqItem(models.Model):
     )
     costing_section = fields.Selection(
         COSTING_SECTION_SELECTION,
-        string='Section',
+        string='Works Division',
         required=True,
         default='civil',
     )
@@ -35,7 +35,7 @@ class FarmBoqItem(models.Model):
 
     work_type_id = fields.Many2one(
         'farm.boq.work.type',
-        string='Work Type',
+        string='Sub-division Works',
         ondelete='set null',
         domain="[('costing_section', '=', costing_section), ('active', '=', True)]",
         help='Work type classification copied from the source template.',

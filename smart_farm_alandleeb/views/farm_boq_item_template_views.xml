@@ -153,7 +153,7 @@
                 <filter string="Control System" name="control_system" domain="[('costing_section','=','control_system')]"/>
                 <filter string="Other" name="other" domain="[('costing_section','=','other')]"/>
                 <group expand="0" string="Group By">
-                    <filter string="Section" name="by_section" context="{'group_by': 'costing_section'}"/>
+                    <filter string="Works Division" name="by_section" context="{'group_by': 'costing_section'}"/>
                 </group>
             </search>
         </field>

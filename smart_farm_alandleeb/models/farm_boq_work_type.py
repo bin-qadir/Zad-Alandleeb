@@ -17,11 +17,11 @@ class FarmBoqWorkType(models.Model):
     _order = 'costing_section, sequence, name'
     _rec_name = 'name'
 
-    name = fields.Char(string='Work Type', required=True, translate=True)
+    name = fields.Char(string='Sub-division Works', required=True, translate=True)
     code = fields.Char(string='Code')
     costing_section = fields.Selection(
         COSTING_SECTION_SELECTION,
-        string='Costing Section',
+        string='Works Division',
         required=True,
         default='civil',
     )

@@ -19,14 +19,14 @@ class FarmInsertBoqItemTemplateWizard(models.TransientModel):
     )
     target_section = fields.Selection(
         COSTING_SECTION_SELECTION,
-        string='Target Section',
+        string='Works Division',
         help='Leave empty to use the template default section.',
     )
 
     # ── Preview fields (updated on template change) ───────────────────────────
     template_section = fields.Selection(
         related='template_id.costing_section',
-        string='Template Section',
+        string='Works Division',
     )
     template_description = fields.Text(
         related='template_id.description',
