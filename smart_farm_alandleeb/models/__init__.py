@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from . import farm_boq_work_type
+from . import project_cost_analysis
 from . import farm_farm
 from . import farm_soil_type
 from . import farm_irrigation_type

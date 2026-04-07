@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         project.cost.analysis.line — standalone List view
+    ================================================================ -->
+    <record id="view_project_cost_analysis_line_list" model="ir.ui.view">
+        <field name="name">project.cost.analysis.line.list</field>
+        <field name="model">project.cost.analysis.line</field>
+        <field name="arch" type="xml">
+            <list string="Costing Analysis Lines"
+                  decoration-bf="line_type == 'division'"
+                  decoration-it="line_type == 'subdivision'">
+                <field name="sequence_no" string="No." readonly="1"/>
+                <field name="line_type" column_invisible="1"/>
+                <field name="name" string="Description"/>
+                <field name="costing_section" string="Works Division"
+                       invisible="line_type == 'boq_item'"/>
+                <field name="work_type_id" string="Sub-division Works"
+                       invisible="line_type != 'subdivision'"/>
+                <field name="boq_item_template_id" string="B.O.Q Item Work"
+                       invisible="line_type != 'boq_item'"/>
+                <field name="uom_name" string="Unit"
+                       invisible="line_type != 'boq_item'"/>
+                <field name="quantity" invisible="line_type != 'boq_item'"/>
+                <field name="material_total" string="Material" readonly="1"
+                       invisible="line_type in ('division','subdivision')"
+                       sum="Total Material"/>
+                <field name="labor_total" string="Labor" readonly="1"
+                       invisible="line_type in ('division','subdivision')"
+                       sum="Total Labor"/>
+                <field name="overhead_total" string="Overhead" readonly="1"
+                       invisible="line_type in ('division','subdivision')"
+                       sum="Total Overhead"/>
+                <field name="total_cost" string="Total Cost" readonly="1"
+                       invisible="line_type in ('division','subdivision')"
+                       sum="Grand Total"/>
+                <field name="suggested_profit_percent" string="Profit %"
+                       invisible="line_type != 'boq_item'"/>
+                <field name="profit_amount" string="Profit" readonly="1"
+                       invisible="line_type in ('division','subdivision')"
+                       sum="Total Profit"/>
+                <field name="sale_total" string="Sale Total" readonly="1"
+                       invisible="line_type in ('division','subdivision')"
+                       sum="Total Sale"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         project.cost.analysis.line — Form view
+    ================================================================ -->
+    <record id="view_project_cost_analysis_line_form" model="ir.ui.view">
+        <field name="name">project.cost.analysis.line.form</field>
+        <field name="model">project.cost.analysis.line</field>
+        <field name="arch" type="xml">
+            <form string="Costing Analysis Line">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Description..."/></h1>
+                        <h3>
+                            <field name="sequence_no" readonly="1"/>
+                            <field name="line_type" widget="badge"
+                                   decoration-primary="line_type == 'division'"
+                                   decoration-info="line_type == 'subdivision'"
+                                   decoration-success="line_type == 'boq_item'"/>
+                        </h3>
+                    </div>
+
+                    <group>
+                        <group string="Classification">
+                            <field name="line_type"/>
+                            <field name="project_id" readonly="1"/>
+                            <field name="parent_id"
+                                   invisible="line_type == 'division'"
+                                   domain="[('project_id', '=', project_id), ('line_type', 'in', ['division', 'subdivision'])]"/>
+                            <field name="costing_section" string="Works Division"
+                                   invisible="line_type == 'boq_item'"/>
+                            <field name="work_type_id" string="Sub-division Works"
+                                   invisible="line_type in ('division', 'boq_item')"
+                                   domain="[('costing_section', '=', costing_section), ('active', '=', True)]"/>
+                            <field name="boq_item_template_id" string="B.O.Q Item Template"
+                                   invisible="line_type != 'boq_item'"/>
+                        </group>
+                        <group string="Item Details" invisible="line_type != 'boq_item'">
+                            <field name="product_id"/>
+                            <field name="uom_name" string="Unit of Measure"/>
+                            <field name="quantity"/>
+                            <field name="suggested_profit_percent" string="Suggested Profit %"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+
+                    <group string="Cost Summary" class="oe_subtotal_footer oe_right"
+                           invisible="line_type != 'boq_item'">
+                        <field name="material_total" readonly="1" string="Total Material"/>
+                        <field name="labor_total" readonly="1" string="Total Labor"/>
+                        <field name="overhead_total" readonly="1" string="Total Overhead"/>
+                        <field name="total_cost" readonly="1" string="Total Cost"
+                               class="oe_subtotal_footer_separator"/>
+                        <field name="profit_amount" readonly="1" string="Profit Amount"/>
+                        <field name="sale_total" readonly="1" string="Total Sale Price"
+                               class="oe_subtotal_footer_separator"/>
+                    </group>
+
+                    <group string="Rollup Totals" class="oe_subtotal_footer oe_right"
+                           invisible="line_type == 'boq_item'">
+                        <field name="total_cost" readonly="1" string="Total Cost (Children)"/>
+                        <field name="profit_amount" readonly="1" string="Total Profit (Children)"/>
+                        <field name="sale_total" readonly="1" string="Total Sale (Children)"
+                               class="oe_subtotal_footer_separator"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Extend project.project form — add Costing Analysis notebook page
+    ================================================================ -->
+    <record id="view_project_project_form_costing_analysis" model="ir.ui.view">
+        <field name="name">project.project.form.costing.analysis</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.project_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Costing Analysis" name="costing_analysis">
+
+                    <!-- Editable Analysis Lines -->
+                    <field name="analysis_line_ids"
+                           context="{
+                               'default_project_id': id,
+                               'default_line_type': 'division'
+                           }">
+                        <list editable="bottom"
+                              decoration-bf="line_type == 'division'"
+                              decoration-it="line_type == 'subdivision'">
+
+                            <field name="sequence" widget="handle"/>
+                            <field name="sequence_no" string="No." readonly="1" optional="show"/>
+                            <field name="line_type" column_invisible="1"/>
+                            <field name="parent_id" optional="show"
+                                   domain="[('project_id', '=', parent.id), ('line_type', 'in', ['division', 'subdivision'])]"
+                                   invisible="line_type == 'division'"/>
+
+                            <!-- Hierarchy columns — shown/hidden by line type -->
+                            <field name="costing_section" string="Works Division"
+                                   invisible="line_type == 'boq_item'"/>
+                            <field name="work_type_id" string="Sub-division Works"
+                                   domain="[('costing_section', '=', costing_section), ('active', '=', True)]"
+                                   invisible="line_type != 'subdivision'"/>
+                            <field name="boq_item_template_id" string="B.O.Q Item Work"
+                                   invisible="line_type != 'boq_item'"/>
+                            <field name="name" string="Description"
+                                   invisible="line_type == 'boq_item'"/>
+
+                            <!-- BOQ item detail columns -->
+                            <field name="product_id" optional="show"
+                                   invisible="line_type != 'boq_item'"/>
+                            <field name="uom_name" string="Unit"
+                                   invisible="line_type != 'boq_item'"/>
+                            <field name="quantity"
+                                   invisible="line_type != 'boq_item'"/>
+
+                            <!-- Cost columns — only for boq_item rows -->
+                            <field name="material_total" string="Material" readonly="1"
+                                   invisible="line_type in ('division','subdivision')"
+                                   sum="Total Material"/>
+                            <field name="labor_total" string="Labor" readonly="1"
+                                   invisible="line_type in ('division','subdivision')"
+                                   sum="Total Labor"/>
+                            <field name="overhead_total" string="Overhead" readonly="1"
+                                   invisible="line_type in ('division','subdivision')"
+                                   sum="Total Overhead"/>
+                            <field name="total_cost" string="Total Cost" readonly="1"
+                                   invisible="line_type in ('division','subdivision')"
+                                   sum="Total Cost"/>
+                            <field name="suggested_profit_percent" string="Profit %"
+                                   invisible="line_type != 'boq_item'"/>
+                            <field name="profit_amount" string="Profit" readonly="1"
+                                   invisible="line_type in ('division','subdivision')"
+                                   sum="Total Profit"/>
+                            <field name="sale_total" string="Sale Total" readonly="1"
+                                   invisible="line_type in ('division','subdivision')"
+                                   sum="Total Sale"/>
+
+                            <control>
+                                <create string="Add Works Division"
+                                        context="{'default_line_type': 'division'}"/>
+                                <create string="Add Sub-division Works"
+                                        context="{'default_line_type': 'subdivision'}"/>
+                                <create string="Add B.O.Q Item Work"
+                                        context="{'default_line_type': 'boq_item'}"/>
+                            </control>
+                        </list>
+                    </field>
+
+                    <!-- Project-level totals summary -->
+                    <div class="oe_clear"/>
+                    <group string="Project Costing Totals"
+                           class="oe_subtotal_footer oe_right">
+                        <field name="analysis_material_total" readonly="1"
+                               string="Total Material"/>
+                        <field name="analysis_labor_total" readonly="1"
+                               string="Total Labor"/>
+                        <field name="analysis_overhead_total" readonly="1"
+                               string="Total Overhead"/>
+                        <field name="analysis_total_cost" readonly="1"
+                               string="Total Cost"
+                               class="oe_subtotal_footer_separator"/>
+                        <field name="analysis_total_profit" readonly="1"
+                               string="Total Profit"/>
+                        <field name="analysis_total_sale" readonly="1"
+                               string="Total Sale Price"
+                               class="oe_subtotal_footer_separator"/>
+                    </group>
+
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
