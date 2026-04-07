@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from .farm_cost_type import COSTING_SECTION_SELECTION
 
 
@@ -83,6 +83,47 @@ class FarmBoqItem(models.Model):
     line_count = fields.Integer(
         string='Lines', compute='_compute_totals', store=True,
     )
+
+    # ── Execution / Task linkage ──────────────────────────────────────────────
+    task_id = fields.Many2one(
+        'project.task', string='Execution Task',
+        ondelete='set null', copy=False, readonly=True,
+        help='Execution task automatically created from this BOQ item.',
+    )
+    sale_order_id = fields.Many2one(
+        'sale.order', string='Quotation',
+        ondelete='set null', copy=False, readonly=True,
+        help='Sales quotation this BOQ item was included in.',
+    )
+    quotation_line_id = fields.Many2one(
+        'sale.order.line', string='Quotation Line',
+        ondelete='set null', copy=False, readonly=True,
+        help='Specific quotation line generated from this BOQ item.',
+    )
+    execution_status = fields.Selection([
+        ('draft', 'Draft'),
+        ('quoted', 'Quoted'),
+        ('task_created', 'Task Created'),
+        ('in_progress', 'In Progress'),
+        ('done', 'Done'),
+    ], string='Execution Status', compute='_compute_execution_status',
+       store=True, readonly=True)
+
+    @api.depends('sale_order_id', 'task_id', 'task_id.stage_id', 'task_id.stage_id.name')
+    def _compute_execution_status(self):
+        for rec in self:
+            if rec.task_id:
+                stage_name = (rec.task_id.stage_id.name or '').lower()
+                if any(w in stage_name for w in ('done', 'complet', 'finish', 'closed')):
+                    rec.execution_status = 'done'
+                elif any(w in stage_name for w in ('progress', 'process', 'active', 'start')):
+                    rec.execution_status = 'in_progress'
+                else:
+                    rec.execution_status = 'task_created'
+            elif rec.sale_order_id:
+                rec.execution_status = 'quoted'
+            else:
+                rec.execution_status = 'draft'
 
     @api.depends(
         'line_ids.material_amount',

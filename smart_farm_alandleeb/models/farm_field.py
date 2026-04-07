@@ -584,6 +584,16 @@ class FarmField(models.Model):
         help='When enabled, BOQ component lines are also added under each BOQ item in the quotation.',
     )
 
+    # ── Project / Execution Tasks ─────────────────────────────────────────────
+    project_id = fields.Many2one(
+        'project.project', string='Execution Project',
+        ondelete='set null', tracking=True,
+        help='Project under which execution tasks are automatically created from BOQ items.',
+    )
+    task_count = fields.Integer(
+        string='Tasks', compute='_compute_task_count',
+    )
+
     # ── Location / Notes ──────────────────────────────────────────────────────
     latitude = fields.Float(string='Latitude', digits=(10, 7))
     longitude = fields.Float(string='Longitude', digits=(10, 7))
@@ -1085,6 +1095,16 @@ class FarmField(models.Model):
         }
 
     # =========================================================================
+    # TASK COUNT
+    # =========================================================================
+    @api.depends('boq_item_ids.task_id')
+    def _compute_task_count(self):
+        for rec in self:
+            rec.task_count = len(
+                rec.boq_item_ids.filtered(lambda i: i.task_id).mapped('task_id')
+            )
+
+    # =========================================================================
     # SALE ORDER (QUOTATION) — generated from BOQ Items with selling prices
     # =========================================================================
     def _compute_sale_order_count(self):
@@ -1138,7 +1158,7 @@ class FarmField(models.Model):
                 })
 
             # Normal BOQ item line
-            self.env['sale.order.line'].create({
+            sol = self.env['sale.order.line'].create({
                 'order_id': so.id,
                 'display_type': False,
                 'name': item.name,
@@ -1146,6 +1166,8 @@ class FarmField(models.Model):
                 'product_uom_qty': item.qty_item,
                 'price_unit': item.total_sales_price_per_item,
             })
+            # Store quotation back-links on the BOQ item
+            item.write({'sale_order_id': so.id, 'quotation_line_id': sol.id})
 
             # Optional: include component detail lines under the BOQ item
             if self.include_detailed_lines:
@@ -1174,6 +1196,103 @@ class FarmField(models.Model):
             'view_mode': 'form',
             'target': 'current',
         }
+
+    def action_view_tasks(self):
+        self.ensure_one()
+        task_ids = (
+            self.boq_item_ids.filtered(lambda i: i.task_id).mapped('task_id').ids
+        )
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Execution Tasks — %s', self.name),
+            'res_model': 'project.task',
+            'view_mode': 'list,form',
+            'domain': [('id', 'in', task_ids)],
+            'target': 'current',
+        }
+
+    def action_create_execution_tasks(self):
+        self.ensure_one()
+
+        # ── Gate 1: final field costing must be approved ──────────────────────
+        if self.field_costing_state != 'approved':
+            raise UserError(_(
+                'You must complete and approve the final field costing analysis '
+                'before creating execution tasks.'
+            ))
+
+        # ── Gate 2: execution project must be set ─────────────────────────────
+        if not self.project_id:
+            raise UserError(_(
+                'Please set an Execution Project on this field before creating tasks.\n'
+                'Go to the Farm Information section and select a project.'
+            ))
+
+        # ── Gate 3: confirmed quotation must exist ────────────────────────────
+        confirmed_so = self.sale_order_ids.filtered(
+            lambda so: so.state in ('sale', 'done')
+        )
+        if not confirmed_so:
+            raise UserError(_(
+                'No confirmed quotation found for this field.\n'
+                'Please confirm a Sales Quotation before generating execution tasks.'
+            ))
+        so = confirmed_so[0]  # use first confirmed SO
+
+        # ── Collect BOQ items ─────────────────────────────────────────────────
+        boq_items = self.boq_item_ids.sorted(
+            key=lambda i: (i.costing_section, i.sequence, i.id)
+        )
+        if not boq_items:
+            raise UserError(_('No BOQ items found on this field.'))
+
+        section_labels = dict(
+            self.env['farm.boq.item']._fields['costing_section'].selection
+        )
+        created = 0
+
+        for item in boq_items:
+            if item.task_id:
+                continue  # already has a task — skip
+
+            # Build rich HTML description
+            lines = [
+                f'<b>Works Division:</b> {section_labels.get(item.costing_section, item.costing_section)}',
+            ]
+            if item.work_type_id:
+                lines.append(f'<b>Sub-division Works:</b> {item.work_type_id.name}')
+            if item.code:
+                lines.append(f'<b>BOQ Item Code:</b> {item.code}')
+            lines.append(
+                f'<b>Quantity:</b> {item.qty_item:g} {item.unit_name or ""}'.strip()
+            )
+            lines.append(f'<b>Selling Value:</b> {item.total_sales_price_qty_item:,.2f}')
+            lines.append(f'<b>Field:</b> {self.code} / {self.name}')
+            if self.partner_id:
+                lines.append(f'<b>Customer:</b> {self.partner_id.name}')
+            lines.append(f'<b>Quotation:</b> {so.name}')
+            if item.description:
+                lines.append(f'<b>Notes:</b> {item.description}')
+
+            task = self.env['project.task'].create({
+                'name': item.name,
+                'project_id': self.project_id.id,
+                'description': '<br/>'.join(lines),
+                'partner_id': self.partner_id.id if self.partner_id else False,
+            })
+            item.task_id = task.id
+            created += 1
+
+        if not created:
+            raise UserError(_(
+                'All BOQ items already have execution tasks. No new tasks were generated.'
+            ))
+
+        self.message_post(
+            body=_('%d execution task(s) created in project "%s" from quotation %s.',
+                   created, self.project_id.name, so.name)
+        )
+        return self.action_view_tasks()
 
     def action_view_quotations(self):
         self.ensure_one()
