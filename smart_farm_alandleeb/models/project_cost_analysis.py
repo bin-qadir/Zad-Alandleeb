@@ -258,27 +258,27 @@ class ProjectProject(models.Model):
     # ── Project-level analysis totals ─────────────────────────────────────────
     analysis_material_total = fields.Float(
         string='Analysis Material Total', digits=(16, 2),
-        compute='_compute_analysis_totals', store=True,
+        compute='_compute_analysis_totals',
     )
     analysis_labor_total = fields.Float(
         string='Analysis Labor Total', digits=(16, 2),
-        compute='_compute_analysis_totals', store=True,
+        compute='_compute_analysis_totals',
     )
     analysis_overhead_total = fields.Float(
         string='Analysis Overhead Total', digits=(16, 2),
-        compute='_compute_analysis_totals', store=True,
+        compute='_compute_analysis_totals',
     )
     analysis_total_cost = fields.Float(
         string='Analysis Total Cost', digits=(16, 2),
-        compute='_compute_analysis_totals', store=True,
+        compute='_compute_analysis_totals',
     )
     analysis_total_profit = fields.Float(
         string='Analysis Total Profit', digits=(16, 2),
-        compute='_compute_analysis_totals', store=True,
+        compute='_compute_analysis_totals',
     )
     analysis_total_sale = fields.Float(
         string='Analysis Total Sale', digits=(16, 2),
-        compute='_compute_analysis_totals', store=True,
+        compute='_compute_analysis_totals',
     )
 
     @api.depends(
