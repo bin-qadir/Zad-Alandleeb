@@ -97,7 +97,10 @@ def migrate(cr, version):
     _add_col(cr, 'farm_boq_item_template', 'work_type_id', 'INTEGER')
 
     # ── 2b. New columns on farm_cost_line ────────────────────────────────────
-    _add_col(cr, 'farm_cost_line', 'work_type_id', 'INTEGER')
+    _add_col(cr, 'farm_cost_line', 'work_type_id',         'INTEGER')
+    _add_col(cr, 'farm_cost_line', 'parent_section_id',    'INTEGER')
+    _add_col(cr, 'farm_cost_line', 'parent_subsection_id', 'INTEGER')
+    _add_col(cr, 'farm_cost_line', 'sequence_no',          'VARCHAR')
 
     # ── 2c. New column on product_template (default cost type) ───────────────
     _add_col(cr, 'product_template', 'cost_type_id', 'INTEGER')

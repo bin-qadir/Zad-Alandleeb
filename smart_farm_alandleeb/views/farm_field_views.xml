@@ -473,21 +473,21 @@
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
-                                           invisible="display_type in ('line_section','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"
                                            optional="show"/>
                                     <field name="product_id"
                                            string="Product"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','civil')]"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="total_cost" readonly="1"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <control>
                                         <create string="Add a line"/>
                                         <create string="Add a section"
@@ -562,18 +562,18 @@
                                                   decoration-it="display_type == 'line_note'">
                                                 <field name="sequence" widget="handle"/>
                                                 <field name="display_type" column_invisible="1"/>
-                                                <field name="line_no" invisible="display_type in ('line_section','line_note')"/>
+                                                <field name="line_no" invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                                 <field name="name" string="Description"/>
-                                                <field name="product_id" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="unit_name" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="qty_1" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_type_id" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_category" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_unit" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="material_amount" invisible="display_type in ('line_section','line_note')" sum="Material"/>
-                                                <field name="labor_amount" invisible="display_type in ('line_section','line_note')" sum="Labor"/>
-                                                <field name="overhead_amount" invisible="display_type in ('line_section','line_note')" sum="Overhead"/>
-                                                <field name="total_line_cost" invisible="display_type in ('line_section','line_note')" sum="Total"/>
+                                                <field name="product_id" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="unit_name" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="qty_1" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_type_id" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_category" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_unit" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="material_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Material"/>
+                                                <field name="labor_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Labor"/>
+                                                <field name="overhead_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Overhead"/>
+                                                <field name="total_line_cost" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Total"/>
                                                 <control>
                                                     <create string="Add a line"/>
                                                     <create string="Add a section" context="{'default_display_type': 'line_section'}"/>
@@ -694,21 +694,21 @@
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
-                                           invisible="display_type in ('line_section','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"
                                            optional="show"/>
                                     <field name="product_id"
                                            string="Product"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','arch')]"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="total_cost" readonly="1"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <control>
                                         <create string="Add a line"/>
                                         <create string="Add a section"
@@ -782,18 +782,18 @@
                                                   decoration-it="display_type == 'line_note'">
                                                 <field name="sequence" widget="handle"/>
                                                 <field name="display_type" column_invisible="1"/>
-                                                <field name="line_no" invisible="display_type in ('line_section','line_note')"/>
+                                                <field name="line_no" invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                                 <field name="name" string="Description"/>
-                                                <field name="product_id" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="unit_name" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="qty_1" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_type_id" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_category" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_unit" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="material_amount" invisible="display_type in ('line_section','line_note')" sum="Material"/>
-                                                <field name="labor_amount" invisible="display_type in ('line_section','line_note')" sum="Labor"/>
-                                                <field name="overhead_amount" invisible="display_type in ('line_section','line_note')" sum="Overhead"/>
-                                                <field name="total_line_cost" invisible="display_type in ('line_section','line_note')" sum="Total"/>
+                                                <field name="product_id" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="unit_name" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="qty_1" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_type_id" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_category" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_unit" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="material_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Material"/>
+                                                <field name="labor_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Labor"/>
+                                                <field name="overhead_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Overhead"/>
+                                                <field name="total_line_cost" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Total"/>
                                                 <control>
                                                     <create string="Add a line"/>
                                                     <create string="Add a section" context="{'default_display_type': 'line_section'}"/>
@@ -910,21 +910,21 @@
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
-                                           invisible="display_type in ('line_section','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"
                                            optional="show"/>
                                     <field name="product_id"
                                            string="Product"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','mechanical')]"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="total_cost" readonly="1"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <control>
                                         <create string="Add a line"/>
                                         <create string="Add a section"
@@ -998,18 +998,18 @@
                                                   decoration-it="display_type == 'line_note'">
                                                 <field name="sequence" widget="handle"/>
                                                 <field name="display_type" column_invisible="1"/>
-                                                <field name="line_no" invisible="display_type in ('line_section','line_note')"/>
+                                                <field name="line_no" invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                                 <field name="name" string="Description"/>
-                                                <field name="product_id" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="unit_name" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="qty_1" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_type_id" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_category" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_unit" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="material_amount" invisible="display_type in ('line_section','line_note')" sum="Material"/>
-                                                <field name="labor_amount" invisible="display_type in ('line_section','line_note')" sum="Labor"/>
-                                                <field name="overhead_amount" invisible="display_type in ('line_section','line_note')" sum="Overhead"/>
-                                                <field name="total_line_cost" invisible="display_type in ('line_section','line_note')" sum="Total"/>
+                                                <field name="product_id" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="unit_name" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="qty_1" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_type_id" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_category" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_unit" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="material_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Material"/>
+                                                <field name="labor_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Labor"/>
+                                                <field name="overhead_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Overhead"/>
+                                                <field name="total_line_cost" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Total"/>
                                                 <control>
                                                     <create string="Add a line"/>
                                                     <create string="Add a section" context="{'default_display_type': 'line_section'}"/>
@@ -1126,21 +1126,21 @@
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
-                                           invisible="display_type in ('line_section','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"
                                            optional="show"/>
                                     <field name="product_id"
                                            string="Product"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','electrical')]"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="total_cost" readonly="1"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <control>
                                         <create string="Add a line"/>
                                         <create string="Add a section"
@@ -1214,18 +1214,18 @@
                                                   decoration-it="display_type == 'line_note'">
                                                 <field name="sequence" widget="handle"/>
                                                 <field name="display_type" column_invisible="1"/>
-                                                <field name="line_no" invisible="display_type in ('line_section','line_note')"/>
+                                                <field name="line_no" invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                                 <field name="name" string="Description"/>
-                                                <field name="product_id" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="unit_name" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="qty_1" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_type_id" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_category" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_unit" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="material_amount" invisible="display_type in ('line_section','line_note')" sum="Material"/>
-                                                <field name="labor_amount" invisible="display_type in ('line_section','line_note')" sum="Labor"/>
-                                                <field name="overhead_amount" invisible="display_type in ('line_section','line_note')" sum="Overhead"/>
-                                                <field name="total_line_cost" invisible="display_type in ('line_section','line_note')" sum="Total"/>
+                                                <field name="product_id" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="unit_name" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="qty_1" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_type_id" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_category" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_unit" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="material_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Material"/>
+                                                <field name="labor_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Labor"/>
+                                                <field name="overhead_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Overhead"/>
+                                                <field name="total_line_cost" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Total"/>
                                                 <control>
                                                     <create string="Add a line"/>
                                                     <create string="Add a section" context="{'default_display_type': 'line_section'}"/>
@@ -1342,21 +1342,21 @@
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
-                                           invisible="display_type in ('line_section','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"
                                            optional="show"/>
                                     <field name="product_id"
                                            string="Product"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','irrigation')]"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="total_cost" readonly="1"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <control>
                                         <create string="Add a line"/>
                                         <create string="Add a section"
@@ -1430,18 +1430,18 @@
                                                   decoration-it="display_type == 'line_note'">
                                                 <field name="sequence" widget="handle"/>
                                                 <field name="display_type" column_invisible="1"/>
-                                                <field name="line_no" invisible="display_type in ('line_section','line_note')"/>
+                                                <field name="line_no" invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                                 <field name="name" string="Description"/>
-                                                <field name="product_id" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="unit_name" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="qty_1" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_type_id" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_category" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_unit" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="material_amount" invisible="display_type in ('line_section','line_note')" sum="Material"/>
-                                                <field name="labor_amount" invisible="display_type in ('line_section','line_note')" sum="Labor"/>
-                                                <field name="overhead_amount" invisible="display_type in ('line_section','line_note')" sum="Overhead"/>
-                                                <field name="total_line_cost" invisible="display_type in ('line_section','line_note')" sum="Total"/>
+                                                <field name="product_id" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="unit_name" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="qty_1" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_type_id" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_category" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_unit" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="material_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Material"/>
+                                                <field name="labor_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Labor"/>
+                                                <field name="overhead_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Overhead"/>
+                                                <field name="total_line_cost" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Total"/>
                                                 <control>
                                                     <create string="Add a line"/>
                                                     <create string="Add a section" context="{'default_display_type': 'line_section'}"/>
@@ -1558,21 +1558,21 @@
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
-                                           invisible="display_type in ('line_section','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"
                                            optional="show"/>
                                     <field name="product_id"
                                            string="Product"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','control_system')]"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="total_cost" readonly="1"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <control>
                                         <create string="Add a line"/>
                                         <create string="Add a section"
@@ -1646,18 +1646,18 @@
                                                   decoration-it="display_type == 'line_note'">
                                                 <field name="sequence" widget="handle"/>
                                                 <field name="display_type" column_invisible="1"/>
-                                                <field name="line_no" invisible="display_type in ('line_section','line_note')"/>
+                                                <field name="line_no" invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                                 <field name="name" string="Description"/>
-                                                <field name="product_id" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="unit_name" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="qty_1" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_type_id" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_category" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_unit" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="material_amount" invisible="display_type in ('line_section','line_note')" sum="Material"/>
-                                                <field name="labor_amount" invisible="display_type in ('line_section','line_note')" sum="Labor"/>
-                                                <field name="overhead_amount" invisible="display_type in ('line_section','line_note')" sum="Overhead"/>
-                                                <field name="total_line_cost" invisible="display_type in ('line_section','line_note')" sum="Total"/>
+                                                <field name="product_id" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="unit_name" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="qty_1" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_type_id" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_category" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_unit" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="material_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Material"/>
+                                                <field name="labor_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Labor"/>
+                                                <field name="overhead_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Overhead"/>
+                                                <field name="total_line_cost" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Total"/>
                                                 <control>
                                                     <create string="Add a line"/>
                                                     <create string="Add a section" context="{'default_display_type': 'line_section'}"/>
@@ -1776,21 +1776,21 @@
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
-                                           invisible="display_type in ('line_section','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"
                                            optional="show"/>
                                     <field name="product_id"
                                            string="Product"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','other')]"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="total_cost" readonly="1"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <control>
                                         <create string="Add a line"/>
                                         <create string="Add a section"
@@ -1864,18 +1864,18 @@
                                                   decoration-it="display_type == 'line_note'">
                                                 <field name="sequence" widget="handle"/>
                                                 <field name="display_type" column_invisible="1"/>
-                                                <field name="line_no" invisible="display_type in ('line_section','line_note')"/>
+                                                <field name="line_no" invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                                 <field name="name" string="Description"/>
-                                                <field name="product_id" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="unit_name" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="qty_1" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_type_id" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_category" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="cost_unit" invisible="display_type in ('line_section','line_note')"/>
-                                                <field name="material_amount" invisible="display_type in ('line_section','line_note')" sum="Material"/>
-                                                <field name="labor_amount" invisible="display_type in ('line_section','line_note')" sum="Labor"/>
-                                                <field name="overhead_amount" invisible="display_type in ('line_section','line_note')" sum="Overhead"/>
-                                                <field name="total_line_cost" invisible="display_type in ('line_section','line_note')" sum="Total"/>
+                                                <field name="product_id" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="unit_name" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="qty_1" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_type_id" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_category" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="cost_unit" invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                                <field name="material_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Material"/>
+                                                <field name="labor_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Labor"/>
+                                                <field name="overhead_amount" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Overhead"/>
+                                                <field name="total_line_cost" invisible="display_type in ('line_section','line_subsection','line_note')" sum="Total"/>
                                                 <control>
                                                     <create string="Add a line"/>
                                                     <create string="Add a section" context="{'default_display_type': 'line_section'}"/>
@@ -1941,17 +1941,26 @@
                         </page>
 
                         <!-- ================================================
-                             PAGE 9 — ALL COSTING SHEET  (main entry grid)
+                             PAGE 9 — ALL COSTING SHEET  (main hierarchical entry grid)
+                             Hierarchy: Works Division → Sub-division Works → BOQ Item
                         ================================================ -->
                         <page string="All Costing Sheet" name="all_costing_sheet">
                             <field name="cost_line_ids">
                                 <list editable="bottom"
                                       decoration-bf="display_type == 'line_section'"
-                                      decoration-it="display_type == 'line_note'">
+                                      decoration-muted="display_type == 'line_note'"
+                                      class="o_field_one2many_list">
+
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
 
-                                    <!-- 1. Works Division -->
+                                    <!-- Sequence No — auto-numbering (01 / 01.02 / 01.02.03) -->
+                                    <field name="sequence_no"
+                                           string="No."
+                                           readonly="1"
+                                           optional="show"/>
+
+                                    <!-- Works Division — shown on section rows and normal items -->
                                     <field name="costing_section"
                                            string="Works Division"
                                            widget="badge"
@@ -1961,48 +1970,58 @@
                                            decoration-warning="costing_section == 'irrigation'"
                                            decoration-danger="costing_section == 'control_system'"
                                            decoration-muted="costing_section == 'other'"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_subsection','line_note')"/>
 
-                                    <!-- 2. Sub-division Works (filtered by section) -->
+                                    <!-- Sub-division Works — shown on subsection rows and normal items -->
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
-                                           invisible="display_type in ('line_section','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"
                                            optional="show"/>
 
-                                    <!-- 3. Product -->
+                                    <!-- Parent hierarchy (optional columns for linking) -->
+                                    <field name="parent_section_id"
+                                           string="Division"
+                                           optional="hide"
+                                           invisible="display_type == 'line_section'"
+                                           domain="[('field_id','=',parent.id),('display_type','=','line_section')]"/>
+                                    <field name="parent_subsection_id"
+                                           string="Sub-division"
+                                           optional="hide"
+                                           invisible="display_type in ('line_section','line_subsection')"
+                                           domain="[('field_id','=',parent.id),('display_type','=','line_subsection')]"/>
+
+                                    <!-- Product (normal items only) -->
                                     <field name="product_id"
                                            string="Product"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
 
-                                    <!-- 4. Description -->
+                                    <!-- Description (all rows) -->
                                     <field name="name"
                                            string="Description"
                                            placeholder="Description..."/>
 
-                                    <!-- 5. Cost Type -->
+                                    <!-- Cost Type (normal items only) -->
                                     <field name="cost_type_id"
                                            string="Cost Type"
-                                           invisible="display_type in ('line_section','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
 
-                                    <!-- 6. Quantity -->
+                                    <!-- Quantity / Unit Cost / Total (normal items only) -->
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_note')"/>
-
-                                    <!-- 7. Unit Cost -->
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_note')"/>
-
-                                    <!-- 8. Total Cost -->
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <field name="total_cost" readonly="1"
-                                           invisible="display_type in ('line_section','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"
                                            sum="Grand Total"/>
 
                                     <control>
-                                        <create string="Add a line"/>
-                                        <create string="Add a section"
+                                        <create string="Add BOQ Item"/>
+                                        <create string="Add Works Division"
                                                 context="{'default_display_type': 'line_section'}"/>
-                                        <create string="Add a note"
+                                        <create string="Add Sub-division Works"
+                                                context="{'default_display_type': 'line_subsection'}"/>
+                                        <create string="Add Note"
                                                 context="{'default_display_type': 'line_note'}"/>
                                     </control>
                                 </list>
