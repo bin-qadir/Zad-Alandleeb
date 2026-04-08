@@ -1945,6 +1945,16 @@
                              Hierarchy: Works Division → Sub-division Works → BOQ Item
                         ================================================ -->
                         <page string="All Costing Sheet" name="all_costing_sheet">
+
+                            <!-- Insert from template button -->
+                            <div class="mb-2">
+                                <button name="action_open_cost_line_template_wizard"
+                                        string="Insert B.O.Q Item Template"
+                                        type="object"
+                                        class="btn-secondary"
+                                        icon="fa-plus-square"/>
+                            </div>
+
                             <field name="cost_line_ids">
                                 <list editable="bottom"
                                       decoration-bf="display_type == 'line_section'"
@@ -2006,6 +2016,13 @@
                                            string="Cost Type"
                                            invisible="display_type in ('line_section','line_subsection','line_note')"/>
 
+                                    <!-- Source template indicator (optional) -->
+                                    <field name="source_template_id"
+                                           string="Template"
+                                           optional="hide"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"
+                                           readonly="1"/>
+
                                     <!-- Quantity / Unit Cost / Total (normal items only) -->
                                     <field name="quantity"
                                            invisible="display_type in ('line_section','line_subsection','line_note')"/>
@@ -2014,6 +2031,14 @@
                                     <field name="total_cost" readonly="1"
                                            invisible="display_type in ('line_section','line_subsection','line_note')"
                                            sum="Grand Total"/>
+
+                                    <!-- Save as template — normal items only -->
+                                    <button name="action_save_as_boq_template"
+                                            string="Save as Template"
+                                            type="object"
+                                            icon="fa-floppy-o"
+                                            title="Save this item as a new BOQ Item Template"
+                                            invisible="display_type"/>
 
                                     <control>
                                         <create string="Add BOQ Item"/>
@@ -2026,6 +2051,7 @@
                                     </control>
                                 </list>
                             </field>
+
                             <group class="oe_subtotal_footer oe_right">
                                 <field name="material_total" readonly="1" string="Material Total"/>
                                 <field name="labor_total" readonly="1" string="Labor Total"/>

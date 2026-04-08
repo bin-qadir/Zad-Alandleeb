@@ -163,3 +163,7 @@ access_farm_boq_item_line_admin,farm.boq.item.line admin,model_farm_boq_item_lin
 access_farm_insert_boq_wizard_user,farm.insert.boq.item.template.wizard user,model_farm_insert_boq_item_template_wizard,smart_farm_alandleeb.group_farm_user,1,1,1,1
 access_farm_insert_boq_wizard_manager,farm.insert.boq.item.template.wizard manager,model_farm_insert_boq_item_template_wizard,smart_farm_alandleeb.group_farm_manager,1,1,1,1
 access_farm_insert_boq_wizard_admin,farm.insert.boq.item.template.wizard admin,model_farm_insert_boq_item_template_wizard,smart_farm_alandleeb.group_farm_admin,1,1,1,1
+
+access_farm_cost_line_insert_wizard_user,farm.cost.line.insert.wizard user,model_farm_cost_line_insert_wizard,smart_farm_alandleeb.group_farm_user,1,1,1,1
+access_farm_cost_line_insert_wizard_manager,farm.cost.line.insert.wizard manager,model_farm_cost_line_insert_wizard,smart_farm_alandleeb.group_farm_manager,1,1,1,1
+access_farm_cost_line_insert_wizard_admin,farm.cost.line.insert.wizard admin,model_farm_cost_line_insert_wizard,smart_farm_alandleeb.group_farm_admin,1,1,1,1

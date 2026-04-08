@@ -11,6 +11,7 @@ from . import farm_cost_analysis_wizard
 from . import farm_boq_item_template
 from . import farm_boq_item
 from . import farm_insert_boq_wizard
+from . import farm_cost_line_template_wizard
 from . import farm_field
 from . import farm_crop
 from . import farm_livestock

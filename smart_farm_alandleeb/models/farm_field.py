@@ -918,6 +918,22 @@ class FarmField(models.Model):
             },
         }
 
+    def action_open_cost_line_template_wizard(self):
+        """Open the Insert BOQ Template into Costing Sheet wizard.
+        Used from the All Costing Sheet tab to add a template as a cost line.
+        """
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Insert B.O.Q Item Template'),
+            'res_model': 'farm.cost.line.insert.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_field_id': self.id,
+            },
+        }
+
     # =========================================================================
     # OVERALL COST ANALYSIS WORKFLOW
     # =========================================================================

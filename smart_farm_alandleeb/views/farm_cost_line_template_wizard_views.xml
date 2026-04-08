@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         farm.cost.line.insert.wizard — Form view
+         Opens from the All Costing Sheet "Insert B.O.Q Item Template" button.
+         Creates one farm.cost.line from the chosen BOQ template.
+    ================================================================ -->
+    <record id="view_farm_cost_line_insert_wizard_form" model="ir.ui.view">
+        <field name="name">farm.cost.line.insert.wizard.form</field>
+        <field name="model">farm.cost.line.insert.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Insert B.O.Q Item Template into Costing Sheet">
+                <sheet>
+
+                    <group>
+                        <group string="Template Selection">
+                            <field name="field_id" readonly="1"/>
+                            <field name="template_id"/>
+                            <field name="quantity"/>
+                        </group>
+                        <group string="Placement">
+                            <field name="costing_section" string="Works Division"/>
+                            <field name="work_type_id" string="Sub-division Works"
+                                   domain="[('costing_section','=',costing_section),('active','=',True)]"/>
+                            <field name="parent_section_id"
+                                   domain="[('field_id','=',field_id),('display_type','=','line_section')]"/>
+                            <field name="parent_subsection_id"
+                                   domain="[('field_id','=',field_id),('display_type','=','line_subsection')]"/>
+                        </group>
+                    </group>
+
+                    <group string="Template Preview"
+                           invisible="not template_id">
+                        <group>
+                            <field name="template_description" readonly="1"/>
+                            <field name="template_line_count" readonly="1" string="Component Lines"/>
+                        </group>
+                        <group>
+                            <field name="template_unit_cost" readonly="1"/>
+                            <field name="template_material_total" readonly="1"/>
+                            <field name="template_labor_total" readonly="1"/>
+                            <field name="template_overhead_total" readonly="1"/>
+                        </group>
+                    </group>
+
+                </sheet>
+
+                <footer>
+                    <button name="action_insert"
+                            string="Insert into Costing Sheet"
+                            type="object"
+                            class="btn-primary"
+                            close="1"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

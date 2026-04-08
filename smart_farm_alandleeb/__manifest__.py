@@ -47,6 +47,7 @@ Smart Farm Al Andleeb
         'views/farm_irrigation_type_views.xml',
         'views/farm_boq_item_template_views.xml',
         'views/farm_insert_boq_wizard_views.xml',
+        'views/farm_cost_line_template_wizard_views.xml',
         'views/farm_cost_analysis_wizard_views.xml',
         'views/farm_field_views.xml',
         'views/farm_crop_views.xml',
