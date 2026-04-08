@@ -39,6 +39,7 @@ Smart Farm Al Andleeb
         'data/farm_irrigation_type_data.xml',
         'data/cron.xml',
         'views/farm_boq_work_type_views.xml',
+        'views/farm_product_extension_views.xml',
         'views/project_cost_analysis_views.xml',
         'views/farm_farm_views.xml',
         'views/farm_soil_type_views.xml',

@@ -470,9 +470,15 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
                                     <field name="costing_section" column_invisible="1"/>
-                                    <field name="name" optional="show" placeholder="Description..."/>
+                                    <field name="work_type_id"
+                                           string="Sub-division Works"
+                                           domain="[('costing_section','=',costing_section),('active','=',True)]"
+                                           invisible="display_type in ('line_section','line_note')"
+                                           optional="show"/>
                                     <field name="product_id"
+                                           string="Product"
                                            invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','civil')]"
                                            invisible="display_type in ('line_section','line_note')"/>
@@ -685,9 +691,15 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
                                     <field name="costing_section" column_invisible="1"/>
-                                    <field name="name" optional="show" placeholder="Description..."/>
+                                    <field name="work_type_id"
+                                           string="Sub-division Works"
+                                           domain="[('costing_section','=',costing_section),('active','=',True)]"
+                                           invisible="display_type in ('line_section','line_note')"
+                                           optional="show"/>
                                     <field name="product_id"
+                                           string="Product"
                                            invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','arch')]"
                                            invisible="display_type in ('line_section','line_note')"/>
@@ -895,9 +907,15 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
                                     <field name="costing_section" column_invisible="1"/>
-                                    <field name="name" optional="show" placeholder="Description..."/>
+                                    <field name="work_type_id"
+                                           string="Sub-division Works"
+                                           domain="[('costing_section','=',costing_section),('active','=',True)]"
+                                           invisible="display_type in ('line_section','line_note')"
+                                           optional="show"/>
                                     <field name="product_id"
+                                           string="Product"
                                            invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','mechanical')]"
                                            invisible="display_type in ('line_section','line_note')"/>
@@ -1105,9 +1123,15 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
                                     <field name="costing_section" column_invisible="1"/>
-                                    <field name="name" optional="show" placeholder="Description..."/>
+                                    <field name="work_type_id"
+                                           string="Sub-division Works"
+                                           domain="[('costing_section','=',costing_section),('active','=',True)]"
+                                           invisible="display_type in ('line_section','line_note')"
+                                           optional="show"/>
                                     <field name="product_id"
+                                           string="Product"
                                            invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','electrical')]"
                                            invisible="display_type in ('line_section','line_note')"/>
@@ -1315,9 +1339,15 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
                                     <field name="costing_section" column_invisible="1"/>
-                                    <field name="name" optional="show" placeholder="Description..."/>
+                                    <field name="work_type_id"
+                                           string="Sub-division Works"
+                                           domain="[('costing_section','=',costing_section),('active','=',True)]"
+                                           invisible="display_type in ('line_section','line_note')"
+                                           optional="show"/>
                                     <field name="product_id"
+                                           string="Product"
                                            invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','irrigation')]"
                                            invisible="display_type in ('line_section','line_note')"/>
@@ -1525,9 +1555,15 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
                                     <field name="costing_section" column_invisible="1"/>
-                                    <field name="name" optional="show" placeholder="Description..."/>
+                                    <field name="work_type_id"
+                                           string="Sub-division Works"
+                                           domain="[('costing_section','=',costing_section),('active','=',True)]"
+                                           invisible="display_type in ('line_section','line_note')"
+                                           optional="show"/>
                                     <field name="product_id"
+                                           string="Product"
                                            invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','control_system')]"
                                            invisible="display_type in ('line_section','line_note')"/>
@@ -1737,9 +1773,15 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
                                     <field name="costing_section" column_invisible="1"/>
-                                    <field name="name" optional="show" placeholder="Description..."/>
+                                    <field name="work_type_id"
+                                           string="Sub-division Works"
+                                           domain="[('costing_section','=',costing_section),('active','=',True)]"
+                                           invisible="display_type in ('line_section','line_note')"
+                                           optional="show"/>
                                     <field name="product_id"
+                                           string="Product"
                                            invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','other')]"
                                            invisible="display_type in ('line_section','line_note')"/>
@@ -1899,34 +1941,78 @@
                         </page>
 
                         <!-- ================================================
-                             PAGE 9 — ALL COSTING SHEET
+                             PAGE 9 — ALL COSTING SHEET  (main entry grid)
                         ================================================ -->
                         <page string="All Costing Sheet" name="all_costing_sheet">
-                            <field name="cost_line_ids" readonly="True">
-                                <list>
-                                    <field name="costing_section" widget="badge"
+                            <field name="cost_line_ids">
+                                <list editable="bottom"
+                                      decoration-bf="display_type == 'line_section'"
+                                      decoration-it="display_type == 'line_note'">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="display_type" column_invisible="1"/>
+
+                                    <!-- 1. Works Division -->
+                                    <field name="costing_section"
+                                           string="Works Division"
+                                           widget="badge"
                                            decoration-info="costing_section == 'civil'"
                                            decoration-primary="costing_section == 'arch'"
                                            decoration-success="costing_section == 'electrical'"
                                            decoration-warning="costing_section == 'irrigation'"
                                            decoration-danger="costing_section == 'control_system'"
-                                           decoration-muted="costing_section == 'other'"/>
-                                    <field name="display_type" column_invisible="1"/>
-                                    <field name="name" optional="show"/>
+                                           decoration-muted="costing_section == 'other'"
+                                           invisible="display_type in ('line_section','line_note')"/>
+
+                                    <!-- 2. Sub-division Works (filtered by section) -->
+                                    <field name="work_type_id"
+                                           string="Sub-division Works"
+                                           domain="[('costing_section','=',costing_section),('active','=',True)]"
+                                           invisible="display_type in ('line_section','line_note')"
+                                           optional="show"/>
+
+                                    <!-- 3. Product -->
                                     <field name="product_id"
+                                           string="Product"
                                            invisible="display_type in ('line_section','line_note')"/>
+
+                                    <!-- 4. Description -->
+                                    <field name="name"
+                                           string="Description"
+                                           placeholder="Description..."/>
+
+                                    <!-- 5. Cost Type -->
                                     <field name="cost_type_id"
+                                           string="Cost Type"
                                            invisible="display_type in ('line_section','line_note')"/>
+
+                                    <!-- 6. Quantity -->
                                     <field name="quantity"
                                            invisible="display_type in ('line_section','line_note')"/>
+
+                                    <!-- 7. Unit Cost -->
                                     <field name="unit_cost"
                                            invisible="display_type in ('line_section','line_note')"/>
-                                    <field name="total_cost"
-                                           invisible="display_type in ('line_section','line_note')"/>
+
+                                    <!-- 8. Total Cost -->
+                                    <field name="total_cost" readonly="1"
+                                           invisible="display_type in ('line_section','line_note')"
+                                           sum="Grand Total"/>
+
+                                    <control>
+                                        <create string="Add a line"/>
+                                        <create string="Add a section"
+                                                context="{'default_display_type': 'line_section'}"/>
+                                        <create string="Add a note"
+                                                context="{'default_display_type': 'line_note'}"/>
+                                    </control>
                                 </list>
                             </field>
-                            <group class="oe_subtotal_footer">
-                                <field name="total_cost" readonly="True" string="Grand Total"/>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="material_total" readonly="1" string="Material Total"/>
+                                <field name="labor_total" readonly="1" string="Labor Total"/>
+                                <field name="overhead_total" readonly="1" string="Overhead Total"/>
+                                <field name="total_cost" readonly="1" string="Grand Total"
+                                       class="oe_subtotal_footer_separator"/>
                             </group>
                         </page>
 

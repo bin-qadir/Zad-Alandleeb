@@ -15,6 +15,8 @@ Changes covered (all code added after the initial 18.0.8.0.0 install):
 
   NEW COLUMNS on existing tables
     farm_boq_item_template  : work_type_id
+    farm_cost_line          : work_type_id
+    product_template        : cost_type_id (default cost type for costing lines)
     farm_boq_item           : work_type_id, task_id, sale_order_id,
                               quotation_line_id, execution_status
     farm_field              : partner_id, include_detailed_lines, project_id
@@ -93,6 +95,12 @@ def migrate(cr, version):
 
     # ── 2. New columns on farm_boq_item_template ─────────────────────────────
     _add_col(cr, 'farm_boq_item_template', 'work_type_id', 'INTEGER')
+
+    # ── 2b. New columns on farm_cost_line ────────────────────────────────────
+    _add_col(cr, 'farm_cost_line', 'work_type_id', 'INTEGER')
+
+    # ── 2c. New column on product_template (default cost type) ───────────────
+    _add_col(cr, 'product_template', 'cost_type_id', 'INTEGER')
 
     # ── 3. New columns on farm_boq_item ─────────────────────────────────────
     _add_col(cr, 'farm_boq_item', 'work_type_id',      'INTEGER')

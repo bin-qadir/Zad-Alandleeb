@@ -27,12 +27,20 @@ class FarmCostLine(models.Model):
         default='other',
     )
 
-    name = fields.Char(string='Description')
-    cost_type_id = fields.Many2one(
-        'farm.cost.type', string='Cost Type', ondelete='restrict',
+    # Work type classification (filtered by costing_section)
+    work_type_id = fields.Many2one(
+        'farm.boq.work.type',
+        string='Sub-division Works',
+        ondelete='set null',
+        domain="[('costing_section', '=', costing_section), ('active', '=', True)]",
     )
+
+    name = fields.Char(string='Description')
     product_id = fields.Many2one(
         'product.product', string='Product', ondelete='restrict',
+    )
+    cost_type_id = fields.Many2one(
+        'farm.cost.type', string='Cost Type', ondelete='restrict',
     )
     quantity = fields.Float(string='Quantity', digits=(16, 3), default=1.0)
     unit_cost = fields.Float(string='Unit Cost', digits=(16, 2))
@@ -53,10 +61,45 @@ class FarmCostLine(models.Model):
         store=False,
     )
 
+    # =========================================================================
+    # ONCHANGES
+    # =========================================================================
+
+    @api.onchange('costing_section')
+    def _onchange_costing_section(self):
+        """Clear work_type when section changes so domain is respected."""
+        if self.work_type_id and self.work_type_id.costing_section != self.costing_section:
+            self.work_type_id = False
+
+    @api.onchange('work_type_id')
+    def _onchange_work_type_id(self):
+        """Auto-fill costing_section from selected work type."""
+        if self.work_type_id and self.work_type_id.costing_section:
+            if not self.costing_section or self.costing_section != self.work_type_id.costing_section:
+                self.costing_section = self.work_type_id.costing_section
+
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
+        """Auto-fill cost_type_id from product's default cost type when available."""
+        if not self.product_id:
+            return
+        product_tmpl = self.product_id.product_tmpl_id
+        if hasattr(product_tmpl, 'cost_type_id') and product_tmpl.cost_type_id:
+            self.cost_type_id = product_tmpl.cost_type_id
+
+    @api.onchange('cost_type_id')
+    def _onchange_cost_type_id(self):
+        """Auto-fill costing_section from selected cost type."""
+        if self.cost_type_id and self.cost_type_id.costing_section:
+            self.costing_section = self.cost_type_id.costing_section
+
+    # =========================================================================
+    # CREATE / DEFAULTS
+    # =========================================================================
+
     @api.model
     def default_get(self, fields_list):
         res = super().default_get(fields_list)
-        # Ensure costing_section is populated from context when not yet set
         if 'costing_section' in fields_list and not res.get('costing_section'):
             section = self.env.context.get('default_costing_section')
             if section:
@@ -72,8 +115,3 @@ class FarmCostLine(models.Model):
                 vals['costing_section'] = section
         return super().create(vals_list)
 
-    @api.onchange('cost_type_id')
-    def _onchange_cost_type_id(self):
-        """Auto-fill costing_section from selected cost type."""
-        if self.cost_type_id and self.cost_type_id.costing_section:
-            self.costing_section = self.cost_type_id.costing_section
