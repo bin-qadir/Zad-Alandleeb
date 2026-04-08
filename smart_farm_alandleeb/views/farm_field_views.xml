@@ -1943,26 +1943,32 @@
                         <!-- ================================================
                              PAGE 9 — ALL COSTING SHEET  (main hierarchical entry grid)
                              Hierarchy: Works Division → Sub-division Works → BOQ Item
+                             Template-based rows  = decoration-info (blue tint)
+                             Manually created rows = no tint
                         ================================================ -->
                         <page string="All Costing Sheet" name="all_costing_sheet">
 
-                            <!-- Insert from template button -->
+                            <!-- Insert from template button (primary workflow entry) -->
                             <div class="mb-2">
                                 <button name="action_open_cost_line_template_wizard"
                                         string="Insert B.O.Q Item Template"
                                         type="object"
-                                        class="btn-secondary"
-                                        icon="fa-plus-square"/>
+                                        class="btn-primary"
+                                        icon="fa-download"
+                                        title="Pick a BOQ Item Template and insert it as a cost line"/>
                             </div>
 
                             <field name="cost_line_ids">
                                 <list editable="bottom"
                                       decoration-bf="display_type == 'line_section'"
                                       decoration-muted="display_type == 'line_note'"
+                                      decoration-info="is_template_based and not display_type"
                                       class="o_field_one2many_list">
 
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
+                                    <field name="is_template_based" column_invisible="1"/>
+                                    <field name="is_manual_item" column_invisible="1"/>
 
                                     <!-- Sequence No — auto-numbering (01 / 01.02 / 01.02.03) -->
                                     <field name="sequence_no"
@@ -1982,7 +1988,7 @@
                                            decoration-muted="costing_section == 'other'"
                                            invisible="display_type in ('line_subsection','line_note')"/>
 
-                                    <!-- Sub-division Works — shown on subsection rows and normal items -->
+                                    <!-- Sub-division Works — shown on normal items -->
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
@@ -2016,9 +2022,9 @@
                                            string="Cost Type"
                                            invisible="display_type in ('line_section','line_subsection','line_note')"/>
 
-                                    <!-- Source template indicator (optional) -->
+                                    <!-- Source template (optional read-only column — shows which template it came from) -->
                                     <field name="source_template_id"
-                                           string="Template"
+                                           string="Source Template"
                                            optional="hide"
                                            invisible="display_type in ('line_section','line_subsection','line_note')"
                                            readonly="1"/>
@@ -2032,16 +2038,43 @@
                                            invisible="display_type in ('line_section','line_subsection','line_note')"
                                            sum="Grand Total"/>
 
-                                    <!-- Save as template — normal items only -->
+                                    <!-- Per-line breakdown (optional hidden columns) -->
+                                    <field name="material_amount" readonly="1"
+                                           optional="hide"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"
+                                           sum="Material"/>
+                                    <field name="labor_amount" readonly="1"
+                                           optional="hide"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"
+                                           sum="Labor"/>
+                                    <field name="overhead_amount" readonly="1"
+                                           optional="hide"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"
+                                           sum="Overhead"/>
+
+                                    <!-- Profit (optional hidden columns) -->
+                                    <field name="profit_percent"
+                                           optional="hide"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                    <field name="profit_amount" readonly="1"
+                                           optional="hide"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"
+                                           sum="Profit"/>
+                                    <field name="sale_total" readonly="1"
+                                           optional="hide"
+                                           invisible="display_type in ('line_section','line_subsection','line_note')"
+                                           sum="Sale Total"/>
+
+                                    <!-- Save as Template — only for manual items not already linked to a template -->
                                     <button name="action_save_as_boq_template"
                                             string="Save as Template"
                                             type="object"
                                             icon="fa-floppy-o"
-                                            title="Save this item as a new BOQ Item Template"
-                                            invisible="display_type"/>
+                                            title="Save this manually created item as a new reusable BOQ Template"
+                                            invisible="display_type or source_template_id"/>
 
                                     <control>
-                                        <create string="Add BOQ Item"/>
+                                        <create string="Add BOQ Item (Manual)"/>
                                         <create string="Add Works Division"
                                                 context="{'default_display_type': 'line_section'}"/>
                                         <create string="Add Sub-division Works"

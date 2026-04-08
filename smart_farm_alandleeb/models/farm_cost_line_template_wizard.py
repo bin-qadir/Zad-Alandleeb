@@ -112,7 +112,9 @@ class FarmCostLineInsertWizard(models.TransientModel):
             'product_id': tpl.product_id.id if tpl.product_id else False,
             'quantity': self.quantity,
             'unit_cost': tpl.total_cost_per_item,
+            'profit_percent': tpl.profit_percent,
             'source_template_id': tpl.id,
+            'is_manual_item': False,
             'parent_section_id': self.parent_section_id.id if self.parent_section_id else False,
             'parent_subsection_id': self.parent_subsection_id.id if self.parent_subsection_id else False,
         })

@@ -15,7 +15,10 @@ Changes covered (all code added after the initial 18.0.8.0.0 install):
 
   NEW COLUMNS on existing tables
     farm_boq_item_template  : work_type_id
-    farm_cost_line          : work_type_id
+    farm_cost_line          : work_type_id, parent_section_id, parent_subsection_id,
+                              sequence_no, source_template_id, is_manual_item,
+                              is_template_based, profit_percent, profit_amount,
+                              sale_total, material_amount, labor_amount, overhead_amount
     product_template        : cost_type_id (default cost type for costing lines)
     farm_boq_item           : work_type_id, task_id, sale_order_id,
                               quotation_line_id, execution_status
@@ -102,6 +105,17 @@ def migrate(cr, version):
     _add_col(cr, 'farm_cost_line', 'parent_subsection_id', 'INTEGER')
     _add_col(cr, 'farm_cost_line', 'sequence_no',          'VARCHAR')
     _add_col(cr, 'farm_cost_line', 'source_template_id',   'INTEGER')
+    # tracking
+    _add_col(cr, 'farm_cost_line', 'is_manual_item',       'BOOLEAN', default='TRUE')
+    _add_col(cr, 'farm_cost_line', 'is_template_based',    'BOOLEAN', default='FALSE')
+    # profit / sale
+    _add_col(cr, 'farm_cost_line', 'profit_percent',       'DOUBLE PRECISION', default='0.0')
+    _add_col(cr, 'farm_cost_line', 'profit_amount',        'DOUBLE PRECISION', default='0.0')
+    _add_col(cr, 'farm_cost_line', 'sale_total',           'DOUBLE PRECISION', default='0.0')
+    # per-line cost breakdown
+    _add_col(cr, 'farm_cost_line', 'material_amount',      'DOUBLE PRECISION', default='0.0')
+    _add_col(cr, 'farm_cost_line', 'labor_amount',         'DOUBLE PRECISION', default='0.0')
+    _add_col(cr, 'farm_cost_line', 'overhead_amount',      'DOUBLE PRECISION', default='0.0')
 
     # ── 2c. New column on product_template (default cost type) ───────────────
     _add_col(cr, 'product_template', 'cost_type_id', 'INTEGER')

@@ -86,6 +86,47 @@ class FarmCostLine(models.Model):
         index=True,
     )
 
+    # ── Source tracking ───────────────────────────────────────────────────────
+    is_manual_item = fields.Boolean(
+        string='Manual Item',
+        default=True,
+        help='True when the item was created directly in the costing sheet.\n'
+             'False when it was inserted from a BOQ template.',
+    )
+    is_template_based = fields.Boolean(
+        string='Template Based',
+        compute='_compute_is_template_based',
+        store=True,
+        help='True when this line was inserted from a BOQ template.',
+    )
+
+    # ── Per-line cost breakdown (display purposes) ────────────────────────────
+    material_amount = fields.Float(
+        string='Material', digits=(16, 2),
+        compute='_compute_category_amounts', store=True,
+    )
+    labor_amount = fields.Float(
+        string='Labor', digits=(16, 2),
+        compute='_compute_category_amounts', store=True,
+    )
+    overhead_amount = fields.Float(
+        string='Overhead', digits=(16, 2),
+        compute='_compute_category_amounts', store=True,
+    )
+
+    # ── Profit / sale ─────────────────────────────────────────────────────────
+    profit_percent = fields.Float(
+        string='Profit %', digits=(16, 2), default=0.0,
+    )
+    profit_amount = fields.Float(
+        string='Profit Amount', digits=(16, 2),
+        compute='_compute_profit', store=True,
+    )
+    sale_total = fields.Float(
+        string='Sale Total', digits=(16, 2),
+        compute='_compute_profit', store=True,
+    )
+
     # ── Category mirror ───────────────────────────────────────────────────────
     cost_category = fields.Selection(
         related='cost_type_id.category',
@@ -105,6 +146,38 @@ class FarmCostLine(models.Model):
                 rec.total_cost = 0.0
             else:
                 rec.total_cost = rec.quantity * rec.unit_cost
+
+    # =========================================================================
+    # COMPUTED — category breakdown, profit, template tracking
+    # =========================================================================
+
+    @api.depends('source_template_id')
+    def _compute_is_template_based(self):
+        for rec in self:
+            rec.is_template_based = bool(rec.source_template_id)
+
+    @api.depends('total_cost', 'cost_type_id', 'cost_type_id.category', 'display_type')
+    def _compute_category_amounts(self):
+        for rec in self:
+            if rec.display_type:
+                rec.material_amount = 0.0
+                rec.labor_amount = 0.0
+                rec.overhead_amount = 0.0
+            else:
+                cat = rec.cost_type_id.category if rec.cost_type_id else False
+                rec.material_amount = rec.total_cost if cat == 'material' else 0.0
+                rec.labor_amount = rec.total_cost if cat == 'labor' else 0.0
+                rec.overhead_amount = rec.total_cost if cat == 'overhead' else 0.0
+
+    @api.depends('total_cost', 'profit_percent', 'display_type')
+    def _compute_profit(self):
+        for rec in self:
+            if rec.display_type:
+                rec.profit_amount = 0.0
+                rec.sale_total = 0.0
+            else:
+                rec.profit_amount = rec.total_cost * (rec.profit_percent / 100.0)
+                rec.sale_total = rec.total_cost + rec.profit_amount
 
     # =========================================================================
     # COMPUTED — hierarchical sequence number
@@ -257,11 +330,14 @@ class FarmCostLine(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        """Safety net: stamp costing_section from context if not set in vals."""
+        """Safety net: stamp costing_section and is_manual_item."""
         section = self.env.context.get('default_costing_section', 'other')
         for vals in vals_list:
             if not vals.get('costing_section'):
                 vals['costing_section'] = section
+            # Lines created from a template are not manual items
+            if vals.get('source_template_id') and 'is_manual_item' not in vals:
+                vals['is_manual_item'] = False
         return super().create(vals_list)
 
     # =========================================================================
@@ -269,22 +345,66 @@ class FarmCostLine(models.Model):
     # =========================================================================
 
     def action_save_as_boq_template(self):
-        """Convert this normal cost line into a new farm.boq.item.template.
+        """Convert this manual cost line into a new farm.boq.item.template.
 
-        Creates the template header plus one component line carrying the same
-        product, cost type, quantity, and unit cost so that re-inserting the
-        template (qty=1) reproduces an equivalent cost line.
+        - Only works on normal (non-header) lines that are not already template-based.
+        - Raises UserError when a duplicate (same name + section + work_type) exists.
+        - Creates one component line mirroring the line's product / cost type /
+          quantity / unit cost so that re-inserting the template (qty=1)
+          reproduces an equivalent cost line.
         """
-        self.ensure_one()
-        if self.display_type:
-            return  # Only normal items can be saved as templates
+        from odoo.exceptions import UserError
 
+        self.ensure_one()
+
+        if self.display_type:
+            return  # Section / subsection / note headers cannot become templates
+
+        if self.source_template_id:
+            raise UserError(
+                _('This item already originates from a template. '
+                  'To create a new template from it, first clear the source '
+                  'template link (Source Template field) and retry.')
+            )
+
+        name = self.name or (self.product_id.name if self.product_id else False) or _('Unnamed')
+
+        # ── Duplicate check ───────────────────────────────────────────────────
+        section_label = dict(
+            self._fields['costing_section']._description_selection(self.env)
+        ).get(self.costing_section, self.costing_section)
+
+        domain = [
+            ('name', '=', name),
+            ('costing_section', '=', self.costing_section),
+            ('active', '=', True),
+        ]
+        if self.work_type_id:
+            domain.append(('work_type_id', '=', self.work_type_id.id))
+        else:
+            domain.append(('work_type_id', '=', False))
+
+        existing = self.env['farm.boq.item.template'].search(domain, limit=1)
+        if existing:
+            raise UserError(
+                _('A BOQ template named "%(name)s" already exists for '
+                  '%(section)s / %(work_type)s.\n\n'
+                  'Rename this item before saving as a template, or open '
+                  'the existing template and update it manually.',
+                  name=name,
+                  section=section_label,
+                  work_type=self.work_type_id.name if self.work_type_id else '—')
+            )
+
+        # ── Create template ───────────────────────────────────────────────────
         template = self.env['farm.boq.item.template'].create({
-            'name': self.name or self.product_id.name or 'Unnamed',
+            'name': name,
             'costing_section': self.costing_section,
             'work_type_id': self.work_type_id.id if self.work_type_id else False,
             'product_id': self.product_id.id if self.product_id else False,
+            'description': self.name,
             'qty_item': 1,
+            'profit_percent': self.profit_percent,
             'active': True,
         })
 
@@ -299,7 +419,7 @@ class FarmCostLine(models.Model):
             'cost_unit': self.unit_cost,
         })
 
-        # Link this line back to the new template
+        # Mark this line as now template-based (but keep is_manual_item for history)
         self.source_template_id = template.id
 
         return {
