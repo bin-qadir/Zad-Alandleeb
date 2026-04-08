@@ -63,11 +63,11 @@
                     <button name="action_create_rfq"
                             string="Create RFQ" type="object"
                             invisible="purchase_order_id != False or field_costing_state != 'approved'"/>
-                    <!-- ── Create Quotation: only when cost analysis is approved ── -->
+                    <!-- ── Create Quotation: only when field costing is approved ── -->
                     <button name="action_create_sale_order"
                             string="Create Quotation" type="object"
                             class="btn-primary"
-                            invisible="cost_analysis_state != 'approved'"/>
+                            invisible="field_costing_state != 'approved'"/>
                     <!-- ── Create Execution Tasks: costing approved + confirmed quotation + project ── -->
                     <button name="action_create_execution_tasks"
                             string="Create Execution Tasks" type="object"

@@ -83,24 +83,9 @@ access_farm_sensor_alert_user,farm.sensor.alert user,model_farm_sensor_alert,sma
 access_farm_sensor_alert_manager,farm.sensor.alert manager,model_farm_sensor_alert,smart_farm_alandleeb.group_farm_manager,1,1,1,0
 access_farm_sensor_alert_admin,farm.sensor.alert admin,model_farm_sensor_alert,smart_farm_alandleeb.group_farm_admin,1,1,1,1
 
-access_farm_mqtt_broker_manager,farm.mqtt.broker manager,model_farm_mqtt_broker,smart_farm_alandleeb.group_farm_manager,1,1,1,0
-access_farm_mqtt_broker_admin,farm.mqtt.broker admin,model_farm_mqtt_broker,smart_farm_alandleeb.group_farm_admin,1,1,1,1
-
 access_farm_mqtt_broker_user,farm.mqtt.broker user,model_farm_mqtt_broker,smart_farm_alandleeb.group_farm_user,1,0,0,0
 access_farm_mqtt_broker_manager,farm.mqtt.broker manager,model_farm_mqtt_broker,smart_farm_alandleeb.group_farm_manager,1,1,1,0
 access_farm_mqtt_broker_admin,farm.mqtt.broker admin,model_farm_mqtt_broker,smart_farm_alandleeb.group_farm_admin,1,1,1,1
-
-access_farm_sensor_user,farm.sensor user,model_farm_sensor,smart_farm_alandleeb.group_farm_user,1,0,0,0
-access_farm_sensor_manager,farm.sensor manager,model_farm_sensor,smart_farm_alandleeb.group_farm_manager,1,1,1,0
-access_farm_sensor_admin,farm.sensor admin,model_farm_sensor,smart_farm_alandleeb.group_farm_admin,1,1,1,1
-
-access_farm_sensor_data_user,farm.sensor.data user,model_farm_sensor_data,smart_farm_alandleeb.group_farm_user,1,0,0,0
-access_farm_sensor_data_manager,farm.sensor.data manager,model_farm_sensor_data,smart_farm_alandleeb.group_farm_manager,1,1,1,0
-access_farm_sensor_data_admin,farm.sensor.data admin,model_farm_sensor_data,smart_farm_alandleeb.group_farm_admin,1,1,1,1
-
-access_farm_sensor_alert_user,farm.sensor.alert user,model_farm_sensor_alert,smart_farm_alandleeb.group_farm_user,1,0,0,0
-access_farm_sensor_alert_manager,farm.sensor.alert manager,model_farm_sensor_alert,smart_farm_alandleeb.group_farm_manager,1,1,1,0
-access_farm_sensor_alert_admin,farm.sensor.alert admin,model_farm_sensor_alert,smart_farm_alandleeb.group_farm_admin,1,1,1,1
 
 access_farm_sensor_cron_admin,farm.sensor.cron admin,model_farm_sensor_cron,smart_farm_alandleeb.group_farm_admin,1,1,1,1
 
