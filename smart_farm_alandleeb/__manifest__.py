@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Smart Farm - Al Andleeb',
-    'version': '18.0.12.0.0',
+    'version': '18.0.13.0.0',
     'category': 'Agriculture',
     'summary': 'Integrated Smart Farm Management System for Al Andleeb',
     'description': """

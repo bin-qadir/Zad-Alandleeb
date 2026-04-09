@@ -467,6 +467,7 @@
                             <field name="civil_cost_line_ids"
                                    context="{'default_costing_section': 'civil'}">
                                 <list editable="bottom"
+                                      parent_field="boq_parent_id"
                                       decoration-bf="display_type == 'line_section' or is_boq_item"
                                       decoration-it="boq_parent_id">
                                     <field name="sequence" widget="handle"/>
@@ -700,6 +701,7 @@
                             <field name="arch_cost_line_ids"
                                    context="{'default_costing_section': 'arch'}">
                                 <list editable="bottom"
+                                      parent_field="boq_parent_id"
                                       decoration-bf="display_type == 'line_section' or is_boq_item"
                                       decoration-it="boq_parent_id">
                                     <field name="sequence" widget="handle"/>
@@ -928,6 +930,7 @@
                             <field name="mechanical_cost_line_ids"
                                    context="{'default_costing_section': 'mechanical'}">
                                 <list editable="bottom"
+                                      parent_field="boq_parent_id"
                                       decoration-bf="display_type == 'line_section' or is_boq_item"
                                       decoration-it="boq_parent_id">
                                     <field name="sequence" widget="handle"/>
@@ -1156,6 +1159,7 @@
                             <field name="electrical_cost_line_ids"
                                    context="{'default_costing_section': 'electrical'}">
                                 <list editable="bottom"
+                                      parent_field="boq_parent_id"
                                       decoration-bf="display_type == 'line_section' or is_boq_item"
                                       decoration-it="boq_parent_id">
                                     <field name="sequence" widget="handle"/>
@@ -1384,6 +1388,7 @@
                             <field name="irrigation_cost_line_ids"
                                    context="{'default_costing_section': 'irrigation'}">
                                 <list editable="bottom"
+                                      parent_field="boq_parent_id"
                                       decoration-bf="display_type == 'line_section' or is_boq_item"
                                       decoration-it="boq_parent_id">
                                     <field name="sequence" widget="handle"/>
@@ -1612,6 +1617,7 @@
                             <field name="control_system_cost_line_ids"
                                    context="{'default_costing_section': 'control_system'}">
                                 <list editable="bottom"
+                                      parent_field="boq_parent_id"
                                       decoration-bf="display_type == 'line_section' or is_boq_item"
                                       decoration-it="boq_parent_id">
                                     <field name="sequence" widget="handle"/>
@@ -1842,6 +1848,7 @@
                             <field name="other_cost_line_ids"
                                    context="{'default_costing_section': 'other'}">
                                 <list editable="bottom"
+                                      parent_field="boq_parent_id"
                                       decoration-bf="display_type == 'line_section' or is_boq_item"
                                       decoration-it="boq_parent_id">
                                     <field name="sequence" widget="handle"/>
@@ -2044,6 +2051,7 @@
 
                             <field name="cost_line_ids">
                                 <list editable="bottom"
+                                      parent_field="boq_parent_id"
                                       decoration-bf="display_type == 'line_section' or is_boq_item"
                                       decoration-muted="display_type == 'line_note'"
                                       decoration-info="is_template_based and not display_type and not is_boq_item and not boq_parent_id"

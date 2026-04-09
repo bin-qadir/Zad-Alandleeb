@@ -7,11 +7,14 @@ class FarmCostLine(models.Model):
     _name = 'farm.cost.line'
     _description = 'Farm Cost Line'
     _order = 'field_id, costing_section, sequence, id'
+    _parent_name = 'boq_parent_id'
+    _parent_store = True
 
     field_id = fields.Many2one(
         'farm.field', string='Field', required=True, ondelete='cascade',
     )
     sequence = fields.Integer(string='Sequence', default=10)
+    parent_path = fields.Char(index=True, unaccent=False)
 
     # ── Line type ─────────────────────────────────────────────────────────────
     # False           = normal costing item (default, Odoo convention)
