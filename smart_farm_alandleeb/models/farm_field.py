@@ -626,24 +626,32 @@ class FarmField(models.Model):
         'cost_line_ids.total_cost',
         'cost_line_ids.costing_section',
         'cost_line_ids.display_type',
-        'cost_line_ids.cost_type_id',
-        'cost_line_ids.cost_type_id.category',
+        'cost_line_ids.boq_parent_id',
+        'cost_line_ids.material_amount',
+        'cost_line_ids.labor_amount',
+        'cost_line_ids.overhead_amount',
         'boq_item_ids.total_cost_per_item',
         'boq_item_ids.costing_section',
         'boq_item_ids.material_total',
         'boq_item_ids.labor_total',
         'boq_item_ids.overhead_total',
+        'boq_item_ids.count_in_cost_total',
         'area',
     )
     def _compute_cost_analysis(self):
         for rec in self:
-            # Normal flat cost lines only (exclude section headers and notes)
-            normal = rec.cost_line_ids.filtered(lambda l: not l.display_type)
+            # Exclude section/note headers and BOQ component children
+            # (children are already rolled up into their is_boq_item parent line)
+            normal = rec.cost_line_ids.filtered(
+                lambda l: not l.display_type and not l.boq_parent_id
+            )
+            # Only count BOQ items not already represented by a cost.line parent
+            counted_boq = rec.boq_item_ids.filtered(lambda i: i.count_in_cost_total)
 
-            # ── Section grand totals (flat lines + BOQ items) ─────────────────
+            # ── Section grand totals (cost lines + counted BOQ items) ─────────
             def _sec(section):
                 lines = sum(l.total_cost for l in normal if l.costing_section == section)
-                boq = sum(i.total_cost_per_item for i in rec.boq_item_ids if i.costing_section == section)
+                boq = sum(i.total_cost_per_item for i in counted_boq if i.costing_section == section)
                 return lines + boq
 
             rec.civil_total = _sec('civil')
@@ -654,61 +662,57 @@ class FarmField(models.Model):
             rec.control_system_total = _sec('control_system')
             rec.other_total = _sec('other')
 
-            # ── Per-section category subtotals (flat lines + BOQ items) ───────
-            def _cat(section, category):
-                lines = sum(
-                    l.total_cost for l in normal
-                    if l.costing_section == section and l.cost_type_id.category == category
-                )
-                boq = sum(
-                    getattr(i, f'{category}_total')
-                    for i in rec.boq_item_ids
-                    if i.costing_section == section
-                )
-                return lines + boq
+            # ── Per-section category subtotals ────────────────────────────────
+            # Use material_amount/labor_amount/overhead_amount on cost lines
+            # (these roll up children correctly for is_boq_item parent lines)
+            def _cat_lines(section, attr):
+                return sum(getattr(l, attr) for l in normal if l.costing_section == section)
+
+            def _cat_boq(section, boq_attr):
+                return sum(getattr(i, boq_attr) for i in counted_boq if i.costing_section == section)
 
             for sec in COSTING_SECTIONS:
-                rec[f'{sec}_material_total'] = _cat(sec, 'material')
-                rec[f'{sec}_labor_total'] = _cat(sec, 'labor')
-                rec[f'{sec}_overhead_total'] = _cat(sec, 'overhead')
+                rec[f'{sec}_material_total'] = _cat_lines(sec, 'material_amount') + _cat_boq(sec, 'material_total')
+                rec[f'{sec}_labor_total'] = _cat_lines(sec, 'labor_amount') + _cat_boq(sec, 'labor_total')
+                rec[f'{sec}_overhead_total'] = _cat_lines(sec, 'overhead_amount') + _cat_boq(sec, 'overhead_total')
 
             # ── Overall category totals ───────────────────────────────────────
-            rec.material_total = sum(
-                l.total_cost for l in normal if l.cost_type_id.category == 'material'
-            ) + sum(rec.boq_item_ids.mapped('material_total'))
-            rec.labor_total = sum(
-                l.total_cost for l in normal if l.cost_type_id.category == 'labor'
-            ) + sum(rec.boq_item_ids.mapped('labor_total'))
-            rec.overhead_total = sum(
-                l.total_cost for l in normal if l.cost_type_id.category == 'overhead'
-            ) + sum(rec.boq_item_ids.mapped('overhead_total'))
+            rec.material_total = (
+                sum(normal.mapped('material_amount'))
+                + sum(counted_boq.mapped('material_total'))
+            )
+            rec.labor_total = (
+                sum(normal.mapped('labor_amount'))
+                + sum(counted_boq.mapped('labor_total'))
+            )
+            rec.overhead_total = (
+                sum(normal.mapped('overhead_amount'))
+                + sum(counted_boq.mapped('overhead_total'))
+            )
 
             rec.total_cost = (
                 sum(normal.mapped('total_cost'))
-                + sum(rec.boq_item_ids.mapped('total_cost_per_item'))
+                + sum(counted_boq.mapped('total_cost_per_item'))
             )
             rec.cost_per_m2 = rec.total_cost / rec.area if rec.area else 0.0
 
             rec.cost_line_count = len(normal)
-            rec.material_line_count = len(
-                normal.filtered(lambda l: l.cost_type_id.category == 'material')
-            )
-            rec.labor_line_count = len(
-                normal.filtered(lambda l: l.cost_type_id.category == 'labor')
-            )
-            rec.overhead_line_count = len(
-                normal.filtered(lambda l: l.cost_type_id.category == 'overhead')
-            )
+            rec.material_line_count = len(normal.filtered(lambda l: l.material_amount > 0))
+            rec.labor_line_count = len(normal.filtered(lambda l: l.labor_amount > 0))
+            rec.overhead_line_count = len(normal.filtered(lambda l: l.overhead_amount > 0))
 
     # ── Section relevance ─────────────────────────────────────────────────────
     @api.depends(
         'cost_line_ids.costing_section', 'cost_line_ids.display_type',
+        'cost_line_ids.boq_parent_id',
         'boq_item_ids.costing_section',
     )
     def _compute_section_relevance(self):
         for rec in self:
             normal_sections = set(
-                rec.cost_line_ids.filtered(lambda l: not l.display_type).mapped('costing_section')
+                rec.cost_line_ids.filtered(
+                    lambda l: not l.display_type and not l.boq_parent_id
+                ).mapped('costing_section')
             )
             boq_sections = set(rec.boq_item_ids.mapped('costing_section'))
             all_sections = normal_sections | boq_sections

@@ -4,8 +4,19 @@ from .farm_cost_type import COSTING_SECTION_SELECTION
 
 
 class FarmInsertBoqItemTemplateWizard(models.TransientModel):
-    """Wizard to insert a BOQ Item Template into a field section.
-    Creates a farm.boq.item record with all component lines from the template.
+    """Wizard to insert a BOQ Item Template into a field costing workspace.
+
+    Creates:
+      1. A parent farm.cost.line (is_boq_item=True) acting as the BOQ item
+         header in the costing workspace, with totals rolled up from children.
+      2. One child farm.cost.line per normal template component line, linked
+         to the parent via boq_parent_id.
+      3. A farm.boq.item record (with count_in_cost_total=False) for
+         downstream RFQ / task-creation workflows.
+      4. farm.boq.item.line records copied from the template.
+
+    Editing the child cost lines (qty, unit cost, description) is per-field
+    and does NOT affect the original template.
     """
     _name = 'farm.insert.boq.item.template.wizard'
     _description = 'Insert BOQ Item Template'
@@ -20,13 +31,28 @@ class FarmInsertBoqItemTemplateWizard(models.TransientModel):
     target_section = fields.Selection(
         COSTING_SECTION_SELECTION,
         string='Works Division',
-        help='Leave empty to use the template default section.',
+        required=True,
+        help='Works Division this BOQ item will be placed in.',
+    )
+
+    # ── Placement inside the cost line hierarchy ──────────────────────────────
+    parent_section_id = fields.Many2one(
+        'farm.cost.line',
+        string='Parent Division Line',
+        domain="[('field_id', '=', field_id), ('display_type', '=', 'line_section')]",
+        help='Optional: place the BOQ item under this section header.',
+    )
+    parent_subsection_id = fields.Many2one(
+        'farm.cost.line',
+        string='Parent Sub-division Line',
+        domain="[('field_id', '=', field_id), ('display_type', '=', 'line_subsection')]",
+        help='Optional: place the BOQ item under this sub-section header.',
     )
 
     # ── Preview fields (updated on template change) ───────────────────────────
     template_section = fields.Selection(
         related='template_id.costing_section',
-        string='Works Division',
+        string='Template Division',
     )
     template_description = fields.Text(
         related='template_id.description',
@@ -78,13 +104,45 @@ class FarmInsertBoqItemTemplateWizard(models.TransientModel):
             self.target_section = self.template_id.costing_section
 
     def action_insert(self):
-        """Create farm.boq.item + farm.boq.item.line records from the template."""
+        """Insert template into the costing workspace as parent + child cost lines."""
         self.ensure_one()
         template = self.template_id
         section = self.target_section or template.costing_section
+        field_id = self.field_id.id
 
+        # ── 1. Create the parent cost.line (BOQ item header) ─────────────────
+        parent_line = self.env['farm.cost.line'].create({
+            'field_id': field_id,
+            'costing_section': section,
+            'name': template.name,
+            'work_type_id': template.work_type_id.id if template.work_type_id else False,
+            'is_boq_item': True,
+            'is_manual_item': False,
+            'source_template_id': template.id,
+            'profit_percent': template.profit_percent,
+            'parent_section_id': self.parent_section_id.id if self.parent_section_id else False,
+            'parent_subsection_id': self.parent_subsection_id.id if self.parent_subsection_id else False,
+        })
+
+        # ── 2. Create child cost.line for each normal template component ──────
+        for tl in template.line_ids.filtered(lambda l: not l.display_type).sorted('sequence'):
+            self.env['farm.cost.line'].create({
+                'field_id': field_id,
+                'costing_section': section,
+                'boq_parent_id': parent_line.id,
+                'sequence': tl.sequence,
+                'name': tl.description or '',
+                'product_id': tl.product_id.id if tl.product_id else False,
+                'cost_type_id': tl.cost_type_id.id if tl.cost_type_id else False,
+                'quantity': tl.qty_1 or 1.0,
+                'unit_cost': tl.cost_unit,
+                'is_manual_item': False,
+                'source_template_id': template.id,
+            })
+
+        # ── 3. Create farm.boq.item (count_in_cost_total=False) ───────────────
         boq_item = self.env['farm.boq.item'].create({
-            'field_id': self.field_id.id,
+            'field_id': field_id,
             'costing_section': section,
             'name': template.name,
             'code': template.code or '',
@@ -95,8 +153,10 @@ class FarmInsertBoqItemTemplateWizard(models.TransientModel):
             'profit_percent': template.profit_percent,
             'source_template_id': template.id,
             'work_type_id': template.work_type_id.id if template.work_type_id else False,
+            'count_in_cost_total': False,
         })
 
+        # ── 4. Create farm.boq.item.line records ──────────────────────────────
         for tl in template.line_ids.sorted('sequence'):
             self.env['farm.boq.item.line'].create({
                 'boq_item_id': boq_item.id,

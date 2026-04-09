@@ -28,6 +28,19 @@
                         </group>
                     </group>
 
+                    <group string="Placement in Costing Workspace">
+                        <group>
+                            <field name="parent_section_id"
+                                   domain="[('field_id','=',field_id),('display_type','=','line_section')]"
+                                   string="Under Division Header"/>
+                        </group>
+                        <group>
+                            <field name="parent_subsection_id"
+                                   domain="[('field_id','=',field_id),('display_type','=','line_subsection')]"
+                                   string="Under Sub-division Header"/>
+                        </group>
+                    </group>
+
                     <!-- Cost summary preview -->
                     <group string="Cost Preview" invisible="not template_id"
                            class="oe_subtotal_footer oe_right">

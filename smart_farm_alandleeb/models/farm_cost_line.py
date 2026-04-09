@@ -100,6 +100,31 @@ class FarmCostLine(models.Model):
         help='True when this line was inserted from a BOQ template.',
     )
 
+    # ── BOQ Item parent-child hierarchy ───────────────────────────────────────
+    # When a BOQ Item Template is inserted into the costing workspace, the
+    # wizard creates one parent line (is_boq_item=True) and N child component
+    # lines (boq_parent_id → parent).  The parent's totals roll up from its
+    # children.  Component children are excluded from field-level totals to
+    # avoid double-counting (the parent already carries the rolled-up values).
+    is_boq_item = fields.Boolean(
+        string='Is BOQ Item Header',
+        default=False,
+        help='True for the parent summary line created when a BOQ Item Template '
+             'is inserted into the costing workspace.',
+    )
+    boq_parent_id = fields.Many2one(
+        'farm.cost.line',
+        string='Parent BOQ Item',
+        ondelete='cascade',
+        index=True,
+        help='Set on component lines that belong to a parent BOQ item.',
+    )
+    boq_child_ids = fields.One2many(
+        'farm.cost.line', 'boq_parent_id',
+        string='Component Lines',
+        help='Component cost lines that roll up into this BOQ item header.',
+    )
+
     # ── Per-line cost breakdown (display purposes) ────────────────────────────
     material_amount = fields.Float(
         string='Material', digits=(16, 2),
@@ -138,12 +163,18 @@ class FarmCostLine(models.Model):
     # COMPUTED — total cost
     # =========================================================================
 
-    @api.depends('quantity', 'unit_cost', 'display_type')
+    @api.depends(
+        'quantity', 'unit_cost', 'display_type', 'is_boq_item',
+        'boq_child_ids.total_cost',
+    )
     def _compute_total_cost(self):
         for rec in self:
-            # Header rows (section / subsection / note) carry no cost
             if rec.display_type:
+                # Header rows (section / subsection / note) carry no cost
                 rec.total_cost = 0.0
+            elif rec.is_boq_item:
+                # BOQ item header: roll up from component children
+                rec.total_cost = sum(rec.boq_child_ids.mapped('total_cost'))
             else:
                 rec.total_cost = rec.quantity * rec.unit_cost
 
@@ -156,25 +187,45 @@ class FarmCostLine(models.Model):
         for rec in self:
             rec.is_template_based = bool(rec.source_template_id)
 
-    @api.depends('total_cost', 'cost_type_id', 'cost_type_id.category', 'display_type')
+    @api.depends(
+        'total_cost', 'cost_type_id', 'cost_type_id.category', 'display_type',
+        'is_boq_item',
+        'boq_child_ids.material_amount',
+        'boq_child_ids.labor_amount',
+        'boq_child_ids.overhead_amount',
+    )
     def _compute_category_amounts(self):
         for rec in self:
             if rec.display_type:
                 rec.material_amount = 0.0
                 rec.labor_amount = 0.0
                 rec.overhead_amount = 0.0
+            elif rec.is_boq_item:
+                # BOQ item header: roll up category amounts from children
+                rec.material_amount = sum(rec.boq_child_ids.mapped('material_amount'))
+                rec.labor_amount = sum(rec.boq_child_ids.mapped('labor_amount'))
+                rec.overhead_amount = sum(rec.boq_child_ids.mapped('overhead_amount'))
             else:
                 cat = rec.cost_type_id.category if rec.cost_type_id else False
                 rec.material_amount = rec.total_cost if cat == 'material' else 0.0
                 rec.labor_amount = rec.total_cost if cat == 'labor' else 0.0
                 rec.overhead_amount = rec.total_cost if cat == 'overhead' else 0.0
 
-    @api.depends('total_cost', 'profit_percent', 'display_type')
+    @api.depends(
+        'total_cost', 'profit_percent', 'display_type', 'is_boq_item',
+        'boq_child_ids.total_cost',
+    )
     def _compute_profit(self):
         for rec in self:
             if rec.display_type:
                 rec.profit_amount = 0.0
                 rec.sale_total = 0.0
+            elif rec.is_boq_item:
+                # BOQ item header: apply profit % to children's rolled-up total
+                child_cost = sum(rec.boq_child_ids.mapped('total_cost'))
+                pct = rec.profit_percent or 0.0
+                rec.profit_amount = child_cost * (pct / 100.0)
+                rec.sale_total = child_cost + rec.profit_amount
             else:
                 rec.profit_amount = rec.total_cost * (rec.profit_percent / 100.0)
                 rec.sale_total = rec.total_cost + rec.profit_amount
@@ -184,19 +235,23 @@ class FarmCostLine(models.Model):
     # =========================================================================
 
     @api.depends(
-        'display_type', 'sequence',
+        'display_type', 'sequence', 'boq_parent_id',
         'parent_section_id', 'parent_section_id.sequence_no',
         'parent_subsection_id', 'parent_subsection_id.sequence_no',
         'field_id.cost_line_ids.display_type',
         'field_id.cost_line_ids.sequence',
         'field_id.cost_line_ids.parent_section_id',
         'field_id.cost_line_ids.parent_subsection_id',
+        'field_id.cost_line_ids.boq_parent_id',
     )
     def _compute_sequence_no(self):
         for rec in self:
             rec.sequence_no = rec._get_sequence_no()
 
     def _get_sequence_no(self):
+        # Component lines under a BOQ item header do not get their own sequence number
+        if self.boq_parent_id:
+            return ''
         if not self.field_id:
             return ''
 
@@ -345,13 +400,12 @@ class FarmCostLine(models.Model):
     # =========================================================================
 
     def action_save_as_boq_template(self):
-        """Convert this manual cost line into a new farm.boq.item.template.
+        """Convert this cost line (or BOQ item header) into a new BOQ template.
 
-        - Only works on normal (non-header) lines that are not already template-based.
-        - Raises UserError when a duplicate (same name + section + work_type) exists.
-        - Creates one component line mirroring the line's product / cost type /
-          quantity / unit cost so that re-inserting the template (qty=1)
-          reproduces an equivalent cost line.
+        Supports two modes:
+          • Normal individual line  → one component line in the new template
+          • BOQ item header (is_boq_item=True)  → all child component lines
+            are copied into the new template, preserving full breakdown
         """
         from odoo.exceptions import UserError
 
@@ -360,7 +414,13 @@ class FarmCostLine(models.Model):
         if self.display_type:
             return  # Section / subsection / note headers cannot become templates
 
-        if self.source_template_id:
+        if self.boq_parent_id:
+            raise UserError(
+                _('Component lines cannot be saved directly as templates. '
+                  'Open the parent BOQ item header and save that as a template instead.')
+            )
+
+        if self.source_template_id and not self.is_boq_item:
             raise UserError(
                 _('This item already originates from a template. '
                   'To create a new template from it, first clear the source '
@@ -408,18 +468,31 @@ class FarmCostLine(models.Model):
             'active': True,
         })
 
-        # One component line mirrors the original cost line
-        self.env['farm.boq.item.template.line'].create({
-            'template_id': template.id,
-            'sequence': 10,
-            'description': self.name,
-            'product_id': self.product_id.id if self.product_id else False,
-            'cost_type_id': self.cost_type_id.id if self.cost_type_id else False,
-            'qty_1': self.quantity,
-            'cost_unit': self.unit_cost,
-        })
+        if self.is_boq_item and self.boq_child_ids:
+            # BOQ item header: copy all component children as template lines
+            for seq, child in enumerate(self.boq_child_ids.sorted('sequence'), start=10):
+                self.env['farm.boq.item.template.line'].create({
+                    'template_id': template.id,
+                    'sequence': seq,
+                    'description': child.name,
+                    'product_id': child.product_id.id if child.product_id else False,
+                    'cost_type_id': child.cost_type_id.id if child.cost_type_id else False,
+                    'qty_1': child.quantity,
+                    'cost_unit': child.unit_cost,
+                })
+        else:
+            # Single normal line: one component line mirrors this line
+            self.env['farm.boq.item.template.line'].create({
+                'template_id': template.id,
+                'sequence': 10,
+                'description': self.name,
+                'product_id': self.product_id.id if self.product_id else False,
+                'cost_type_id': self.cost_type_id.id if self.cost_type_id else False,
+                'qty_1': self.quantity,
+                'cost_unit': self.unit_cost,
+            })
 
-        # Mark this line as now template-based (but keep is_manual_item for history)
+        # Mark this line as now template-based
         self.source_template_id = template.id
 
         return {

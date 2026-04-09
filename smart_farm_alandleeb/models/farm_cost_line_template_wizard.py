@@ -98,25 +98,41 @@ class FarmCostLineInsertWizard(models.TransientModel):
                 self.costing_section = self.parent_subsection_id.costing_section
 
     def action_insert(self):
-        """Create one farm.cost.line from the selected template."""
+        """Create a parent BOQ item header + child component cost lines from the template."""
         self.ensure_one()
         tpl = self.template_id
         section = self.costing_section or tpl.costing_section
+        field_id = self.field_id.id
 
-        self.env['farm.cost.line'].create({
-            'field_id': self.field_id.id,
+        # ── Parent cost.line (BOQ item header, totals roll up from children) ──
+        parent_line = self.env['farm.cost.line'].create({
+            'field_id': field_id,
             'costing_section': section,
             'work_type_id': (self.work_type_id.id
                              or (tpl.work_type_id.id if tpl.work_type_id else False)),
             'name': tpl.name,
-            'product_id': tpl.product_id.id if tpl.product_id else False,
-            'quantity': self.quantity,
-            'unit_cost': tpl.total_cost_per_item,
             'profit_percent': tpl.profit_percent,
             'source_template_id': tpl.id,
+            'is_boq_item': True,
             'is_manual_item': False,
             'parent_section_id': self.parent_section_id.id if self.parent_section_id else False,
             'parent_subsection_id': self.parent_subsection_id.id if self.parent_subsection_id else False,
         })
+
+        # ── Child cost.line per normal template component ──────────────────────
+        for tl in tpl.line_ids.filtered(lambda l: not l.display_type).sorted('sequence'):
+            self.env['farm.cost.line'].create({
+                'field_id': field_id,
+                'costing_section': section,
+                'boq_parent_id': parent_line.id,
+                'sequence': tl.sequence,
+                'name': tl.description or '',
+                'product_id': tl.product_id.id if tl.product_id else False,
+                'cost_type_id': tl.cost_type_id.id if tl.cost_type_id else False,
+                'quantity': tl.qty_1 or 1.0,
+                'unit_cost': tl.cost_unit,
+                'is_manual_item': False,
+                'source_template_id': tpl.id,
+            })
 
         return {'type': 'ir.actions.act_window_close'}

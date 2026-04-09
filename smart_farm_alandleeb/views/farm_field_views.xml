@@ -466,14 +466,18 @@
                             <!-- Price Study / Cost lines -->
                             <field name="civil_cost_line_ids"
                                    context="{'default_costing_section': 'civil'}">
-                                <list editable="bottom">
+                                <list editable="bottom"
+                                      decoration-bf="display_type == 'line_section' or is_boq_item"
+                                      decoration-it="boq_parent_id">
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
                                     <field name="costing_section" column_invisible="1"/>
+                                    <field name="is_boq_item" column_invisible="1"/>
+                                    <field name="boq_parent_id" column_invisible="1"/>
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or boq_parent_id"
                                            optional="show"/>
                                     <field name="product_id"
                                            string="Product"
@@ -481,11 +485,11 @@
                                     <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','civil')]"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="total_cost" readonly="1"
                                            invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <control>
@@ -687,14 +691,18 @@
 
                             <field name="arch_cost_line_ids"
                                    context="{'default_costing_section': 'arch'}">
-                                <list editable="bottom">
+                                <list editable="bottom"
+                                      decoration-bf="display_type == 'line_section' or is_boq_item"
+                                      decoration-it="boq_parent_id">
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
                                     <field name="costing_section" column_invisible="1"/>
+                                    <field name="is_boq_item" column_invisible="1"/>
+                                    <field name="boq_parent_id" column_invisible="1"/>
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or boq_parent_id"
                                            optional="show"/>
                                     <field name="product_id"
                                            string="Product"
@@ -702,11 +710,11 @@
                                     <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','arch')]"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="total_cost" readonly="1"
                                            invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <control>
@@ -903,14 +911,18 @@
 
                             <field name="mechanical_cost_line_ids"
                                    context="{'default_costing_section': 'mechanical'}">
-                                <list editable="bottom">
+                                <list editable="bottom"
+                                      decoration-bf="display_type == 'line_section' or is_boq_item"
+                                      decoration-it="boq_parent_id">
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
                                     <field name="costing_section" column_invisible="1"/>
+                                    <field name="is_boq_item" column_invisible="1"/>
+                                    <field name="boq_parent_id" column_invisible="1"/>
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or boq_parent_id"
                                            optional="show"/>
                                     <field name="product_id"
                                            string="Product"
@@ -918,11 +930,11 @@
                                     <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','mechanical')]"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="total_cost" readonly="1"
                                            invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <control>
@@ -1119,14 +1131,18 @@
 
                             <field name="electrical_cost_line_ids"
                                    context="{'default_costing_section': 'electrical'}">
-                                <list editable="bottom">
+                                <list editable="bottom"
+                                      decoration-bf="display_type == 'line_section' or is_boq_item"
+                                      decoration-it="boq_parent_id">
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
                                     <field name="costing_section" column_invisible="1"/>
+                                    <field name="is_boq_item" column_invisible="1"/>
+                                    <field name="boq_parent_id" column_invisible="1"/>
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or boq_parent_id"
                                            optional="show"/>
                                     <field name="product_id"
                                            string="Product"
@@ -1134,11 +1150,11 @@
                                     <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','electrical')]"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="total_cost" readonly="1"
                                            invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <control>
@@ -1335,14 +1351,18 @@
 
                             <field name="irrigation_cost_line_ids"
                                    context="{'default_costing_section': 'irrigation'}">
-                                <list editable="bottom">
+                                <list editable="bottom"
+                                      decoration-bf="display_type == 'line_section' or is_boq_item"
+                                      decoration-it="boq_parent_id">
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
                                     <field name="costing_section" column_invisible="1"/>
+                                    <field name="is_boq_item" column_invisible="1"/>
+                                    <field name="boq_parent_id" column_invisible="1"/>
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or boq_parent_id"
                                            optional="show"/>
                                     <field name="product_id"
                                            string="Product"
@@ -1350,11 +1370,11 @@
                                     <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','irrigation')]"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="total_cost" readonly="1"
                                            invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <control>
@@ -1551,14 +1571,18 @@
 
                             <field name="control_system_cost_line_ids"
                                    context="{'default_costing_section': 'control_system'}">
-                                <list editable="bottom">
+                                <list editable="bottom"
+                                      decoration-bf="display_type == 'line_section' or is_boq_item"
+                                      decoration-it="boq_parent_id">
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
                                     <field name="costing_section" column_invisible="1"/>
+                                    <field name="is_boq_item" column_invisible="1"/>
+                                    <field name="boq_parent_id" column_invisible="1"/>
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or boq_parent_id"
                                            optional="show"/>
                                     <field name="product_id"
                                            string="Product"
@@ -1566,11 +1590,11 @@
                                     <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','control_system')]"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="total_cost" readonly="1"
                                            invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <control>
@@ -1769,14 +1793,18 @@
 
                             <field name="other_cost_line_ids"
                                    context="{'default_costing_section': 'other'}">
-                                <list editable="bottom">
+                                <list editable="bottom"
+                                      decoration-bf="display_type == 'line_section' or is_boq_item"
+                                      decoration-it="boq_parent_id">
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
                                     <field name="costing_section" column_invisible="1"/>
+                                    <field name="is_boq_item" column_invisible="1"/>
+                                    <field name="boq_parent_id" column_invisible="1"/>
                                     <field name="work_type_id"
                                            string="Sub-division Works"
                                            domain="[('costing_section','=',costing_section),('active','=',True)]"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or boq_parent_id"
                                            optional="show"/>
                                     <field name="product_id"
                                            string="Product"
@@ -1784,11 +1812,11 @@
                                     <field name="name" string="Description" placeholder="Description..."/>
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','other')]"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="total_cost" readonly="1"
                                            invisible="display_type in ('line_section','line_subsection','line_note')"/>
                                     <control>
@@ -1960,15 +1988,18 @@
 
                             <field name="cost_line_ids">
                                 <list editable="bottom"
-                                      decoration-bf="display_type == 'line_section'"
+                                      decoration-bf="display_type == 'line_section' or is_boq_item"
                                       decoration-muted="display_type == 'line_note'"
-                                      decoration-info="is_template_based and not display_type"
+                                      decoration-info="is_template_based and not display_type and not is_boq_item and not boq_parent_id"
+                                      decoration-it="boq_parent_id"
                                       class="o_field_one2many_list">
 
                                     <field name="sequence" widget="handle"/>
                                     <field name="display_type" column_invisible="1"/>
                                     <field name="is_template_based" column_invisible="1"/>
                                     <field name="is_manual_item" column_invisible="1"/>
+                                    <field name="is_boq_item" column_invisible="1"/>
+                                    <field name="boq_parent_id" column_invisible="1"/>
 
                                     <!-- Sequence No — auto-numbering (01 / 01.02 / 01.02.03) -->
                                     <field name="sequence_no"
@@ -2017,10 +2048,10 @@
                                            string="Description"
                                            placeholder="Description..."/>
 
-                                    <!-- Cost Type (normal items only) -->
+                                    <!-- Cost Type (normal items only, not BOQ parent headers) -->
                                     <field name="cost_type_id"
                                            string="Cost Type"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
 
                                     <!-- Source template (optional read-only column — shows which template it came from) -->
                                     <field name="source_template_id"
@@ -2029,11 +2060,12 @@
                                            invisible="display_type in ('line_section','line_subsection','line_note')"
                                            readonly="1"/>
 
-                                    <!-- Quantity / Unit Cost / Total (normal items only) -->
+                                    <!-- Quantity / Unit Cost: hidden for display types and BOQ parent headers -->
+                                    <!-- Total Cost: shown for normal items AND BOQ parent headers (rollup) -->
                                     <field name="quantity"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="unit_cost"
-                                           invisible="display_type in ('line_section','line_subsection','line_note')"/>
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="total_cost" readonly="1"
                                            invisible="display_type in ('line_section','line_subsection','line_note')"
                                            sum="Grand Total"/>

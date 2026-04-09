@@ -47,6 +47,16 @@ class FarmBoqItem(models.Model):
         ondelete='set null', copy=False, readonly=True,
     )
 
+    # When True, this BOQ item's cost is included in field cost totals.
+    # Set to False when a parallel farm.cost.line parent already carries the cost
+    # (i.e. inserted via template wizard) to prevent double-counting.
+    count_in_cost_total = fields.Boolean(
+        string='Count in Cost Total',
+        default=True,
+        help='When False, this BOQ item is excluded from field cost analysis totals '
+             '(used when a cost.line parent already represents the cost).',
+    )
+
     line_ids = fields.One2many(
         'farm.boq.item.line', 'boq_item_id', string='Component Lines',
     )
