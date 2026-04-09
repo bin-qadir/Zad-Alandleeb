@@ -188,6 +188,10 @@ class FarmBoqItemLine(models.Model):
     )
     unit_name = fields.Char(string='Unit')
     qty_1 = fields.Float(string='Quantity', digits=(16, 3), default=1.0)
+    base_ratio_qty = fields.Float(
+        string='Base Ratio Qty', digits=(16, 4), default=1.0,
+        help='Quantity required for ONE unit of the parent item.',
+    )
     cost_type_id = fields.Many2one(
         'farm.cost.type', string='Cost Type', ondelete='restrict',
     )

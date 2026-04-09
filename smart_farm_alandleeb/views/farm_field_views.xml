@@ -486,6 +486,14 @@
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','civil')]"
                                            invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
+                                    <field name="main_quantity"
+                                           string="Main Qty"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or not is_boq_item"/>
+                                    <field name="base_ratio_qty"
+                                           string="Ratio / 1"
+                                           readonly="1"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item or not boq_parent_id"
+                                           optional="show"/>
                                     <field name="quantity"
                                            invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="unit_cost"
@@ -711,6 +719,14 @@
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','arch')]"
                                            invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
+                                    <field name="main_quantity"
+                                           string="Main Qty"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or not is_boq_item"/>
+                                    <field name="base_ratio_qty"
+                                           string="Ratio / 1"
+                                           readonly="1"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item or not boq_parent_id"
+                                           optional="show"/>
                                     <field name="quantity"
                                            invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="unit_cost"
@@ -931,6 +947,14 @@
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','mechanical')]"
                                            invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
+                                    <field name="main_quantity"
+                                           string="Main Qty"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or not is_boq_item"/>
+                                    <field name="base_ratio_qty"
+                                           string="Ratio / 1"
+                                           readonly="1"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item or not boq_parent_id"
+                                           optional="show"/>
                                     <field name="quantity"
                                            invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="unit_cost"
@@ -1151,6 +1175,14 @@
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','electrical')]"
                                            invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
+                                    <field name="main_quantity"
+                                           string="Main Qty"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or not is_boq_item"/>
+                                    <field name="base_ratio_qty"
+                                           string="Ratio / 1"
+                                           readonly="1"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item or not boq_parent_id"
+                                           optional="show"/>
                                     <field name="quantity"
                                            invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="unit_cost"
@@ -1371,6 +1403,14 @@
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','irrigation')]"
                                            invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
+                                    <field name="main_quantity"
+                                           string="Main Qty"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or not is_boq_item"/>
+                                    <field name="base_ratio_qty"
+                                           string="Ratio / 1"
+                                           readonly="1"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item or not boq_parent_id"
+                                           optional="show"/>
                                     <field name="quantity"
                                            invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="unit_cost"
@@ -1591,6 +1631,14 @@
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','control_system')]"
                                            invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
+                                    <field name="main_quantity"
+                                           string="Main Qty"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or not is_boq_item"/>
+                                    <field name="base_ratio_qty"
+                                           string="Ratio / 1"
+                                           readonly="1"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item or not boq_parent_id"
+                                           optional="show"/>
                                     <field name="quantity"
                                            invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="unit_cost"
@@ -1813,6 +1861,14 @@
                                     <field name="cost_type_id"
                                            domain="[('costing_section','=','other')]"
                                            invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
+                                    <field name="main_quantity"
+                                           string="Main Qty"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or not is_boq_item"/>
+                                    <field name="base_ratio_qty"
+                                           string="Ratio / 1"
+                                           readonly="1"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item or not boq_parent_id"
+                                           optional="show"/>
                                     <field name="quantity"
                                            invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item"/>
                                     <field name="unit_cost"
@@ -2060,6 +2116,16 @@
                                            invisible="display_type in ('line_section','line_subsection','line_note')"
                                            readonly="1"/>
 
+                                    <!-- Main Quantity: shown only on BOQ item header rows -->
+                                    <field name="main_quantity"
+                                           string="Main Qty"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or not is_boq_item"/>
+                                    <!-- Base Ratio: shown only on child component rows -->
+                                    <field name="base_ratio_qty"
+                                           string="Ratio / 1"
+                                           readonly="1"
+                                           invisible="display_type in ('line_section','line_subsection','line_note') or is_boq_item or not boq_parent_id"
+                                           optional="show"/>
                                     <!-- Quantity / Unit Cost: hidden for display types and BOQ parent headers -->
                                     <!-- Total Cost: shown for normal items AND BOQ parent headers (rollup) -->
                                     <field name="quantity"
@@ -2097,13 +2163,13 @@
                                            invisible="display_type in ('line_section','line_subsection','line_note')"
                                            sum="Sale Total"/>
 
-                                    <!-- Save as Template — only for manual items not already linked to a template -->
+                                    <!-- Save as Template — for manual items or BOQ item headers -->
                                     <button name="action_save_as_boq_template"
                                             string="Save as Template"
                                             type="object"
                                             icon="fa-floppy-o"
-                                            title="Save this manually created item as a new reusable BOQ Template"
-                                            invisible="display_type or source_template_id"/>
+                                            title="Save this item as a new reusable BOQ Template"
+                                            invisible="display_type or boq_parent_id or (source_template_id and not is_boq_item)"/>
 
                                     <control>
                                         <create string="Add BOQ Item (Manual)"/>

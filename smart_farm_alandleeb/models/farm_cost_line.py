@@ -67,6 +67,7 @@ class FarmCostLine(models.Model):
     product_id = fields.Many2one(
         'product.product', string='Product', ondelete='restrict',
     )
+    unit_name = fields.Char(string='Unit')
     cost_type_id = fields.Many2one(
         'farm.cost.type', string='Cost Type', ondelete='restrict',
     )
@@ -75,6 +76,20 @@ class FarmCostLine(models.Model):
     total_cost = fields.Float(
         string='Total Cost', digits=(16, 2),
         compute='_compute_total_cost', store=True,
+    )
+
+    # ── Master-template quantity propagation ─────────────────────────────────
+    # Parent BOQ item header: user enters main_quantity manually.
+    # Children: actual quantity = parent.main_quantity * base_ratio_qty
+    main_quantity = fields.Float(
+        string='Main Quantity', digits=(16, 3), default=0.0,
+        help='Main item quantity (editable on BOQ item header rows). '
+             'Changing this recalculates all child component quantities.',
+    )
+    base_ratio_qty = fields.Float(
+        string='Base Ratio Qty', digits=(16, 4), default=0.0,
+        help='Component quantity per ONE unit of the parent item. '
+             'Actual quantity = parent main quantity × this ratio.',
     )
 
     # ── Template origin (set when line was inserted from a BOQ template) ─────
@@ -166,6 +181,7 @@ class FarmCostLine(models.Model):
     @api.depends(
         'quantity', 'unit_cost', 'display_type', 'is_boq_item',
         'boq_child_ids.total_cost',
+        'main_quantity', 'base_ratio_qty',
     )
     def _compute_total_cost(self):
         for rec in self:
@@ -395,6 +411,22 @@ class FarmCostLine(models.Model):
                 vals['is_manual_item'] = False
         return super().create(vals_list)
 
+    def write(self, vals):
+        """Propagate main_quantity changes to child component quantities."""
+        res = super().write(vals)
+        if 'main_quantity' in vals and not self.env.context.get('_skip_qty_propagation'):
+            for rec in self.filtered(lambda r: r.is_boq_item):
+                child_vals = []
+                for child in rec.boq_child_ids:
+                    if child.base_ratio_qty:
+                        new_qty = rec.main_quantity * child.base_ratio_qty
+                        child_vals.append((child.id, new_qty))
+                for child_id, new_qty in child_vals:
+                    self.browse(child_id).with_context(
+                        _skip_qty_propagation=True,
+                    ).write({'quantity': new_qty})
+        return res
+
     # =========================================================================
     # SAVE AS BOQ TEMPLATE
     # =========================================================================
@@ -422,9 +454,8 @@ class FarmCostLine(models.Model):
 
         if self.source_template_id and not self.is_boq_item:
             raise UserError(
-                _('This item already originates from a template. '
-                  'To create a new template from it, first clear the source '
-                  'template link (Source Template field) and retry.')
+                _('This individual item already originates from a template. '
+                  'To save it as a new template, use the parent BOQ item header instead.')
             )
 
         name = self.name or (self.product_id.name if self.product_id else False) or _('Unnamed')
@@ -462,8 +493,9 @@ class FarmCostLine(models.Model):
             'costing_section': self.costing_section,
             'work_type_id': self.work_type_id.id if self.work_type_id else False,
             'product_id': self.product_id.id if self.product_id else False,
+            'unit_name': self.unit_name or '',
             'description': self.name,
-            'qty_item': 1,
+            'qty_item': self.main_quantity if self.is_boq_item and self.main_quantity else 1,
             'profit_percent': self.profit_percent,
             'active': True,
         })
@@ -471,13 +503,16 @@ class FarmCostLine(models.Model):
         if self.is_boq_item and self.boq_child_ids:
             # BOQ item header: copy all component children as template lines
             for seq, child in enumerate(self.boq_child_ids.sorted('sequence'), start=10):
+                ratio = child.base_ratio_qty or child.quantity
                 self.env['farm.boq.item.template.line'].create({
                     'template_id': template.id,
                     'sequence': seq,
                     'description': child.name,
                     'product_id': child.product_id.id if child.product_id else False,
+                    'unit_name': child.unit_name or '',
                     'cost_type_id': child.cost_type_id.id if child.cost_type_id else False,
                     'qty_1': child.quantity,
+                    'base_ratio_qty': ratio,
                     'cost_unit': child.unit_cost,
                 })
         else:
@@ -487,8 +522,10 @@ class FarmCostLine(models.Model):
                 'sequence': 10,
                 'description': self.name,
                 'product_id': self.product_id.id if self.product_id else False,
+                'unit_name': self.unit_name or '',
                 'cost_type_id': self.cost_type_id.id if self.cost_type_id else False,
                 'qty_1': self.quantity,
+                'base_ratio_qty': self.base_ratio_qty or self.quantity,
                 'cost_unit': self.unit_cost,
             })
 

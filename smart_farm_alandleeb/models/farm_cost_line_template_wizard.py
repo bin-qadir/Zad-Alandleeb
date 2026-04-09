@@ -43,7 +43,11 @@ class FarmCostLineInsertWizard(models.TransientModel):
         domain="[('field_id', '=', field_id), ('display_type', '=', 'line_subsection')]",
         ondelete='set null',
     )
-    quantity = fields.Float(string='Quantity', digits=(16, 3), default=1.0, required=True)
+    main_quantity = fields.Float(
+        string='Main Quantity', digits=(16, 3), default=1.0, required=True,
+        help='Main item quantity. Component quantities = main quantity × base ratio.',
+    )
+    quantity = fields.Float(string='Quantity (legacy)', digits=(16, 3), default=1.0)
 
     # ── Template preview (read-only) ──────────────────────────────────────────
     template_description = fields.Text(
@@ -103,24 +107,31 @@ class FarmCostLineInsertWizard(models.TransientModel):
         tpl = self.template_id
         section = self.costing_section or tpl.costing_section
         field_id = self.field_id.id
+        main_qty = self.main_quantity or self.quantity or 1.0
 
         # ── Parent cost.line (BOQ item header, totals roll up from children) ──
-        parent_line = self.env['farm.cost.line'].create({
+        parent_line = self.env['farm.cost.line'].with_context(
+            _skip_qty_propagation=True,
+        ).create({
             'field_id': field_id,
             'costing_section': section,
             'work_type_id': (self.work_type_id.id
                              or (tpl.work_type_id.id if tpl.work_type_id else False)),
             'name': tpl.name,
+            'product_id': tpl.product_id.id if tpl.product_id else False,
+            'unit_name': tpl.unit_name or '',
             'profit_percent': tpl.profit_percent,
             'source_template_id': tpl.id,
             'is_boq_item': True,
             'is_manual_item': False,
+            'main_quantity': main_qty,
             'parent_section_id': self.parent_section_id.id if self.parent_section_id else False,
             'parent_subsection_id': self.parent_subsection_id.id if self.parent_subsection_id else False,
         })
 
         # ── Child cost.line per normal template component ──────────────────────
         for tl in tpl.line_ids.filtered(lambda l: not l.display_type).sorted('sequence'):
+            ratio = tl.base_ratio_qty or tl.qty_1 or 1.0
             self.env['farm.cost.line'].create({
                 'field_id': field_id,
                 'costing_section': section,
@@ -128,8 +139,10 @@ class FarmCostLineInsertWizard(models.TransientModel):
                 'sequence': tl.sequence,
                 'name': tl.description or '',
                 'product_id': tl.product_id.id if tl.product_id else False,
+                'unit_name': tl.unit_name or '',
                 'cost_type_id': tl.cost_type_id.id if tl.cost_type_id else False,
-                'quantity': tl.qty_1 or 1.0,
+                'base_ratio_qty': ratio,
+                'quantity': main_qty * ratio,
                 'unit_cost': tl.cost_unit,
                 'is_manual_item': False,
                 'source_template_id': tpl.id,

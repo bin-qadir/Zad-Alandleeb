@@ -19,6 +19,8 @@
                             <field name="field_id" readonly="1"/>
                             <field name="template_id" required="1"/>
                             <field name="target_section" required="1"/>
+                            <field name="main_quantity" string="Main Quantity"
+                                   help="Quantity of the main item. Component quantities are calculated automatically."/>
                         </group>
                         <group string="Template Preview" invisible="not template_id">
                             <field name="template_description" readonly="1" nolabel="1"

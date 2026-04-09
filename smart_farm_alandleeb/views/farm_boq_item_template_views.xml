@@ -79,6 +79,9 @@
                                            invisible="display_type in ('line_section','line_note')"/>
                                     <field name="qty_1" string="Qty"
                                            invisible="display_type in ('line_section','line_note')"/>
+                                    <field name="base_ratio_qty" string="Ratio / 1 Unit"
+                                           invisible="display_type in ('line_section','line_note')"
+                                           help="Quantity per 1 unit of the main parent item"/>
                                     <field name="cost_type_id"
                                            invisible="display_type in ('line_section','line_note')"/>
                                     <field name="cost_category" string="Category"

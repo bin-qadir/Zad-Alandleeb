@@ -34,6 +34,11 @@ class FarmInsertBoqItemTemplateWizard(models.TransientModel):
         required=True,
         help='Works Division this BOQ item will be placed in.',
     )
+    main_quantity = fields.Float(
+        string='Main Quantity', digits=(16, 3), default=1.0, required=True,
+        help='Quantity of the main item. Component quantities are calculated '
+             'automatically: component qty = main quantity × base ratio.',
+    )
 
     # ── Placement inside the cost line hierarchy ──────────────────────────────
     parent_section_id = fields.Many2one(
@@ -104,28 +109,42 @@ class FarmInsertBoqItemTemplateWizard(models.TransientModel):
             self.target_section = self.template_id.costing_section
 
     def action_insert(self):
-        """Insert template into the costing workspace as parent + child cost lines."""
+        """Insert template into the costing workspace as parent + child cost lines.
+
+        Creates:
+          1. Parent cost.line (is_boq_item=True) with main_quantity
+          2. Child cost.lines with base_ratio_qty; actual qty = main_quantity × ratio
+          3. farm.boq.item (count_in_cost_total=False) for downstream workflows
+          4. farm.boq.item.line records
+        """
         self.ensure_one()
         template = self.template_id
         section = self.target_section or template.costing_section
         field_id = self.field_id.id
+        main_qty = self.main_quantity or 1.0
 
         # ── 1. Create the parent cost.line (BOQ item header) ─────────────────
-        parent_line = self.env['farm.cost.line'].create({
+        parent_line = self.env['farm.cost.line'].with_context(
+            _skip_qty_propagation=True,
+        ).create({
             'field_id': field_id,
             'costing_section': section,
             'name': template.name,
+            'product_id': template.product_id.id if template.product_id else False,
+            'unit_name': template.unit_name or '',
             'work_type_id': template.work_type_id.id if template.work_type_id else False,
             'is_boq_item': True,
             'is_manual_item': False,
             'source_template_id': template.id,
             'profit_percent': template.profit_percent,
+            'main_quantity': main_qty,
             'parent_section_id': self.parent_section_id.id if self.parent_section_id else False,
             'parent_subsection_id': self.parent_subsection_id.id if self.parent_subsection_id else False,
         })
 
         # ── 2. Create child cost.line for each normal template component ──────
         for tl in template.line_ids.filtered(lambda l: not l.display_type).sorted('sequence'):
+            ratio = tl.base_ratio_qty or tl.qty_1 or 1.0
             self.env['farm.cost.line'].create({
                 'field_id': field_id,
                 'costing_section': section,
@@ -133,8 +152,10 @@ class FarmInsertBoqItemTemplateWizard(models.TransientModel):
                 'sequence': tl.sequence,
                 'name': tl.description or '',
                 'product_id': tl.product_id.id if tl.product_id else False,
+                'unit_name': tl.unit_name or '',
                 'cost_type_id': tl.cost_type_id.id if tl.cost_type_id else False,
-                'quantity': tl.qty_1 or 1.0,
+                'base_ratio_qty': ratio,
+                'quantity': main_qty * ratio,
                 'unit_cost': tl.cost_unit,
                 'is_manual_item': False,
                 'source_template_id': template.id,
@@ -149,7 +170,7 @@ class FarmInsertBoqItemTemplateWizard(models.TransientModel):
             'description': template.description or '',
             'product_id': template.product_id.id if template.product_id else False,
             'unit_name': template.unit_name or '',
-            'qty_item': template.qty_item,
+            'qty_item': main_qty,
             'profit_percent': template.profit_percent,
             'source_template_id': template.id,
             'work_type_id': template.work_type_id.id if template.work_type_id else False,
@@ -158,6 +179,7 @@ class FarmInsertBoqItemTemplateWizard(models.TransientModel):
 
         # ── 4. Create farm.boq.item.line records ──────────────────────────────
         for tl in template.line_ids.sorted('sequence'):
+            ratio = tl.base_ratio_qty or tl.qty_1 or 1.0
             self.env['farm.boq.item.line'].create({
                 'boq_item_id': boq_item.id,
                 'sequence': tl.sequence,
@@ -166,7 +188,8 @@ class FarmInsertBoqItemTemplateWizard(models.TransientModel):
                 'name': tl.description or '',
                 'product_id': tl.product_id.id if tl.product_id else False,
                 'unit_name': tl.unit_name or '',
-                'qty_1': tl.qty_1,
+                'qty_1': (main_qty * ratio) if not tl.display_type else tl.qty_1,
+                'base_ratio_qty': ratio,
                 'cost_type_id': tl.cost_type_id.id if tl.cost_type_id else False,
                 'cost_unit': tl.cost_unit,
             })

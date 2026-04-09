@@ -17,7 +17,8 @@
                         <group string="Template Selection">
                             <field name="field_id" readonly="1"/>
                             <field name="template_id"/>
-                            <field name="quantity"/>
+                            <field name="main_quantity" string="Main Quantity"
+                                   help="Main item quantity. Component quantities = main quantity x base ratio."/>
                         </group>
                         <group string="Placement">
                             <field name="costing_section" string="Works Division"/>
