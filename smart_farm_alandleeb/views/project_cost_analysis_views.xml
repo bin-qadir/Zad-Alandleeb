@@ -122,7 +122,7 @@
     <record id="view_project_project_form_costing_analysis" model="ir.ui.view">
         <field name="name">project.project.form.costing.analysis</field>
         <field name="model">project.project</field>
-        <field name="inherit_id" ref="project.view_project_form"/>
+        <field name="inherit_id" ref="project.edit_project"/>
         <field name="arch" type="xml">
 
             <xpath expr="//notebook" position="inside">
