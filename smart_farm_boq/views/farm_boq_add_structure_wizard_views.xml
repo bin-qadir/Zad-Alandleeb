@@ -85,28 +85,8 @@
             <field name="target">new</field>
         </record>
 
-        <!-- ══════════════════════════════════════════════════════════════════
-             Inject "Add BOQ Structure" button into the BOQ form header.
-             Placed before the "Rebuild Structure" maintenance button
-             so it appears prominently when the BOQ is in draft/start state.
-        ══════════════════════════════════════════════════════════════════════ -->
-        <record id="view_farm_boq_add_structure_button_inject" model="ir.ui.view">
-            <field name="name">farm.boq.add_structure.button.inject</field>
-            <field name="model">farm.boq</field>
-            <field name="inherit_id" ref="smart_farm_boq.view_farm_boq_form"/>
-            <field name="arch" type="xml">
-
-                <!-- Inject before the "Rebuild Structure" button -->
-                <xpath expr="//button[@name='action_cleanup_structure']" position="before">
-                    <button name="action_add_structure"
-                            type="object"
-                            string="Add BOQ Structure"
-                            icon="fa-plus-square"
-                            class="btn-primary"/>
-                </xpath>
-
-            </field>
-        </record>
+        <!-- "Add BOQ Structure" button has been moved to the BOQ Structure screen list header.
+             See farm_boq_line_views.xml for the new location. -->
 
     </data>
 </odoo>

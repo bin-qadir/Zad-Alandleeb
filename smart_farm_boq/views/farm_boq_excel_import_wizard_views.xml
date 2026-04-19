@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             BOQ Excel Import Wizard
+             3-state form: draft → validated → done
+        ══════════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_boq_excel_import_wizard_form" model="ir.ui.view">
+            <field name="name">farm.boq.excel.import.wizard.form</field>
+            <field name="model">farm.boq.excel.import.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Import BOQ from Excel">
+
+                    <!-- ── Hidden state tracking ── -->
+                    <field name="state"          invisible="1"/>
+                    <field name="has_errors"     invisible="1"/>
+                    <field name="has_warnings"   invisible="1"/>
+                    <field name="has_downstream" invisible="1"/>
+
+                    <!-- ══════════════════════════════════════════════════
+                         STEP 1 — Configure upload
+                    ══════════════════════════════════════════════════ -->
+                    <group invisible="state != 'draft'">
+                        <group string="Target Cost Structure">
+                            <field name="boq_id" readonly="1"/>
+                            <field name="imported_by" readonly="1"/>
+                        </group>
+                        <group string="Import Mode">
+                            <field name="import_mode" widget="radio"/>
+                        </group>
+                    </group>
+
+                    <div class="alert alert-info mb-3" invisible="state != 'draft'">
+                        <strong>Expected Excel columns (case-insensitive):</strong><br/>
+                        <code>Division | Subdivision | Sub-Subdivision | Name | Qty | Unit | Unit Price | Notes</code><br/>
+                        <span class="text-muted small">
+                            A <em>Code</em> column is optional but improves matching accuracy in
+                            Update mode. Division / Subdivision / Sub-Subdivision are matched against
+                            master data (new records are auto-created if not found).
+                        </span>
+                    </div>
+
+                    <group string="Upload Excel File" invisible="state != 'draft'">
+                        <field name="excel_file"
+                               filename="file_name"
+                               widget="binary"
+                               string="Excel File (.xlsx)"/>
+                        <field name="file_name" invisible="1"/>
+                    </group>
+
+                    <!-- ══════════════════════════════════════════════════
+                         STEP 2 — Validation results + confirm
+                    ══════════════════════════════════════════════════ -->
+                    <div invisible="state != 'validated'">
+                        <field name="validation_html" widget="html" nolabel="1"/>
+                    </div>
+
+                    <group invisible="state != 'validated' or not has_downstream">
+                        <field name="confirm_replace"/>
+                    </group>
+
+                    <!-- ══════════════════════════════════════════════════
+                         STEP 3 — Import result
+                    ══════════════════════════════════════════════════ -->
+                    <div invisible="state != 'done'">
+                        <field name="result_html" widget="html" nolabel="1"/>
+                        <group>
+                            <group string="Lines Created / Updated">
+                                <field name="result_created" string="Created"/>
+                                <field name="result_updated" string="Updated"/>
+                            </group>
+                            <group string="Lines Skipped / Deleted">
+                                <field name="result_skipped" string="Skipped"/>
+                                <field name="result_deleted" string="Deleted (Replace)"/>
+                            </group>
+                        </group>
+                    </div>
+
+                    <!-- ── Footer buttons (state-driven) ── -->
+                    <footer>
+                        <!-- Step 1 -->
+                        <button name="action_validate_excel"
+                                type="object"
+                                string="Validate Excel"
+                                class="btn-primary"
+                                invisible="state != 'draft'"/>
+
+                        <!-- Step 2 — import (only when no blocking errors) -->
+                        <button name="action_confirm_import"
+                                type="object"
+                                string="Import"
+                                class="btn-primary"
+                                invisible="state != 'validated' or has_errors"
+                                confirm="Import the BOQ lines from this Excel file?"/>
+
+                        <!-- Step 2 — re-validate after fixing the file -->
+                        <button name="action_validate_excel"
+                                type="object"
+                                string="Re-validate"
+                                class="btn-secondary"
+                                invisible="state != 'validated'"/>
+
+                        <button string="Close"
+                                class="btn-secondary"
+                                special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+        <!-- ── Window action ─────────────────────────────────────────────── -->
+        <record id="action_farm_boq_excel_import" model="ir.actions.act_window">
+            <field name="name">Import BOQ from Excel</field>
+            <field name="res_model">farm.boq.excel.import.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

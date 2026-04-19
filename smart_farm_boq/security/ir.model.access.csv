@@ -14,3 +14,4 @@ access_farm_boq_line_template_use_wizard_user,farm.boq.line.template.use.wizard 
 access_farm_boq_add_subitem_wizard_user,farm.boq.add.subitem.wizard user,model_farm_boq_add_subitem_wizard,base.group_user,1,1,1,1
 access_farm_boq_add_structure_wizard_user,farm.boq.add_structure.wizard user,model_farm_boq_add_structure_wizard,base.group_user,1,1,1,1
 access_farm_boq_print_wizard_user,farm.boq.print.wizard user,model_farm_boq_print_wizard,base.group_user,1,1,1,1
+access_farm_boq_excel_import_wizard_user,farm.boq.excel.import.wizard user,model_farm_boq_excel_import_wizard,base.group_user,1,1,1,1

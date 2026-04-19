@@ -678,3 +678,143 @@ class FarmBoqLine(models.Model):
                     sib.write({'sequence_sub': i})
 
         return result
+
+    # ────────────────────────────────────────────────────────────────────────
+    # BOQ Structure Screen — list header action buttons
+    # Called from the <header> of the farm.boq.line list view.
+    # The BOQ is resolved from context (default_boq_id) or from self[0].boq_id.
+    # ────────────────────────────────────────────────────────────────────────
+
+    def _get_context_boq(self):
+        """Return the farm.boq from context or from the first selected line."""
+        boq_id = self.env.context.get('default_boq_id')
+        if not boq_id and self:
+            boq_id = self[0].boq_id.id
+        if not boq_id:
+            raise UserError(_(
+                'No Cost Structure context found.\n\n'
+                'Open the BOQ Structure screen from a Cost Structure document.'
+            ))
+        return self.env['farm.boq'].browse(boq_id)
+
+    def action_structure_open_add_wizard(self):
+        """Open the Add BOQ Structure wizard for the current BOQ."""
+        boq = self._get_context_boq()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Add BOQ Structure'),
+            'res_model': 'farm.boq.add_structure.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_boq_id': boq.id},
+        }
+
+    def action_structure_rebuild(self):
+        """Deduplicate + resequence all hierarchy rows for the current BOQ."""
+        boq = self._get_context_boq()
+        return boq.action_cleanup_structure()
+
+    def action_sequence_rebuild(self):
+        """Rebuild display codes and sequence numbers without deduplication."""
+        boq = self._get_context_boq()
+        return boq.rebuild_boq_sequence()
+
+    def action_open_excel_import(self):
+        """Open the Excel Import wizard for the current BOQ."""
+        boq = self._get_context_boq()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Import BOQ from Excel'),
+            'res_model': 'farm.boq.excel.import.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_boq_id': boq.id},
+        }
+
+    def action_delete_selected_lines(self):
+        """Safe hierarchical delete of selected BOQ lines.
+
+        Expands the selection to include all children of any selected parent.
+        Blocks deletion if subitems have downstream analysis or job-order links.
+        Rebuilds the BOQ sequence after deletion.
+        """
+        if not self:
+            raise UserError(_('No lines selected. Select one or more BOQ lines to delete.'))
+
+        to_delete = self._collect_with_children()
+        subitems = to_delete.filtered(lambda l: not l.display_type)
+        warnings = self._check_downstream_links(subitems)
+
+        if warnings:
+            raise UserError(_(
+                'Cannot delete — the following downstream links exist on the selected items:\n\n'
+                '%s\n\n'
+                'Remove or re-link these records before deleting the BOQ lines.',
+                '\n'.join('  • %s' % w for w in warnings),
+            ))
+
+        boq_id = to_delete[0].boq_id.id if to_delete else False
+        count = len(to_delete)
+        to_delete.unlink()
+
+        if boq_id:
+            boq = self.env['farm.boq'].browse(boq_id)
+            if boq.exists():
+                boq._rebuild_sequence()
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Lines Deleted'),
+                'message': _('%d BOQ line(s) deleted and sequence rebuilt.', count),
+                'type': 'success',
+                'sticky': False,
+            },
+        }
+
+    def _collect_with_children(self):
+        """Expand a recordset to include all hierarchy descendants."""
+        Line = self.env['farm.boq.line']
+        result = self.env['farm.boq.line']
+
+        for line in self:
+            result |= line
+            if line.display_type == 'line_section':
+                subsections = Line.search([('section_line_id', '=', line.id)])
+                result |= subsections
+                for sub in subsections:
+                    sub_subs = Line.search([('subsection_line_id', '=', sub.id)])
+                    result |= sub_subs
+                    for ss in sub_subs:
+                        result |= Line.search([('parent_id', '=', ss.id)])
+            elif line.display_type == 'line_subsection':
+                sub_subs = Line.search([('subsection_line_id', '=', line.id)])
+                result |= sub_subs
+                for ss in sub_subs:
+                    result |= Line.search([('parent_id', '=', ss.id)])
+            elif line.display_type == 'line_sub_subsection':
+                result |= Line.search([('parent_id', '=', line.id)])
+
+        return result
+
+    def _check_downstream_links(self, subitems):
+        """Return list of human-readable warning strings for downstream links."""
+        if not subitems:
+            return []
+        ids = subitems.ids
+        warnings = []
+
+        AnalysisLine = self.env.get('farm.boq.analysis.line')
+        if AnalysisLine is not None:
+            count = AnalysisLine.search_count([('boq_line_id', 'in', ids)])
+            if count:
+                warnings.append(_('%d BOQ Analysis line(s)') % count)
+
+        JobOrder = self.env.get('farm.job.order')
+        if JobOrder is not None and 'boq_line_id' in JobOrder._fields:
+            count = JobOrder.search_count([('boq_line_id', 'in', ids)])
+            if count:
+                warnings.append(_('%d Job Order(s)') % count)
+
+        return warnings

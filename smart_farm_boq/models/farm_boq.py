@@ -211,6 +211,18 @@ class FarmBoq(models.Model):
             },
         }
 
+    def action_open_excel_import(self):
+        """Open the Excel Import wizard for this BOQ."""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Import BOQ from Excel — %s') % self.name,
+            'res_model': 'farm.boq.excel.import.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_boq_id': self.id},
+        }
+
     # ── KPI-card click actions (filtered to real subitems by boq_state) ──────
 
     def _action_subitems(self, label, extra_domain=None):

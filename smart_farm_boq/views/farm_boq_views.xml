@@ -66,22 +66,7 @@
                         <button name="action_export_pdf" type="object" string="PDF"
                                 icon="fa-file-pdf-o" class="btn-secondary o_boq_action_btn"/>
 
-                        <!-- Structure maintenance -->
-                        <button name="action_cleanup_structure"
-                                type="object"
-                                string="Rebuild Structure"
-                                icon="fa-wrench"
-                                class="btn-warning"
-                                groups="smart_farm_base.group_smart_farm_manager"
-                                confirm="This will remove duplicate lines and rebuild sequential ordering. Continue?"/>
-                        <!-- Sequence-only rebuild — no deduplication, safe at any time -->
-                        <button name="rebuild_boq_sequence"
-                                type="object"
-                                string="Rebuild Sequence"
-                                icon="fa-sort-numeric-asc"
-                                class="btn-secondary"
-                                groups="smart_farm_base.group_smart_farm_manager"
-                                confirm="Rebuild all BOQ line codes and sequence numbers?"/>
+                        <!-- Structure maintenance buttons have moved to the BOQ Structure screen -->
 
                         <!-- Statusbar — clickable for managers, display-only for others -->
                         <field name="state" widget="statusbar"
@@ -127,6 +112,11 @@
                                     string="Open BOQ Structure"
                                     icon="fa-sitemap"
                                     class="btn btn-primary btn-lg px-4"/>
+                            <button name="action_open_excel_import"
+                                    type="object"
+                                    string="Import BOQ Excel"
+                                    icon="fa-file-excel-o"
+                                    class="btn btn-success btn-lg px-4"/>
                         </div>
 
                         <!-- ── NOTEBOOK ──────────────────────────────────────── -->

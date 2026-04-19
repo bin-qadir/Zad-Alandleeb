@@ -6,4 +6,5 @@ from . import farm_boq_line
 from . import farm_boq_wizard
 from . import farm_boq_add_item_wizard
 from . import farm_boq_add_structure_wizard
+from . import farm_boq_excel_import_wizard
 from . import farm_project_inherit

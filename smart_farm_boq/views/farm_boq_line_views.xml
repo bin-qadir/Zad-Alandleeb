@@ -52,6 +52,38 @@
                       decoration-bf="display_type == 'line_section'"
                       decoration-it="display_type == 'line_subsection'"
                       decoration-muted="parent_id != False">
+
+                    <!-- ── Structure Screen Action Buttons ─────────────────
+                         These appear above the list (in the control panel).
+                         All actions resolve the BOQ from default_boq_id context.
+                    ──────────────────────────────────────────────────── -->
+                    <header>
+                        <button name="action_structure_open_add_wizard"
+                                type="object"
+                                string="Add BOQ Structure"
+                                class="btn-primary"/>
+                        <button name="action_structure_rebuild"
+                                type="object"
+                                string="Rebuild Structure"
+                                class="btn-warning"
+                                groups="smart_farm_base.group_smart_farm_manager"
+                                confirm="Remove duplicate lines and rebuild sequential ordering?"/>
+                        <button name="action_sequence_rebuild"
+                                type="object"
+                                string="Rebuild Sequence"
+                                class="btn-secondary"
+                                groups="smart_farm_base.group_smart_farm_manager"
+                                confirm="Rebuild all BOQ line codes and sequence numbers?"/>
+                        <button name="action_open_excel_import"
+                                type="object"
+                                string="Import BOQ Excel"
+                                class="btn-success"/>
+                        <button name="action_delete_selected_lines"
+                                type="object"
+                                string="Delete Selected"
+                                class="btn-danger"
+                                confirm="Delete the selected BOQ lines (and all their children)? This cannot be undone."/>
+                    </header>
                     <field name="display_type" column_invisible="1"/>
                     <field name="div_rank" column_invisible="1"/>
                     <field name="sub_rank" column_invisible="1"/>

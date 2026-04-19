@@ -1,6 +1,6 @@
 {
     'name': 'Smart Farm BOQ',
-    'version': '18.0.2.1.0',
+    'version': '18.0.2.2.0',
     'summary': 'Bill of Quantities for the Smart Farm system',
     'description': (
         'Manage BOQ documents with template loading, manual entry, '
@@ -28,6 +28,7 @@
         'views/farm_boq_wizard_views.xml',
         'views/farm_boq_add_structure_wizard_views.xml',
         'views/farm_boq_print_wizard_views.xml',
+        'views/farm_boq_excel_import_wizard_views.xml',
         'views/farm_project_views_inherit.xml',
         'views/menu.xml',
     ],
