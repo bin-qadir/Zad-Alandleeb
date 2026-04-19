@@ -178,7 +178,7 @@
                                     <list>
                                         <field name="name"/>
                                         <field name="crop_type_id"/>
-                                        <field name="area" string="Area (ha)"/>
+                                        <field name="area_m2" string="Area (m²)"/>
                                         <field name="notes" optional="show"/>
                                     </list>
                                 </field>

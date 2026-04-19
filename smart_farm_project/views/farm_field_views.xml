@@ -10,7 +10,7 @@
                     <field name="name"/>
                     <field name="project_id"/>
                     <field name="crop_type_id"/>
-                    <field name="area"/>
+                    <field name="area_m2" string="Area (m²)"/>
                 </list>
             </field>
         </record>
@@ -30,7 +30,7 @@
                             <group string="Details">
                                 <field name="project_id"/>
                                 <field name="crop_type_id"/>
-                                <field name="area"/>
+                                <field name="area_m2" string="Area (m²)"/>
                             </group>
                         </group>
                         <notebook>

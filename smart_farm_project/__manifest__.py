@@ -1,6 +1,6 @@
 {
     'name': 'Smart Farm Project',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.1.0',
     'summary': 'Farm project management for the Smart Farm system',
     'description': 'Manage farm projects and fields, linked to Odoo project tasks.',
     'category': 'Agriculture',

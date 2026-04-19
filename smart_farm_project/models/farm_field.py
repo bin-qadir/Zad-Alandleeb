@@ -18,5 +18,5 @@ class FarmField(models.Model):
         string='Crop Type',
         ondelete='set null',
     )
-    area = fields.Float(string='Area (ha)')
+    area_m2 = fields.Float(string='Area (m²)', digits=(16, 2))
     notes = fields.Text(string='Notes')
