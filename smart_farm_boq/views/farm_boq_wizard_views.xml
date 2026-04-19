@@ -46,11 +46,23 @@
                             <field name="project_phase_id" invisible="1"/>
                         </group>
 
-                        <!-- Location info (readonly — set from the sub-subdivision row) -->
+                        <!-- Location info.
+                             Readonly when opened from a sub-subdivision row
+                             (lock_location=True in context).
+                             Editable when opened from the top "Add Item" button
+                             (lock_location absent / False). -->
                         <group string="Location">
-                            <field name="division_id" readonly="1"/>
-                            <field name="subdivision_id" readonly="1"/>
-                            <field name="sub_subdivision_id" readonly="1"/>
+                            <field name="division_id"
+                                   readonly="context.get('lock_location', False)"
+                                   options="{'no_create': True, 'no_open': True}"/>
+                            <field name="subdivision_id"
+                                   readonly="context.get('lock_location', False)"
+                                   domain="[('division_id', '=', division_id)]"
+                                   options="{'no_create': True, 'no_open': True}"/>
+                            <field name="sub_subdivision_id"
+                                   readonly="context.get('lock_location', False)"
+                                   domain="[('subdivision_id', '=', subdivision_id)]"
+                                   options="{'no_create': True, 'no_open': True}"/>
                         </group>
 
                         <!-- Entry mode selection -->

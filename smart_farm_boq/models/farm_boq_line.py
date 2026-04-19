@@ -496,6 +496,8 @@ class FarmBoqLine(models.Model):
                 'default_sub_subsection_line_id': self.id,
                 # Pass project phase so the subitem form can inherit it
                 'default_project_phase_id':       self.project_phase_id.id or False,
+                # Lock location fields (opened from a specific row — location is known)
+                'lock_location': True,
             },
         }
 
@@ -729,6 +731,28 @@ class FarmBoqLine(models.Model):
             'view_mode': 'form',
             'target': 'new',
             'context': {'default_boq_id': boq.id},
+        }
+
+    def action_open_add_item(self):
+        """Open Add Item wizard from the Structure screen top button.
+
+        Unlike action_add_subitem (which is called from a specific row and
+        therefore pre-fills + locks the division/subdivision/sub-subdivision),
+        this entry-point leaves those fields editable so the user can choose
+        the full location from the wizard itself.
+        """
+        boq = self._get_context_boq()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Add Item'),
+            'res_model': 'farm.boq.add.subitem.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_boq_id': boq.id,
+                # lock_location = False → location fields are editable
+                'lock_location': False,
+            },
         }
 
     def action_delete_selected_lines(self):

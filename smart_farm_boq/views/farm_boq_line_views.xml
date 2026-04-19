@@ -62,6 +62,10 @@
                                 type="object"
                                 string="Add BOQ Structure"
                                 class="btn-primary"/>
+                        <button name="action_open_add_item"
+                                type="object"
+                                string="Add Item"
+                                class="btn-primary"/>
                         <button name="action_structure_rebuild"
                                 type="object"
                                 string="Rebuild Structure"
