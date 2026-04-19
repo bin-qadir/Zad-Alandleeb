@@ -54,34 +54,43 @@
                       decoration-muted="parent_id != False">
 
                     <!-- ── Structure Screen Action Buttons ─────────────────
-                         These appear above the list (in the control panel).
+                         display="always"  → renders in control-panel-always-buttons slot
+                                             → visible at all times (Odoo 18 list view)
+                         no display attr   → renders in control-panel-selection-actions slot
+                                             → visible only when rows are selected
                          All actions resolve the BOQ from default_boq_id context.
                     ──────────────────────────────────────────────────── -->
                     <header>
                         <button name="action_structure_open_add_wizard"
                                 type="object"
                                 string="Add BOQ Structure"
+                                display="always"
                                 class="btn-primary"/>
                         <button name="action_open_add_item"
                                 type="object"
                                 string="Add Item"
+                                display="always"
                                 class="btn-primary"/>
                         <button name="action_structure_rebuild"
                                 type="object"
                                 string="Rebuild Structure"
+                                display="always"
                                 class="btn-warning"
                                 groups="smart_farm_base.group_smart_farm_manager"
                                 confirm="Remove duplicate lines and rebuild sequential ordering?"/>
                         <button name="action_sequence_rebuild"
                                 type="object"
                                 string="Rebuild Sequence"
+                                display="always"
                                 class="btn-secondary"
                                 groups="smart_farm_base.group_smart_farm_manager"
                                 confirm="Rebuild all BOQ line codes and sequence numbers?"/>
                         <button name="action_open_excel_import"
                                 type="object"
                                 string="Import BOQ Excel"
+                                display="always"
                                 class="btn-success"/>
+                        <!-- Delete Selected: no display="always" — only meaningful when rows selected -->
                         <button name="action_delete_selected_lines"
                                 type="object"
                                 string="Delete Selected"
