@@ -60,6 +60,13 @@
                             </h1>
                         </div>
 
+                        <!-- ── MAIN ACTION BUTTONS ───────────────────────────
+                             Anchor div for action buttons injected by sub-modules.
+                             smart_farm_boq injects "New BOQ" here.
+                        ──────────────────────────────────────────────────── -->
+                        <div class="d-flex flex-wrap gap-3 mb-4"
+                             name="main_action_buttons"/>
+
                         <!-- ── MAIN INFO — 2-column ───────────────────────────
                              LEFT  (group_project_details):
                                Analytic Account, Start Date, End Date
