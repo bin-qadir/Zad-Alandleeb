@@ -188,9 +188,9 @@ class FarmBoq(models.Model):
         The DB-level UNIQUE(boq_id) constraint guarantees at most one Analysis
         per BOQ.  This method therefore has exactly two cases:
 
-        • Analysis exists → open its form view.
-        • No analysis yet → create one (auto-loads BOQ subitems via
-          ``_load_boq_lines``), then open the new form.
+        • Analysis exists → open its form view (any BOQ state).
+        • No analysis yet → only allowed when BOQ is approved; creates one
+          (auto-loads BOQ subitems via ``_load_boq_lines``), then opens it.
         """
         self.ensure_one()
 
@@ -199,8 +199,20 @@ class FarmBoq(models.Model):
         )
 
         if not analysis:
-            # _load_boq_lines() is called automatically in create()
-            analysis = self.env['farm.boq.analysis'].create({
+            if self.state != 'approved':
+                raise UserError(_(
+                    'BOQ Analysis can only be created from an approved B.O.Q.\n\n'
+                    'Current status of "%(boq)s" is: %(state)s.\n\n'
+                    'Please submit and approve the B.O.Q before opening the analysis.',
+                    boq=self.name,
+                    state=dict(self.fields_get(['state'])['state']['selection']).get(
+                        self.state, self.state
+                    ),
+                ))
+            # Pass bypass context so the model-level guard allows creation.
+            analysis = self.env['farm.boq.analysis'].with_context(
+                from_boq_analysis_create=True
+            ).create({
                 'boq_id': self.id,
             })
 

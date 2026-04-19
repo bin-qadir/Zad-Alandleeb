@@ -56,6 +56,7 @@
             <field name="model">farm.boq.analysis</field>
             <field name="arch" type="xml">
                 <list string="BOQ Analysis"
+                      create="0"
                       decoration-muted="analysis_state == 'draft'"
                       decoration-warning="analysis_state == 'review'"
                       decoration-success="analysis_state == 'approved'">
@@ -97,7 +98,7 @@
             <field name="name">farm.boq.analysis.form</field>
             <field name="model">farm.boq.analysis</field>
             <field name="arch" type="xml">
-                <form string="BOQ Analysis">
+                <form string="BOQ Analysis" create="0">
                     <header>
                         <!-- ── Workflow buttons ──────────────────────────── -->
                         <button name="action_review"

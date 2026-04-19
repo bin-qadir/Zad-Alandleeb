@@ -146,6 +146,13 @@ class FarmBoqDocAnalysis(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        # Block direct creation — analysis must be initiated from an approved BOQ.
+        if not self.env.context.get('from_boq_analysis_create'):
+            raise UserError(_(
+                'BOQ Analysis cannot be created manually.\n\n'
+                'Open an approved B.O.Q document and click '
+                '"Open BOQ Analysis" to create the analysis.'
+            ))
         seq = self.env['ir.sequence']
         for vals in vals_list:
             if vals.get('name', _('New')) == _('New'):
