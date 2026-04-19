@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Inject into the BOQ form (when smart_farm_boq_analysis is installed):
+              1. Header: "Open BOQ Analysis" navigation button
+              2. button_box: "Analysis" stat button
+              3. Overview > alerts_section: items-without-analysis + draft alert
+              4. Overview: Analysis Lines Status section (after Financial Summary)
+        -->
+        <record id="view_farm_boq_form_doc_analysis_inherit" model="ir.ui.view">
+            <field name="name">farm.boq.form.doc.analysis.inherit</field>
+            <field name="model">farm.boq</field>
+            <field name="inherit_id" ref="smart_farm_boq.view_farm_boq_form"/>
+            <field name="arch" type="xml">
+
+                <!-- ── 1. "Open BOQ Analysis" action button ─────────────────
+                     Inserted inside main_action_buttons div alongside
+                     "Open BOQ Structure" as a big prominent button.
+                ──────────────────────────────────────────────────────────── -->
+                <xpath expr="//div[@name='main_action_buttons']"
+                       position="inside">
+                    <button name="action_open_doc_analysis"
+                            type="object"
+                            string="Open BOQ Analysis"
+                            icon="fa-line-chart"
+                            class="btn btn-success btn-lg px-4"/>
+                </xpath>
+
+                <!-- ── 2. "Analysis" stat button ────────────────────────── -->
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button class="oe_stat_button"
+                            name="action_open_doc_analysis"
+                            type="object"
+                            icon="fa-bar-chart">
+                        <field name="doc_analysis_count"
+                               widget="statinfo"
+                               string="Analysis"/>
+                    </button>
+                </xpath>
+
+                <!-- ── 3. Alerts section ─────────────────────────────────
+                     Replaces the empty <div name="alerts_section"/> anchor
+                     with clickable alert buttons that open filtered views.
+                ──────────────────────────────────────────────────────────── -->
+                <xpath expr="//div[@name='alerts_section']" position="replace">
+                    <div name="alerts_section"
+                         class="mb-4"
+                         invisible="subitem_no_analysis_count == 0 and subitem_draft_count == 0">
+
+                        <div class="fw-semibold text-uppercase small mb-2"
+                             style="letter-spacing:0.06em; color:#6c757d;">
+                            ⚠ Alerts
+                        </div>
+
+                        <!-- Items without analysis / in draft — clickable, opens filtered structure -->
+                        <button name="action_open_no_analysis_items"
+                                type="object"
+                                class="btn w-100 text-start d-flex align-items-center gap-2 p-2 rounded mb-2"
+                                style="background:#fff3cd; border:1px solid #ffc107; cursor:pointer;"
+                                invisible="subitem_no_analysis_count == 0">
+                            <i class="fa fa-exclamation-triangle text-warning"/>
+                            <span class="fw-semibold">
+                                <field name="subitem_no_analysis_count"
+                                       nolabel="1" readonly="1"/>
+                                item(s) have no analysis — click to review draft
+                            </span>
+                        </button>
+
+                        <!-- Items in draft (not priced) — clickable, opens filtered structure -->
+                        <button name="action_open_draft_items"
+                                type="object"
+                                class="btn w-100 text-start d-flex align-items-center gap-2 p-2 rounded"
+                                style="background:#f8f9fa; border:1px solid #dee2e6; cursor:pointer;"
+                                invisible="subitem_draft_count == 0">
+                            <i class="fa fa-clock-o text-muted"/>
+                            <span class="fw-semibold text-muted">
+                                <field name="subitem_draft_count"
+                                       nolabel="1" readonly="1"/>
+                                item(s) still in Draft (not priced) — click to view
+                            </span>
+                        </button>
+
+                    </div>
+                </xpath>
+
+                <!-- ── 4. Financial KPI cards — cost / sale / profit / margin ───
+                     Injected inside the Financial Summary group as a second
+                     column, only visible when at least one analysis exists.
+                     All fields are read-only; editing happens in BOQ Analysis.
+                ──────────────────────────────────────────────────────────── -->
+                <xpath expr="//group[@name='financial_group']" position="inside">
+                    <group string="Analysis Financials"
+                           invisible="doc_analysis_count == 0">
+                        <field name="total_cost"
+                               string="Total Cost"
+                               readonly="1"
+                               widget="monetary"
+                               options="{'currency_field': 'currency_id'}"/>
+                        <field name="total_sale"
+                               string="Total Sale"
+                               readonly="1"
+                               widget="monetary"
+                               options="{'currency_field': 'currency_id'}"/>
+                        <field name="total_profit"
+                               string="Profit"
+                               readonly="1"
+                               widget="monetary"
+                               options="{'currency_field': 'currency_id'}"/>
+                        <field name="margin"
+                               string="Margin (%)"
+                               readonly="1"/>
+                    </group>
+                </xpath>
+
+                <!-- ── 5. Financial visual section — prominent KPI cards ──────
+                     Shown after the alerts section; hidden until an analysis
+                     document exists.  Uses Bootstrap grid classes available
+                     in Odoo 18.  All values computed; no editing here.
+                ──────────────────────────────────────────────────────────── -->
+                <xpath expr="//group[@name='financial_group']" position="after">
+
+                    <!-- Financial KPI card row (analysis-sourced) -->
+                    <div class="row g-3 mb-4"
+                         invisible="doc_analysis_count == 0">
+
+                        <div class="small fw-bold text-muted text-uppercase mb-1 px-2"
+                             style="letter-spacing:.08em; width:100%;">
+                            💰 Financial Picture (from Analysis)
+                        </div>
+
+                        <!-- Total Cost -->
+                        <div class="col-lg-3 col-sm-6">
+                            <div class="d-flex flex-column align-items-center
+                                        justify-content-center p-3 rounded
+                                        border border-danger h-100 gap-1"
+                                 style="background:rgba(220,53,69,.05);">
+                                <i class="fa fa-money fa-2x text-danger mb-1"/>
+                                <span class="fw-bold text-danger lh-1"
+                                      style="font-size:1.4rem;">
+                                    <field name="total_cost"
+                                           nolabel="1" readonly="1"
+                                           widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"/>
+                                </span>
+                                <span class="small fw-semibold text-uppercase text-muted"
+                                      style="letter-spacing:.06em;">
+                                    Total Cost
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Total Sale -->
+                        <div class="col-lg-3 col-sm-6">
+                            <div class="d-flex flex-column align-items-center
+                                        justify-content-center p-3 rounded
+                                        border border-primary h-100 gap-1"
+                                 style="background:rgba(13,110,253,.05);">
+                                <i class="fa fa-dollar fa-2x text-primary mb-1"/>
+                                <span class="fw-bold text-primary lh-1"
+                                      style="font-size:1.4rem;">
+                                    <field name="total_sale"
+                                           nolabel="1" readonly="1"
+                                           widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"/>
+                                </span>
+                                <span class="small fw-semibold text-uppercase text-muted"
+                                      style="letter-spacing:.06em;">
+                                    Total Sale
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Profit -->
+                        <div class="col-lg-3 col-sm-6">
+                            <div class="d-flex flex-column align-items-center
+                                        justify-content-center p-3 rounded
+                                        border border-success h-100 gap-1"
+                                 style="background:rgba(25,135,84,.05);">
+                                <i class="fa fa-line-chart fa-2x text-success mb-1"/>
+                                <span class="fw-bold text-success lh-1"
+                                      style="font-size:1.4rem;">
+                                    <field name="total_profit"
+                                           nolabel="1" readonly="1"
+                                           widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"/>
+                                </span>
+                                <span class="small fw-semibold text-uppercase text-muted"
+                                      style="letter-spacing:.06em;">
+                                    Profit
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Margin % -->
+                        <div class="col-lg-3 col-sm-6">
+                            <div class="d-flex flex-column align-items-center
+                                        justify-content-center p-3 rounded
+                                        border border-info h-100 gap-1"
+                                 style="background:rgba(13,202,240,.05);">
+                                <i class="fa fa-percent fa-2x text-info mb-1"/>
+                                <span class="fw-bold text-info lh-1"
+                                      style="font-size:1.4rem;">
+                                    <field name="margin"
+                                           nolabel="1" readonly="1"/>%
+                                </span>
+                                <span class="small fw-semibold text-uppercase text-muted"
+                                      style="letter-spacing:.06em;">
+                                    Margin
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Analysis Lines Status -->
+                    <group string="Analysis Lines Status"
+                           name="analysis_status_group"
+                           invisible="doc_analysis_count == 0">
+                        <group>
+                            <field name="analysis_line_count"
+                                   string="Total Lines" readonly="1"/>
+                            <field name="analysis_line_approved_count"
+                                   string="Approved" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="analysis_line_review_count"
+                                   string="In Review" readonly="1"/>
+                            <field name="analysis_line_draft_count"
+                                   string="Draft" readonly="1"/>
+                        </group>
+                    </group>
+
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

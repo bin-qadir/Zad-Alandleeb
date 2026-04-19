@@ -1,0 +1,1143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             DIVISION 1 — CIVIL WORKS
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <!-- 1.01 Site Preparation -->
+        <record id="sub3_civil_site_clearing" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_civil"/>
+            <field name="subdivision_id" ref="sub_civil_site_prep"/>
+            <field name="name">Site Clearing</field>
+            <field name="name_ar">تنظيف الموقع</field>
+            <field name="code">1.01.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_civil_site_leveling" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_civil"/>
+            <field name="subdivision_id" ref="sub_civil_site_prep"/>
+            <field name="name">Leveling &amp; Grading</field>
+            <field name="name_ar">تسوية وتدريج الأرض</field>
+            <field name="code">1.01.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 1.02 Excavation -->
+        <record id="sub3_civil_bulk_exc" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_civil"/>
+            <field name="subdivision_id" ref="sub_civil_excavation"/>
+            <field name="name">Bulk Excavation</field>
+            <field name="name_ar">الحفر الكتلي</field>
+            <field name="code">1.02.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_civil_trench_exc" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_civil"/>
+            <field name="subdivision_id" ref="sub_civil_excavation"/>
+            <field name="name">Trench Excavation</field>
+            <field name="name_ar">حفر الخنادق</field>
+            <field name="code">1.02.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 1.03 Backfilling -->
+        <record id="sub3_civil_granular_fill" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_civil"/>
+            <field name="subdivision_id" ref="sub_civil_backfilling"/>
+            <field name="name">Granular Backfill</field>
+            <field name="name_ar">ردم حبيبي</field>
+            <field name="code">1.03.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_civil_compacted_fill" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_civil"/>
+            <field name="subdivision_id" ref="sub_civil_backfilling"/>
+            <field name="name">Compacted Fill</field>
+            <field name="name_ar">ردم مدكوك</field>
+            <field name="code">1.03.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 1.04 Earthworks -->
+        <record id="sub3_civil_cut_fill" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_civil"/>
+            <field name="subdivision_id" ref="sub_civil_earthworks"/>
+            <field name="name">Cut &amp; Fill</field>
+            <field name="name_ar">قطع وردم</field>
+            <field name="code">1.04.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_civil_embankment" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_civil"/>
+            <field name="subdivision_id" ref="sub_civil_earthworks"/>
+            <field name="name">Embankment Works</field>
+            <field name="name_ar">أعمال الردم والتحصين</field>
+            <field name="code">1.04.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 1.05 Road Works -->
+        <record id="sub3_civil_road_base" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_civil"/>
+            <field name="subdivision_id" ref="sub_civil_road"/>
+            <field name="name">Road Base Course</field>
+            <field name="name_ar">طبقة الأساس للطريق</field>
+            <field name="code">1.05.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_civil_asphalt" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_civil"/>
+            <field name="subdivision_id" ref="sub_civil_road"/>
+            <field name="name">Asphalt Paving</field>
+            <field name="name_ar">رصف الأسفلت</field>
+            <field name="code">1.05.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 1.06 Foundations -->
+        <record id="sub3_civil_pad_found" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_civil"/>
+            <field name="subdivision_id" ref="sub_civil_foundations"/>
+            <field name="name">Pad Foundations</field>
+            <field name="name_ar">أساسات قواعد منفردة</field>
+            <field name="code">1.06.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_civil_strip_found" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_civil"/>
+            <field name="subdivision_id" ref="sub_civil_foundations"/>
+            <field name="name">Strip Foundations</field>
+            <field name="name_ar">أساسات شريطية</field>
+            <field name="code">1.06.02</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub3_civil_pile_found" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_civil"/>
+            <field name="subdivision_id" ref="sub_civil_foundations"/>
+            <field name="name">Pile Foundations</field>
+            <field name="name_ar">أساسات خوازيق</field>
+            <field name="code">1.06.03</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- 1.07 Concrete Works -->
+        <record id="sub3_civil_plain_conc" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_civil"/>
+            <field name="subdivision_id" ref="sub_civil_concrete"/>
+            <field name="name">Plain Concrete</field>
+            <field name="name_ar">خرسانة عادية</field>
+            <field name="code">1.07.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_civil_rc_conc" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_civil"/>
+            <field name="subdivision_id" ref="sub_civil_concrete"/>
+            <field name="name">Reinforced Concrete</field>
+            <field name="name_ar">خرسانة مسلحة</field>
+            <field name="code">1.07.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             DIVISION 2 — STRUCTURAL WORKS
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <!-- 2.01 Rebar -->
+        <record id="sub3_str_rebar_fab" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_structural"/>
+            <field name="subdivision_id" ref="sub_str_rebar"/>
+            <field name="name">Rebar Fabrication</field>
+            <field name="name_ar">تصنيع حديد التسليح</field>
+            <field name="code">2.01.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_str_rebar_fix" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_structural"/>
+            <field name="subdivision_id" ref="sub_str_rebar"/>
+            <field name="name">Rebar Fixing</field>
+            <field name="name_ar">تركيب حديد التسليح</field>
+            <field name="code">2.01.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 2.02 Structural Concrete -->
+        <record id="sub3_str_conc_supply" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_structural"/>
+            <field name="subdivision_id" ref="sub_str_concrete"/>
+            <field name="name">Concrete Supply</field>
+            <field name="name_ar">توريد الخرسانة</field>
+            <field name="code">2.02.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_str_conc_place" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_structural"/>
+            <field name="subdivision_id" ref="sub_str_concrete"/>
+            <field name="name">Concrete Placement &amp; Curing</field>
+            <field name="name_ar">صب الخرسانة ومعالجتها</field>
+            <field name="code">2.02.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 2.03 Columns -->
+        <record id="sub3_str_rc_columns" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_structural"/>
+            <field name="subdivision_id" ref="sub_str_columns"/>
+            <field name="name">RC Columns</field>
+            <field name="name_ar">أعمدة خرسانية مسلحة</field>
+            <field name="code">2.03.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_str_steel_columns" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_structural"/>
+            <field name="subdivision_id" ref="sub_str_columns"/>
+            <field name="name">Steel Columns</field>
+            <field name="name_ar">أعمدة فولاذية</field>
+            <field name="code">2.03.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 2.04 Beams -->
+        <record id="sub3_str_rc_beams" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_structural"/>
+            <field name="subdivision_id" ref="sub_str_beams"/>
+            <field name="name">RC Beams</field>
+            <field name="name_ar">كمرات خرسانية مسلحة</field>
+            <field name="code">2.04.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_str_steel_beams" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_structural"/>
+            <field name="subdivision_id" ref="sub_str_beams"/>
+            <field name="name">Steel Beams</field>
+            <field name="name_ar">كمرات فولاذية</field>
+            <field name="code">2.04.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 2.05 Slabs -->
+        <record id="sub3_str_solid_slab" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_structural"/>
+            <field name="subdivision_id" ref="sub_str_slabs"/>
+            <field name="name">Solid Slabs</field>
+            <field name="name_ar">بلاطات مصمتة</field>
+            <field name="code">2.05.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_str_hollow_slab" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_structural"/>
+            <field name="subdivision_id" ref="sub_str_slabs"/>
+            <field name="name">Hollow Core Slabs</field>
+            <field name="name_ar">بلاطات مجوفة</field>
+            <field name="code">2.05.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             DIVISION 3 — ARCHITECTURAL WORKS
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <!-- 3.01 Blockwork -->
+        <record id="sub3_arch_int_block" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_architectural"/>
+            <field name="subdivision_id" ref="sub_arch_blockwork"/>
+            <field name="name">Internal Blockwork</field>
+            <field name="name_ar">بلوك داخلي</field>
+            <field name="code">3.01.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_arch_ext_block" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_architectural"/>
+            <field name="subdivision_id" ref="sub_arch_blockwork"/>
+            <field name="name">External Blockwork</field>
+            <field name="name_ar">بلوك خارجي</field>
+            <field name="code">3.01.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 3.02 Plastering -->
+        <record id="sub3_arch_int_plaster" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_architectural"/>
+            <field name="subdivision_id" ref="sub_arch_plastering"/>
+            <field name="name">Internal Plastering</field>
+            <field name="name_ar">لياسة داخلية</field>
+            <field name="code">3.02.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_arch_ext_plaster" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_architectural"/>
+            <field name="subdivision_id" ref="sub_arch_plastering"/>
+            <field name="name">External Plastering</field>
+            <field name="name_ar">لياسة خارجية</field>
+            <field name="code">3.02.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 3.03 Tiling -->
+        <record id="sub3_arch_floor_tile" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_architectural"/>
+            <field name="subdivision_id" ref="sub_arch_tiling"/>
+            <field name="name">Floor Tiling</field>
+            <field name="name_ar">بلاط أرضيات</field>
+            <field name="code">3.03.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_arch_wall_tile" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_architectural"/>
+            <field name="subdivision_id" ref="sub_arch_tiling"/>
+            <field name="name">Wall Tiling</field>
+            <field name="name_ar">بلاط جدران</field>
+            <field name="code">3.03.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 3.04 Painting -->
+        <record id="sub3_arch_int_paint" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_architectural"/>
+            <field name="subdivision_id" ref="sub_arch_painting"/>
+            <field name="name">Internal Painting</field>
+            <field name="name_ar">دهانات داخلية</field>
+            <field name="code">3.04.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_arch_ext_paint" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_architectural"/>
+            <field name="subdivision_id" ref="sub_arch_painting"/>
+            <field name="name">External Painting</field>
+            <field name="name_ar">دهانات خارجية</field>
+            <field name="code">3.04.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 3.05 Ceiling -->
+        <record id="sub3_arch_susp_ceil" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_architectural"/>
+            <field name="subdivision_id" ref="sub_arch_ceiling"/>
+            <field name="name">Suspended Ceiling</field>
+            <field name="name_ar">أسقف معلقة</field>
+            <field name="code">3.05.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_arch_gyp_ceil" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_architectural"/>
+            <field name="subdivision_id" ref="sub_arch_ceiling"/>
+            <field name="name">Gypsum Ceiling</field>
+            <field name="name_ar">أسقف جبسية</field>
+            <field name="code">3.05.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 3.06 Cladding -->
+        <record id="sub3_arch_ext_clad" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_architectural"/>
+            <field name="subdivision_id" ref="sub_arch_cladding"/>
+            <field name="name">External Cladding</field>
+            <field name="name_ar">كسوة خارجية</field>
+            <field name="code">3.06.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_arch_int_clad" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_architectural"/>
+            <field name="subdivision_id" ref="sub_arch_cladding"/>
+            <field name="name">Internal Cladding</field>
+            <field name="name_ar">كسوة داخلية</field>
+            <field name="code">3.06.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 3.07 Waterproofing -->
+        <record id="sub3_arch_roof_wp" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_architectural"/>
+            <field name="subdivision_id" ref="sub_arch_waterproofing"/>
+            <field name="name">Roof Waterproofing</field>
+            <field name="name_ar">عزل الأسطح</field>
+            <field name="code">3.07.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_arch_base_wp" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_architectural"/>
+            <field name="subdivision_id" ref="sub_arch_waterproofing"/>
+            <field name="name">Basement Waterproofing</field>
+            <field name="name_ar">عزل الأقبية</field>
+            <field name="code">3.07.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             DIVISION 4 — MECHANICAL WORKS
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <!-- 4.01 HVAC Systems -->
+        <record id="sub3_mech_chiller" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_hvac"/>
+            <field name="name">Chiller Units</field>
+            <field name="name_ar">وحدات التبريد المركزي</field>
+            <field name="code">4.01.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_mech_fcu" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_hvac"/>
+            <field name="name">Fan Coil Units</field>
+            <field name="name_ar">وحدات الملفات الهوائية</field>
+            <field name="code">4.01.02</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub3_mech_split_ac" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_hvac"/>
+            <field name="name">Split AC Units</field>
+            <field name="name_ar">وحدات تكييف سبليت</field>
+            <field name="code">4.01.03</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- 4.02 Ducting -->
+        <record id="sub3_mech_supply_duct" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_hvac_ducting"/>
+            <field name="name">Supply Air Ducting</field>
+            <field name="name_ar">مجاري هواء التوريد</field>
+            <field name="code">4.02.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_mech_return_duct" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_hvac_ducting"/>
+            <field name="name">Return Air Ducting</field>
+            <field name="name_ar">مجاري هواء العودة</field>
+            <field name="code">4.02.02</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub3_mech_flex_duct" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_hvac_ducting"/>
+            <field name="name">Flexible Ducts &amp; Diffusers</field>
+            <field name="name_ar">مجاري مرنة وموزعات</field>
+            <field name="code">4.02.03</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- 4.03 AHU -->
+        <record id="sub3_mech_ahu_unit" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_hvac_ahu"/>
+            <field name="name">Air Handling Units</field>
+            <field name="name_ar">وحدات معالجة الهواء</field>
+            <field name="code">4.03.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_mech_fahu" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_hvac_ahu"/>
+            <field name="name">Fresh Air Units</field>
+            <field name="name_ar">وحدات الهواء النقي</field>
+            <field name="code">4.03.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 4.04 Ventilation -->
+        <record id="sub3_mech_exhaust_fan" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_hvac_ventilation"/>
+            <field name="name">Exhaust Fans</field>
+            <field name="name_ar">مراوح سحب</field>
+            <field name="code">4.04.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_mech_supply_fan" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_hvac_ventilation"/>
+            <field name="name">Supply Fans</field>
+            <field name="name_ar">مراوح نفخ</field>
+            <field name="code">4.04.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 4.05 Fire Fighting -->
+        <record id="sub3_mech_sprinkler" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_firefight"/>
+            <field name="name">Sprinkler System</field>
+            <field name="name_ar">نظام الرشاشات</field>
+            <field name="code">4.05.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_mech_hose_reel" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_firefight"/>
+            <field name="name">Fire Hose Reels</field>
+            <field name="name_ar">بكرات خراطيم الحريق</field>
+            <field name="code">4.05.02</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub3_mech_fire_alarm" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_firefight"/>
+            <field name="name">Fire Alarm System</field>
+            <field name="name_ar">نظام إنذار الحريق</field>
+            <field name="code">4.05.03</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- 4.06 LPG -->
+        <record id="sub3_mech_lpg_pipes" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_lpg"/>
+            <field name="name">LPG Supply Lines</field>
+            <field name="name_ar">خطوط توريد الغاز السائل</field>
+            <field name="code">4.06.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_mech_lpg_reg" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_lpg"/>
+            <field name="name">LPG Regulators &amp; Safety</field>
+            <field name="name_ar">منظمات وأمان الغاز السائل</field>
+            <field name="code">4.06.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 4.07 Equipment Works / Pumps -->
+        <record id="sub3_mech_pump_sets" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_equipment"/>
+            <field name="name">Pump Sets</field>
+            <field name="name_ar">مجموعات مضخات</field>
+            <field name="code">4.07.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_mech_pressure_vessel" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_equipment"/>
+            <field name="name">Pressure Vessels &amp; Tanks</field>
+            <field name="name_ar">أوعية ضغط وخزانات</field>
+            <field name="code">4.07.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             DIVISION 5 — ELECTRICAL WORKS
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <!-- 5.01 Power Distribution -->
+        <record id="sub3_elec_main_dist" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_electrical"/>
+            <field name="subdivision_id" ref="sub_elec_power"/>
+            <field name="name">Main Distribution Board</field>
+            <field name="name_ar">لوحة التوزيع الرئيسية</field>
+            <field name="code">5.01.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_elec_sub_dist" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_electrical"/>
+            <field name="subdivision_id" ref="sub_elec_power"/>
+            <field name="name">Sub Distribution Boards</field>
+            <field name="name_ar">لوحات التوزيع الفرعية</field>
+            <field name="code">5.01.02</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub3_elec_cabling" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_electrical"/>
+            <field name="subdivision_id" ref="sub_elec_power"/>
+            <field name="name">Power Cabling</field>
+            <field name="name_ar">كابلات الطاقة</field>
+            <field name="code">5.01.03</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- 5.02 Lighting -->
+        <record id="sub3_elec_indoor_light" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_electrical"/>
+            <field name="subdivision_id" ref="sub_elec_lighting"/>
+            <field name="name">Indoor Lighting</field>
+            <field name="name_ar">إضاءة داخلية</field>
+            <field name="code">5.02.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_elec_outdoor_light" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_electrical"/>
+            <field name="subdivision_id" ref="sub_elec_lighting"/>
+            <field name="name">Outdoor Lighting</field>
+            <field name="name_ar">إضاءة خارجية</field>
+            <field name="code">5.02.02</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub3_elec_emrg_light" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_electrical"/>
+            <field name="subdivision_id" ref="sub_elec_lighting"/>
+            <field name="name">Emergency Lighting</field>
+            <field name="name_ar">إضاءة طوارئ</field>
+            <field name="code">5.02.03</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- 5.03 Low Current -->
+        <record id="sub3_elec_data_voice" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_electrical"/>
+            <field name="subdivision_id" ref="sub_elec_lowcurrent"/>
+            <field name="name">Data &amp; Voice Network</field>
+            <field name="name_ar">شبكة البيانات والاتصال</field>
+            <field name="code">5.03.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_elec_cctv" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_electrical"/>
+            <field name="subdivision_id" ref="sub_elec_lowcurrent"/>
+            <field name="name">CCTV System</field>
+            <field name="name_ar">نظام المراقبة</field>
+            <field name="code">5.03.02</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub3_elec_access_ctrl" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_electrical"/>
+            <field name="subdivision_id" ref="sub_elec_lowcurrent"/>
+            <field name="name">Access Control</field>
+            <field name="name_ar">نظام التحكم بالدخول</field>
+            <field name="code">5.03.03</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- 5.04 Earthing -->
+        <record id="sub3_elec_earth_sys" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_electrical"/>
+            <field name="subdivision_id" ref="sub_elec_earthing"/>
+            <field name="name">Earthing System</field>
+            <field name="name_ar">نظام التأريض</field>
+            <field name="code">5.04.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_elec_lightning_prot" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_electrical"/>
+            <field name="subdivision_id" ref="sub_elec_earthing"/>
+            <field name="name">Lightning Protection</field>
+            <field name="name_ar">حماية من الصواعق</field>
+            <field name="code">5.04.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             DIVISION 6 — CONTROL WORKS  (div_hvac)
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <!-- 6.01 Control Panels -->
+        <record id="sub3_ctrl_main_panel" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_hvac"/>
+            <field name="subdivision_id" ref="sub_ctrl_panels"/>
+            <field name="name">Main Control Panel</field>
+            <field name="name_ar">لوحة التحكم الرئيسية</field>
+            <field name="code">6.01.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_ctrl_field_panel" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_hvac"/>
+            <field name="subdivision_id" ref="sub_ctrl_panels"/>
+            <field name="name">Field Control Panels</field>
+            <field name="name_ar">لوحات تحكم ميدانية</field>
+            <field name="code">6.01.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 6.02 BMS -->
+        <record id="sub3_ctrl_bms_server" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_hvac"/>
+            <field name="subdivision_id" ref="sub_ctrl_bms"/>
+            <field name="name">BMS Server &amp; Software</field>
+            <field name="name_ar">خادم وبرنامج إدارة المبنى</field>
+            <field name="code">6.02.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_ctrl_bms_field" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_hvac"/>
+            <field name="subdivision_id" ref="sub_ctrl_bms"/>
+            <field name="name">BMS Field Devices</field>
+            <field name="name_ar">أجهزة BMS الميدانية</field>
+            <field name="code">6.02.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 6.03 Sensors -->
+        <record id="sub3_ctrl_temp_sensor" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_hvac"/>
+            <field name="subdivision_id" ref="sub_ctrl_sensors"/>
+            <field name="name">Temperature Sensors</field>
+            <field name="name_ar">حساسات الحرارة</field>
+            <field name="code">6.03.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_ctrl_humid_sensor" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_hvac"/>
+            <field name="subdivision_id" ref="sub_ctrl_sensors"/>
+            <field name="name">Humidity Sensors</field>
+            <field name="name_ar">حساسات الرطوبة</field>
+            <field name="code">6.03.02</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub3_ctrl_press_sensor" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_hvac"/>
+            <field name="subdivision_id" ref="sub_ctrl_sensors"/>
+            <field name="name">Pressure Sensors</field>
+            <field name="name_ar">حساسات الضغط</field>
+            <field name="code">6.03.03</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- 6.04 Actuators -->
+        <record id="sub3_ctrl_ctrl_valves" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_hvac"/>
+            <field name="subdivision_id" ref="sub_ctrl_actuators"/>
+            <field name="name">Control Valves</field>
+            <field name="name_ar">صمامات التحكم</field>
+            <field name="code">6.04.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_ctrl_actuator_drv" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_hvac"/>
+            <field name="subdivision_id" ref="sub_ctrl_actuators"/>
+            <field name="name">Actuator Drives</field>
+            <field name="name_ar">محركات المشغلات</field>
+            <field name="code">6.04.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 6.05 Control Cabling -->
+        <record id="sub3_ctrl_ctrl_cable" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_hvac"/>
+            <field name="subdivision_id" ref="sub_ctrl_cabling"/>
+            <field name="name">Control Cables</field>
+            <field name="name_ar">كابلات التحكم</field>
+            <field name="code">6.05.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_ctrl_signal_cable" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_hvac"/>
+            <field name="subdivision_id" ref="sub_ctrl_cabling"/>
+            <field name="name">Signal Cables</field>
+            <field name="name_ar">كابلات الإشارة</field>
+            <field name="code">6.05.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 6.06 PLC / Automation -->
+        <record id="sub3_ctrl_plc_hw" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_hvac"/>
+            <field name="subdivision_id" ref="sub_ctrl_plc"/>
+            <field name="name">PLC Hardware</field>
+            <field name="name_ar">أجهزة PLC</field>
+            <field name="code">6.06.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_ctrl_plc_prog" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_hvac"/>
+            <field name="subdivision_id" ref="sub_ctrl_plc"/>
+            <field name="name">PLC Programming</field>
+            <field name="name_ar">برمجة PLC</field>
+            <field name="code">6.06.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             DIVISION 7 — PLUMBING WORKS
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <!-- 7.01 Water Supply -->
+        <record id="sub3_plumb_cold_water" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_plumbing"/>
+            <field name="subdivision_id" ref="sub_plumb_water"/>
+            <field name="name">Cold Water</field>
+            <field name="name_ar">المياه الباردة</field>
+            <field name="code">7.01.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_plumb_hot_water" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_plumbing"/>
+            <field name="subdivision_id" ref="sub_plumb_water"/>
+            <field name="name">Hot Water</field>
+            <field name="name_ar">المياه الساخنة</field>
+            <field name="code">7.01.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 7.02 Drainage Systems -->
+        <record id="sub3_plumb_soil_drain" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_plumbing"/>
+            <field name="subdivision_id" ref="sub_plumb_drainage"/>
+            <field name="name">Soil Drainage</field>
+            <field name="name_ar">صرف المجاري</field>
+            <field name="code">7.02.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_plumb_waste_drain" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_plumbing"/>
+            <field name="subdivision_id" ref="sub_plumb_drainage"/>
+            <field name="name">Waste Drainage</field>
+            <field name="name_ar">صرف مياه الهدر</field>
+            <field name="code">7.02.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 7.03 Sewage Systems -->
+        <record id="sub3_plumb_int_sewage" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_plumbing"/>
+            <field name="subdivision_id" ref="sub_plumb_sewage"/>
+            <field name="name">Internal Sewage</field>
+            <field name="name_ar">الصرف الصحي الداخلي</field>
+            <field name="code">7.03.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_plumb_ext_sewage" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_plumbing"/>
+            <field name="subdivision_id" ref="sub_plumb_sewage"/>
+            <field name="name">External Sewage</field>
+            <field name="name_ar">الصرف الصحي الخارجي</field>
+            <field name="code">7.03.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             DIVISION 8 — IRRIGATION WORKS
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <!-- 8.01 Irrigation Networks -->
+        <record id="sub3_irr_main_line" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_irrigation"/>
+            <field name="subdivision_id" ref="sub_irr_networks"/>
+            <field name="name">Main Irrigation Lines</field>
+            <field name="name_ar">خطوط الري الرئيسية</field>
+            <field name="code">8.01.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_irr_dist_net" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_irrigation"/>
+            <field name="subdivision_id" ref="sub_irr_networks"/>
+            <field name="name">Distribution Network</field>
+            <field name="name_ar">شبكة التوزيع</field>
+            <field name="code">8.01.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 8.02 Drip Irrigation -->
+        <record id="sub3_irr_drip_lines" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_irrigation"/>
+            <field name="subdivision_id" ref="sub_irr_drip"/>
+            <field name="name">Drip Lines</field>
+            <field name="name_ar">خطوط التقطير</field>
+            <field name="code">8.02.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_irr_drip_emit" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_irrigation"/>
+            <field name="subdivision_id" ref="sub_irr_drip"/>
+            <field name="name">Drip Emitters &amp; Filters</field>
+            <field name="name_ar">قطارات وفلاتر</field>
+            <field name="code">8.02.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 8.03 Sprinkler System -->
+        <record id="sub3_irr_popup" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_irrigation"/>
+            <field name="subdivision_id" ref="sub_irr_sprinkler"/>
+            <field name="name">Pop-up Sprinklers</field>
+            <field name="name_ar">رشاشات منبثقة</field>
+            <field name="code">8.03.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_irr_rotary" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_irrigation"/>
+            <field name="subdivision_id" ref="sub_irr_sprinkler"/>
+            <field name="name">Rotary Sprinklers</field>
+            <field name="name_ar">رشاشات دوارة</field>
+            <field name="code">8.03.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             DIVISION 9 — INFRASTRUCTURE WORKS
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <!-- 9.01 Road Networks -->
+        <record id="sub3_infra_road_net" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_infrastructure"/>
+            <field name="subdivision_id" ref="sub_infra_networks"/>
+            <field name="name">Internal Road Networks</field>
+            <field name="name_ar">شبكة طرق داخلية</field>
+            <field name="code">9.01.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_infra_footpath" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_infrastructure"/>
+            <field name="subdivision_id" ref="sub_infra_networks"/>
+            <field name="name">Footpaths &amp; Walkways</field>
+            <field name="name_ar">ممرات للمشاة</field>
+            <field name="code">9.01.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 9.02 Storm Water -->
+        <record id="sub3_infra_sw_drain" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_infrastructure"/>
+            <field name="subdivision_id" ref="sub_infra_storm"/>
+            <field name="name">Storm Water Drains</field>
+            <field name="name_ar">مصارف مياه الأمطار</field>
+            <field name="code">9.02.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_infra_culvert" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_infrastructure"/>
+            <field name="subdivision_id" ref="sub_infra_storm"/>
+            <field name="name">Culverts &amp; Channels</field>
+            <field name="name_ar">قنوات وعبارات</field>
+            <field name="code">9.02.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 9.03 Utility Networks -->
+        <record id="sub3_infra_util_trench" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_infrastructure"/>
+            <field name="subdivision_id" ref="sub_infra_utility"/>
+            <field name="name">Utility Trenches</field>
+            <field name="name_ar">خنادق المرافق</field>
+            <field name="code">9.03.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_infra_cable_duct" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_infrastructure"/>
+            <field name="subdivision_id" ref="sub_infra_utility"/>
+            <field name="name">Cable Ducts &amp; Manholes</field>
+            <field name="name_ar">قنوات كابلات وغرف تفتيش</field>
+            <field name="code">9.03.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             DIVISION 10 — FINISHING WORKS
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <!-- 10.01 Coating -->
+        <record id="sub3_fin_floor_coat" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_finishing"/>
+            <field name="subdivision_id" ref="sub_fin_coating"/>
+            <field name="name">Floor Coating</field>
+            <field name="name_ar">طلاء الأرضيات</field>
+            <field name="code">10.01.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_fin_wall_coat" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_finishing"/>
+            <field name="subdivision_id" ref="sub_fin_coating"/>
+            <field name="name">Wall Coating</field>
+            <field name="name_ar">طلاء الجدران</field>
+            <field name="code">10.01.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 10.02 Decorative Works -->
+        <record id="sub3_fin_dec_panels" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_finishing"/>
+            <field name="subdivision_id" ref="sub_fin_decorative"/>
+            <field name="name">Decorative Panels</field>
+            <field name="name_ar">ألواح زخرفية</field>
+            <field name="code">10.02.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_fin_feat_wall" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_finishing"/>
+            <field name="subdivision_id" ref="sub_fin_decorative"/>
+            <field name="name">Feature Walls</field>
+            <field name="name_ar">جدران مميزة</field>
+            <field name="code">10.02.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 10.03 Fixtures -->
+        <record id="sub3_fin_sanitary" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_finishing"/>
+            <field name="subdivision_id" ref="sub_fin_fixtures"/>
+            <field name="name">Sanitary Fixtures</field>
+            <field name="name_ar">أدوات صحية</field>
+            <field name="code">10.03.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_fin_ironmongery" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_finishing"/>
+            <field name="subdivision_id" ref="sub_fin_fixtures"/>
+            <field name="name">Ironmongery &amp; Hardware</field>
+            <field name="name_ar">مستلزمات معدنية</field>
+            <field name="code">10.03.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             DIVISION 11 — LANDSCAPE WORKS
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <!-- 11.01 Softscape -->
+        <record id="sub3_land_lawn" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_landscape"/>
+            <field name="subdivision_id" ref="sub_land_softscape"/>
+            <field name="name">Lawn Areas</field>
+            <field name="name_ar">مساحات عشبية</field>
+            <field name="code">11.01.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_land_shrubs" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_landscape"/>
+            <field name="subdivision_id" ref="sub_land_softscape"/>
+            <field name="name">Shrubs &amp; Groundcover</field>
+            <field name="name_ar">شجيرات وغطاء أرضي</field>
+            <field name="code">11.01.02</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub3_land_trees" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_landscape"/>
+            <field name="subdivision_id" ref="sub_land_softscape"/>
+            <field name="name">Trees</field>
+            <field name="name_ar">أشجار</field>
+            <field name="code">11.01.03</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- 11.02 Hardscape -->
+        <record id="sub3_land_paving" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_landscape"/>
+            <field name="subdivision_id" ref="sub_land_hardscape"/>
+            <field name="name">Paving &amp; Kerbs</field>
+            <field name="name_ar">بلاط وحدود</field>
+            <field name="code">11.02.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_land_retain_wall" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_landscape"/>
+            <field name="subdivision_id" ref="sub_land_hardscape"/>
+            <field name="name">Retaining Walls &amp; Fencing</field>
+            <field name="name_ar">جدران استنادية وأسوار</field>
+            <field name="code">11.02.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 11.03 Plantation -->
+        <record id="sub3_land_palms" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_landscape"/>
+            <field name="subdivision_id" ref="sub_land_plantation"/>
+            <field name="name">Palms</field>
+            <field name="name_ar">نخيل</field>
+            <field name="code">11.03.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_land_ornamental" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_landscape"/>
+            <field name="subdivision_id" ref="sub_land_plantation"/>
+            <field name="name">Ornamental Trees</field>
+            <field name="name_ar">أشجار زينة</field>
+            <field name="code">11.03.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             DIVISION 12 — AGRICULTURAL WORKS
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <!-- 12.01 Greenhouse -->
+        <record id="sub3_agr_gh_struct" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_agricultural"/>
+            <field name="subdivision_id" ref="sub_agr_greenhouse"/>
+            <field name="name">Greenhouse Structure</field>
+            <field name="name_ar">هيكل البيت المحمي</field>
+            <field name="code">12.01.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_agr_gh_clad" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_agricultural"/>
+            <field name="subdivision_id" ref="sub_agr_greenhouse"/>
+            <field name="name">Greenhouse Cladding</field>
+            <field name="name_ar">تغطية البيت المحمي</field>
+            <field name="code">12.01.02</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub3_agr_gh_climate" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_agricultural"/>
+            <field name="subdivision_id" ref="sub_agr_greenhouse"/>
+            <field name="name">Climate Control Systems</field>
+            <field name="name_ar">أنظمة التحكم بالمناخ</field>
+            <field name="code">12.01.03</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- 12.02 Hydroponic Systems -->
+        <record id="sub3_agr_hydro_sys" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_agricultural"/>
+            <field name="subdivision_id" ref="sub_agr_hydroponic"/>
+            <field name="name">Hydroponic Systems</field>
+            <field name="name_ar">أنظمة الزراعة المائية</field>
+            <field name="code">12.02.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_agr_grow_chan" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_agricultural"/>
+            <field name="subdivision_id" ref="sub_agr_hydroponic"/>
+            <field name="name">Growing Channels &amp; Media</field>
+            <field name="name_ar">قنوات النمو والوسائط</field>
+            <field name="code">12.02.02</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub3_agr_nutrient" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_agricultural"/>
+            <field name="subdivision_id" ref="sub_agr_hydroponic"/>
+            <field name="name">Nutrient Delivery Systems</field>
+            <field name="name_ar">أنظمة توصيل المغذيات</field>
+            <field name="code">12.02.03</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- 12.03 Planting Works -->
+        <record id="sub3_agr_soil_prep" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_agricultural"/>
+            <field name="subdivision_id" ref="sub_agr_planting"/>
+            <field name="name">Soil Preparation</field>
+            <field name="name_ar">تحضير التربة</field>
+            <field name="code">12.03.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_agr_planting_wks" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_agricultural"/>
+            <field name="subdivision_id" ref="sub_agr_planting"/>
+            <field name="name">Planting Works</field>
+            <field name="name_ar">أعمال الزراعة</field>
+            <field name="code">12.03.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 12.04 Soil Works -->
+        <record id="sub3_agr_soil_test" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_agricultural"/>
+            <field name="subdivision_id" ref="sub_agr_soil"/>
+            <field name="name">Soil Testing &amp; Analysis</field>
+            <field name="name_ar">اختبار وتحليل التربة</field>
+            <field name="code">12.04.01</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub3_agr_soil_amend" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_agricultural"/>
+            <field name="subdivision_id" ref="sub_agr_soil"/>
+            <field name="name">Soil Amendment &amp; Fertilization</field>
+            <field name="name_ar">تحسين التربة والتسميد</field>
+            <field name="code">12.04.02</field>
+            <field name="sequence">20</field>
+        </record>
+
+    </data>
+</odoo>

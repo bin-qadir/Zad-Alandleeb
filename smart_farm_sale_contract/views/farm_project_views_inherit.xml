@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Extend the Farm Project form with:
+            1. Sales Orders stat button (inserted after BOQ Analysis button)
+            2. Cost Control tab with Estimated / Contract / Actual / Variance
+        -->
+
+        <record id="view_farm_project_sale_contract_inherit" model="ir.ui.view">
+            <field name="name">farm.project.sale.contract.inherit</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
+            <field name="arch" type="xml">
+
+                <!-- ── 1. Sales Orders stat button (after BOQ Analysis button) ── -->
+                <xpath expr="//button[@name='action_open_project_analysis']" position="after">
+                    <button class="oe_stat_button"
+                            type="object"
+                            name="action_open_sale_orders"
+                            icon="fa-file-text">
+                        <field name="sale_order_count"
+                               widget="statinfo"
+                               string="Sales Orders"/>
+                    </button>
+                </xpath>
+
+                <!-- ── 2. Cost Control tab ── -->
+                <xpath expr="//notebook" position="inside">
+                    <page string="Cost Control" name="tab_cost_control" icon="fa-usd">
+                        <group>
+                            <group string="Budget Summary">
+                                <field name="estimated_cost"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="contract_value"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <group string="Actual Costs">
+                                <field name="actual_material_cost"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="actual_labour_cost"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="actual_total_cost"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Variance">
+                                <field name="cost_variance"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-danger="cost_variance &gt; 0"
+                                       decoration-success="cost_variance &lt;= 0 and actual_total_cost &gt; 0"
+                                       decoration-muted="actual_total_cost == 0"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

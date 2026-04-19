@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Hide "Generate Job Orders" from the BOQ Analysis form.
+
+            BOQ Analysis is now a PLANNING + PRICING tool ONLY.
+            Job Orders are generated exclusively from Approved Sales Orders
+            (see smart_farm_sale_contract).
+
+            The button is hidden (invisible="True") rather than removed so that
+            existing functionality is preserved and the model method still works
+            (it is still called during module tests or via RPC if needed).
+        -->
+
+        <record id="view_farm_boq_analysis_hide_generate_jo" model="ir.ui.view">
+            <field name="name">farm.boq.analysis.hide.generate.jo</field>
+            <field name="model">farm.boq.analysis</field>
+            <field name="inherit_id" ref="smart_farm_execution.view_farm_boq_analysis_execution_inherit"/>
+            <field name="arch" type="xml">
+
+                <!-- Hide "Generate Job Orders" header button -->
+                <xpath expr="//button[@name='action_generate_job_orders']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

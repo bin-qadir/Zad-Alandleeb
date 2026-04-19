@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_farm_division_work_search" model="ir.ui.view">
+            <field name="name">farm.division.work.search</field>
+            <field name="model">farm.division.work</field>
+            <field name="arch" type="xml">
+                <search string="Division Works">
+                    <field name="name" string="Name"/>
+                    <field name="code" string="Code"/>
+                    <filter name="active"   string="Active"   domain="[('active','=',True)]"/>
+                    <filter name="inactive" string="Archived" domain="[('active','=',False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_farm_division_work_list" model="ir.ui.view">
+            <field name="name">farm.division.work.list</field>
+            <field name="model">farm.division.work</field>
+            <field name="arch" type="xml">
+                <list string="Division Works" default_order="sequence">
+                    <field name="sequence" widget="handle"/>
+                    <field name="code"/>
+                    <field name="name" string="Name (English)"/>
+                    <field name="name_ar" string="الاسم (عربي)" optional="show"/>
+                    <field name="display_name_bilingual" string="Bilingual Label" optional="show"/>
+                    <field name="active" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_farm_division_work_form" model="ir.ui.view">
+            <field name="name">farm.division.work.form</field>
+            <field name="model">farm.division.work</field>
+            <field name="arch" type="xml">
+                <form string="Division Work">
+                    <sheet>
+                        <group>
+                            <group string="Names">
+                                <field name="name" string="Name (English)"/>
+                                <field name="name_ar" string="الاسم (عربي)"/>
+                                <field name="display_name_bilingual"
+                                       string="Bilingual Label (Preview)"
+                                       readonly="1"/>
+                            </group>
+                            <group string="Settings">
+                                <field name="code"/>
+                                <field name="sequence"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_farm_division_work" model="ir.actions.act_window">
+            <field name="name">Division Works</field>
+            <field name="res_model">farm.division.work</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

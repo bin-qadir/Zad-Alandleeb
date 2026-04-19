@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════
+             smart.farm.tag
+        ══════════════════════════════════════════════════════ -->
+
+        <record id="view_smart_farm_tag_search" model="ir.ui.view">
+            <field name="name">smart.farm.tag.search</field>
+            <field name="model">smart.farm.tag</field>
+            <field name="arch" type="xml">
+                <search string="Tags">
+                    <field name="name" string="Tag Name"/>
+                    <filter name="active"   string="Active"
+                            domain="[('active','=',True)]"/>
+                    <filter name="inactive" string="Archived"
+                            domain="[('active','=',False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_smart_farm_tag_list" model="ir.ui.view">
+            <field name="name">smart.farm.tag.list</field>
+            <field name="model">smart.farm.tag</field>
+            <field name="arch" type="xml">
+                <list string="Tags">
+                    <field name="name"/>
+                    <field name="active" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_smart_farm_tag_form" model="ir.ui.view">
+            <field name="name">smart.farm.tag.form</field>
+            <field name="model">smart.farm.tag</field>
+            <field name="arch" type="xml">
+                <form string="Tag">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Tag Name…"/></h1>
+                        </div>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_smart_farm_tag" model="ir.actions.act_window">
+            <field name="name">Tags</field>
+            <field name="res_model">smart.farm.tag</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════
+             smart.farm.stage
+        ══════════════════════════════════════════════════════ -->
+
+        <record id="view_smart_farm_stage_search" model="ir.ui.view">
+            <field name="name">smart.farm.stage.search</field>
+            <field name="model">smart.farm.stage</field>
+            <field name="arch" type="xml">
+                <search string="Stages">
+                    <field name="name" string="Stage Name"/>
+                    <filter name="active"   string="Active"
+                            domain="[('active','=',True)]"/>
+                    <filter name="inactive" string="Archived"
+                            domain="[('active','=',False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_smart_farm_stage_list" model="ir.ui.view">
+            <field name="name">smart.farm.stage.list</field>
+            <field name="model">smart.farm.stage</field>
+            <field name="arch" type="xml">
+                <list string="Stages">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="active" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_smart_farm_stage_form" model="ir.ui.view">
+            <field name="name">smart.farm.stage.form</field>
+            <field name="model">smart.farm.stage</field>
+            <field name="arch" type="xml">
+                <form string="Stage">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Stage Name…"/></h1>
+                        </div>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_smart_farm_stage" model="ir.actions.act_window">
+            <field name="name">Stages</field>
+            <field name="res_model">smart.farm.stage</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

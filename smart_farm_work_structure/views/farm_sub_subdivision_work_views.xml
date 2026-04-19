@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_farm_sub_subdivision_work_search" model="ir.ui.view">
+            <field name="name">farm.sub_subdivision.work.search</field>
+            <field name="model">farm.sub_subdivision.work</field>
+            <field name="arch" type="xml">
+                <search string="Sub-Subdivision Works">
+                    <field name="name" string="Name"/>
+                    <field name="code" string="Code"/>
+                    <field name="division_id" string="Division"/>
+                    <field name="subdivision_id" string="Subdivision"/>
+                    <filter name="active"   string="Active"   domain="[('active','=',True)]"/>
+                    <filter name="inactive" string="Archived" domain="[('active','=',False)]"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_division"    string="Division"
+                                context="{'group_by': 'division_id'}"/>
+                        <filter name="group_subdivision" string="Subdivision"
+                                context="{'group_by': 'subdivision_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_farm_sub_subdivision_work_list" model="ir.ui.view">
+            <field name="name">farm.sub_subdivision.work.list</field>
+            <field name="model">farm.sub_subdivision.work</field>
+            <field name="arch" type="xml">
+                <list string="Sub-Subdivision Works"
+                      default_order="division_sequence,subdivision_sequence,sequence">
+                    <field name="sequence" widget="handle"/>
+                    <field name="code"/>
+                    <field name="name" string="Name (English)"/>
+                    <field name="name_ar" string="الاسم (عربي)" optional="show"/>
+                    <field name="display_name_bilingual" string="Bilingual Label" optional="show"/>
+                    <field name="division_id"/>
+                    <field name="subdivision_id"/>
+                    <field name="division_sequence" column_invisible="1"/>
+                    <field name="subdivision_sequence" column_invisible="1"/>
+                    <field name="active" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_farm_sub_subdivision_work_form" model="ir.ui.view">
+            <field name="name">farm.sub_subdivision.work.form</field>
+            <field name="model">farm.sub_subdivision.work</field>
+            <field name="arch" type="xml">
+                <form string="Sub-Subdivision Work">
+                    <sheet>
+                        <group>
+                            <group string="Names">
+                                <field name="name" string="Name (English)"/>
+                                <field name="name_ar" string="الاسم (عربي)"/>
+                                <field name="display_name_bilingual"
+                                       string="Bilingual Label (Preview)"
+                                       readonly="1"/>
+                            </group>
+                            <group string="Settings">
+                                <field name="code"/>
+                                <field name="division_id"/>
+                                <field name="subdivision_id"
+                                       domain="[('division_id', '=', division_id)]"/>
+                                <field name="sequence"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_farm_sub_subdivision_work" model="ir.actions.act_window">
+            <field name="name">Sub-Subdivision Works</field>
+            <field name="res_model">farm.sub_subdivision.work</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

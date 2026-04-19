@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            SMART FARM CONTROL — Executive Cost Control UI + Phase Lock Banners
+
+            Extends the Farm Project form with:
+            1. Rebuilt Cost Control tab (replaces the simple version from
+               smart_farm_sale_contract) with full enterprise metrics.
+            2. Execution lock banner visible whenever project is NOT in
+               execution phase — shows exactly what is locked.
+        -->
+
+        <record id="view_farm_project_control_inherit" model="ir.ui.view">
+            <field name="name">farm.project.control.inherit</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
+            <field name="arch" type="xml">
+
+                <!-- ══════════════════════════════════════════════════════════
+                     REMOVE duplicate phase banners injected by
+                     smart_farm_contract — superseded by the colored
+                     control banners added below.
+                     Applied sequentially: [1] picks the first remaining
+                     match after each removal.
+                ═══════════════════════════════════════════════════════════ -->
+                <xpath expr="//div[hasclass('alert-info')][hasclass('mb-3')]" position="replace"/>
+                <xpath expr="//div[hasclass('alert-warning')][hasclass('mb-3')][1]" position="replace"/>
+                <xpath expr="//div[hasclass('alert-warning')][hasclass('mb-3')][1]" position="replace"/>
+                <xpath expr="//div[hasclass('alert-success')][hasclass('mb-3')]" position="replace"/>
+
+                <!-- ══════════════════════════════════════════════════════════
+                     REPLACE the Cost Control tab content
+                     (added by smart_farm_sale_contract)
+                ═══════════════════════════════════════════════════════════ -->
+                <xpath expr="//page[@name='tab_cost_control']" position="replace">
+
+                    <page string="Cost Control" name="tab_cost_control" icon="fa-usd">
+
+                        <!-- ── Section 1: Budget Baseline ──────────────────── -->
+                        <group string="Budget Baseline" name="grp_budget">
+                            <group>
+                                <field name="estimated_cost"
+                                       string="Estimated Cost"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="contract_value"
+                                       string="Contract Value"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <group>
+                                <field name="contract_vs_estimate_variance"
+                                       string="Contract vs Estimate"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="contract_vs_estimate_variance &gt; 0"
+                                       decoration-danger="contract_vs_estimate_variance &lt; 0"
+                                       decoration-muted="contract_vs_estimate_variance == 0"/>
+                                <field name="estimated_profit"
+                                       string="Budgeted Margin"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="estimated_profit &gt; 0"
+                                       decoration-danger="estimated_profit &lt;= 0"/>
+                            </group>
+                        </group>
+
+                        <separator/>
+
+                        <!-- ── Section 2: Committed Cost ───────────────────── -->
+                        <group string="Committed Cost  (Confirmed POs + Subcontracts)" name="grp_committed">
+                            <group>
+                                <field name="committed_material_cost"
+                                       string="Materials (POs)"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="committed_subcontract_cost"
+                                       string="Subcontract (proxy)"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="total_committed_cost"
+                                       string="Total Committed"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <group>
+                                <field name="committed_profit"
+                                       string="Committed Profit"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="committed_profit &gt; 0"
+                                       decoration-danger="committed_profit &lt;= 0"/>
+                            </group>
+                        </group>
+
+                        <separator/>
+
+                        <!-- ── Section 3: Actual Cost Buckets ──────────────── -->
+                        <group string="Actual Costs  (from Job Orders)" name="grp_actual">
+                            <group>
+                                <field name="actual_material_cost"
+                                       string="Material"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="actual_labour_cost"
+                                       string="Labour"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="actual_subcontract_cost"
+                                       string="Subcontract"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="actual_other_cost"
+                                       string="Other / Overhead"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="actual_total_cost"
+                                       string="Total Actual"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <group>
+                                <field name="current_profit"
+                                       string="Current Profit"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="current_profit &gt; 0"
+                                       decoration-danger="current_profit &lt;= 0"/>
+                                <field name="contract_vs_actual_variance"
+                                       string="Revenue Headroom"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="contract_vs_actual_variance &gt; 0"
+                                       decoration-danger="contract_vs_actual_variance &lt; 0"
+                                       decoration-muted="contract_vs_actual_variance == 0"/>
+                                <field name="estimate_vs_actual_variance"
+                                       string="Under / Over Budget"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="estimate_vs_actual_variance &gt; 0"
+                                       decoration-danger="estimate_vs_actual_variance &lt; 0"
+                                       decoration-muted="estimate_vs_actual_variance == 0"/>
+                            </group>
+                        </group>
+
+                        <separator/>
+
+                        <!-- ── Section 4: Forecast at Completion ───────────── -->
+                        <group string="Forecast at Completion" name="grp_forecast">
+                            <group>
+                                <field name="forecast_final_cost"
+                                       string="Forecast Final Cost"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="gross_margin_pct"
+                                       string="Gross Margin %"
+                                       decoration-success="gross_margin_pct &gt; 0"
+                                       decoration-danger="gross_margin_pct &lt;= 0"/>
+                            </group>
+                            <group>
+                                <field name="projected_profit"
+                                       string="Projected Profit"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="projected_profit &gt; 0"
+                                       decoration-danger="projected_profit &lt;= 0"/>
+                            </group>
+                        </group>
+
+                        <separator/>
+
+                        <!-- ── Section 5: Variance Summary ─────────────────── -->
+                        <group string="Variance Summary" name="grp_variance">
+                            <group>
+                                <field name="contract_vs_estimate_variance"
+                                       string="Contract vs Estimate"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="contract_vs_estimate_variance &gt; 0"
+                                       decoration-danger="contract_vs_estimate_variance &lt; 0"/>
+                                <field name="contract_vs_actual_variance"
+                                       string="Contract vs Actual"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="contract_vs_actual_variance &gt; 0"
+                                       decoration-danger="contract_vs_actual_variance &lt; 0"/>
+                                <field name="estimate_vs_actual_variance"
+                                       string="Estimate vs Actual"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="estimate_vs_actual_variance &gt; 0"
+                                       decoration-danger="estimate_vs_actual_variance &lt; 0"/>
+                                <field name="cost_variance"
+                                       string="Actual vs Contract (Net)"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-danger="cost_variance &gt; 0"
+                                       decoration-success="cost_variance &lt; 0"
+                                       decoration-muted="cost_variance == 0"/>
+                            </group>
+                        </group>
+
+                        <!-- Hidden for decoration conditions -->
+                        <field name="currency_id" invisible="True"/>
+                        <field name="actual_total_cost" invisible="True"/>
+
+                    </page>
+
+                </xpath>
+
+                <!-- ══════════════════════════════════════════════════════════
+                     EXECUTION LOCK SUPPLEMENTARY BANNER
+                     Shown below the existing phase banners whenever the
+                     project is NOT in execution phase.
+                     Explicitly lists what is currently blocked.
+                ═══════════════════════════════════════════════════════════ -->
+                <xpath expr="//sheet" position="inside">
+
+                    <!-- PRE-TENDER lock banner -->
+                    <div class="alert alert-secondary border-start border-danger border-3 mb-2"
+                         role="alert"
+                         invisible="project_phase != 'pre_tender'">
+                        <strong><i class="fa fa-lock me-1" title="Locked"/> Execution Lock Active</strong>
+                        — Blocked: Sales Order contract approval, Job Orders, Materials,
+                        Labour, Subcontracts, Progress Tracking.
+                    </div>
+
+                    <!-- TENDER lock banner -->
+                    <div class="alert alert-secondary border-start border-warning border-3 mb-2"
+                         role="alert"
+                         invisible="project_phase != 'tender'">
+                        <strong><i class="fa fa-lock me-1" title="Locked"/> Execution Lock Active</strong>
+                        — Blocked: Contract Approval, Job Orders, Materials, Labour,
+                        Subcontracts. Allowed: Quotations, RFQs, Supplier Pricing.
+                    </div>
+
+                    <!-- CONTRACT lock banner -->
+                    <div class="alert alert-secondary border-start border-warning border-3 mb-2"
+                         role="alert"
+                         invisible="project_phase != 'contract'">
+                        <strong><i class="fa fa-lock me-1" title="Locked"/> Execution Lock Active</strong>
+                        — Blocked: Job Orders, Materials, Labour, Subcontracts.
+                        Approve a contract or Sales Order to unlock Execution phase.
+                    </div>
+
+                    <!-- EXECUTION unlocked banner -->
+                    <div class="alert alert-success border-start border-success border-3 mb-2"
+                         role="alert"
+                         invisible="project_phase != 'execution'">
+                        <strong><i class="fa fa-unlock me-1" title="Unlocked"/> Execution Unlocked</strong>
+                        — Job Orders, Materials, Labour, Equipment, Subcontracts,
+                        and Progress Tracking are fully active.
+                    </div>
+
+                    <!-- CLOSING banner -->
+                    <div class="alert alert-secondary border-start border-secondary border-3 mb-2"
+                         role="alert"
+                         invisible="project_phase != 'closing'">
+                        <strong><i class="fa fa-flag-checkered me-1" title="Closed"/> Project Closed</strong>
+                        — This project is in the closing phase. Final review, documentation,
+                        and sign-off. No new Job Orders, Materials, or Labour entries are permitted.
+                        Managers may reopen the project if required.
+                    </div>
+
+                </xpath>
+
+            </field>
+        </record>
+
+        <!--
+            PHASE-BASED SMART BUTTON VISIBILITY
+            ====================================
+
+            Enforces enterprise navigation: buttons are only shown in the
+            phases where they are meaningful.
+
+            Phase map:
+              pre_tender : Fields | Cost Structures | BOQ Analysis
+              tender     : BOQ Analysis | Sales Orders
+              contract   : Sales Orders | Contracts
+              execution  : Contracts | Job Orders (requires approved contract)
+
+            ┌──────────────────────┬──────┬────────┬──────────┬───────────┐
+            │ Button               │ Pre  │ Tender │ Contract │ Execution │
+            ├──────────────────────┼──────┼────────┼──────────┼───────────┤
+            │ Fields               │  ✓   │   ✓    │          │           │
+            │ Cost Structures      │  ✓   │   ✓    │          │           │
+            │ BOQ Analysis         │  ✓   │   ✓    │          │           │
+            │ Sales Orders         │      │   ✓    │    ✓     │     ✓     │
+            │ Contracts            │      │        │    ✓     │     ✓     │
+            │ Job Orders           │      │        │          │  ✓ (gate) │
+            └──────────────────────┴──────┴────────┴──────────┴───────────┘
+
+            Job Orders gate: project_phase == execution AND has_approved_contract.
+        -->
+
+        <record id="view_farm_project_button_visibility" model="ir.ui.view">
+            <field name="name">farm.project.button.visibility</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
+            <field name="arch" type="xml">
+
+                <!-- ── Fields button: Planning phases only ── -->
+                <xpath expr="//button[@name='action_open_fields']" position="attributes">
+                    <attribute name="invisible">project_phase not in ('pre_tender', 'tender')</attribute>
+                </xpath>
+
+                <!-- ── Cost Structures button: Planning phases only ── -->
+                <xpath expr="//button[@name='action_open_boqs']" position="attributes">
+                    <attribute name="invisible">project_phase not in ('pre_tender', 'tender')</attribute>
+                </xpath>
+
+                <!-- ── BOQ Analysis button: Planning phases only ── -->
+                <xpath expr="//button[@name='action_open_project_analysis']" position="attributes">
+                    <attribute name="invisible">project_phase not in ('pre_tender', 'tender')</attribute>
+                </xpath>
+
+                <!-- ── Sales Orders button: Commercial + Closing phases ── -->
+                <xpath expr="//button[@name='action_open_sale_orders']" position="attributes">
+                    <attribute name="invisible">project_phase not in ('tender', 'contract', 'execution', 'closing')</attribute>
+                </xpath>
+
+                <!-- ── Contracts button: Contract, Execution, and Closing phases ── -->
+                <xpath expr="//button[@name='action_open_contracts']" position="attributes">
+                    <attribute name="invisible">project_phase not in ('contract', 'execution', 'closing')</attribute>
+                </xpath>
+
+                <!-- ── Job Orders button: Execution (double gate) + Closing (review only) ──
+                     Execution: must have approved contract.
+                     Closing: always visible (review of completed JOs).
+                -->
+                <xpath expr="//button[@name='action_open_job_orders']" position="attributes">
+                    <attribute name="invisible">(project_phase == 'execution' and not has_approved_contract) or project_phase not in ('execution', 'closing')</attribute>
+                </xpath>
+
+                <!-- has_approved_contract needed for Job Orders invisible expression -->
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <field name="has_approved_contract" invisible="True"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

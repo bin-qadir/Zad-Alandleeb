@@ -1,0 +1,20 @@
+{
+    'name': 'Smart Farm Base',
+    'version': '18.0.1.0.0',
+    'summary': 'Base module for the Smart Farm system',
+    'description': 'Provides the foundational models and configuration for the Smart Farm system.',
+    'category': 'Agriculture',
+    'author': 'Smart Farm',
+    'license': 'LGPL-3',
+    'depends': ['base'],
+    'data': [
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        'data/data.xml',
+        'views/base_views.xml',
+        'views/menu.xml',
+    ],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+}

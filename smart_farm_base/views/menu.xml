@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════
+             ROOT APP MENU — Smart Farm
+             Sequence 100 keeps it after standard Odoo apps.
+        ══════════════════════════════════════════════════ -->
+        <menuitem
+            id="menu_smart_farm_root"
+            name="Smart Farm"
+            sequence="100"
+            web_icon="smart_farm_base,static/description/icon.png"
+        />
+
+        <!-- ── Projects ───────────────────────── seq 10 in project/menu.xml ── -->
+        <!-- ── Cost Structure ─────────────────── seq 20 in boq/menu.xml ──── -->
+        <!-- ── Execution ──────────────────────── seq 30 in execution/menu.xml  -->
+
+        <!-- ══════════════════════════════════════════════════
+             CONFIGURATION  (always last, seq 100)
+        ══════════════════════════════════════════════════ -->
+        <menuitem
+            id="menu_smart_farm_config"
+            name="Configuration"
+            parent="menu_smart_farm_root"
+            sequence="100"
+        />
+
+        <!-- ── Configuration / Work Structure ── defined in smart_farm_work_structure ── -->
+        <!-- ── Configuration / Types ──────────── defined in smart_farm_master ──────── -->
+
+        <!-- ── Configuration / Settings ── -->
+        <menuitem
+            id="menu_smart_farm_config_settings"
+            name="Settings"
+            parent="menu_smart_farm_config"
+            sequence="90"
+        />
+
+        <menuitem
+            id="menu_smart_farm_tag"
+            name="Tags"
+            parent="menu_smart_farm_config_settings"
+            action="action_smart_farm_tag"
+            sequence="10"
+        />
+
+        <menuitem
+            id="menu_smart_farm_stage"
+            name="Stages"
+            parent="menu_smart_farm_config_settings"
+            action="action_smart_farm_stage"
+            sequence="20"
+        />
+
+    </data>
+</odoo>

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_farm_crop_type_user,farm.crop.type user,model_farm_crop_type,base.group_user,1,1,1,1
+access_farm_cost_type_user,farm.cost.type user,model_farm_cost_type,base.group_user,1,1,1,1
+access_farm_work_type_user,farm.work.type user,model_farm_work_type,base.group_user,1,1,1,1
+access_farm_sensor_type_user,farm.sensor.type user,model_farm_sensor_type,base.group_user,1,1,1,1

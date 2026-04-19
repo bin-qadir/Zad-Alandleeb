@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ===== farm.boq.line.analysis — list ===== -->
+
+        <record id="view_farm_boq_line_analysis_list" model="ir.ui.view">
+            <field name="name">farm.boq.line.analysis.list</field>
+            <field name="model">farm.boq.line.analysis</field>
+            <field name="arch" type="xml">
+                <list string="BOQ Analysis"
+                      decoration-success="state == 'final'"
+                      decoration-info="state == 'analysis'"
+                      decoration-warning="state == 'reviewed'"
+                      decoration-muted="state == 'rejected'">
+                    <field name="name"/>
+                    <field name="boq_line_id"/>
+                    <field name="boq_id"/>
+                    <field name="date"/>
+                    <field name="boq_qty"/>
+                    <field name="cost_total"/>
+                    <field name="sale_total"/>
+                    <field name="profit"/>
+                    <field name="margin_percent" string="Margin %" widget="percentage"/>
+                    <field name="state" widget="badge"
+                           decoration-muted="state == 'draft'"
+                           decoration-info="state == 'analysis'"
+                           decoration-warning="state == 'reviewed'"
+                           decoration-success="state in ('approved', 'final')"
+                           decoration-danger="state == 'rejected'"/>
+                </list>
+            </field>
+        </record>
+
+
+        <!-- ===== farm.boq.line.analysis — form ===== -->
+
+        <record id="view_farm_boq_line_analysis_form" model="ir.ui.view">
+            <field name="name">farm.boq.line.analysis.form</field>
+            <field name="model">farm.boq.line.analysis</field>
+            <field name="arch" type="xml">
+                <form string="BOQ Line Analysis">
+                    <header>
+                        <!-- Workflow buttons -->
+                        <button name="action_set_analysis"
+                                type="object"
+                                string="Start Analysis"
+                                class="btn-primary"
+                                invisible="state != 'draft'"/>
+                        <button name="action_review"
+                                type="object"
+                                string="Mark as Reviewed"
+                                class="btn-secondary"
+                                invisible="state != 'analysis'"/>
+                        <button name="action_approve"
+                                type="object"
+                                string="Approve"
+                                class="btn-primary"
+                                invisible="state != 'reviewed'"
+                                groups="smart_farm_base.group_smart_farm_manager"/>
+                        <button name="action_set_final"
+                                type="object"
+                                string="Set as Final"
+                                class="btn-primary"
+                                invisible="state != 'approved'"/>
+                        <button name="action_reject"
+                                type="object"
+                                string="Reject"
+                                class="btn-danger"
+                                invisible="state in ('draft', 'rejected', 'final')"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,analysis,reviewed,approved,final"/>
+                    </header>
+
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" placeholder="Analysis Name…"/>
+                            </h1>
+                        </div>
+
+                        <!-- ── 1. Basic Info ──────────────────────────────── -->
+                        <group string="Basic Info">
+                            <group>
+                                <field name="boq_line_id"/>
+                                <field name="boq_id" readonly="1"/>
+                                <field name="date"/>
+                            </group>
+                            <group/>
+                        </group>
+
+                        <!-- ── 2. Financial Analysis ─────────────────────── -->
+                        <field name="currency_id" invisible="1"/>
+                        <group string="Financial Analysis">
+                            <group string="Cost">
+                                <field name="cost_unit_price" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="cost_total" readonly="1" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <group string="Sale">
+                                <field name="sale_unit_price" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="sale_total" readonly="1" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <group string="Profitability">
+                                <field name="profit" readonly="1" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="margin_percent" readonly="1" widget="percentage"/>
+                            </group>
+                            <group/>
+                        </group>
+
+                        <!-- ── 3. Quantity Tracking ───────────────────────── -->
+                        <group string="Quantity Tracking">
+                            <group>
+                                <field name="boq_qty" readonly="1"/>
+                                <field name="requested_qty"/>
+                                <field name="executed_qty"/>
+                            </group>
+                            <group>
+                                <field name="approved_qty"/>
+                                <field name="invoiced_qty"/>
+                            </group>
+                        </group>
+
+                        <!-- ── 4. Approval ────────────────────────────────── -->
+                        <group string="Approval"
+                               invisible="state not in ('approved', 'final')">
+                            <group>
+                                <field name="approved_by" readonly="1"/>
+                                <field name="approved_date" readonly="1"/>
+                            </group>
+                            <group/>
+                        </group>
+
+                        <!-- Notes -->
+                        <group>
+                            <field name="notes" placeholder="Add analysis notes…"
+                                   colspan="2"/>
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- ===== Action ===== -->
+
+        <record id="action_farm_boq_line_analysis" model="ir.actions.act_window">
+            <field name="name">BOQ Analysis</field>
+            <field name="res_model">farm.boq.line.analysis</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

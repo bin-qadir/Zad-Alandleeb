@@ -1,0 +1,98 @@
+/* ============================================================
+   BOQ Chatter Toggle — hide/show bottom discussion panel
+   Odoo 18  ·  branch dev-ai-work
+
+   The <chatter/> tag is placed INSIDE <sheet> in the BOQ form,
+   so Odoo 18's form compiler keeps it inline (no right sidebar).
+
+   Selector: .o-mail-Form-chatter  (injected by form_compiler.js)
+
+   Toggle class (set by boq_chatter_toggle.js):
+     .o_boq_form                   → panel HIDDEN  (default)
+     .o_boq_form.boq-chatter-open  → panel VISIBLE (below notebook)
+   ============================================================ */
+
+
+/* ── 1. Hide discussion panel by default ─────────────────────
+   display:none removes the element from layout so the notebook
+   and table above it claim the full sheet width.
+   ──────────────────────────────────────────────────────────── */
+.o_boq_form .o-mail-Form-chatter {
+    display: none !important;
+}
+
+
+/* ── 2. Show panel when toggled open — compact bottom strip ──
+   100% width, capped at 380 px height with internal scroll so
+   a long message thread does not push the page down.
+   A top border visually separates it from the notebook.
+   ──────────────────────────────────────────────────────────── */
+.o_boq_form.boq-chatter-open .o-mail-Form-chatter {
+    display: block !important;
+    width: 100% !important;
+    flex: none !important;           /* not a flex child in inline mode */
+    max-height: 380px;
+    overflow-y: auto;
+    border-top: 2px solid #dee2e6;
+    margin-top: 14px;
+    padding-top: 6px;
+    background: #fff;
+    border-radius: 0 0 4px 4px;
+}
+
+/* Give the inner Chatter Owl component full width */
+.o_boq_form.boq-chatter-open .o-mail-Form-chatter .o-mail-Chatter {
+    width: 100% !important;
+    max-height: none;               /* let parent handle the scroll cap */
+    overflow: visible !important;
+}
+
+/* Action buttons row (Send message / Log note / Activities) —
+   keep them horizontally arranged and compact */
+.o_boq_form.boq-chatter-open .o-mail-Chatter-topbar {
+    flex-wrap: nowrap;
+    gap: 4px;
+}
+.o_boq_form.boq-chatter-open .o-mail-Chatter-sendMessage,
+.o_boq_form.boq-chatter-open .o-mail-Chatter-logNote,
+.o_boq_form.boq-chatter-open .o-mail-Chatter-activity {
+    font-size: 12.5px !important;
+    padding: 4px 12px !important;
+}
+
+
+/* ── 3. Sheet bg — always full width ─────────────────────────
+   Chatter is no longer a flex sibling of the sheet, so this
+   is belt-and-suspenders but keeps things clean.
+   ──────────────────────────────────────────────────────────── */
+.o_boq_form .o_form_sheet_bg {
+    flex: 1 1 auto !important;
+    max-width: 100% !important;
+    min-width: 0;
+}
+
+
+/* ── 4. Toggle button ─────────────────────────────────────── */
+.o_boq_toggle_btn {
+    font-size: 12px !important;
+    padding: 3px 10px !important;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+.o_boq_toggle_btn .fa {
+    font-size: 13px;
+}
+.o_boq_toggle_btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(200, 168, 75, 0.4);
+}
+
+/* Toggle bar row — sits between the group fields and the notebook */
+.o_boq_toggle_bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 4px 0 6px 0;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #f0f0f0;
+}

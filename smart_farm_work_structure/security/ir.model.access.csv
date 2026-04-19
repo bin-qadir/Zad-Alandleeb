@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_farm_division_work_user,farm.division.work user,model_farm_division_work,base.group_user,1,1,1,1
+access_farm_subdivision_work_user,farm.subdivision.work user,model_farm_subdivision_work,base.group_user,1,1,1,1
+access_farm_sub_subdivision_work_user,farm.sub_subdivision.work user,model_farm_sub_subdivision_work,base.group_user,1,1,1,1

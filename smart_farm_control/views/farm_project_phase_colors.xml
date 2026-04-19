@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            SMART FARM CONTROL — Phase Color Coding
+            ========================================
+
+            Color scheme:
+              pre_tender  → success / green  (planning phase — safe and on-track)
+              tender      → warning / yellow (negotiation — attention required)
+              contract    → primary / blue   (contractual — formal and important)
+              execution   → danger  / red    (live execution — high stakes)
+
+            Applied to:
+              1. Form header: colored phase badge alongside the statusbar
+              2. Phase transition buttons: color-coded by target phase
+              3. Phase lock/unlock banners: color-coded supplementary banners
+              4. List view: phase badge column
+              5. Kanban view: phase-colored card borders + badges
+        -->
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             1 · FORM — colored phase badge + button colors
+        ════════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_project_phase_colors_form" model="ir.ui.view">
+            <field name="name">farm.project.phase.colors.form</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Extend statusbar to show the closing step -->
+                <xpath expr="//field[@name='project_phase'][@widget='statusbar']" position="attributes">
+                    <attribute name="statusbar_visible">pre_tender,tender,contract,execution,closing</attribute>
+                </xpath>
+
+                <!-- Colored phase badge alongside the statusbar in the header -->
+                <xpath expr="//field[@name='project_phase'][@widget='statusbar']" position="after">
+                    <field name="project_phase"
+                           widget="badge"
+                           decoration-success="project_phase == 'pre_tender'"
+                           decoration-warning="project_phase == 'tender'"
+                           decoration-primary="project_phase == 'contract'"
+                           decoration-danger="project_phase == 'execution'"
+                           decoration-muted="project_phase == 'closing'"/>
+                </xpath>
+
+                <!-- Color-code phase transition buttons by target phase -->
+                <xpath expr="//button[@name='action_phase_to_tender']" position="attributes">
+                    <attribute name="class">btn-warning</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_phase_to_contract']" position="attributes">
+                    <attribute name="class">btn-primary</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_phase_to_execution']" position="attributes">
+                    <attribute name="class">btn-danger</attribute>
+                </xpath>
+
+                <!-- Close Project button: execution phase only -->
+                <xpath expr="//button[@name='action_phase_to_execution']" position="after">
+                    <button name="action_phase_to_closing"
+                            string="Close Project"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="project_phase != 'execution'"
+                            confirm="Close this project? All Job Orders must be completed or closed first. This action locks the project."
+                            data-hotkey="c"/>
+                    <button name="action_phase_reopen"
+                            string="Reopen Project"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="project_phase != 'closing'"
+                            groups="smart_farm_base.group_smart_farm_manager"
+                            confirm="Reopen this project back to Execution phase?"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             2 · FORM — replace phase lock banners with color-coded versions
+                 (replaces the alert-secondary banners from control views)
+        ════════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_project_phase_banners_colored" model="ir.ui.view">
+            <field name="name">farm.project.phase.banners.colored</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_control.view_farm_project_control_inherit"/>
+            <field name="arch" type="xml">
+
+                <!-- Replace pre_tender supplementary banner → GREEN guidance -->
+                <xpath expr="//div[hasclass('alert-secondary')][1]" position="replace">
+                    <div class="alert alert-success d-flex align-items-center gap-2 py-2 mb-2"
+                         role="alert"
+                         invisible="project_phase != 'pre_tender'">
+                        <i class="fa fa-check-circle fa-lg text-success" title="Pre-Tender"/>
+                        <span>
+                            <strong>Pre-Tender Phase</strong> —
+                            Prepare BOQ, Cost Structures, and Analysis.
+                            <span class="ms-2 badge text-bg-danger">
+                                <i class="fa fa-lock me-1" title="Locked"/>
+                                Execution Locked
+                            </span>
+                        </span>
+                    </div>
+                </xpath>
+
+                <!-- Replace tender supplementary banner → YELLOW warning -->
+                <xpath expr="//div[hasclass('alert-secondary')][1]" position="replace">
+                    <div class="alert alert-warning d-flex align-items-center gap-2 py-2 mb-2"
+                         role="alert"
+                         invisible="project_phase != 'tender'">
+                        <i class="fa fa-gavel fa-lg text-warning" title="Tender"/>
+                        <span>
+                            <strong>Tender Phase</strong> —
+                            Quotations, Sales Negotiation, RFQs, and Supplier Pricing.
+                            <span class="ms-2 badge text-bg-danger">
+                                <i class="fa fa-lock me-1" title="Locked"/>
+                                Execution Locked
+                            </span>
+                        </span>
+                    </div>
+                </xpath>
+
+                <!-- Replace contract supplementary banner → BLUE primary -->
+                <xpath expr="//div[hasclass('alert-secondary')][1]" position="replace">
+                    <div class="alert alert-info d-flex align-items-center gap-2 py-2 mb-2"
+                         role="alert"
+                         invisible="project_phase != 'contract'">
+                        <i class="fa fa-file-text-o fa-lg text-primary" title="Contract"/>
+                        <span>
+                            <strong>Contract Phase</strong> —
+                            Contract review, Sales Order approval, PO preparation.
+                            <span class="ms-2 badge text-bg-danger">
+                                <i class="fa fa-lock me-1" title="Locked"/>
+                                Execution Locked
+                            </span>
+                        </span>
+                    </div>
+                </xpath>
+
+                <!-- Replace execution unlocked banner → GREEN success -->
+                <xpath expr="//div[hasclass('alert-success')]" position="replace">
+                    <div class="alert alert-success d-flex align-items-center gap-2 py-2 mb-2"
+                         role="alert"
+                         invisible="project_phase != 'execution'">
+                        <i class="fa fa-play-circle fa-lg text-success" title="Execution Active"/>
+                        <span>
+                            <strong>Execution Phase</strong> —
+                            Job Orders, Materials, Labour, Equipment, Subcontracts, and Progress Tracking.
+                            <span class="ms-2 badge text-bg-success">
+                                <i class="fa fa-unlock me-1" title="Unlocked"/>
+                                Execution Active
+                            </span>
+                        </span>
+                    </div>
+                </xpath>
+
+                <!-- Closing phase banner → MUTED / dark -->
+                <xpath expr="//sheet" position="inside">
+                    <div class="alert alert-secondary d-flex align-items-center gap-2 py-2 mb-2"
+                         role="alert"
+                         invisible="project_phase != 'closing'">
+                        <i class="fa fa-flag-checkered fa-lg text-secondary" title="Project Closed"/>
+                        <span>
+                            <strong>Closing Phase</strong> —
+                            Project is closed. Final review, documentation, and sign-off.
+                            <span class="ms-2 badge text-bg-secondary">
+                                <i class="fa fa-lock me-1" title="Closed"/>
+                                Project Closed
+                            </span>
+                        </span>
+                    </div>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             3 · LIST VIEW — add phase badge column
+        ════════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_project_list_phase_badge" model="ir.ui.view">
+            <field name="name">farm.project.list.phase.badge</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_project.view_farm_project_list"/>
+            <field name="arch" type="xml">
+
+                <!-- Insert phase badge after the state badge -->
+                <xpath expr="//field[@name='state']" position="after">
+                    <field name="project_phase"
+                           string="Phase"
+                           optional="show"
+                           widget="badge"
+                           decoration-success="project_phase == 'pre_tender'"
+                           decoration-warning="project_phase == 'tender'"
+                           decoration-primary="project_phase == 'contract'"
+                           decoration-danger="project_phase == 'execution'"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             4 · KANBAN VIEW — phase-colored card borders + badges
+        ════════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_project_kanban" model="ir.ui.view">
+            <field name="name">farm.project.kanban</field>
+            <field name="model">farm.project</field>
+            <field name="arch" type="xml">
+                <kanban default_order="name" class="o_kanban_small_column">
+                    <field name="id"/>
+                    <field name="name"/>
+                    <field name="project_phase"/>
+                    <field name="project_type"/>
+                    <field name="project_manager_id"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="state"/>
+                    <field name="has_approved_contract"/>
+                    <templates>
+                        <t t-name="card">
+                            <!-- Phase-colored left border -->
+                            <div t-attf-class="
+                                h-100 border-start border-3
+                                #{record.project_phase.value === 'pre_tender' ? 'border-success' :
+                                  record.project_phase.value === 'tender'     ? 'border-warning' :
+                                  record.project_phase.value === 'contract'   ? 'border-primary' :
+                                  record.project_phase.value === 'execution'  ? 'border-danger' :
+                                                                                'border-secondary'}
+                                ps-2">
+
+                                <!-- Card header: name + phase badge -->
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <strong class="fs-6">
+                                        <field name="name"/>
+                                    </strong>
+                                    <field name="project_phase"
+                                           widget="badge"
+                                           decoration-success="project_phase == 'pre_tender'"
+                                           decoration-warning="project_phase == 'tender'"
+                                           decoration-primary="project_phase == 'contract'"
+                                           decoration-danger="project_phase == 'execution'"
+                                           decoration-muted="project_phase == 'closing'"/>
+                                </div>
+
+                                <!-- Project type + manager -->
+                                <div class="text-muted small mb-1">
+                                    <t t-if="record.project_type.value">
+                                        <i class="fa fa-tag me-1" title="Type"/>
+                                        <field name="project_type"/>
+                                    </t>
+                                </div>
+                                <div class="text-muted small mb-1" t-if="record.project_manager_id.value">
+                                    <i class="fa fa-user me-1" title="Manager"/>
+                                    <field name="project_manager_id"/>
+                                </div>
+
+                                <!-- Dates -->
+                                <div class="text-muted small mb-2" t-if="record.start_date.value or record.end_date.value">
+                                    <i class="fa fa-calendar me-1" title="Schedule"/>
+                                    <field name="start_date"/>
+                                    <t t-if="record.end_date.value"> → <field name="end_date"/></t>
+                                </div>
+
+                                <!-- Footer: project state + contract lock indicator -->
+                                <div class="d-flex justify-content-between align-items-center mt-auto">
+                                    <field name="state"
+                                           widget="badge"
+                                           decoration-info="state == 'draft'"
+                                           decoration-success="state == 'running'"
+                                           decoration-muted="state == 'done'"/>
+                                    <t t-if="record.project_phase.value === 'execution'">
+                                        <span t-if="record.has_approved_contract.value"
+                                              class="badge text-bg-success">
+                                            <i class="fa fa-unlock me-1" title="Unlocked"/>Active
+                                        </span>
+                                        <span t-else=""
+                                              class="badge text-bg-danger">
+                                            <i class="fa fa-lock me-1" title="Locked"/>Needs Contract
+                                        </span>
+                                    </t>
+                                    <t t-elif="record.project_phase.value === 'closing'">
+                                        <span class="badge text-bg-secondary">
+                                            <i class="fa fa-flag-checkered me-1" title="Closed"/>Closed
+                                        </span>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="badge text-bg-secondary opacity-75">
+                                            <i class="fa fa-lock me-1" title="Locked"/>Locked
+                                        </span>
+                                    </t>
+                                </div>
+
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             5 · ACTION UPDATE — add kanban to view_mode
+        ════════════════════════════════════════════════════════════════════ -->
+
+        <record id="smart_farm_project.action_farm_project" model="ir.actions.act_window">
+            <field name="view_mode">kanban,list,form</field>
+        </record>
+
+    </data>
+</odoo>

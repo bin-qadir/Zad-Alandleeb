@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Extend the Job Order form to show the contract_id field
+            in the General tab → Project & Scope group.
+        -->
+
+        <record id="view_farm_job_order_contract_inherit" model="ir.ui.view">
+            <field name="name">farm.job.order.contract.inherit</field>
+            <field name="model">farm.job.order</field>
+            <field name="inherit_id" ref="smart_farm_execution.view_farm_job_order_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Inject contract_id after analysis_id (unique in the form) -->
+                <xpath expr="//field[@name='analysis_id']" position="after">
+                    <field name="contract_id"
+                           options="{'no_create': True}"
+                           readonly="state not in ('draft', 'ready')"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!--
+            Extend the Job Order list to show contract_id as an optional column.
+        -->
+
+        <record id="view_farm_job_order_contract_list_inherit" model="ir.ui.view">
+            <field name="name">farm.job.order.contract.list.inherit</field>
+            <field name="model">farm.job.order</field>
+            <field name="inherit_id" ref="smart_farm_execution.view_farm_job_order_list"/>
+            <field name="arch" type="xml">
+
+                <!-- Inject contract column after project_id -->
+                <xpath expr="//field[@name='project_id']" position="after">
+                    <field name="contract_id" string="Contract" optional="show"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

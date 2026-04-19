@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Execution extension for farm.boq.analysis form view.
+
+            Injects:
+            1. "Generate Job Orders" + "View Job Orders" header buttons
+            2. "Job Orders" stat button in button_box
+            3. Execution columns in Analysis Lines list:
+               job_order_count, execution_actual_qty, execution_actual_cost,
+               execution_progress, execution_cost_variance
+        -->
+
+        <record id="view_farm_boq_analysis_execution_inherit" model="ir.ui.view">
+            <field name="name">farm.boq.analysis.execution.inherit</field>
+            <field name="model">farm.boq.analysis</field>
+            <field name="inherit_id" ref="smart_farm_boq_analysis.view_farm_boq_analysis_form"/>
+            <field name="arch" type="xml">
+
+                <!-- ── 1. Header buttons ── -->
+                <xpath expr="//header/field[@name='analysis_state']" position="before">
+                    <button name="action_generate_job_orders"
+                            type="object"
+                            string="Generate Job Orders"
+                            icon="fa-tasks"
+                            class="btn-primary"
+                            invisible="analysis_state != 'approved'"
+                            confirm="Generate Job Orders for all approved analysis lines that don't have one yet?"/>
+                    <button name="action_view_job_orders"
+                            type="object"
+                            string="View Job Orders"
+                            icon="fa-list-ul"
+                            class="btn-secondary"
+                            invisible="job_order_count == 0"/>
+                </xpath>
+
+                <!-- ── 2. Stat button ── -->
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button class="oe_stat_button"
+                            type="object"
+                            name="action_view_job_orders"
+                            icon="fa-tasks"
+                            invisible="job_order_count == 0">
+                        <field name="job_order_count"
+                               widget="statinfo"
+                               string="Job Orders"/>
+                    </button>
+                </xpath>
+
+                <!-- ── 3. Execution columns after analysis_state badge ── -->
+                <xpath expr="//field[@name='line_ids']//field[@name='analysis_state']" position="after">
+                    <field name="job_order_count"
+                           string="Jobs"
+                           readonly="1"
+                           optional="show"/>
+                    <field name="execution_actual_qty"
+                           string="Exec. Qty"
+                           readonly="1"
+                           optional="show"/>
+                    <field name="execution_progress"
+                           string="Progress %"
+                           readonly="1"
+                           optional="show"/>
+                    <field name="execution_actual_cost"
+                           string="Exec. Actual Cost"
+                           readonly="1"
+                           optional="show"/>
+                    <field name="execution_cost_variance"
+                           string="Exec. Variance"
+                           readonly="1"
+                           optional="show"
+                           decoration-danger="execution_cost_variance &gt; 0"
+                           decoration-success="execution_cost_variance &lt;= 0 and execution_actual_cost &gt; 0"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

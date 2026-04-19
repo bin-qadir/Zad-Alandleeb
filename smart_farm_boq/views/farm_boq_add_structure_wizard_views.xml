@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             Add BOQ Structure Wizard — Dialog Form
+             3-step: Division → Subdivisions (optional) → Sub-Subdivisions (optional)
+        ══════════════════════════════════════════════════════════════════════ -->
+        <record id="view_farm_boq_add_structure_wizard_form" model="ir.ui.view">
+            <field name="name">farm.boq.add_structure.wizard.form</field>
+            <field name="model">farm.boq.add_structure.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Add BOQ Structure">
+
+                    <div class="alert alert-info mb-3" role="alert">
+                        <strong>How it works:</strong>
+                        Select a Division (required). Optionally narrow to specific
+                        Subdivisions and/or Sub-Subdivisions.
+                        Leave Subdivisions empty → all branches are imported.
+                        Leave Sub-Subdivisions empty → all leaves are imported.
+                        Existing rows are safely skipped.
+                    </div>
+
+                    <group>
+                        <field name="boq_id" readonly="1"/>
+                    </group>
+
+                    <separator string="Step 1 — Select Division(s)  (required)"/>
+                    <group>
+                        <field name="division_ids"
+                               widget="many2many_tags"
+                               options="{'no_create': True, 'no_open': True}"
+                               placeholder="Select one or more divisions…"/>
+                    </group>
+
+                    <separator string="Step 2 — Filter Subdivisions  (optional — leave empty = all)"/>
+                    <group>
+                        <field name="subdivision_ids"
+                               widget="many2many_tags"
+                               domain="[('division_id', 'in', division_ids)]"
+                               options="{'no_create': True, 'no_open': True}"
+                               placeholder="Leave empty to import ALL subdivisions under the selected division(s)…"
+                               invisible="not division_ids"/>
+                        <div class="text-muted small"
+                             invisible="division_ids">
+                            ← Select a Division first
+                        </div>
+                    </group>
+
+                    <separator string="Step 3 — Filter Sub-Subdivisions  (optional — leave empty = all)"/>
+                    <group>
+                        <field name="sub_subdivision_ids"
+                               widget="many2many_tags"
+                               domain="[('subdivision_id', 'in', subdivision_ids)]"
+                               options="{'no_create': True, 'no_open': True}"
+                               placeholder="Leave empty to import ALL sub-subdivisions under the selected subdivision(s)…"
+                               invisible="not subdivision_ids"/>
+                        <div class="text-muted small"
+                             invisible="subdivision_ids">
+                            ← Select specific Subdivisions first to filter here
+                        </div>
+                    </group>
+
+                    <footer>
+                        <button name="action_import"
+                                type="object"
+                                string="Import Structure"
+                                class="btn-primary"
+                                close="1"
+                                invisible="not division_ids"/>
+                        <button string="Cancel"
+                                class="btn-secondary"
+                                special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+        <!-- ── Action ─────────────────────────────────────────────────────── -->
+        <record id="action_farm_boq_add_structure_wizard" model="ir.actions.act_window">
+            <field name="name">Add BOQ Structure</field>
+            <field name="res_model">farm.boq.add_structure.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             Inject "Add BOQ Structure" button into the BOQ form header.
+             Placed before the "Rebuild Structure" maintenance button
+             so it appears prominently when the BOQ is in draft/start state.
+        ══════════════════════════════════════════════════════════════════════ -->
+        <record id="view_farm_boq_add_structure_button_inject" model="ir.ui.view">
+            <field name="name">farm.boq.add_structure.button.inject</field>
+            <field name="model">farm.boq</field>
+            <field name="inherit_id" ref="smart_farm_boq.view_farm_boq_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Inject before the "Rebuild Structure" button -->
+                <xpath expr="//button[@name='action_cleanup_structure']" position="before">
+                    <button name="action_add_structure"
+                            type="object"
+                            string="Add BOQ Structure"
+                            icon="fa-plus-square"
+                            class="btn-primary"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

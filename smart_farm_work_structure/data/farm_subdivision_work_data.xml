@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- ── Civil Works ──────────────────────────────────────────────── -->
+        <record id="sub_civil_site_prep" model="farm.subdivision.work">
+            <field name="name">Site Preparation</field>
+            <field name="division_id" ref="div_civil"/>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub_civil_excavation" model="farm.subdivision.work">
+            <field name="name">Excavation</field>
+            <field name="division_id" ref="div_civil"/>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub_civil_backfilling" model="farm.subdivision.work">
+            <field name="name">Backfilling</field>
+            <field name="division_id" ref="div_civil"/>
+            <field name="sequence">30</field>
+        </record>
+        <record id="sub_civil_earthworks" model="farm.subdivision.work">
+            <field name="name">Earthworks</field>
+            <field name="division_id" ref="div_civil"/>
+            <field name="sequence">40</field>
+        </record>
+        <record id="sub_civil_road" model="farm.subdivision.work">
+            <field name="name">Road Works</field>
+            <field name="division_id" ref="div_civil"/>
+            <field name="sequence">50</field>
+        </record>
+        <record id="sub_civil_foundations" model="farm.subdivision.work">
+            <field name="name">Foundations</field>
+            <field name="division_id" ref="div_civil"/>
+            <field name="sequence">60</field>
+        </record>
+        <record id="sub_civil_concrete" model="farm.subdivision.work">
+            <field name="name">Concrete Works</field>
+            <field name="division_id" ref="div_civil"/>
+            <field name="sequence">70</field>
+        </record>
+
+        <!-- ── Architectural Works ─────────────────────────────────────── -->
+        <record id="sub_arch_blockwork" model="farm.subdivision.work">
+            <field name="name">Block Work</field>
+            <field name="division_id" ref="div_architectural"/>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub_arch_plastering" model="farm.subdivision.work">
+            <field name="name">Plastering</field>
+            <field name="division_id" ref="div_architectural"/>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub_arch_tiling" model="farm.subdivision.work">
+            <field name="name">Tiling</field>
+            <field name="division_id" ref="div_architectural"/>
+            <field name="sequence">30</field>
+        </record>
+        <record id="sub_arch_painting" model="farm.subdivision.work">
+            <field name="name">Painting</field>
+            <field name="division_id" ref="div_architectural"/>
+            <field name="sequence">40</field>
+        </record>
+        <record id="sub_arch_ceiling" model="farm.subdivision.work">
+            <field name="name">False Ceiling</field>
+            <field name="division_id" ref="div_architectural"/>
+            <field name="sequence">50</field>
+        </record>
+        <record id="sub_arch_cladding" model="farm.subdivision.work">
+            <field name="name">Cladding</field>
+            <field name="division_id" ref="div_architectural"/>
+            <field name="sequence">60</field>
+        </record>
+        <record id="sub_arch_waterproofing" model="farm.subdivision.work">
+            <field name="name">Waterproofing</field>
+            <field name="division_id" ref="div_architectural"/>
+            <field name="sequence">70</field>
+        </record>
+
+        <!-- ── Structural Works ───────────────────────────────────────── -->
+        <record id="sub_str_rebar" model="farm.subdivision.work">
+            <field name="name">Reinforcement Steel</field>
+            <field name="division_id" ref="div_structural"/>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub_str_concrete" model="farm.subdivision.work">
+            <field name="name">Structural Concrete</field>
+            <field name="division_id" ref="div_structural"/>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub_str_columns" model="farm.subdivision.work">
+            <field name="name">Columns</field>
+            <field name="division_id" ref="div_structural"/>
+            <field name="sequence">30</field>
+        </record>
+        <record id="sub_str_beams" model="farm.subdivision.work">
+            <field name="name">Beams</field>
+            <field name="division_id" ref="div_structural"/>
+            <field name="sequence">40</field>
+        </record>
+        <record id="sub_str_slabs" model="farm.subdivision.work">
+            <field name="name">Slabs</field>
+            <field name="division_id" ref="div_structural"/>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- ── Mechanical Works ───────────────────────────────────────── -->
+        <record id="sub_mech_hvac" model="farm.subdivision.work">
+            <field name="name">HVAC Systems</field>
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub_hvac_ducting" model="farm.subdivision.work">
+            <field name="name">Ducting</field>
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub_hvac_ahu" model="farm.subdivision.work">
+            <field name="name">Air Handling Units</field>
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="sequence">30</field>
+        </record>
+        <record id="sub_hvac_ventilation" model="farm.subdivision.work">
+            <field name="name">Ventilation Systems</field>
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="sequence">40</field>
+        </record>
+        <record id="sub_mech_firefight" model="farm.subdivision.work">
+            <field name="name">Fire Fighting Systems</field>
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="sequence">50</field>
+        </record>
+        <record id="sub_mech_lpg" model="farm.subdivision.work">
+            <field name="name">LPG Systems</field>
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="sequence">60</field>
+        </record>
+        <record id="sub_mech_equipment" model="farm.subdivision.work">
+            <field name="name">Equipment Works (Pumps)</field>
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="sequence">70</field>
+        </record>
+
+        <!-- ── Electrical Works ───────────────────────────────────────── -->
+        <record id="sub_elec_power" model="farm.subdivision.work">
+            <field name="name">Power Systems</field>
+            <field name="division_id" ref="div_electrical"/>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub_elec_lighting" model="farm.subdivision.work">
+            <field name="name">Lighting Systems</field>
+            <field name="division_id" ref="div_electrical"/>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub_elec_lowcurrent" model="farm.subdivision.work">
+            <field name="name">Low Current Systems</field>
+            <field name="division_id" ref="div_electrical"/>
+            <field name="sequence">30</field>
+        </record>
+        <record id="sub_elec_earthing" model="farm.subdivision.work">
+            <field name="name">Earthing Systems</field>
+            <field name="division_id" ref="div_electrical"/>
+            <field name="sequence">40</field>
+        </record>
+
+        <!-- ── Plumbing Works ─────────────────────────────────────────── -->
+        <record id="sub_plumb_water" model="farm.subdivision.work">
+            <field name="name">Water Supply</field>
+            <field name="division_id" ref="div_plumbing"/>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub_plumb_drainage" model="farm.subdivision.work">
+            <field name="name">Drainage Systems</field>
+            <field name="division_id" ref="div_plumbing"/>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub_plumb_sewage" model="farm.subdivision.work">
+            <field name="name">Sewage Systems</field>
+            <field name="division_id" ref="div_plumbing"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- ── Irrigation Works ───────────────────────────────────────── -->
+        <record id="sub_irr_networks" model="farm.subdivision.work">
+            <field name="name">Irrigation Networks</field>
+            <field name="division_id" ref="div_irrigation"/>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub_irr_drip" model="farm.subdivision.work">
+            <field name="name">Drip Systems</field>
+            <field name="division_id" ref="div_irrigation"/>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub_irr_sprinkler" model="farm.subdivision.work">
+            <field name="name">Sprinkler Systems</field>
+            <field name="division_id" ref="div_irrigation"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- ── Control Works ─────────────────────────────────────��───── -->
+        <record id="sub_ctrl_panels" model="farm.subdivision.work">
+            <field name="name">Control Panels</field>
+            <field name="division_id" ref="div_hvac"/>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub_ctrl_bms" model="farm.subdivision.work">
+            <field name="name">BMS Works</field>
+            <field name="division_id" ref="div_hvac"/>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub_ctrl_sensors" model="farm.subdivision.work">
+            <field name="name">Sensors &amp; Thermostats</field>
+            <field name="division_id" ref="div_hvac"/>
+            <field name="sequence">30</field>
+        </record>
+        <record id="sub_ctrl_actuators" model="farm.subdivision.work">
+            <field name="name">Actuators / Control Valves</field>
+            <field name="division_id" ref="div_hvac"/>
+            <field name="sequence">40</field>
+        </record>
+        <record id="sub_ctrl_cabling" model="farm.subdivision.work">
+            <field name="name">Control Cabling</field>
+            <field name="division_id" ref="div_hvac"/>
+            <field name="sequence">50</field>
+        </record>
+        <record id="sub_ctrl_plc" model="farm.subdivision.work">
+            <field name="name">PLC / Automation Devices</field>
+            <field name="division_id" ref="div_hvac"/>
+            <field name="sequence">60</field>
+        </record>
+
+        <!-- ── Infrastructure Works ───────────────────────────────────── -->
+        <record id="sub_infra_networks" model="farm.subdivision.work">
+            <field name="name">External Networks</field>
+            <field name="division_id" ref="div_infrastructure"/>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub_infra_storm" model="farm.subdivision.work">
+            <field name="name">Storm Water</field>
+            <field name="division_id" ref="div_infrastructure"/>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub_infra_utility" model="farm.subdivision.work">
+            <field name="name">Utility Connections</field>
+            <field name="division_id" ref="div_infrastructure"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- ── Finishing Works ────────────────────────────────────────── -->
+        <record id="sub_fin_coating" model="farm.subdivision.work">
+            <field name="name">Final Coating</field>
+            <field name="division_id" ref="div_finishing"/>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub_fin_decorative" model="farm.subdivision.work">
+            <field name="name">Decorative Works</field>
+            <field name="division_id" ref="div_finishing"/>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub_fin_fixtures" model="farm.subdivision.work">
+            <field name="name">Fixtures Installation</field>
+            <field name="division_id" ref="div_finishing"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- ── Landscape Works ────────────────────────────────────────── -->
+        <record id="sub_land_softscape" model="farm.subdivision.work">
+            <field name="name">Softscape</field>
+            <field name="division_id" ref="div_landscape"/>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub_land_hardscape" model="farm.subdivision.work">
+            <field name="name">Hardscape</field>
+            <field name="division_id" ref="div_landscape"/>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub_land_plantation" model="farm.subdivision.work">
+            <field name="name">Plantation</field>
+            <field name="division_id" ref="div_landscape"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- ── Agricultural Works ─────────────────────────────────────── -->
+        <record id="sub_agr_greenhouse" model="farm.subdivision.work">
+            <field name="name">Greenhouse Setup</field>
+            <field name="division_id" ref="div_agricultural"/>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sub_agr_hydroponic" model="farm.subdivision.work">
+            <field name="name">Hydroponic Systems</field>
+            <field name="division_id" ref="div_agricultural"/>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sub_agr_planting" model="farm.subdivision.work">
+            <field name="name">Planting Systems</field>
+            <field name="division_id" ref="div_agricultural"/>
+            <field name="sequence">30</field>
+        </record>
+        <record id="sub_agr_soil" model="farm.subdivision.work">
+            <field name="name">Soil Preparation</field>
+            <field name="division_id" ref="div_agricultural"/>
+            <field name="sequence">40</field>
+        </record>
+
+    </data>
+</odoo>

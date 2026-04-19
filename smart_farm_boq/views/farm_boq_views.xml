@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ===== farm.boq — list ===== -->
+
+        <record id="view_farm_boq_list" model="ir.ui.view">
+            <field name="name">farm.boq.list</field>
+            <field name="model">farm.boq</field>
+            <field name="arch" type="xml">
+                <list string="Cost Structures"
+                      create="false"
+                      decoration-muted="state == 'draft'"
+                      decoration-info="state == 'start'"
+                      decoration-warning="state in ('in_progress', 'submitted')"
+                      decoration-success="state == 'approved'">
+                    <field name="name"/>
+                    <field name="project_id"/>
+                    <field name="date"/>
+                    <field name="progress_percent" widget="progressbar"
+                           options="{'max_value': 100}" string="Progress"/>
+                    <field name="subitem_count" string="Items" optional="show"/>
+                    <field name="subitem_approved_count" string="Approved" optional="show"/>
+                    <field name="is_revision" optional="show"/>
+                    <field name="base_boq_id" optional="show"/>
+                    <field name="state" widget="badge"
+                           decoration-muted="state == 'draft'"
+                           decoration-info="state == 'start'"
+                           decoration-warning="state in ('in_progress', 'submitted')"
+                           decoration-success="state == 'approved'"/>
+                </list>
+            </field>
+        </record>
+
+
+        <!-- ===== farm.boq — form ===== -->
+
+        <record id="view_farm_boq_form" model="ir.ui.view">
+            <field name="name">farm.boq.form</field>
+            <field name="model">farm.boq</field>
+            <field name="arch" type="xml">
+                <form string="Project Cost Structure" class="o_boq_form">
+                    <header>
+                        <field name="can_edit_state" invisible="1"/>
+
+                        <!--
+                            Workflow state transitions happen via the clickable
+                            statusbar (managers only).  State-change buttons are
+                            intentionally absent to keep the header clean.
+
+                            "Create Revision" is kept because it has no statusbar
+                            equivalent — it creates a new document, not a transition.
+                        -->
+                        <button name="action_create_revision"
+                                type="object"
+                                string="Create Revision"
+                                icon="fa-copy"
+                                class="btn-secondary"
+                                invisible="state in ('draft', 'start')"
+                                groups="smart_farm_base.group_smart_farm_manager"/>
+
+                        <!-- Export / Print utilities -->
+                        <button name="action_print_boq" type="object" string="Print"
+                                icon="fa-print" class="btn-secondary o_boq_action_btn"/>
+                        <button name="action_export_excel" type="object" string="Excel"
+                                icon="fa-file-excel-o" class="btn-secondary o_boq_action_btn"/>
+                        <button name="action_export_pdf" type="object" string="PDF"
+                                icon="fa-file-pdf-o" class="btn-secondary o_boq_action_btn"/>
+
+                        <!-- Structure maintenance -->
+                        <button name="action_cleanup_structure"
+                                type="object"
+                                string="Rebuild Structure"
+                                icon="fa-wrench"
+                                class="btn-warning"
+                                groups="smart_farm_base.group_smart_farm_manager"
+                                confirm="This will remove duplicate lines and rebuild sequential ordering. Continue?"/>
+                        <!-- Sequence-only rebuild — no deduplication, safe at any time -->
+                        <button name="rebuild_boq_sequence"
+                                type="object"
+                                string="Rebuild Sequence"
+                                icon="fa-sort-numeric-asc"
+                                class="btn-secondary"
+                                groups="smart_farm_base.group_smart_farm_manager"
+                                confirm="Rebuild all BOQ line codes and sequence numbers?"/>
+
+                        <!-- Statusbar — clickable for managers, display-only for others -->
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,start,in_progress,submitted,approved"
+                               clickable="1"
+                               invisible="not can_edit_state"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,start,in_progress,submitted,approved"
+                               invisible="can_edit_state"/>
+                    </header>
+
+                    <sheet>
+
+                        <!-- ── SMART HEADER STATS (top-right stat buttons) ─── -->
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" icon="fa-tasks"
+                                    type="object" name="action_open_structure">
+                                <field name="progress_percent" widget="statinfo"
+                                       string="% Complete"
+                                       options="{'digits': [5, 1]}"/>
+                            </button>
+                            <button class="oe_stat_button" icon="fa-list"
+                                    type="object" name="action_open_structure">
+                                <field name="subitem_count" widget="statinfo"
+                                       string="Subitems"/>
+                            </button>
+                            <!-- Analysis stat button injected by smart_farm_boq_analysis -->
+                        </div>
+
+                        <!-- ── TITLE ─────────────────────────────────────────── -->
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" readonly="1"/></h1>
+                        </div>
+
+                        <!-- ── MAIN NAVIGATION ACTIONS ───────────────────────────
+                             Big primary buttons positioned directly under the title.
+                             "Open BOQ Analysis" is injected by smart_farm_boq_analysis.
+                        ──────────────────────────────────────────────────────── -->
+                        <div class="d-flex flex-wrap gap-3 mb-4" name="main_action_buttons">
+                            <button name="action_open_structure"
+                                    type="object"
+                                    string="Open BOQ Structure"
+                                    icon="fa-sitemap"
+                                    class="btn btn-primary btn-lg px-4"/>
+                        </div>
+
+                        <!-- ── NOTEBOOK ──────────────────────────────────────── -->
+                        <notebook>
+
+                            <!-- ════════════════════════════════════════════════════
+                                 TAB 1 — OVERVIEW DASHBOARD  (default landing page)
+                                 No structure lines. Pure executive dashboard.
+                            ════════════════════════════════════════════════════ -->
+                            <page string="Overview | نظرة عامة" name="overview_tab">
+
+                                <field name="currency_id" invisible="1"/>
+
+                                <!-- ── KPI CARDS (clickable — each opens a filtered list) ── -->
+                                <div class="row g-3 mb-4">
+
+                                    <!-- Total Subitems → action_view_all_subitems -->
+                                    <div class="col-lg-3 col-sm-6">
+                                        <div class="position-relative h-100">
+                                            <div class="d-flex flex-column align-items-center
+                                                        justify-content-center p-3 rounded
+                                                        border bg-light h-100 gap-1">
+                                                <i class="fa fa-list fa-2x text-primary mb-1"/>
+                                                <span class="display-6 fw-bold text-primary lh-1">
+                                                    <field name="subitem_count"
+                                                           nolabel="1" readonly="1"/>
+                                                </span>
+                                                <span class="small fw-semibold text-uppercase text-muted"
+                                                      style="letter-spacing:.06em;">
+                                                    Total Subitems
+                                                </span>
+                                            </div>
+                                            <button name="action_view_all_subitems"
+                                                    type="object"
+                                                    title="Open All Subitems"
+                                                    style="position:absolute;top:0;left:0;
+                                                           width:100%;height:100%;
+                                                           background:transparent;border:none;
+                                                           cursor:pointer;border-radius:.375rem;"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Approved → action_view_approved_lines -->
+                                    <div class="col-lg-3 col-sm-6">
+                                        <div class="position-relative h-100">
+                                            <div class="d-flex flex-column align-items-center
+                                                        justify-content-center p-3 rounded
+                                                        border border-success h-100 gap-1"
+                                                 style="background:rgba(25,135,84,.07);">
+                                                <i class="fa fa-check-circle fa-2x text-success mb-1"/>
+                                                <span class="display-6 fw-bold text-success lh-1">
+                                                    <field name="subitem_approved_count"
+                                                           nolabel="1" readonly="1"/>
+                                                </span>
+                                                <span class="small fw-semibold text-uppercase text-muted"
+                                                      style="letter-spacing:.06em;">
+                                                    Approved
+                                                </span>
+                                            </div>
+                                            <button name="action_view_approved_lines"
+                                                    type="object"
+                                                    title="Open Approved Items"
+                                                    style="position:absolute;top:0;left:0;
+                                                           width:100%;height:100%;
+                                                           background:transparent;border:none;
+                                                           cursor:pointer;border-radius:.375rem;"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- In Review → action_view_review_lines -->
+                                    <div class="col-lg-3 col-sm-6">
+                                        <div class="position-relative h-100">
+                                            <div class="d-flex flex-column align-items-center
+                                                        justify-content-center p-3 rounded
+                                                        border border-warning h-100 gap-1"
+                                                 style="background:rgba(255,193,7,.07);">
+                                                <i class="fa fa-clock-o fa-2x text-warning mb-1"/>
+                                                <span class="display-6 fw-bold text-warning lh-1">
+                                                    <field name="subitem_review_count"
+                                                           nolabel="1" readonly="1"/>
+                                                </span>
+                                                <span class="small fw-semibold text-uppercase text-muted"
+                                                      style="letter-spacing:.06em;">
+                                                    In Review
+                                                </span>
+                                            </div>
+                                            <button name="action_view_review_lines"
+                                                    type="object"
+                                                    title="Open Items In Review"
+                                                    style="position:absolute;top:0;left:0;
+                                                           width:100%;height:100%;
+                                                           background:transparent;border:none;
+                                                           cursor:pointer;border-radius:.375rem;"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Draft → action_view_draft_lines -->
+                                    <div class="col-lg-3 col-sm-6">
+                                        <div class="position-relative h-100">
+                                            <div class="d-flex flex-column align-items-center
+                                                        justify-content-center p-3 rounded
+                                                        border bg-light h-100 gap-1">
+                                                <i class="fa fa-edit fa-2x text-muted mb-1"/>
+                                                <span class="display-6 fw-bold text-muted lh-1">
+                                                    <field name="subitem_draft_count"
+                                                           nolabel="1" readonly="1"/>
+                                                </span>
+                                                <span class="small fw-semibold text-uppercase text-muted"
+                                                      style="letter-spacing:.06em;">
+                                                    Draft
+                                                </span>
+                                            </div>
+                                            <button name="action_view_draft_lines"
+                                                    type="object"
+                                                    title="Open Draft Items"
+                                                    style="position:absolute;top:0;left:0;
+                                                           width:100%;height:100%;
+                                                           background:transparent;border:none;
+                                                           cursor:pointer;border-radius:.375rem;"/>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!-- ── GRAND TOTAL ──────────────────────────────── -->
+                                <div class="text-center py-3 px-4 mb-4 rounded border"
+                                     style="background:linear-gradient(135deg,#f8f9fa 0%,#e9ecef 100%);">
+                                    <div class="small fw-bold text-muted text-uppercase mb-1"
+                                         style="letter-spacing:.08em;">
+                                        Grand Total
+                                    </div>
+                                    <div class="fw-bold text-primary"
+                                         style="font-size:2.4rem; line-height:1.15;">
+                                        <field name="total" nolabel="1" readonly="1"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                    </div>
+                                </div>
+
+                                <!-- ── PRICING COMPLETION PROGRESS ──────────────── -->
+                                <div class="mb-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="small fw-bold text-muted text-uppercase"
+                                              style="letter-spacing:.06em;">
+                                            Pricing Completion
+                                        </span>
+                                        <span class="badge text-bg-primary">
+                                            <field name="progress_percent"
+                                                   nolabel="1" readonly="1"/>%
+                                        </span>
+                                    </div>
+                                    <field name="progress_percent"
+                                           widget="progressbar"
+                                           options="{'max_value': 100, 'editable': False}"
+                                           nolabel="1"/>
+                                </div>
+
+                                <!-- ── ALERTS ──────────────────────────────────────
+                                     This anchor div is REPLACED by smart_farm_boq_analysis
+                                     with live clickable alert rows.
+                                ──────────────────────────────────────────────────── -->
+                                <div name="alerts_section"/>
+
+                                <!-- ── DETAILS + REVISION ──────────────────────── -->
+                                <group>
+                                    <group string="Details">
+                                        <field name="project_id"
+                                               readonly="state not in ('draft', 'start')"/>
+                                        <field name="project_phase_id"
+                                               options="{'no_create': True}"
+                                               placeholder="Select phase…"/>
+                                        <field name="date"/>
+                                    </group>
+                                    <group string="Revision">
+                                        <field name="is_revision"/>
+                                        <field name="revision_no"
+                                               invisible="not is_revision"/>
+                                        <field name="base_boq_id"
+                                               invisible="not is_revision"/>
+                                    </group>
+                                </group>
+
+                                <!-- ── FINANCIAL SUMMARY ────────────────────────── -->
+                                <group string="Financial Summary" name="financial_group">
+                                    <group>
+                                        <field name="total" string="Grand Total"
+                                               readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                    </group>
+                                </group>
+
+                                <!-- Analysis Status group injected after financial_group
+                                     by smart_farm_boq_analysis                          -->
+
+                            </page>
+
+                            <!-- ════════════════════════════════════════════════════
+                                 TAB 2 — NOTES
+                            ════════════════════════════════════════════════════ -->
+                            <page string="Notes" name="notes_tab">
+                                <field name="note" placeholder="Add notes…"/>
+                            </page>
+
+                        </notebook>
+
+                        <div class="o_boq_toggle_bar">
+                            <widget name="boq_chatter_toggle"/>
+                        </div>
+                        <chatter/>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- ===== Action ===== -->
+
+        <record id="action_farm_boq" model="ir.actions.act_window">
+            <field name="name">Project Cost Structures</field>
+            <field name="res_model">farm.boq</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

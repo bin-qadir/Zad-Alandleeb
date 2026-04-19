@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_farm_boq_line_analysis_user,farm.boq.line.analysis user,model_farm_boq_line_analysis,base.group_user,1,1,1,1
+access_farm_boq_analysis_user,farm.boq.analysis user,model_farm_boq_analysis,base.group_user,1,1,1,1
+access_farm_boq_analysis_line_user,farm.boq.analysis.line user,model_farm_boq_analysis_line,base.group_user,1,1,1,1

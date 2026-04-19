@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             SEQUENCE
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="seq_farm_boq_analysis" model="ir.sequence">
+            <field name="name">BOQ Analysis</field>
+            <field name="code">farm.boq.analysis</field>
+            <field name="prefix">BOQA-</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             farm.boq.analysis — SEARCH
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_boq_analysis_search" model="ir.ui.view">
+            <field name="name">farm.boq.analysis.search</field>
+            <field name="model">farm.boq.analysis</field>
+            <field name="arch" type="xml">
+                <search string="BOQ Analysis">
+                    <field name="name" string="Reference"/>
+                    <field name="boq_id"/>
+                    <field name="project_id"/>
+                    <separator/>
+                    <filter name="draft"    string="Draft"
+                            domain="[('analysis_state','=','draft')]"/>
+                    <filter name="review"   string="Review"
+                            domain="[('analysis_state','=','review')]"/>
+                    <filter name="approved" string="Approved"
+                            domain="[('analysis_state','=','approved')]"/>
+                    <group string="Group By">
+                        <filter name="by_project" string="Project"
+                                context="{'group_by':'project_id'}"/>
+                        <filter name="by_boq"     string="BOQ Document"
+                                context="{'group_by':'boq_id'}"/>
+                        <filter name="by_state"   string="Status"
+                                context="{'group_by':'analysis_state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             farm.boq.analysis — LIST
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_boq_analysis_list" model="ir.ui.view">
+            <field name="name">farm.boq.analysis.list</field>
+            <field name="model">farm.boq.analysis</field>
+            <field name="arch" type="xml">
+                <list string="BOQ Analysis"
+                      decoration-muted="analysis_state == 'draft'"
+                      decoration-warning="analysis_state == 'review'"
+                      decoration-success="analysis_state == 'approved'">
+                    <field name="name"       string="Analysis Reference"/>
+                    <field name="boq_id"     string="BOQ Document"/>
+                    <field name="project_id" string="Farm Project"/>
+                    <field name="date"/>
+                    <field name="item_count" string="Priced Items" optional="show"/>
+                    <field name="total_cost"   string="Total Cost"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"
+                           optional="show"/>
+                    <field name="total_sale"   string="Total Sale"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"
+                           optional="show"/>
+                    <field name="total_profit" string="Profit"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"
+                           optional="show"/>
+                    <field name="total_margin" string="Margin %" optional="show"
+                           widget="percentage"/>
+                    <field name="currency_id" column_invisible="1"/>
+                    <field name="analysis_state" widget="badge"
+                           decoration-muted="analysis_state == 'draft'"
+                           decoration-warning="analysis_state == 'review'"
+                           decoration-success="analysis_state == 'approved'"/>
+                </list>
+            </field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             farm.boq.analysis — FORM
+             (PARTS 1–6 + 8 implemented here)
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_boq_analysis_form" model="ir.ui.view">
+            <field name="name">farm.boq.analysis.form</field>
+            <field name="model">farm.boq.analysis</field>
+            <field name="arch" type="xml">
+                <form string="BOQ Analysis">
+                    <header>
+                        <!-- ── Workflow buttons ──────────────────────────── -->
+                        <button name="action_review"
+                                type="object"
+                                string="Submit for Review"
+                                class="btn-primary"
+                                invisible="analysis_state != 'draft'"
+                                groups="smart_farm_base.group_smart_farm_manager"/>
+                        <button name="action_approve"
+                                type="object"
+                                string="Approve"
+                                class="btn-success"
+                                invisible="analysis_state != 'review'"
+                                groups="smart_farm_base.group_smart_farm_manager"/>
+                        <button name="action_reset_draft"
+                                type="object"
+                                string="Reset to Draft"
+                                class="btn-secondary"
+                                invisible="analysis_state == 'draft' or analysis_state == 'approved'"/>
+
+                        <!-- ── PART 1: Export buttons ─────────────────────── -->
+                        <button name="action_print_pdf"
+                                type="object"
+                                string="🖨 Print PDF"
+                                class="btn-outline-primary"
+                                title="Download BOQ Analysis as PDF (hierarchical, landscape)"/>
+                        <button name="action_export_excel"
+                                type="object"
+                                string="📊 Export Excel"
+                                class="btn-outline-success"
+                                title="Download BOQ Analysis as Excel (Sheet 1: Full, Sheet 2: Summary)"/>
+
+                        <!-- ── Sync button ─────────────────────────────────── -->
+                        <button name="action_refresh_from_boq"
+                                type="object"
+                                string="⟳ Sync from BOQ"
+                                class="btn-secondary"
+                                invisible="analysis_state == 'approved'"
+                                confirm="Re-sync all BOQ lines? Structural rows will be refreshed. Your pricing data is preserved."/>
+
+                        <field name="analysis_state" widget="statusbar"
+                               statusbar_visible="draft,review,approved"/>
+                    </header>
+
+                    <sheet>
+                        <!-- Smart buttons -->
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button"
+                                    icon="fa-list-ol"
+                                    type="object"
+                                    name="action_refresh_from_boq"
+                                    invisible="analysis_state == 'approved'">
+                                <field name="item_count" widget="statinfo"
+                                       string="Priced Items"/>
+                            </button>
+                        </div>
+
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+
+                        <!-- Header details -->
+                        <group>
+                            <group string="Document">
+                                <field name="boq_id"
+                                       readonly="analysis_state != 'draft'"
+                                       options="{'no_create': True}"/>
+                                <field name="project_id" readonly="1"/>
+                                <field name="date"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                            <group string="Financial Summary">
+                                <field name="total_cost"   readonly="1" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="total_sale"   readonly="1" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="total_profit" readonly="1" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="total_profit > 0"
+                                       decoration-danger="total_profit &lt;= 0"/>
+                                <field name="total_margin" readonly="1"
+                                       string="Margin (%)" widget="percentage"
+                                       decoration-success="total_margin > 10"
+                                       decoration-warning="total_margin > 0 and total_margin &lt;= 10"
+                                       decoration-danger="total_margin &lt;= 0"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+
+                            <!-- ═══════════════════════════════════════════════
+                                 TAB 1 — ANALYSIS LINES
+                                 PART 2: parent_field hierarchy
+                                 PART 3: decoration-based row colouring
+                                 PART 4: coloured status badges
+                                 PART 5: bulk action buttons
+                                 PART 6: CSS makes thead sticky (see boq_analysis.css)
+                            ═══════════════════════════════════════════════ -->
+                            <page string="Analysis Lines" name="analysis_lines">
+                                <field name="currency_id" invisible="1"/>
+
+                                <!-- PART 5: Bulk action buttons (styled panel) -->
+                                <div class="boq-analysis-actions"
+                                     invisible="analysis_state == 'approved'">
+                                    <button name="action_set_lines_review"
+                                            type="object"
+                                            string="All → Review"
+                                            class="btn btn-warning btn-sm"
+                                            title="Move all Draft subitem lines to Review"/>
+                                    <button name="action_approve_lines"
+                                            type="object"
+                                            string="✔ Approve All Lines"
+                                            class="btn btn-success btn-sm"
+                                            title="Approve all Review lines and write prices back to BOQ"/>
+                                    <button name="action_reset_lines_draft"
+                                            type="object"
+                                            string="↺ Reset All Lines"
+                                            class="btn btn-secondary btn-sm"
+                                            title="Reset all non-Draft analysis lines back to Draft"/>
+                                </div>
+
+                                <!-- ─────────────────────────────────────────
+                                     PART 2: parent_field tree hierarchy
+                                     PART 3: decoration row classes (boq-div /
+                                             boq-sub / boq-subsub) are picked up
+                                             by boq_analysis.css for background
+                                             colours.
+                                     PART 4: badge colours via decoration-*
+                                ───────────────────────────────────────────── -->
+                                <field name="line_ids"
+                                       readonly="analysis_state == 'approved'">
+                                    <list
+                                        string="Analysis Lines"
+                                        parent_field="boq_parent_id"
+                                        default_order="div_rank, sub_rank, sub_sub_rank, row_level, sequence_sub"
+                                        editable="bottom"
+                                        create="0"
+                                        delete="0"
+                                        decoration-bf="display_type == 'line_section'"
+                                        decoration-it="display_type == 'line_sub_subsection'"
+                                        decoration-boq-div="display_type == 'line_section'"
+                                        decoration-boq-sub="display_type == 'line_subsection'"
+                                        decoration-boq-subsub="display_type == 'line_sub_subsection'"
+                                        decoration-warning="analysis_state == 'review' and not display_type"
+                                        decoration-success="analysis_state == 'approved' and not display_type">
+
+                                        <!-- Hidden ordering fields -->
+                                        <field name="div_rank"      column_invisible="1"/>
+                                        <field name="sub_rank"      column_invisible="1"/>
+                                        <field name="sub_sub_rank"  column_invisible="1"/>
+                                        <field name="row_level"     column_invisible="1"/>
+                                        <field name="sequence_main" column_invisible="1"/>
+                                        <field name="sequence_sub"  column_invisible="1"/>
+                                        <field name="currency_id"   column_invisible="1"/>
+                                        <field name="display_type"  column_invisible="1"/>
+
+                                        <!-- Code — always visible -->
+                                        <field name="display_code"
+                                               string="Code"
+                                               readonly="1"
+                                               width="95"/>
+
+                                        <!-- Name — always visible -->
+                                        <field name="name"
+                                               string="Description"
+                                               readonly="1"/>
+
+                                        <!-- BOQ Qty — hidden on structural rows -->
+                                        <field name="boq_qty"
+                                               string="BOQ Qty"
+                                               readonly="1"
+                                               invisible="display_type != False"
+                                               optional="show"/>
+
+                                        <!-- Unit — hidden on structural rows -->
+                                        <field name="unit_id"
+                                               string="Unit"
+                                               readonly="1"
+                                               invisible="display_type != False"
+                                               optional="show"/>
+
+                                        <!-- Cost Unit Price — PART 4: editable for subitems only -->
+                                        <field name="cost_unit_price"
+                                               string="Cost Unit Price"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"
+                                               invisible="display_type != False"
+                                               optional="show"/>
+
+                                        <!-- Sale Unit Price -->
+                                        <field name="sale_unit_price"
+                                               string="Sale Unit Price"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"
+                                               invisible="display_type != False"/>
+
+                                        <!-- Cost Total (read-only) -->
+                                        <field name="cost_total"
+                                               string="Cost Total"
+                                               readonly="1"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"
+                                               invisible="display_type != False"
+                                               optional="show"/>
+
+                                        <!-- Sale Total (read-only) -->
+                                        <field name="sale_total"
+                                               string="Sale Total"
+                                               readonly="1"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"
+                                               invisible="display_type != False"/>
+
+                                        <!-- Profit -->
+                                        <field name="profit"
+                                               string="Profit"
+                                               readonly="1"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"
+                                               invisible="display_type != False"
+                                               decoration-success="profit > 0"
+                                               decoration-danger="profit &lt;= 0"
+                                               optional="show"/>
+
+                                        <!-- Margin % -->
+                                        <field name="margin"
+                                               string="Margin %"
+                                               readonly="1"
+                                               widget="percentage"
+                                               invisible="display_type != False"
+                                               decoration-success="margin > 10"
+                                               decoration-warning="margin > 0 and margin &lt;= 10"
+                                               decoration-danger="margin &lt;= 0"
+                                               optional="show"/>
+
+                                        <!-- PART 4: BOQ Status badge
+                                             draft=gray / review=amber / approved=green -->
+                                        <field name="boq_state"
+                                               string="BOQ Status"
+                                               widget="badge"
+                                               readonly="1"
+                                               invisible="display_type != False"
+                                               optional="show"
+                                               decoration-muted="boq_state == 'draft'"
+                                               decoration-warning="boq_state == 'review'"
+                                               decoration-success="boq_state == 'approved'"/>
+
+                                        <!-- PART 4: Analysis Status badge -->
+                                        <field name="analysis_state"
+                                               string="Analysis Status"
+                                               widget="badge"
+                                               readonly="1"
+                                               invisible="display_type != False"
+                                               optional="show"
+                                               decoration-muted="analysis_state == 'draft'"
+                                               decoration-warning="analysis_state == 'review'"
+                                               decoration-success="analysis_state == 'approved'"/>
+
+                                    </list>
+                                </field>
+                            </page>
+
+                            <!-- ═══════════════════════════════════════════════
+                                 TAB 2 — NOTES
+                            ═══════════════════════════════════════════════ -->
+                            <page string="Notes" name="notes_tab">
+                                <field name="notes"
+                                       placeholder="Analysis notes, assumptions, reviewer comments…"
+                                       nolabel="1"/>
+                            </page>
+
+                        </notebook>
+                    </sheet>
+
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             ACTION
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="action_farm_boq_doc_analysis" model="ir.actions.act_window">
+            <field name="name">B.O.Q Analysis</field>
+            <field name="res_model">farm.boq.analysis</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_farm_boq_analysis_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No BOQ Analysis documents yet.
+                </p>
+                <p>
+                    Open a BOQ document and click <strong>Open Analysis</strong>
+                    to create a mirrored analysis screen for pricing.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

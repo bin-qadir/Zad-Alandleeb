@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Extend the standard product template form to show the
+            job_type field immediately after the product type selector.
+
+            Rules enforced by the model:
+              Goods  (type != service) → job_type = material (auto-set, readonly)
+              Service                  → job_type ∈ {labor, tools, equipment,
+                                          subcontractor, other}
+        -->
+        <record id="view_product_template_form_job_type" model="ir.ui.view">
+            <field name="name">product.template.form.job.type</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='type']" position="after">
+                    <field name="job_type"
+                           string="Job Type | نوع العمل"
+                           readonly="type != 'service'"
+                           required="type != 'service'"
+                           options="{'no_create': True}"
+                           help="Controls which cost tab this product appears in on BOQ subitems.
+• Goods / Consumable / Storable: always Material (auto-set, readonly).
+• Service: choose Labour / Tools / Equipment / Subcontractor / Other."/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

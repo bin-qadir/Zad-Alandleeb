@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             SEARCH
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_labour_entry_search" model="ir.ui.view">
+            <field name="name">farm.labour.entry.search</field>
+            <field name="model">farm.labour.entry</field>
+            <field name="arch" type="xml">
+                <search string="Labour Entries">
+                    <field name="job_order_id"/>
+                    <field name="project_id"/>
+                    <field name="employee_id"/>
+                    <field name="date"/>
+                    <group string="Group By">
+                        <filter name="by_job_order" string="Job Order"
+                                context="{'group_by':'job_order_id'}"/>
+                        <filter name="by_project"   string="Project"
+                                context="{'group_by':'project_id'}"/>
+                        <filter name="by_employee"  string="Employee"
+                                context="{'group_by':'employee_id'}"/>
+                        <filter name="by_date"      string="Date"
+                                context="{'group_by':'date:month'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             LIST
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_labour_entry_list" model="ir.ui.view">
+            <field name="name">farm.labour.entry.list</field>
+            <field name="model">farm.labour.entry</field>
+            <field name="arch" type="xml">
+                <list string="Labour Entries">
+                    <field name="job_order_id"  string="Job Order"/>
+                    <field name="project_id"    string="Project"/>
+                    <field name="employee_id"   string="Employee"/>
+                    <field name="date"          string="Date"/>
+                    <field name="description"   string="Work Description"/>
+                    <field name="hours"         string="Hours"/>
+                    <field name="cost_per_hour" string="Rate / hr" optional="show"/>
+                    <field name="total_cost"    string="Total Cost"/>
+                    <field name="timesheet_id"  string="Timesheet"  optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             ACTION
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="action_farm_labour_entry" model="ir.actions.act_window">
+            <field name="name">Labour Entries</field>
+            <field name="res_model">farm.labour.entry</field>
+            <field name="view_mode">list</field>
+            <field name="search_view_id" ref="view_farm_labour_entry_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No labour entries yet.
+                </p>
+                <p>
+                    Add labour time inside a Job Order's
+                    <strong>Labour</strong> tab.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

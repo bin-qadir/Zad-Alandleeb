@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Inject Analysis columns and row decorations into the standalone
+            farm.boq.line LIST view (view_farm_boq_line_list).
+
+            This view is opened when the user clicks "Project B.O.Q Structure"
+            from the BOQ Overview — it is the primary place where users interact
+            with subitems and trigger analysis.
+
+            Changes applied:
+              • Row decorations per analysis_state (subitems only)
+              • 'analysis_state' badge column after 'total'
+              • 'Analyze' button — opens or creates the per-line Analysis popup
+        -->
+
+        <record id="view_farm_boq_form_analysis_inject" model="ir.ui.view">
+            <field name="name">farm.boq.line.list.analysis.inject</field>
+            <field name="model">farm.boq.line</field>
+            <field name="inherit_id" ref="smart_farm_boq.view_farm_boq_line_list"/>
+            <field name="arch" type="xml">
+
+                <!-- Row colour decorations for subitems -->
+                <xpath expr="//list" position="attributes">
+                    <attribute name="decoration-danger">
+                        not display_type and parent_id and analysis_state == 'no_analysis'
+                    </attribute>
+                    <attribute name="decoration-warning">
+                        not display_type and parent_id and analysis_state in ('draft', 'analysis', 'reviewed')
+                    </attribute>
+                    <attribute name="decoration-success">
+                        not display_type and parent_id and analysis_state == 'approved'
+                    </attribute>
+                </xpath>
+
+                <!--
+                    Inject pricing columns + status badges after the Unit column.
+
+                    Column order: unit_id → cost_unit_price → unit_price (sale)
+                                  → total → boq_state badge → analysis_state badge
+
+                    All pricing columns are readonly — editing happens only inside
+                    the BOQ Analysis document.  The "Edit Pricing" button navigates
+                    there directly.
+                -->
+                <xpath expr="//field[@name='unit_id']" position="after">
+
+                    <!-- Cost unit price (from final/approved per-line analysis) -->
+                    <field name="cost_unit_price"
+                           string="Cost Unit Price"
+                           readonly="1"
+                           invisible="display_type != False"
+                           optional="show"/>
+
+                    <!-- Sale unit price (= unit_price; set by approved analysis) -->
+                    <field name="unit_price"
+                           string="Sale Unit Price"
+                           readonly="1"
+                           invisible="display_type != False"
+                           optional="show"/>
+
+                    <!-- Line total = boq_qty × unit_price -->
+                    <field name="total"
+                           string="Total"
+                           readonly="1"
+                           invisible="display_type != False"
+                           optional="show"/>
+
+                    <!-- Profit (sale total − cost total) -->
+                    <field name="profit"
+                           string="Profit"
+                           readonly="1"
+                           invisible="display_type != False"
+                           optional="show"/>
+
+                    <!--
+                        BOQ Pricing Status badge (boq_state):
+                          Draft    → secondary / gray
+                          Review   → warning / orange
+                          Approved → success / green
+                    -->
+                    <field name="boq_state"
+                           string="Pricing Status"
+                           widget="badge"
+                           readonly="1"
+                           optional="show"
+                           decoration-warning="boq_state == 'review'"
+                           decoration-success="boq_state == 'approved'"
+                           invisible="display_type != False or not parent_id"/>
+                    <!-- Note: boq_state='draft' carries no decoration-* so the
+                         badge widget renders in its default neutral/gray tone.
+                         decoration-muted is valid XML but is unreliable on badge
+                         widgets in Odoo 18; omitting it gives the cleaner result. -->
+
+                    <!-- Analysis Status badge (analysis_state) -->
+                    <field name="analysis_state"
+                           string="Analysis Status"
+                           widget="badge"
+                           readonly="1"
+                           optional="show"
+                           decoration-danger="analysis_state == 'no_analysis'"
+                           decoration-warning="analysis_state in ('draft', 'analysis', 'reviewed')"
+                           decoration-success="analysis_state == 'approved'"
+                           invisible="display_type != False or not parent_id"/>
+
+                </xpath>
+
+                <!--
+                    Buttons for subitems:
+                      • "Edit Pricing" → opens the BOQ Analysis document
+                        (document-level pricing; sets cost_unit_price / sale_unit_price)
+                      • "Analyze"      → opens the per-line analysis popup
+                        (detailed cost breakdown for a single subitem)
+                -->
+                <xpath expr="//button[@name='action_view_details']" position="after">
+                    <button name="action_open_boq_analysis"
+                            type="object"
+                            string="Edit Pricing"
+                            icon="fa-pencil"
+                            invisible="display_type != False or not parent_id"
+                            class="btn-warning btn-sm"/>
+                    <button name="action_open_analysis"
+                            type="object"
+                            string="Analyze"
+                            icon="fa-bar-chart"
+                            invisible="display_type != False or not parent_id"
+                            class="btn-primary btn-sm"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

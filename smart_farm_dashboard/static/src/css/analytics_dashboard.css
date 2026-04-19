@@ -1,0 +1,576 @@
+/*
+ * SMART FARM — ANALYTICS DASHBOARD STYLES
+ * =========================================
+ * Power BI / SAP Analytics-inspired corporate dashboard.
+ * All selectors scoped under .sfa-root to avoid conflicts.
+ */
+
+/* ── Root container ──────────────────────────────────────────────────────── */
+
+.sfa-root {
+    background    : #f0f2f5;
+    min-height    : 100vh;
+    padding       : 0 0 48px;
+    font-family   : "Inter", "Segoe UI", system-ui, sans-serif;
+    color         : #1e293b;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+
+.sfa-header {
+    display         : flex;
+    align-items     : center;
+    justify-content : space-between;
+    flex-wrap       : wrap;
+    gap             : 12px;
+    background      : linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #1e40af 100%);
+    padding         : 20px 32px;
+    box-shadow      : 0 4px 20px rgba(0,0,0,0.25);
+}
+
+.sfa-header-brand {
+    display     : flex;
+    align-items : center;
+    gap         : 14px;
+}
+
+.sfa-header-icon-wrap {
+    width           : 48px;
+    height          : 48px;
+    border-radius   : 12px;
+    background      : rgba(255,255,255,0.12);
+    display         : flex;
+    align-items     : center;
+    justify-content : center;
+    font-size       : 22px;
+    color           : #7dd3fc;
+    backdrop-filter : blur(4px);
+    flex-shrink     : 0;
+}
+
+.sfa-header-title {
+    display     : block;
+    font-size   : 22px;
+    font-weight : 700;
+    color       : #f1f5f9;
+    letter-spacing: -0.3px;
+}
+
+.sfa-header-sub {
+    display     : block;
+    font-size   : 13px;
+    color       : rgba(255,255,255,0.55);
+    margin-top  : 2px;
+}
+
+.sfa-header-controls {
+    display     : flex;
+    align-items : center;
+    gap         : 12px;
+    flex-wrap   : wrap;
+}
+
+/* ── Filter pills ────────────────────────────────────────────────────────── */
+
+.sfa-filter-bar {
+    display    : flex;
+    gap        : 6px;
+    flex-wrap  : wrap;
+}
+
+.sfa-filter-pill {
+    padding         : 5px 13px;
+    border-radius   : 20px;
+    border          : 1.5px solid rgba(255,255,255,0.25);
+    background      : rgba(255,255,255,0.08);
+    color           : rgba(255,255,255,0.75);
+    font-size       : 12px;
+    font-weight     : 500;
+    cursor          : pointer;
+    transition      : all 0.15s ease;
+    white-space     : nowrap;
+}
+
+.sfa-filter-pill:hover {
+    background   : rgba(255,255,255,0.18);
+    border-color : rgba(255,255,255,0.5);
+    color        : #fff;
+}
+
+.sfa-filter-pill.active {
+    background   : #2563eb;
+    border-color : #3b82f6;
+    color        : #fff;
+    font-weight  : 600;
+    box-shadow   : 0 2px 8px rgba(37,99,235,0.5);
+}
+
+/* ── Refresh button ──────────────────────────────────────────────────────── */
+
+.sfa-refresh-btn {
+    padding       : 7px 16px;
+    border-radius : 8px;
+    border        : 1.5px solid rgba(255,255,255,0.3);
+    background    : rgba(255,255,255,0.1);
+    color         : rgba(255,255,255,0.85);
+    font-size     : 13px;
+    font-weight   : 500;
+    cursor        : pointer;
+    transition    : all 0.15s ease;
+    display       : flex;
+    align-items   : center;
+    gap           : 6px;
+    white-space   : nowrap;
+}
+
+.sfa-refresh-btn:hover {
+    background : rgba(255,255,255,0.22);
+    color      : #fff;
+    border-color: rgba(255,255,255,0.6);
+}
+
+/* ── Loading state ───────────────────────────────────────────────────────── */
+
+.sfa-loading {
+    display         : flex;
+    flex-direction  : column;
+    align-items     : center;
+    justify-content : center;
+    min-height      : 60vh;
+    color           : #64748b;
+    gap             : 16px;
+}
+
+.sfa-loading p {
+    font-size  : 16px;
+    font-weight: 500;
+    color      : #64748b;
+}
+
+/* ── Section label ───────────────────────────────────────────────────────── */
+
+.sfa-section-label {
+    display     : flex;
+    align-items : center;
+    gap         : 8px;
+    font-size   : 13px;
+    font-weight : 600;
+    color       : #475569;
+    text-transform : uppercase;
+    letter-spacing : 0.06em;
+    margin      : 28px 32px 12px;
+}
+
+.sfa-section-action {
+    margin-left : auto;
+    font-size   : 12px;
+    color       : #2563eb;
+    cursor      : pointer;
+    font-weight : 500;
+    text-transform: none;
+    letter-spacing: 0;
+    transition  : color 0.15s;
+}
+
+.sfa-section-action:hover { color: #1d4ed8; text-decoration: underline; }
+
+/* ── KPI Cards ───────────────────────────────────────────────────────────── */
+
+.sfa-kpi-row {
+    display   : grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap       : 16px;
+    padding   : 0 32px;
+    margin-bottom: 4px;
+}
+
+.sfa-kpi-card {
+    border-radius   : 14px;
+    padding         : 22px 20px 18px;
+    display         : flex;
+    flex-direction  : column;
+    gap             : 4px;
+    cursor          : pointer;
+    transition      : transform 0.18s ease, box-shadow 0.18s ease;
+    position        : relative;
+    overflow        : hidden;
+    color           : #fff;
+}
+
+.sfa-kpi-card::before {
+    content          : '';
+    position         : absolute;
+    top              : -30px;
+    right            : -30px;
+    width            : 100px;
+    height           : 100px;
+    border-radius    : 50%;
+    background       : rgba(255,255,255,0.07);
+    pointer-events   : none;
+}
+
+.sfa-kpi-card:hover {
+    transform  : translateY(-3px);
+    box-shadow : 0 12px 32px rgba(0,0,0,0.18);
+}
+
+/* Card color variants */
+.sfa-kpi-blue {
+    background : linear-gradient(135deg, #1d4ed8 0%, #2563eb 60%, #3b82f6 100%);
+    box-shadow : 0 4px 20px rgba(37,99,235,0.35);
+}
+.sfa-kpi-red {
+    background : linear-gradient(135deg, #b91c1c 0%, #dc2626 60%, #ef4444 100%);
+    box-shadow : 0 4px 20px rgba(239,68,68,0.35);
+}
+.sfa-kpi-green {
+    background : linear-gradient(135deg, #047857 0%, #059669 60%, #10b981 100%);
+    box-shadow : 0 4px 20px rgba(16,185,129,0.35);
+}
+.sfa-kpi-orange {
+    background : linear-gradient(135deg, #b45309 0%, #d97706 60%, #f59e0b 100%);
+    box-shadow : 0 4px 20px rgba(245,158,11,0.35);
+}
+.sfa-kpi-teal {
+    background : linear-gradient(135deg, #0f766e 0%, #0d9488 60%, #14b8a6 100%);
+    box-shadow : 0 4px 20px rgba(20,184,166,0.35);
+}
+.sfa-kpi-amber {
+    background : linear-gradient(135deg, #92400e 0%, #b45309 60%, #d97706 100%);
+    box-shadow : 0 4px 20px rgba(180,83,9,0.35);
+}
+.sfa-kpi-crimson {
+    background : linear-gradient(135deg, #7f1d1d 0%, #991b1b 60%, #b91c1c 100%);
+    box-shadow : 0 4px 20px rgba(127,29,29,0.35);
+}
+
+.sfa-kpi-icon-wrap {
+    font-size       : 20px;
+    opacity         : 0.7;
+    margin-bottom   : 6px;
+}
+
+.sfa-kpi-value {
+    font-size   : 2.4rem;
+    font-weight : 800;
+    line-height : 1.05;
+    letter-spacing: -0.5px;
+}
+
+.sfa-kpi-label {
+    font-size   : 14px;
+    font-weight : 600;
+    opacity     : 0.9;
+    margin-top  : 2px;
+}
+
+.sfa-kpi-sub {
+    font-size : 11px;
+    opacity   : 0.65;
+    margin-top: 2px;
+}
+
+.sfa-kpi-indicator {
+    margin-top  : 10px;
+    font-size   : 11px;
+    font-weight : 600;
+    padding     : 3px 10px;
+    border-radius: 20px;
+    display     : inline-flex;
+    align-items : center;
+    gap         : 4px;
+    width       : fit-content;
+    background  : rgba(255,255,255,0.15);
+}
+
+.sfa-indicator-positive { background: rgba(16,185,129,0.25); }
+.sfa-indicator-negative { background: rgba(239,68,68,0.25); }
+.sfa-indicator-warning  { background: rgba(245,158,11,0.25); }
+
+/* ── Chart panels ────────────────────────────────────────────────────────── */
+
+.sfa-charts-row {
+    display : flex;
+    gap     : 16px;
+    padding : 0 32px;
+    flex-wrap: wrap;
+}
+
+.sfa-chart-panel {
+    background    : #fff;
+    border-radius : 14px;
+    box-shadow    : 0 2px 12px rgba(0,0,0,0.07);
+    display       : flex;
+    flex-direction: column;
+    overflow      : hidden;
+    flex          : 1;
+    min-width     : 280px;
+}
+
+.sfa-chart-wide {
+    flex: 2;
+    min-width: 420px;
+}
+
+.sfa-chart-medium {
+    flex: 1.5;
+    min-width: 340px;
+}
+
+.sfa-chart-donut {
+    flex      : 1;
+    min-width : 220px;
+    max-width : 320px;
+}
+
+.sfa-chart-header {
+    display         : flex;
+    align-items     : center;
+    justify-content : space-between;
+    padding         : 16px 20px 12px;
+    border-bottom   : 1px solid #f1f5f9;
+    gap             : 8px;
+}
+
+.sfa-chart-title {
+    font-size   : 14px;
+    font-weight : 600;
+    color       : #1e293b;
+    display     : flex;
+    align-items : center;
+    gap         : 7px;
+}
+
+.sfa-chart-title .fa {
+    color     : #6366f1;
+    font-size : 14px;
+}
+
+.sfa-chart-hint {
+    font-size : 11px;
+    color     : #94a3b8;
+    display   : flex;
+    align-items: center;
+    gap       : 6px;
+}
+
+.sfa-legend-dot {
+    display       : inline-block;
+    width         : 10px;
+    height        : 10px;
+    border-radius : 50%;
+}
+
+.sfa-chart-body {
+    padding  : 16px 16px 12px;
+    flex     : 1;
+    height   : 280px;
+    position : relative;
+}
+
+.sfa-chart-body canvas {
+    max-height : 100%;
+}
+
+.sfa-chart-body-donut {
+    height  : 220px;
+    padding : 12px;
+}
+
+.sfa-donut-stats {
+    display         : flex;
+    justify-content : center;
+    flex-wrap       : wrap;
+    gap             : 8px;
+    padding         : 10px 14px 14px;
+    border-top      : 1px solid #f8fafc;
+}
+
+.sfa-donut-stat {
+    font-size     : 11px;
+    font-weight   : 500;
+    cursor        : pointer;
+    padding       : 3px 9px;
+    border-radius : 20px;
+    background    : #f8fafc;
+    transition    : background 0.15s;
+    display       : flex;
+    align-items   : center;
+    gap           : 4px;
+}
+.sfa-donut-stat:hover { background: #f1f5f9; }
+
+.sfa-stat-healthy  { color: #059669; }
+.sfa-stat-warning  { color: #d97706; }
+.sfa-stat-critical { color: #dc2626; }
+
+/* ── Risk Table ──────────────────────────────────────────────────────────── */
+
+.sfa-risk-table-wrap {
+    margin        : 0 32px;
+    background    : #fff;
+    border-radius : 14px;
+    box-shadow    : 0 2px 12px rgba(0,0,0,0.07);
+    overflow      : hidden;
+}
+
+.sfa-risk-table {
+    width           : 100%;
+    border-collapse : collapse;
+    font-size       : 13px;
+}
+
+.sfa-risk-table thead {
+    background : #f8fafc;
+}
+
+.sfa-risk-table th {
+    padding    : 11px 16px;
+    text-align : left;
+    font-size  : 11px;
+    font-weight: 600;
+    color      : #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom : 2px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.sfa-risk-table th.sfa-num-col,
+.sfa-risk-table td.sfa-num-col {
+    text-align : right;
+}
+
+.sfa-risk-table tbody tr {
+    border-bottom : 1px solid #f1f5f9;
+    cursor        : pointer;
+    transition    : background 0.12s;
+}
+
+.sfa-risk-table tbody tr:hover { background: #f8fafc; }
+.sfa-risk-table tbody tr:last-child { border-bottom: none; }
+
+.sfa-risk-table td {
+    padding    : 12px 16px;
+    color      : #334155;
+    vertical-align: middle;
+}
+
+/* Row health tint */
+.sfa-risk-row.sfa-health-critical { border-left: 3px solid #ef4444; }
+.sfa-risk-row.sfa-health-warning  { border-left: 3px solid #f59e0b; }
+.sfa-risk-row.sfa-health-healthy  { border-left: 3px solid #10b981; }
+
+.sfa-proj-name {
+    display    : flex;
+    align-items: center;
+    gap        : 6px;
+}
+
+.sfa-proj-name-text {
+    font-weight: 500;
+    color      : #1e293b;
+}
+
+.sfa-flag-overbudget {
+    color       : #ef4444;
+    font-size   : 11px;
+    flex-shrink : 0;
+}
+
+/* Badges */
+.sfa-phase-badge,
+.sfa-health-badge {
+    display       : inline-flex;
+    align-items   : center;
+    gap           : 4px;
+    padding       : 3px 9px;
+    border-radius : 20px;
+    font-size     : 11px;
+    font-weight   : 600;
+    white-space   : nowrap;
+}
+
+/* Chips for margin/overrun */
+.sfa-margin-chip,
+.sfa-overrun-chip {
+    display       : inline-block;
+    padding       : 2px 8px;
+    border-radius : 20px;
+    font-size     : 12px;
+    font-weight   : 600;
+}
+
+.chip-ok   { background: rgba(16,185,129,0.12); color: #047857; }
+.chip-warn { background: rgba(245,158,11,0.12); color: #b45309; }
+.chip-bad  { background: rgba(239,68,68,0.12);  color: #b91c1c; }
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+
+.sfa-empty-state {
+    display         : flex;
+    flex-direction  : column;
+    align-items     : center;
+    padding         : 40px 32px;
+    gap             : 10px;
+    color           : #64748b;
+    background      : #fff;
+    border-radius   : 14px;
+    margin          : 0 32px;
+    box-shadow      : 0 2px 12px rgba(0,0,0,0.07);
+}
+
+.sfa-empty-state p {
+    font-size   : 15px;
+    font-weight : 500;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 1200px) {
+    .sfa-kpi-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .sfa-chart-wide { min-width: 300px; }
+}
+
+@media (max-width: 800px) {
+    .sfa-header {
+        padding  : 16px 18px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .sfa-kpi-row,
+    .sfa-charts-row,
+    .sfa-risk-table-wrap {
+        padding : 0 14px;
+        margin  : 0 14px;
+    }
+    .sfa-kpi-row {
+        grid-template-columns: 1fr 1fr;
+        padding: 0 14px;
+    }
+    .sfa-section-label {
+        margin: 20px 14px 10px;
+    }
+    .sfa-charts-row {
+        flex-direction: column;
+    }
+    .sfa-chart-donut {
+        max-width: 100%;
+    }
+    .sfa-kpi-value {
+        font-size: 1.8rem;
+    }
+    .sfa-risk-table-wrap {
+        overflow-x: auto;
+        margin: 0 14px;
+    }
+}
+
+@media (max-width: 540px) {
+    .sfa-kpi-row {
+        grid-template-columns: 1fr;
+    }
+    .sfa-filter-bar { display: none; }
+}

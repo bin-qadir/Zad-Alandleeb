@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            SMART FARM DASHBOARD — Executive Menu Hub
+            ==========================================
+
+            "Executive Dashboard" becomes a parent menu with two children:
+              1. Portfolio Overview  — the singleton form (existing PMO cockpit)
+              2. Analytics           — the new Owl chart dashboard
+        -->
+
+        <!-- Parent hub (no action — container only) -->
+        <menuitem
+            id="menu_executive_hub"
+            name="Executive Dashboard"
+            parent="smart_farm_base.menu_smart_farm_root"
+            sequence="5"
+        />
+
+        <!-- 1 — Portfolio Overview (existing executive cockpit) -->
+        <menuitem
+            id="menu_farm_dashboard"
+            name="Portfolio Overview"
+            parent="smart_farm_dashboard.menu_executive_hub"
+            action="smart_farm_dashboard.action_open_farm_dashboard_server"
+            sequence="10"
+        />
+
+        <!-- 2 — Analytics Dashboard (new Owl + Chart.js dashboard) -->
+        <menuitem
+            id="menu_farm_analytics"
+            name="Analytics"
+            parent="smart_farm_dashboard.menu_executive_hub"
+            action="smart_farm_dashboard.action_smart_farm_analytics"
+            sequence="20"
+        />
+
+    </data>
+</odoo>

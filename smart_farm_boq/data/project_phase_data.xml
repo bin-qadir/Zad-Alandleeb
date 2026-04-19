@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="phase_pre_tender" model="project.phase.master">
+            <field name="name">Pre-Tender Phase</field>
+            <field name="sequence">0</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="phase_tender" model="project.phase.master">
+            <field name="name">Tender Phase</field>
+            <field name="sequence">1</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="phase_post_tender" model="project.phase.master">
+            <field name="name">Post Tender Phase</field>
+            <field name="sequence">2</field>
+            <field name="active">True</field>
+        </record>
+
+    </data>
+</odoo>

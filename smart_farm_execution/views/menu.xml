@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ── Smart Farm / Execution (peer of Cost Structure) ── -->
+        <menuitem
+            id="menu_smart_farm_execution"
+            name="Execution"
+            parent="smart_farm_base.menu_smart_farm_root"
+            sequence="30"
+        />
+
+        <!-- Job Orders -->
+        <menuitem
+            id="menu_smart_farm_execution_job_orders"
+            name="Job Orders"
+            parent="menu_smart_farm_execution"
+            action="smart_farm_execution.action_farm_job_order"
+            sequence="10"
+        />
+
+        <!-- Material Consumption -->
+        <menuitem
+            id="menu_smart_farm_execution_materials"
+            name="Material Consumption"
+            parent="menu_smart_farm_execution"
+            action="smart_farm_execution.action_farm_material_consumption"
+            sequence="20"
+        />
+
+        <!-- Labour Entries -->
+        <menuitem
+            id="menu_smart_farm_execution_labour"
+            name="Labour Entries"
+            parent="menu_smart_farm_execution"
+            action="smart_farm_execution.action_farm_labour_entry"
+            sequence="30"
+        />
+
+        <!-- Progress Tracking -->
+        <menuitem
+            id="menu_smart_farm_execution_progress"
+            name="Progress Tracking"
+            parent="menu_smart_farm_execution"
+            action="smart_farm_execution.action_farm_job_progress_log"
+            sequence="40"
+        />
+
+    </data>
+</odoo>

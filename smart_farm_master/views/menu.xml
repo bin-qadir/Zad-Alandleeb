@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ── Configuration / Types ── -->
+        <menuitem
+            id="menu_smart_farm_config_types"
+            name="Types"
+            parent="smart_farm_base.menu_smart_farm_config"
+            sequence="20"
+        />
+
+        <!-- Crop Types -->
+        <menuitem
+            id="menu_farm_crop_type"
+            name="Crop Types"
+            parent="menu_smart_farm_config_types"
+            action="action_farm_crop_type"
+            sequence="10"
+        />
+
+        <!-- Cost Types -->
+        <menuitem
+            id="menu_farm_cost_type"
+            name="Cost Types"
+            parent="menu_smart_farm_config_types"
+            action="action_farm_cost_type"
+            sequence="20"
+        />
+
+        <!-- Work Types -->
+        <menuitem
+            id="menu_farm_work_type"
+            name="Work Types"
+            parent="menu_smart_farm_config_types"
+            action="action_farm_work_type"
+            sequence="30"
+        />
+
+        <!-- Sensor Types -->
+        <menuitem
+            id="menu_farm_sensor_type"
+            name="Sensor Types"
+            parent="menu_smart_farm_config_types"
+            action="action_farm_sensor_type"
+            sequence="40"
+        />
+
+    </data>
+</odoo>

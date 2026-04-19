@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_farm_boq_line_material_user,farm.boq.line.material user,model_farm_boq_line_material,base.group_user,1,1,1,1
+access_farm_boq_line_labor_user,farm.boq.line.labor user,model_farm_boq_line_labor,base.group_user,1,1,1,1
+access_farm_boq_line_overhead_user,farm.boq.line.overhead user,model_farm_boq_line_overhead,base.group_user,1,1,1,1
+access_farm_boq_line_cost_user,farm.boq.line.cost user,model_farm_boq_line_cost,base.group_user,1,1,1,1

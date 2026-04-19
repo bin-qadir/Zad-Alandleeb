@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+            BOQ Analysis stat button — injected into the Farm Project button_box.
+            Opens all Analysis documents for this project (filtered by project_id).
+        -->
+        <record id="view_farm_project_form_analysis_inherit" model="ir.ui.view">
+            <field name="name">farm.project.form.analysis.inherit</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Open BOQ Analysis stat button -->
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button class="oe_stat_button"
+                            type="object"
+                            name="action_open_project_analysis"
+                            icon="fa-bar-chart">
+                        <field name="analysis_count"
+                               widget="statinfo"
+                               string="BOQ Analysis"/>
+                    </button>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

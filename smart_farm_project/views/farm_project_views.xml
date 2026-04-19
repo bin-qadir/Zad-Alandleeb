@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ===== farm.project — list ===== -->
+
+        <record id="view_farm_project_list" model="ir.ui.view">
+            <field name="name">farm.project.list</field>
+            <field name="model">farm.project</field>
+            <field name="arch" type="xml">
+                <list string="Farm Projects">
+                    <field name="name"/>
+                    <field name="project_type" optional="show"/>
+                    <field name="project_manager_id" optional="show"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="state" widget="badge"
+                           decoration-info="state == 'draft'"
+                           decoration-success="state == 'running'"
+                           decoration-muted="state == 'done'"/>
+                    <field name="odoo_project_id" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- ===== farm.project — form ===== -->
+
+        <record id="view_farm_project_form" model="ir.ui.view">
+            <field name="name">farm.project.form</field>
+            <field name="model">farm.project</field>
+            <field name="arch" type="xml">
+                <form string="Farm Project">
+                    <header>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,running,done"/>
+                    </header>
+                    <!-- ── STAT BUTTONS — above the sheet ───────────────────
+                         Fields button lives here.
+                         Cost Structures, BOQ Analysis, Job Orders are
+                         injected by smart_farm_boq / smart_farm_boq_analysis
+                         / smart_farm_execution into this same button_box.
+                    ──────────────────────────────────────────────────── -->
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button"
+                                type="object"
+                                name="action_open_fields"
+                                icon="fa-map-marker">
+                            <field name="field_count"
+                                   widget="statinfo"
+                                   string="Fields"/>
+                        </button>
+                    </div>
+
+                    <sheet>
+
+                        <!-- ── PROJECT TITLE ──────────────────────────────── -->
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Project Name…"/>
+                            </h1>
+                        </div>
+
+                        <!-- ── MAIN INFO — 2-column ───────────────────────────
+                             LEFT  (group_project_details):
+                               Analytic Account, Start Date, End Date
+                               + Project Phase injected by smart_farm_boq
+
+                             RIGHT (group_project_link):
+                               Odoo Project, Project Manager, Tags, Project Type
+                        ──────────────────────────────────────────────────── -->
+                        <group>
+                            <group string="Project Details"
+                                   name="group_project_details">
+                                <field name="analytic_account_id"
+                                       options="{'no_create': True}"/>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                                <!-- project_phase_id injected here by smart_farm_boq -->
+                            </group>
+                            <group string="Responsibility &amp; Type"
+                                   name="group_project_link">
+                                <field name="odoo_project_id"
+                                       options="{'no_create': True}"/>
+                                <field name="project_manager_id"
+                                       options="{'no_create': True}"/>
+                                <field name="project_tag_ids"
+                                       widget="many2many_tags"
+                                       options="{'no_create': True, 'no_open': True}"
+                                       placeholder="Tags…"/>
+                                <field name="project_type"/>
+                            </group>
+                        </group>
+
+                        <!-- ── NOTEBOOK TABS ─────────────────────────────── -->
+                        <notebook>
+
+                            <!-- 1 · Description -->
+                            <page string="Description" name="tab_description">
+                                <field name="description"
+                                       placeholder="Add a project description…"/>
+                            </page>
+
+                            <!-- 2 · Location -->
+                            <page string="Location" name="tab_location">
+                                <group>
+                                    <group string="Address">
+                                        <field name="country_id"
+                                               options="{'no_create': True}"/>
+                                        <field name="state_id"
+                                               options="{'no_create': True}"
+                                               domain="[('country_id', '=', country_id)]"/>
+                                        <field name="city"/>
+                                    </group>
+                                    <group string="GPS Coordinates">
+                                        <field name="latitude"/>
+                                        <field name="longitude"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <field name="location_text"
+                                           placeholder="Additional location details, landmarks, access route…"/>
+                                </group>
+                            </page>
+
+                            <!-- 3 · Consists -->
+                            <page string="Consists" name="tab_consists">
+                                <field name="consists_notes"
+                                       placeholder="Describe what this project consists of — scope, major components, deliverables…"/>
+                            </page>
+
+                            <!-- 4 · Documents -->
+                            <page string="Documents" name="tab_documents">
+                                <group>
+                                    <field name="document_notes"
+                                           string="Document Notes"
+                                           placeholder="List key documents, reference numbers, contract details, or filing notes…"/>
+                                </group>
+                                <div class="alert alert-info mt-2" role="alert">
+                                    <i class="fa fa-paperclip me-2" title="Attach Files"/>
+                                    <strong>Attach Files</strong> — Contracts, permits,
+                                    specifications, and reports can be attached using the
+                                    <strong>chatter below</strong> (paperclip icon).
+                                    All attachments are version-tracked and searchable.
+                                </div>
+                            </page>
+
+                            <!-- 5 · Drawings -->
+                            <page string="Drawings" name="tab_drawings">
+                                <group>
+                                    <field name="drawing_notes"
+                                           string="Drawing References / Notes"
+                                           placeholder="Drawing numbers, revision history, or reference links…"/>
+                                </group>
+                                <div class="alert alert-info mt-2" role="alert">
+                                    <i class="fa fa-file-image-o me-2" title="Drawing Files"/>
+                                    <strong>Drawing Files</strong> (PDF, DWG, DXF) —
+                                    attach via the chatter below.
+                                </div>
+                            </page>
+
+                            <!-- 6 · Area -->
+                            <page string="Area" name="tab_area">
+                                <group string="Area Breakdown">
+                                    <group>
+                                        <field name="total_project_area"
+                                               string="Total Project Area (ha)"/>
+                                        <field name="cultivated_area"
+                                               string="Cultivated Area (ha)"/>
+                                        <field name="builtup_area"
+                                               string="Built-up Area (ha)"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <!-- 7 · Fields -->
+                            <page string="Fields" name="tab_fields">
+                                <field name="field_ids">
+                                    <list>
+                                        <field name="name"/>
+                                        <field name="crop_type_id"/>
+                                        <field name="area" string="Area (ha)"/>
+                                        <field name="notes" optional="show"/>
+                                    </list>
+                                </field>
+                            </page>
+
+                            <!-- 8 · Teams -->
+                            <page string="Teams" name="tab_teams">
+                                <group string="Project Team Members">
+                                    <field name="team_member_ids"
+                                           nolabel="1"
+                                           widget="many2many_tags"
+                                           options="{'no_create': True}"
+                                           placeholder="Add team members…"/>
+                                </group>
+                            </page>
+
+                            <!-- 9 · Zones -->
+                            <page string="Zones" name="tab_zones">
+                                <field name="zone_notes"
+                                       placeholder="Describe project zones, internal sub-areas, or land parcels…"/>
+                            </page>
+
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <!-- ===== Action ===== -->
+
+        <record id="action_farm_project" model="ir.actions.act_window">
+            <field name="name">Farm Projects</field>
+            <field name="res_model">farm.project</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

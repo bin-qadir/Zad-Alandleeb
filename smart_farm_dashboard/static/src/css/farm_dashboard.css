@@ -1,0 +1,777 @@
+/* ══════════════════════════════════════════════════════════════════════
+   SMART FARM — Executive Portfolio Dashboard
+   Modern SAP-level executive cockpit — Odoo 18 / Bootstrap 5
+══════════════════════════════════════════════════════════════════════ */
+
+/* ── Root wrapper ─────────────────────────────────────────────────── */
+.sf-dashboard-root {
+    font-family: inherit;
+    background: #f1f5f9;
+    padding: 0;
+}
+
+/* Override Odoo sheet padding for full-bleed layout */
+.o_form_view:has(.sf-dashboard-root) .o_form_sheet {
+    padding: 0 !important;
+    background: #f1f5f9 !important;
+    max-width: 100% !important;
+}
+
+/* ── Section labels ───────────────────────────────────────────────── */
+.sf-section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.sf-section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+    margin-left: 0.4rem;
+}
+
+/* ── Dashboard header ─────────────────────────────────────────────── */
+.sf-dash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 0;
+}
+
+.sf-dash-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sf-dash-title .fa {
+    color: #3b82f6;
+}
+
+.sf-dash-subtitle {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 400;
+    margin-top: 0.15rem;
+}
+
+/* ── Dashboard body ───────────────────────────────────────────────── */
+.sf-dash-body {
+    padding: 1.25rem 1.5rem;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   KPI STRIP — 4 large cards
+══════════════════════════════════════════════════════════════════ */
+.sf-kpi-strip {
+    margin-bottom: 1.5rem;
+}
+
+.sf-kpi-card {
+    position: relative;
+    border-radius: 14px;
+    padding: 1.4rem 1.5rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 140px;
+    color: #fff;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.2s ease;
+}
+
+.sf-kpi-card:hover {
+    transform: translateY(-4px) scale(1.01);
+}
+
+/* Decorative circle shape in background */
+.sf-kpi-card::before {
+    content: '';
+    position: absolute;
+    right: -1.5rem;
+    top: -1.5rem;
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+}
+
+.sf-kpi-card::after {
+    content: '';
+    position: absolute;
+    right: 1rem;
+    bottom: -2rem;
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+}
+
+.sf-kpi-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.sf-kpi-icon {
+    font-size: 1.8rem;
+    opacity: 0.8;
+}
+
+.sf-kpi-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.2);
+    text-transform: uppercase;
+}
+
+/* Number inside KPI card */
+.sf-kpi-number {
+    margin: 0.5rem 0 0.25rem;
+}
+
+.sf-kpi-card .o_field_widget,
+.sf-kpi-card .o_field_integer,
+.sf-kpi-card [class*="o_field_"] {
+    font-size: 3.2rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    color: #fff !important;
+    letter-spacing: -0.02em;
+}
+
+.sf-kpi-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-top: 0.2rem;
+}
+
+/* Invisible overlay button — makes entire card clickable */
+.sf-card-btn {
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    border-radius: inherit;
+    transition: background 0.15s ease;
+    padding: 0;
+}
+
+.sf-card-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sf-card-btn:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: -3px;
+}
+
+/* KPI card color variants */
+.sf-kpi-navy {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2d5282 100%);
+    box-shadow: 0 8px 24px rgba(30, 58, 95, 0.35);
+}
+.sf-kpi-navy:hover { box-shadow: 0 16px 40px rgba(30, 58, 95, 0.45); }
+
+.sf-kpi-blue {
+    background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+    box-shadow: 0 8px 24px rgba(29, 78, 216, 0.35);
+}
+.sf-kpi-blue:hover { box-shadow: 0 16px 40px rgba(29, 78, 216, 0.45); }
+
+.sf-kpi-amber {
+    background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%);
+    box-shadow: 0 8px 24px rgba(180, 83, 9, 0.35);
+}
+.sf-kpi-amber:hover { box-shadow: 0 16px 40px rgba(180, 83, 9, 0.45); }
+
+.sf-kpi-crimson {
+    background: linear-gradient(135deg, #991b1b 0%, #ef4444 100%);
+    box-shadow: 0 8px 24px rgba(153, 27, 27, 0.35);
+}
+.sf-kpi-crimson:hover { box-shadow: 0 16px 40px rgba(153, 27, 27, 0.45); }
+
+/* ══════════════════════════════════════════════════════════════════
+   PHASE PILLS
+══════════════════════════════════════════════════════════════════ */
+.sf-phase-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+}
+
+.sf-phase-pill {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 1.1rem 0.55rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+                filter 0.15s ease,
+                box-shadow 0.15s ease;
+    border: none;
+    color: #fff;
+    overflow: hidden;
+}
+
+.sf-phase-pill:hover {
+    transform: translateY(-2px) scale(1.06);
+    filter: brightness(1.12);
+}
+
+.sf-phase-pill:active {
+    transform: scale(0.97);
+}
+
+/* Count bubble inside pill */
+.sf-pill-ct {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.28);
+    border-radius: 999px;
+    min-width: 1.7rem;
+    height: 1.7rem;
+    padding: 0 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 900;
+}
+
+/* Make the field widget inside pill look like the count bubble */
+.sf-phase-pill .o_field_widget,
+.sf-phase-pill [class*="o_field_"] {
+    background: rgba(255, 255, 255, 0.28) !important;
+    border-radius: 999px !important;
+    min-width: 1.7rem !important;
+    height: 1.7rem !important;
+    padding: 0 0.35rem !important;
+    font-size: 0.8rem !important;
+    font-weight: 900 !important;
+    color: #fff !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+}
+
+/* Phase pill overlay button */
+.sf-pill-btn {
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 5;
+    border-radius: inherit;
+}
+
+/* Phase colors */
+.sf-pill-pre-tender { background: #15803d; box-shadow: 0 4px 14px rgba(21,128,61,0.4); }
+.sf-pill-tender     { background: #b45309; box-shadow: 0 4px 14px rgba(180,83,9,0.4); }
+.sf-pill-contract   { background: #1d4ed8; box-shadow: 0 4px 14px rgba(29,78,216,0.4); }
+.sf-pill-execution  { background: #dc2626; box-shadow: 0 4px 14px rgba(220,38,38,0.4); }
+.sf-pill-closing    { background: #475569; box-shadow: 0 4px 14px rgba(71,85,105,0.4); }
+
+/* ══════════════════════════════════════════════════════════════════
+   EXECUTION READINESS INDICATORS
+   Visually distinct from phase pills: rectangular cards with
+   accent border, NOT round pills — signals "cross-cutting flag"
+   rather than a lifecycle stage.
+══════════════════════════════════════════════════════════════════ */
+.sf-readiness-strip {
+    display        : flex;
+    flex-wrap      : wrap;
+    gap            : 0.85rem;
+    margin-bottom  : 1.5rem;
+    align-items    : stretch;
+}
+
+.sf-readiness-indicator {
+    position        : relative;
+    display         : flex;
+    align-items     : center;
+    gap             : 0.9rem;
+    padding         : 0.85rem 1.25rem;
+    border-radius   : 12px;
+    background      : #fff;
+    border          : 1.5px solid #e2e8f0;
+    cursor          : pointer;
+    transition      : transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    min-width       : 210px;
+    overflow        : hidden;
+}
+
+.sf-readiness-indicator::before {
+    content         : '';
+    position        : absolute;
+    left            : 0;
+    top             : 0;
+    bottom          : 0;
+    width           : 4px;
+    border-radius   : 12px 0 0 12px;
+}
+
+.sf-readiness-indicator:hover {
+    transform        : translateY(-2px);
+    box-shadow       : 0 6px 20px rgba(0,0,0,0.10);
+    border-color     : #cbd5e1;
+}
+
+/* Icon wrap */
+.sf-ri-icon-wrap {
+    width           : 42px;
+    height          : 42px;
+    border-radius   : 10px;
+    display         : flex;
+    align-items     : center;
+    justify-content : center;
+    font-size       : 18px;
+    flex-shrink     : 0;
+}
+
+/* Text body */
+.sf-ri-body {
+    display         : flex;
+    flex-direction  : column;
+    gap             : 1px;
+}
+
+.sf-ri-count {
+    font-size       : 1.55rem;
+    font-weight     : 800;
+    line-height     : 1.1;
+    letter-spacing  : -0.5px;
+}
+
+/* Make Odoo field widget inside count look like plain text */
+.sf-readiness-indicator .o_field_widget,
+.sf-readiness-indicator [class*="o_field_"] {
+    font-size   : 1.55rem !important;
+    font-weight : 800 !important;
+    line-height : 1.1 !important;
+    color       : inherit !important;
+    background  : transparent !important;
+    padding     : 0 !important;
+    min-width   : unset !important;
+}
+
+.sf-ri-label {
+    font-size       : 0.82rem;
+    font-weight     : 700;
+    letter-spacing  : 0.02em;
+}
+
+.sf-ri-sub {
+    font-size       : 0.72rem;
+    opacity         : 0.6;
+    margin-top      : 1px;
+}
+
+/* Overlay click button */
+.sf-ri-btn {
+    position    : absolute;
+    inset       : 0;
+    background  : transparent;
+    border      : none;
+    cursor      : pointer;
+    z-index     : 5;
+    border-radius: inherit;
+}
+
+/* Pre-Execution variant — dark slate */
+.sf-ri-locked {
+    color       : #1e293b;
+    border-color: #94a3b8;
+}
+.sf-ri-locked::before   { background: #1e293b; }
+.sf-ri-locked .sf-ri-icon-wrap {
+    background  : rgba(30,41,59,0.09);
+    color       : #1e293b;
+}
+
+/* Approved Contract variant — teal/green */
+.sf-ri-contract-ok {
+    color       : #065f46;
+    border-color: #6ee7b7;
+}
+.sf-ri-contract-ok::before   { background: #059669; }
+.sf-ri-contract-ok .sf-ri-icon-wrap {
+    background  : rgba(5,150,105,0.09);
+    color       : #059669;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   HEALTH BIG CARDS — most prominent section
+══════════════════════════════════════════════════════════════════ */
+.sf-health-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.sf-health-card {
+    position: relative;
+    flex: 1;
+    border-radius: 16px;
+    padding: 2rem 1.5rem 1.75rem;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.sf-health-card:hover {
+    transform: translateY(-5px) scale(1.02);
+}
+
+/* Glowing border on hover */
+.sf-health-healthy:hover  { box-shadow: 0 16px 40px rgba(22,163,74,0.25) !important; }
+.sf-health-warning:hover  { box-shadow: 0 16px 40px rgba(245,158,11,0.25) !important; }
+.sf-health-critical:hover { box-shadow: 0 16px 40px rgba(220,38,38,0.30) !important; }
+
+.sf-health-card .sf-health-icon {
+    font-size: 2.4rem;
+    margin-bottom: 0.6rem;
+    display: block;
+}
+
+/* Health card big number */
+.sf-health-card .o_field_widget,
+.sf-health-card [class*="o_field_"] {
+    font-size: 4.5rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    letter-spacing: -0.03em;
+    display: block !important;
+    color: inherit !important;
+}
+
+.sf-health-card .sf-health-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 0.6rem;
+    opacity: 0.75;
+}
+
+.sf-health-healthy {
+    background: linear-gradient(160deg, rgba(22,163,74,0.09) 0%, rgba(22,163,74,0.04) 100%);
+    border: 2px solid rgba(22,163,74,0.2);
+    color: #15803d;
+    box-shadow: 0 4px 18px rgba(22,163,74,0.1);
+}
+
+.sf-health-warning {
+    background: linear-gradient(160deg, rgba(245,158,11,0.09) 0%, rgba(245,158,11,0.04) 100%);
+    border: 2px solid rgba(245,158,11,0.25);
+    color: #92400e;
+    box-shadow: 0 4px 18px rgba(245,158,11,0.12);
+}
+
+.sf-health-critical {
+    background: linear-gradient(160deg, rgba(220,38,38,0.10) 0%, rgba(220,38,38,0.04) 100%);
+    border: 2px solid rgba(220,38,38,0.25);
+    color: #991b1b;
+    box-shadow: 0 4px 18px rgba(220,38,38,0.14);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   FINANCIAL PANELS
+══════════════════════════════════════════════════════════════════ */
+.sf-fin-panel {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.25rem;
+    height: 100%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.sf-fin-panel-title {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #475569;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.sf-fin-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.55rem 0.7rem;
+    border-radius: 8px;
+    margin-bottom: 0.35rem;
+    background: #f8fafc;
+    transition: background 0.12s ease;
+    gap: 0.5rem;
+}
+
+.sf-fin-item:hover {
+    background: #f1f5f9;
+}
+
+.sf-fin-item:last-child {
+    margin-bottom: 0;
+}
+
+.sf-fin-item-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    white-space: nowrap;
+    min-width: 0;
+    flex-shrink: 0;
+}
+
+.sf-fin-item .o_field_widget,
+.sf-fin-item .o_field_monetary {
+    font-size: 0.92rem !important;
+    font-weight: 700 !important;
+    text-align: right;
+}
+
+/* Emphasis row (totals) */
+.sf-fin-item-emphasis {
+    background: #e0f2fe !important;
+    border: 1px solid #bae6fd;
+}
+
+.sf-fin-item-emphasis .sf-fin-item-label {
+    color: #0369a1;
+    font-weight: 700;
+}
+
+.sf-fin-item-positive .o_field_widget { color: #15803d !important; }
+.sf-fin-item-negative .o_field_widget { color: #dc2626 !important; }
+.sf-fin-item-warning  .o_field_widget { color: #b45309 !important; }
+
+/* ══════════════════════════════════════════════════════════════════
+   RISK ALERT BLOCKS
+══════════════════════════════════════════════════════════════════ */
+.sf-risk-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.sf-risk-block {
+    position: relative;
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.15s ease;
+    overflow: hidden;
+    border-width: 1.5px;
+    border-style: solid;
+}
+
+.sf-risk-block:hover {
+    transform: translateX(4px);
+    filter: brightness(1.04);
+}
+
+.sf-risk-icon {
+    font-size: 1.75rem;
+    flex-shrink: 0;
+    opacity: 0.8;
+}
+
+.sf-risk-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+}
+
+.sf-risk-block .o_field_widget,
+.sf-risk-block [class*="o_field_"] {
+    font-size: 2.2rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    letter-spacing: -0.02em;
+    color: inherit !important;
+    display: block !important;
+}
+
+.sf-risk-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+
+.sf-risk-btn {
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 5;
+    border-radius: inherit;
+}
+
+/* Risk block variants */
+.sf-risk-critical {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+.sf-risk-warning {
+    background: #fffbeb;
+    border-color: #fde68a;
+    color: #92400e;
+}
+
+.sf-risk-budget {
+    background: #fff7ed;
+    border-color: #fed7aa;
+    color: #9a3412;
+}
+
+.sf-risk-profit {
+    background: #fdf4ff;
+    border-color: #e9d5ff;
+    color: #7c3aed;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   PMO ACTION GRID
+══════════════════════════════════════════════════════════════════ */
+.sf-action-section {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.sf-action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+}
+
+.sf-action-row:last-child {
+    margin-bottom: 0;
+}
+
+.sf-action-row-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 0.4rem;
+}
+
+.sf-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.6rem 1.1rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.15s ease,
+                filter 0.12s ease;
+    line-height: 1.2;
+}
+
+.sf-action-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    filter: brightness(1.08);
+}
+
+.sf-action-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Action button color variants */
+.sf-btn-exec    { background: #dc2626; color: #fff; box-shadow: 0 2px 8px rgba(220,38,38,0.3); }
+.sf-btn-contract{ background: #1d4ed8; color: #fff; box-shadow: 0 2px 8px rgba(29,78,216,0.3); }
+.sf-btn-tender  { background: #d97706; color: #fff; box-shadow: 0 2px 8px rgba(217,119,6,0.3); }
+.sf-btn-pretend { background: #16a34a; color: #fff; box-shadow: 0 2px 8px rgba(22,163,74,0.3); }
+.sf-btn-closing { background: #475569; color: #fff; box-shadow: 0 2px 8px rgba(71,85,105,0.3); }
+.sf-btn-crit    { background: #dc2626; color: #fff; box-shadow: 0 2px 8px rgba(220,38,38,0.3); }
+.sf-btn-warn    { background: #d97706; color: #fff; box-shadow: 0 2px 8px rgba(217,119,6,0.3); }
+.sf-btn-budget  { background: #9a3412; color: #fff; box-shadow: 0 2px 8px rgba(154,52,18,0.3); }
+.sf-btn-profit  { background: #7c3aed; color: #fff; box-shadow: 0 2px 8px rgba(124,58,237,0.3); }
+.sf-btn-green   { background: #059669; color: #fff; box-shadow: 0 2px 8px rgba(5,150,105,0.3); }
+
+/* ══════════════════════════════════════════════════════════════════
+   UTILITY
+══════════════════════════════════════════════════════════════════ */
+.sf-sep {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 1.25rem 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .sf-health-row { flex-direction: column; }
+    .sf-risk-grid  { grid-template-columns: 1fr; }
+    .sf-kpi-card .o_field_widget { font-size: 2.5rem !important; }
+    .sf-health-card .o_field_widget { font-size: 3.5rem !important; }
+}
+
+@media (max-width: 576px) {
+    .sf-dash-header { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
+    .sf-kpi-card    { min-height: 110px; }
+    .sf-kpi-card .o_field_widget { font-size: 2rem !important; }
+    .sf-phase-strip { gap: 0.4rem; }
+    .sf-phase-pill  { font-size: 0.76rem; padding: 0.45rem 0.85rem 0.45rem 0.7rem; }
+}

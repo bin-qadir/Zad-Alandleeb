@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Extend the BOQ Line form to add an Analysis tab.
+            The tab shows the one2many list of analysis records
+            and a stat button showing the count.
+        -->
+        <record id="view_farm_boq_line_form_analysis" model="ir.ui.view">
+            <field name="name">farm.boq.line.form.analysis</field>
+            <field name="model">farm.boq.line</field>
+            <field name="inherit_id" ref="smart_farm_boq.view_farm_boq_line_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Smart button above the sheet title -->
+                <xpath expr="//sheet/div[hasclass('oe_title')]" position="before">
+                    <div class="oe_button_box" name="button_box">
+                        <!--
+                            Use type="object" → action_open_analysis() so the
+                            button always opens only THIS line's analysis records
+                            (scoped domain / create-if-absent behaviour) rather
+                            than the global action_farm_boq_line_analysis which
+                            has no domain filter.
+                        -->
+                        <button class="oe_stat_button"
+                                name="action_open_analysis"
+                                type="object"
+                                icon="fa-bar-chart"
+                                invisible="analysis_count == 0">
+                            <field name="analysis_count" widget="statinfo"
+                                   string="Analysis"/>
+                        </button>
+                    </div>
+                </xpath>
+
+                <!-- Analysis tab inside the notebook -->
+                <xpath expr="//notebook" position="inside">
+                    <page string="Analysis" name="analysis_tab">
+                        <field name="analysis_ids"
+                               context="{'default_boq_line_id': id}">
+                            <list decoration-success="state == 'final'"
+                                  decoration-muted="state == 'rejected'"
+                                  decoration-info="state == 'analysis'">
+                                <field name="name"/>
+                                <field name="date"/>
+                                <field name="boq_qty" readonly="1"/>
+                                <field name="cost_total"/>
+                                <field name="sale_total"/>
+                                <field name="profit" readonly="1"/>
+                                <field name="margin_percent" string="Margin %"
+                                       widget="percentage" readonly="1"/>
+                                <field name="state" widget="badge"
+                                       decoration-muted="state == 'draft'"
+                                       decoration-info="state == 'analysis'"
+                                       decoration-warning="state == 'reviewed'"
+                                       decoration-success="state in ('approved', 'final')"
+                                       decoration-danger="state == 'rejected'"/>
+                            </list>
+                        </field>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             SEARCH
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_job_progress_log_search" model="ir.ui.view">
+            <field name="name">farm.job.progress.log.search</field>
+            <field name="model">farm.job.progress.log</field>
+            <field name="arch" type="xml">
+                <search string="Progress Logs">
+                    <field name="job_order_id"/>
+                    <field name="project_id"/>
+                    <field name="logged_by"/>
+                    <field name="date"/>
+                    <group string="Group By">
+                        <filter name="by_job_order" string="Job Order"
+                                context="{'group_by':'job_order_id'}"/>
+                        <filter name="by_project"   string="Project"
+                                context="{'group_by':'project_id'}"/>
+                        <filter name="by_date"      string="Date"
+                                context="{'group_by':'date:week'}"/>
+                        <filter name="by_logged_by" string="Reporter"
+                                context="{'group_by':'logged_by'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             LIST
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_job_progress_log_list" model="ir.ui.view">
+            <field name="name">farm.job.progress.log.list</field>
+            <field name="model">farm.job.progress.log</field>
+            <field name="arch" type="xml">
+                <list string="Progress Logs">
+                    <field name="date"               string="Date"/>
+                    <field name="job_order_id"       string="Job Order"/>
+                    <field name="project_id"         string="Project"/>
+                    <field name="executed_increment" string="Qty Executed"/>
+                    <field name="note"               string="Site Note" optional="show"/>
+                    <field name="logged_by"          string="Logged By"/>
+                </list>
+            </field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             ACTION
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="action_farm_job_progress_log" model="ir.actions.act_window">
+            <field name="name">Progress Tracking</field>
+            <field name="res_model">farm.job.progress.log</field>
+            <field name="view_mode">list</field>
+            <field name="search_view_id" ref="view_farm_job_progress_log_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No progress logs yet.
+                </p>
+                <p>
+                    Add progress entries inside a Job Order's
+                    <strong>Progress</strong> tab.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

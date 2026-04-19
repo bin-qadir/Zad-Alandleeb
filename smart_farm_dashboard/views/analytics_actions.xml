@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            SMART FARM ANALYTICS — Client Action
+            =====================================
+
+            Registers the Owl component tag "smart_farm_analytics".
+            The menu item in menu.xml points to this action.
+        -->
+
+        <record id="action_smart_farm_analytics" model="ir.actions.client">
+            <field name="name">Smart Farm — Analytics</field>
+            <field name="tag">smart_farm_analytics</field>
+            <field name="target">current</field>
+        </record>
+
+    </data>
+</odoo>

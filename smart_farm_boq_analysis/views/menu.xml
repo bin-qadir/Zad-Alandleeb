@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Document-level BOQ Analysis -->
+        <menuitem
+            id="menu_farm_boq_doc_analysis"
+            name="B.O.Q Analysis"
+            parent="smart_farm_boq.menu_smart_farm_boq"
+            action="action_farm_boq_doc_analysis"
+            sequence="20"
+        />
+
+    </data>
+</odoo>

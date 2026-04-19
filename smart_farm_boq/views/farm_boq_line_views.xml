@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ===== farm.boq.line — search ===== -->
+
+        <record id="view_farm_boq_line_search" model="ir.ui.view">
+            <field name="name">farm.boq.line.search</field>
+            <field name="model">farm.boq.line</field>
+            <field name="arch" type="xml">
+                <search string="Cost Structure Lines">
+                    <field name="name" string="Item Name"/>
+                    <field name="boq_id"/>
+                    <field name="division_id"/>
+                    <field name="subdivision_id"/>
+                    <filter name="main_items" string="Items Only"
+                            domain="[('parent_id', '=', False), ('display_type', '=', False)]"/>
+                    <filter name="sections_only" string="Sections / Subsections"
+                            domain="[('display_type', '!=', False)]"/>
+                    <separator/>
+                    <group string="Group By">
+                        <filter name="group_by_division" string="Division"
+                                context="{'group_by': 'division_id'}"/>
+                        <filter name="group_by_subdivision" string="Subdivision"
+                                context="{'group_by': 'subdivision_id'}"/>
+                        <filter name="group_by_boq" string="Cost Structure"
+                                context="{'group_by': 'boq_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <!-- ===== farm.boq.line — list ===== -->
+        <!--
+            Standalone BOQ Lines list, ordered by div_rank → sub_rank → sequence_main.
+
+            decoration-bf   → Division Sections (bold, legacy)
+            decoration-it   → Subdivision Sections (italic, legacy)
+            decoration-muted → Sub-items under items (muted)
+
+            Cost columns are hidden per-row for section / subsection rows.
+        -->
+
+        <record id="view_farm_boq_line_list" model="ir.ui.view">
+            <field name="name">farm.boq.line.list</field>
+            <field name="model">farm.boq.line</field>
+            <field name="arch" type="xml">
+                <list string="Cost Structure Lines"
+                      create="false"
+                      default_order="div_rank, sub_rank, sub_sub_rank, row_level, sequence_sub"
+                      decoration-bf="display_type == 'line_section'"
+                      decoration-it="display_type == 'line_subsection'"
+                      decoration-muted="parent_id != False">
+                    <field name="display_type" column_invisible="1"/>
+                    <field name="div_rank" column_invisible="1"/>
+                    <field name="sub_rank" column_invisible="1"/>
+                    <field name="sub_sub_rank" column_invisible="1"/>
+                    <field name="row_level" column_invisible="1"/>
+                    <field name="display_code" string="Code"/>
+                    <field name="division_id" optional="show"/>
+                    <field name="subdivision_id" optional="show"/>
+                    <field name="sub_subdivision_id" optional="show"/>
+                    <field name="name"/>
+                    <field name="boq_id" optional="show"/>
+                    <field name="project_id" optional="hide"/>
+                    <field name="project_phase_id" optional="hide"/>
+                    <field name="parent_id" optional="hide"/>
+                    <field name="child_count" string="Sub-items"
+                           invisible="display_type != False"
+                           optional="show"/>
+                    <field name="boq_qty" string="BOQ Qty" invisible="display_type != False"/>
+                    <field name="unit_id" string="Unit"
+                           invisible="display_type != False"
+                           optional="show"/>
+                    <!-- unit_price and total are injected here by smart_farm_boq_analysis -->
+                    <button name="action_add_subitem"
+                            type="object"
+                            string="Add Subitem"
+                            icon="fa-plus"
+                            class="btn-success btn-sm"
+                            invisible="display_type != 'line_sub_subsection'"/>
+                    <button name="action_view_details" type="object"
+                            string="View Details"
+                            icon="fa-external-link-square"
+                            class="btn-secondary btn-sm"
+                            invisible="display_type != False"/>
+                </list>
+            </field>
+        </record>
+
+
+        <!-- ===== farm.boq.line — form ===== -->
+        <!--
+            Primary workflow:
+              1. Select Display Type  → leave False for a normal item
+              2. Select Division Work
+              3. Select Subdivision Work (filtered by Division)
+              4. Enter Name
+              5. Fill Quantities & Pricing
+
+            System auto-assigns the code (1.01.01) on save.
+
+            section_line_id is shown only when editing a subdivision-section
+            row (so the user can link it to its parent division section).
+            subsection_line_id is hidden — always auto-managed.
+        -->
+
+        <record id="view_farm_boq_line_form" model="ir.ui.view">
+            <field name="name">farm.boq.line.form</field>
+            <field name="model">farm.boq.line</field>
+            <field name="arch" type="xml">
+                <form string="Cost Structure Line">
+                    <!-- ── Subitem workflow header ────────────────────────────
+                         Visible only for real subitems (parent_id is set).
+                         Sections / Subdivisions have no item-level workflow.
+                    ──────────────────────────────────────────────────────── -->
+                    <header>
+                        <!-- Draft → Study -->
+                        <button name="action_item_study"
+                                string="Study"
+                                type="object"
+                                class="btn-primary"
+                                invisible="not parent_id or item_state != 'draft'"/>
+                        <!-- Draft / Study → Submitted -->
+                        <button name="action_item_submit"
+                                string="Submit"
+                                type="object"
+                                class="btn-primary"
+                                invisible="not parent_id or item_state not in ('draft', 'study')"/>
+                        <!-- Submitted / Resubmitted → Approved -->
+                        <button name="action_item_approve"
+                                string="Approve"
+                                type="object"
+                                class="btn-success"
+                                invisible="not parent_id or item_state not in ('submitted', 'resubmitted')"/>
+                        <!-- Study / Submitted / Resubmitted → Rejected -->
+                        <button name="action_item_reject"
+                                string="Reject"
+                                type="object"
+                                class="btn-danger"
+                                invisible="not parent_id or item_state not in ('study', 'submitted', 'resubmitted')"/>
+                        <!-- Rejected → Resubmitted -->
+                        <button name="action_item_resubmit"
+                                string="Resubmit"
+                                type="object"
+                                class="btn-secondary"
+                                invisible="not parent_id or item_state != 'rejected'"/>
+                        <!-- Status bar: main flow steps shown; rejected/resubmitted shown inline -->
+                        <field name="item_state"
+                               widget="statusbar"
+                               statusbar_visible="draft,study,submitted,approved"
+                               invisible="not parent_id"/>
+
+                        <!-- ── BOQ Pricing Status ───────────────────────────
+                             boq_state tracks whether the BOQ line's pricing
+                             has been set (draft), is under review (review),
+                             or is locked/approved (approved).
+                             Only shown for real subitems (parent_id set).
+                        ──────────────────────────────────────────────────── -->
+                        <button name="action_boq_state_review"
+                                string="Mark Price Review"
+                                type="object"
+                                class="btn-warning"
+                                invisible="not parent_id or boq_state != 'draft'"
+                                groups="smart_farm_base.group_smart_farm_manager"/>
+                        <button name="action_boq_state_approve"
+                                string="Lock Price"
+                                type="object"
+                                class="btn-success"
+                                invisible="not parent_id or boq_state != 'review'"
+                                groups="smart_farm_base.group_smart_farm_manager"/>
+                        <button name="action_boq_state_reset"
+                                string="Unlock Price"
+                                type="object"
+                                class="btn-secondary"
+                                invisible="not parent_id or boq_state == 'draft'"
+                                groups="smart_farm_base.group_smart_farm_manager"/>
+                        <field name="boq_state"
+                               widget="statusbar"
+                               statusbar_visible="draft,review,approved"
+                               invisible="not parent_id"/>
+                        <!-- Hidden flag for readonly expressions in child views -->
+                        <field name="is_editable" invisible="1"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="display_code"/>
+                            <h2>
+                                <field name="display_code" readonly="1"/>
+                            </h2>
+                            <h1>
+                                <field name="name" placeholder="Item Name…"/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group string="Classification">
+                                <field name="boq_id"
+                                       readonly="context.get('lock_classification', False) or bool(parent_id)"/>
+                                <field name="project_id" readonly="1"/>
+                                <field name="project_phase_id"
+                                       readonly="context.get('lock_classification', False) or bool(parent_id)"
+                                       options="{'no_create': True, 'no_open': True}"/>
+                                <field name="display_type"
+                                       readonly="context.get('lock_classification', False) or bool(parent_id)"/>
+                                <!-- Division + Subdivision — locked when opened from a
+                                     hierarchy button so the user cannot break the required
+                                     Division → Subdivision → Sub-Subdivision → Item chain. -->
+                                <field name="division_id"
+                                       readonly="context.get('lock_classification', False) or bool(parent_id)"
+                                       options="{'no_create': True, 'no_open': True}"/>
+                                <field name="subdivision_id"
+                                       domain="[('division_id', '=', division_id)]"
+                                       readonly="context.get('lock_classification', False) or bool(parent_id)"
+                                       options="{'no_create': True, 'no_open': True}"/>
+                                <field name="sub_subdivision_id"
+                                       invisible="display_type != False"
+                                       readonly="context.get('lock_classification', False) or bool(parent_id)"
+                                       domain="[('subdivision_id', '=', subdivision_id)]"
+                                       options="{'no_create': True, 'no_open': True}"/>
+                                <!-- Template loader — items only -->
+                                <field name="template_id"
+                                       invisible="display_type != False"
+                                       placeholder="Select a template to pre-fill…"
+                                       options="{'no_create': True}"/>
+                                <!-- Parent: subitems live under a sub-subdivision row -->
+                                <field name="parent_id"
+                                       invisible="display_type != False"
+                                       readonly="context.get('lock_classification', False) or bool(parent_id)"
+                                       domain="[('boq_id', '=', boq_id),
+                                                ('display_type', '=', 'line_sub_subsection')]"
+                                       context="{'default_boq_id': boq_id}"/>
+                                <!-- section_line_id: only relevant for subsection rows -->
+                                <field name="section_line_id"
+                                       invisible="display_type != 'line_subsection'"
+                                       domain="[('boq_id', '=', boq_id),
+                                                ('display_type', '=', 'line_section')]"
+                                       options="{'no_create': True}"/>
+                                <!-- subsection_line_id: auto-managed, hidden -->
+                                <field name="subsection_line_id" invisible="1"/>
+                            </group>
+
+                            <group string="Unit Info"
+                                   invisible="display_type != False">
+                                <field name="unit_id" string="Unit of Measure"/>
+                            </group>
+
+                            <!-- Planning dates — subitems only -->
+                            <group string="Planning"
+                                   invisible="not parent_id">
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                            </group>
+                        </group>
+
+                        <notebook invisible="display_type == 'line_section'">
+                            <!-- Description: only for actual items and subsection rows -->
+                            <page string="Description" invisible="display_type == 'line_section'">
+                                <field name="description"
+                                       placeholder="Add a description…"/>
+                            </page>
+                            <!-- Sub Items: shown on subsection rows (list their children)
+                                 and on old-style standalone main items -->
+                            <page string="Subitems"
+                                  invisible="display_type == False and parent_id">
+                                <field name="child_ids">
+                                    <list>
+                                        <field name="display_code" string="Code" readonly="1"/>
+                                        <field name="name"/>
+                                        <field name="unit_id" string="Unit" optional="show" readonly="1"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- ===== Action ===== -->
+
+        <record id="action_farm_boq_line" model="ir.actions.act_window">
+            <field name="name">Cost Structure Lines</field>
+            <field name="res_model">farm.boq.line</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_farm_boq_line_search"/>
+            <field name="context">{
+                'search_default_main_items': 1,
+                'search_default_group_by_division': 1,
+                'search_default_group_by_subdivision': 1
+            }</field>
+        </record>
+
+    </data>
+</odoo>

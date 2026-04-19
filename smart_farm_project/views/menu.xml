@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Projects submenu under Smart Farm root -->
+        <menuitem
+            id="menu_smart_farm_projects"
+            name="Projects"
+            parent="smart_farm_base.menu_smart_farm_root"
+            sequence="10"
+        />
+
+        <!-- Farm Projects -->
+        <menuitem
+            id="menu_farm_project"
+            name="Farm Projects"
+            parent="menu_smart_farm_projects"
+            action="action_farm_project"
+            sequence="10"
+        />
+
+        <!-- Fields -->
+        <menuitem
+            id="menu_farm_field"
+            name="Fields"
+            parent="menu_smart_farm_projects"
+            action="action_farm_field"
+            sequence="20"
+        />
+
+    </data>
+</odoo>

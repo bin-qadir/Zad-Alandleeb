@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One-time cleanup: removes obsolete farm.boq.division / farm.boq.subdivision
+    records created by the previous version of this module.
+    Those models are now replaced by farm.division.work / farm.subdivision.work
+    from smart_farm_work_structure.
+-->
+<odoo>
+    <data>
+
+        <!-- Delete obsolete menu items first (they reference the actions below) -->
+        <delete model="ir.ui.menu" search="[('name', '=', 'BOQ Divisions')]"/>
+        <delete model="ir.ui.menu" search="[('name', '=', 'BOQ Subdivisions')]"/>
+
+        <!-- Remove standalone Load Template menu (now a button on the BOQ form) -->
+        <delete model="ir.ui.menu" search="[('name', '=', 'Load Template')]"/>
+
+        <!-- Delete obsolete window actions -->
+        <delete model="ir.actions.act_window"
+                search="[('res_model', '=', 'farm.boq.division')]"/>
+        <delete model="ir.actions.act_window"
+                search="[('res_model', '=', 'farm.boq.subdivision')]"/>
+
+        <!-- Delete obsolete views -->
+        <delete model="ir.ui.view"
+                search="[('model', '=', 'farm.boq.division')]"/>
+        <delete model="ir.ui.view"
+                search="[('model', '=', 'farm.boq.subdivision')]"/>
+
+    </data>
+</odoo>

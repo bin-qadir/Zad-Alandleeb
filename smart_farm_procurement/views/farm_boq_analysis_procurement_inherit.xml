@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Procurement extension for farm.boq.analysis form view.
+
+            Injects:
+            1. "Generate RFQ" + "View Purchases" header buttons
+            2. "Purchase Orders" stat button in button_box
+            3. Procurement columns in the Analysis Lines list
+            4. Procurement tab with detail view for each line
+        -->
+
+        <record id="view_farm_boq_analysis_procurement_inherit" model="ir.ui.view">
+            <field name="name">farm.boq.analysis.procurement.inherit</field>
+            <field name="model">farm.boq.analysis</field>
+            <field name="inherit_id" ref="smart_farm_boq_analysis.view_farm_boq_analysis_form"/>
+            <field name="arch" type="xml">
+
+                <!-- ── 1. Header buttons: Generate RFQ + View Purchases ── -->
+                <xpath expr="//header/field[@name='analysis_state']" position="before">
+                    <button name="action_generate_rfq"
+                            type="object"
+                            string="Generate RFQ"
+                            icon="fa-shopping-cart"
+                            class="btn-primary"
+                            invisible="analysis_state != 'approved'"
+                            confirm="Generate Purchase Request(s) for all approved lines with a vendor assigned?"/>
+                    <button name="action_view_purchases"
+                            type="object"
+                            string="View Purchases"
+                            icon="fa-truck"
+                            class="btn-secondary"
+                            invisible="purchase_count == 0"/>
+                </xpath>
+
+                <!-- ── 2. Stat button: Purchase Orders count ── -->
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button class="oe_stat_button"
+                            type="object"
+                            name="action_view_purchases"
+                            icon="fa-truck"
+                            invisible="purchase_count == 0">
+                        <field name="purchase_count"
+                               widget="statinfo"
+                               string="Purchases"/>
+                    </button>
+                </xpath>
+
+                <!-- ── 3. Procurement columns in the Analysis Lines list ── -->
+                <!-- Inject after the last analysis_state badge column -->
+                <xpath expr="//field[@name='line_ids']//field[@name='analysis_state']" position="after">
+                    <field name="procurement_type"
+                           string="Type"
+                           optional="show"
+                           readonly="0"/>
+                    <field name="vendor_id"
+                           string="Vendor"
+                           optional="show"
+                           readonly="0"/>
+                    <field name="estimated_qty"
+                           string="Est. Qty"
+                           optional="hide"/>
+                    <field name="estimated_unit_cost"
+                           string="Est. Unit Cost"
+                           optional="hide"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"/>
+                    <field name="estimated_total_cost"
+                           string="Est. Total"
+                           optional="show"
+                           readonly="1"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"/>
+                    <field name="actual_total_cost"
+                           string="Act. Total"
+                           optional="show"
+                           readonly="1"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"/>
+                    <field name="cost_variance"
+                           string="Variance"
+                           optional="show"
+                           readonly="1"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"
+                           decoration-danger="cost_variance &gt; 0"
+                           decoration-success="cost_variance &lt;= 0 and actual_total_cost &gt; 0"/>
+                    <field name="procurement_state"
+                           string="Proc. Status"
+                           widget="badge"
+                           optional="show"
+                           readonly="1"
+                           decoration-muted="procurement_state == 'not_requested'"
+                           decoration-info="procurement_state == 'rfq_sent'"
+                           decoration-warning="procurement_state == 'ordered'"
+                           decoration-primary="procurement_state == 'received'"
+                           decoration-success="procurement_state == 'billed'"/>
+                    <field name="purchase_order_id"
+                           string="PO"
+                           optional="show"
+                           readonly="1"/>
+                </xpath>
+
+                <!-- ── 4. Procurement Tab ── -->
+                <xpath expr="//page[@name='notes_tab']" position="before">
+                    <page string="Procurement" name="procurement_tab">
+                        <field name="line_ids"
+                               readonly="analysis_state == 'approved'"
+                               domain="[('procurement_type', '!=', 'labour')]">
+                            <list string="Procurement Lines"
+                                  default_order="div_rank, sub_rank, sub_sub_rank, sequence_main, sequence_sub"
+                                  editable="bottom"
+                                  create="0"
+                                  delete="0">
+
+                                <!-- Hidden ordering -->
+                                <field name="div_rank"      column_invisible="1"/>
+                                <field name="sub_rank"      column_invisible="1"/>
+                                <field name="sub_sub_rank"  column_invisible="1"/>
+                                <field name="sequence_main" column_invisible="1"/>
+                                <field name="sequence_sub"  column_invisible="1"/>
+                                <field name="currency_id"   column_invisible="1"/>
+
+                                <!-- Identity -->
+                                <field name="display_code"  string="Code"   readonly="1" width="85"/>
+                                <field name="name"          string="Description" readonly="1"/>
+                                <field name="boq_qty"       string="BOQ Qty"     readonly="1" optional="show"/>
+                                <field name="unit_id"       string="Unit"        readonly="1" optional="show"/>
+
+                                <!-- Procurement fields -->
+                                <field name="procurement_type" string="Type"/>
+                                <field name="product_id"       string="Product"
+                                       options="{'no_create': True}"/>
+                                <field name="vendor_id"        string="Vendor"
+                                       options="{'no_create': True}"/>
+                                <field name="purchase_uom_id"  string="Purch. UoM"
+                                       options="{'no_create': True}" optional="show"/>
+                                <field name="estimated_qty"       string="Est. Qty"/>
+                                <field name="estimated_unit_cost" string="Est. Unit Cost"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="estimated_total_cost" string="Est. Total"
+                                       readonly="1"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+
+                                <!-- Actual cost (read-only — from PO/bill) -->
+                                <field name="purchase_order_id"  string="PO"       readonly="1" optional="show"/>
+                                <field name="actual_qty"          string="Act. Qty"  readonly="1" optional="show"/>
+                                <field name="actual_unit_cost"    string="Act. Unit" readonly="1" optional="show"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="actual_total_cost"   string="Act. Total" readonly="1"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="cost_variance"       string="Variance"   readonly="1"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-danger="cost_variance &gt; 0"
+                                       decoration-success="cost_variance &lt;= 0 and actual_total_cost &gt; 0"/>
+                                <field name="cost_variance_pct"   string="Var %"      readonly="1"
+                                       widget="percentage" optional="show"/>
+
+                                <!-- Vendor bill link -->
+                                <field name="vendor_bill_line_id" string="Bill Line"
+                                       optional="hide"
+                                       options="{'no_create': True}"/>
+
+                                <!-- Status -->
+                                <field name="procurement_state"   string="Status"
+                                       widget="badge"
+                                       readonly="1"
+                                       decoration-muted="procurement_state == 'not_requested'"
+                                       decoration-info="procurement_state == 'rfq_sent'"
+                                       decoration-warning="procurement_state == 'ordered'"
+                                       decoration-primary="procurement_state == 'received'"
+                                       decoration-success="procurement_state == 'billed'"/>
+                            </list>
+                        </field>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

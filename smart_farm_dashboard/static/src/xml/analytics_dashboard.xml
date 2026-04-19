@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+    SMART FARM — ANALYTICS DASHBOARD TEMPLATE
+    ==========================================
+    Owl 2 template for the analytics client action.
+    Rendered by SmartFarmAnalyticsDashboard component.
+-->
+<templates xml:space="preserve">
+
+<t t-name="smart_farm_dashboard.AnalyticsDashboard">
+    <div class="sfa-root">
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             HEADER
+        ════════════════════════════════════════════════════════════════════ -->
+        <div class="sfa-header">
+            <div class="sfa-header-brand">
+                <div class="sfa-header-icon-wrap">
+                    <i class="fa fa-line-chart"/>
+                </div>
+                <div class="sfa-header-text">
+                    <span class="sfa-header-title">Smart Farm — Analytics</span>
+                    <span class="sfa-header-sub">Portfolio intelligence &amp; performance insights</span>
+                </div>
+            </div>
+
+            <div class="sfa-header-controls">
+                <!-- Phase filter pills -->
+                <div class="sfa-filter-bar">
+                    <t t-foreach="phaseFilters" t-as="f" t-key="f.value">
+                        <button
+                            t-att-class="'sfa-filter-pill' + (state.filterPhase === f.value ? ' active' : '')"
+                            t-on-click="() => this.onFilterPhase(f.value)">
+                            <t t-esc="f.label"/>
+                        </button>
+                    </t>
+                </div>
+                <button class="sfa-refresh-btn" t-on-click="() => this._loadAndRender()">
+                    <i class="fa fa-refresh"/> Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading spinner -->
+        <t t-if="state.loading">
+            <div class="sfa-loading">
+                <i class="fa fa-circle-o-notch fa-spin fa-3x"/>
+                <p>Loading analytics…</p>
+            </div>
+        </t>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             BODY — only visible once loaded
+        ════════════════════════════════════════════════════════════════════ -->
+        <t t-else="">
+
+            <!-- ── SECTION 1: KPI SUMMARY CARDS ──────────────────────────── -->
+            <div class="sfa-section-label">Key Performance Indicators</div>
+            <div class="sfa-kpi-row">
+
+                <!-- Total Revenue -->
+                <div class="sfa-kpi-card sfa-kpi-blue" t-on-click="openAll">
+                    <div class="sfa-kpi-icon-wrap">
+                        <i class="fa fa-money"/>
+                    </div>
+                    <div class="sfa-kpi-body">
+                        <div class="sfa-kpi-value">
+                            <t t-esc="this.fmtCurrency(state.kpis.totalContractValue)"/>
+                        </div>
+                        <div class="sfa-kpi-label">Total Revenue</div>
+                        <div class="sfa-kpi-sub">Contract value across all projects</div>
+                    </div>
+                    <div class="sfa-kpi-indicator sfa-indicator-positive">
+                        <i class="fa fa-arrow-up"/> Revenue
+                    </div>
+                </div>
+
+                <!-- Total Cost -->
+                <div class="sfa-kpi-card sfa-kpi-red" t-on-click="openOverBudget">
+                    <div class="sfa-kpi-icon-wrap">
+                        <i class="fa fa-bar-chart"/>
+                    </div>
+                    <div class="sfa-kpi-body">
+                        <div class="sfa-kpi-value">
+                            <t t-esc="this.fmtCurrency(state.kpis.totalActualCost)"/>
+                        </div>
+                        <div class="sfa-kpi-label">Total Cost</div>
+                        <div class="sfa-kpi-sub">Actual cost incurred to date</div>
+                    </div>
+                    <div class="sfa-kpi-indicator sfa-indicator-negative">
+                        <i class="fa fa-exclamation-triangle"/> Cost
+                    </div>
+                </div>
+
+                <!-- Total Profit -->
+                <div t-att-class="'sfa-kpi-card ' + (profitPositive ? 'sfa-kpi-green' : 'sfa-kpi-orange')">
+                    <div class="sfa-kpi-icon-wrap">
+                        <i class="fa fa-line-chart"/>
+                    </div>
+                    <div class="sfa-kpi-body">
+                        <div class="sfa-kpi-value">
+                            <t t-esc="this.fmtCurrency(state.kpis.totalProfit)"/>
+                        </div>
+                        <div class="sfa-kpi-label">Total Profit</div>
+                        <div class="sfa-kpi-sub">Current portfolio profit</div>
+                    </div>
+                    <div t-att-class="'sfa-kpi-indicator ' + (profitPositive ? 'sfa-indicator-positive' : 'sfa-indicator-negative')">
+                        <i t-att-class="'fa ' + (profitPositive ? 'fa-arrow-up' : 'fa-arrow-down')"/>
+                        <t t-esc="profitPositive ? 'Profitable' : 'Loss'"/>
+                    </div>
+                </div>
+
+                <!-- Avg Margin % -->
+                <div t-att-class="'sfa-kpi-card ' + (state.kpis.avgMargin >= 10 ? 'sfa-kpi-teal' : state.kpis.avgMargin >= 0 ? 'sfa-kpi-amber' : 'sfa-kpi-crimson')">
+                    <div class="sfa-kpi-icon-wrap">
+                        <i class="fa fa-percent"/>
+                    </div>
+                    <div class="sfa-kpi-body">
+                        <div class="sfa-kpi-value">
+                            <t t-esc="(state.kpis.avgMargin || 0).toFixed(1) + '%'"/>
+                        </div>
+                        <div class="sfa-kpi-label">Avg Margin %</div>
+                        <div class="sfa-kpi-sub">Execution &amp; closing projects</div>
+                    </div>
+                    <div t-att-class="'sfa-kpi-indicator ' + marginClass">
+                        <i t-att-class="'fa ' + (state.kpis.avgMargin >= 10 ? 'fa-check-circle' : state.kpis.avgMargin >= 0 ? 'fa-exclamation-circle' : 'fa-times-circle')"/>
+                        <t t-esc="state.kpis.avgMargin >= 10 ? 'On Target' : state.kpis.avgMargin >= 0 ? 'Low Margin' : 'Negative'"/>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── SECTION 2+3: LINE CHARTS ───────────────────────────────── -->
+            <div class="sfa-section-label">Financial Trend &amp; Margin Analysis</div>
+            <div class="sfa-charts-row">
+
+                <!-- Section 2: KPI Trend (wide) -->
+                <div class="sfa-chart-panel sfa-chart-wide">
+                    <div class="sfa-chart-header">
+                        <span class="sfa-chart-title">
+                            <i class="fa fa-area-chart"/> Financial Overview — Top Projects
+                        </span>
+                        <span class="sfa-chart-hint">Sorted by contract value (top 10)</span>
+                    </div>
+                    <div class="sfa-chart-body">
+                        <canvas t-ref="kpiTrendCanvas"/>
+                    </div>
+                </div>
+
+                <!-- Section 3: Margin Trend -->
+                <div class="sfa-chart-panel">
+                    <div class="sfa-chart-header">
+                        <span class="sfa-chart-title">
+                            <i class="fa fa-percent"/> Margin % by Project
+                        </span>
+                        <span class="sfa-chart-hint">
+                            <span class="sfa-legend-dot" style="background:#10b981"/> ≥10%
+                            <span class="sfa-legend-dot" style="background:#f59e0b"/> 0–10%
+                            <span class="sfa-legend-dot" style="background:#ef4444"/> &lt;0%
+                        </span>
+                    </div>
+                    <div class="sfa-chart-body">
+                        <canvas t-ref="marginCanvas"/>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── SECTION 4+5+6: COST/REVENUE + DONUTS ──────────────────── -->
+            <div class="sfa-section-label">Cost vs Revenue &amp; Distribution</div>
+            <div class="sfa-charts-row sfa-charts-row-triple">
+
+                <!-- Section 4: Cost vs Revenue by Phase -->
+                <div class="sfa-chart-panel sfa-chart-medium">
+                    <div class="sfa-chart-header">
+                        <span class="sfa-chart-title">
+                            <i class="fa fa-bar-chart"/> Cost vs Revenue by Phase
+                        </span>
+                        <span class="sfa-chart-hint">Phase-grouped financials</span>
+                    </div>
+                    <div class="sfa-chart-body">
+                        <canvas t-ref="costRevenueCanvas"/>
+                    </div>
+                </div>
+
+                <!-- Section 5: Project Health Donut -->
+                <div class="sfa-chart-panel sfa-chart-donut">
+                    <div class="sfa-chart-header">
+                        <span class="sfa-chart-title">
+                            <i class="fa fa-heartbeat"/> Health Distribution
+                        </span>
+                    </div>
+                    <div class="sfa-chart-body sfa-chart-body-donut">
+                        <canvas t-ref="healthCanvas"/>
+                    </div>
+                    <!-- Quick stats -->
+                    <div class="sfa-donut-stats">
+                        <span class="sfa-donut-stat sfa-stat-healthy" t-on-click="() => this._openList([['project_health','=','healthy']], 'Healthy Projects')">
+                            <i class="fa fa-check-circle"/> Healthy
+                        </span>
+                        <span class="sfa-donut-stat sfa-stat-warning" t-on-click="() => this._openList([['project_health','=','warning']], 'Warning Projects')">
+                            <i class="fa fa-exclamation-triangle"/> Warning
+                        </span>
+                        <span class="sfa-donut-stat sfa-stat-critical" t-on-click="() => this._openList([['project_health','=','critical']], 'Critical Projects')">
+                            <i class="fa fa-times-circle"/> Critical
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Section 6: Phase Distribution Donut -->
+                <div class="sfa-chart-panel sfa-chart-donut">
+                    <div class="sfa-chart-header">
+                        <span class="sfa-chart-title">
+                            <i class="fa fa-pie-chart"/> Phase Distribution
+                        </span>
+                    </div>
+                    <div class="sfa-chart-body sfa-chart-body-donut">
+                        <canvas t-ref="phaseCanvas"/>
+                    </div>
+                    <div class="sfa-donut-stats">
+                        <t t-foreach="phaseFilters.slice(1)" t-as="f" t-key="f.value">
+                            <span class="sfa-donut-stat"
+                                  t-att-style="'color:' + this._phaseColor(f.value)"
+                                  t-on-click="() => this.onFilterPhase(f.value)">
+                                <i class="fa fa-circle"/> <t t-esc="f.label"/>
+                            </span>
+                        </t>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── SECTION 7: TOP RISK TABLE ──────────────────────────────── -->
+            <div class="sfa-section-label">
+                <i class="fa fa-warning"/> Top Risk Projects
+                <span class="sfa-section-action" t-on-click="() => this._openList([['project_health','!=','healthy']], 'At-Risk Projects')">
+                    View All <i class="fa fa-arrow-right"/>
+                </span>
+            </div>
+
+            <t t-if="state.topRisk.length === 0">
+                <div class="sfa-empty-state">
+                    <i class="fa fa-check-circle fa-2x" style="color:#10b981"/>
+                    <p>No at-risk projects — portfolio is healthy!</p>
+                </div>
+            </t>
+
+            <t t-else="">
+                <div class="sfa-risk-table-wrap">
+                    <table class="sfa-risk-table">
+                        <thead>
+                            <tr>
+                                <th>Project</th>
+                                <th>Phase</th>
+                                <th class="sfa-num-col">Contract Value</th>
+                                <th class="sfa-num-col">Actual Cost</th>
+                                <th class="sfa-num-col">Margin %</th>
+                                <th class="sfa-num-col">Cost Overrun</th>
+                                <th>Health</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.topRisk" t-as="proj" t-key="proj.id">
+                                <tr t-att-class="'sfa-risk-row sfa-health-' + (proj.project_health || 'healthy')"
+                                    t-on-click="() => this.openProject(proj.id)">
+                                    <td class="sfa-proj-name">
+                                        <span class="sfa-proj-name-text">
+                                            <t t-esc="proj.name"/>
+                                        </span>
+                                        <t t-if="proj.is_over_budget">
+                                            <span class="sfa-flag-overbudget" title="Over Budget">
+                                                <i class="fa fa-exclamation-triangle"/>
+                                            </span>
+                                        </t>
+                                    </td>
+                                    <td>
+                                        <span class="sfa-phase-badge"
+                                              t-att-style="'background:' + this._phaseColor(proj.project_phase) + '22; color:' + this._phaseColor(proj.project_phase)">
+                                            <t t-esc="this._phaseLabel(proj.project_phase)"/>
+                                        </span>
+                                    </td>
+                                    <td class="sfa-num-col">
+                                        <t t-esc="this.fmtCurrency(proj.contract_value)"/>
+                                    </td>
+                                    <td class="sfa-num-col">
+                                        <t t-esc="this.fmtCurrency(proj.actual_total_cost)"/>
+                                    </td>
+                                    <td class="sfa-num-col">
+                                        <span t-att-class="'sfa-margin-chip ' + (proj.gross_margin_pct >= 10 ? 'chip-ok' : proj.gross_margin_pct >= 0 ? 'chip-warn' : 'chip-bad')">
+                                            <t t-esc="(proj.gross_margin_pct || 0).toFixed(1) + '%'"/>
+                                        </span>
+                                    </td>
+                                    <td class="sfa-num-col">
+                                        <t t-if="proj.is_over_budget">
+                                            <span class="sfa-overrun-chip chip-bad">
+                                                +<t t-esc="this.overrunPct(proj)"/>%
+                                            </span>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="sfa-overrun-chip chip-ok">—</span>
+                                        </t>
+                                    </td>
+                                    <td>
+                                        <span class="sfa-health-badge"
+                                              t-att-style="'background:' + this.healthColor(proj.project_health) + '22; color:' + this.healthColor(proj.project_health)">
+                                            <i t-att-class="'fa ' + (proj.project_health === 'critical' ? 'fa-times-circle' : proj.project_health === 'warning' ? 'fa-exclamation-circle' : 'fa-check-circle')"/>
+                                            <t t-esc="this.healthLabel(proj.project_health)"/>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+
+        </t><!-- end t-else loaded -->
+    </div>
+</t>
+
+</templates>

@@ -1,0 +1,197 @@
+/*
+ * SMART FARM — BOQ ANALYSIS STYLES
+ * ==================================
+ * Hierarchy row colours, sticky header, status badge overrides,
+ * indentation and inline-button improvements.
+ *
+ * All selectors are scoped to the analysis form's o2m list to avoid
+ * affecting other views.
+ *
+ * Row class names (set by decoration-* attributes in the XML view):
+ *   .boq-div    → Division     (row_level 0, display_type='line_section')
+ *   .boq-sub    → Subdivision  (row_level 1)
+ *   .boq-subsub → Sub-Sub      (row_level 2)
+ *   (subitems: no extra class — white background, normal styling)
+ */
+
+/* ── PART 2/3: Hierarchical row colours ──────────────────────────────────── */
+
+/* Division row — beige, bold, larger font */
+.o_form_view .o_field_one2many .o_list_view tr.o_data_row.boq-div > td {
+    background-color : #EFE2B8 !important;
+    font-weight      : 700    !important;
+    font-size        : 13px   !important;
+    border-bottom    : 1px solid #C8A84B !important;
+    border-top       : 2px solid #C8A84B !important;
+    color            : #000000 !important;
+}
+
+/* Subdivision row — cream, semi-bold */
+.o_form_view .o_field_one2many .o_list_view tr.o_data_row.boq-sub > td {
+    background-color : #FDF9EE !important;
+    font-weight      : 600    !important;
+    font-size        : 12px   !important;
+    border-bottom    : 1px solid #E0D5B0 !important;
+    color            : #000000 !important;
+}
+
+/* Sub-subdivision row — off-white, italic */
+.o_form_view .o_field_one2many .o_list_view tr.o_data_row.boq-subsub > td {
+    background-color : #FFFDF5 !important;
+    font-style       : italic  !important;
+    font-size        : 12px    !important;
+    border-bottom    : 1px solid #F0ECD8 !important;
+    color            : #444444 !important;
+}
+
+/* Subitem row (default Odoo white) — ensure clean look */
+.o_form_view .o_field_one2many .o_list_view tr.o_data_row:not(.boq-div):not(.boq-sub):not(.boq-subsub) > td {
+    background-color : #FFFFFF !important;
+    font-size        : 12px    !important;
+}
+
+/* Hover effect (don't override hierarchy colour too aggressively) */
+.o_form_view .o_field_one2many .o_list_view tr.o_data_row.boq-div:hover > td {
+    background-color : #E8D9A5 !important;
+}
+.o_form_view .o_field_one2many .o_list_view tr.o_data_row.boq-sub:hover > td {
+    background-color : #F5F0E0 !important;
+}
+.o_form_view .o_field_one2many .o_list_view tr.o_data_row.boq-subsub:hover > td {
+    background-color : #FFF9ED !important;
+}
+
+/* ── PART 6: Sticky list header ──────────────────────────────────────────── */
+
+.o_form_view .o_field_one2many .o_list_view thead {
+    position   : sticky;
+    top        : 0;
+    z-index    : 5;
+    box-shadow : 0 2px 6px rgba(0,0,0,0.10);
+}
+
+/* ── PART 4: Status badge colours ────────────────────────────────────────── */
+
+/*
+ * BOQ Status  — draft=gray, review=amber, approved=green
+ * Analysis Status — same mapping
+ */
+
+/* Override Odoo's default badge-muted (gray) → stays gray ✓ */
+
+/* Override badge-warning for "review" → warm amber tone */
+.o_form_view .o_field_one2many .badge.text-bg-warning,
+.o_form_view .o_field_one2many .o_badge.text-bg-warning {
+    background-color : #FFC107 !important;
+    color            : #5A3E00 !important;
+    font-weight      : 600;
+}
+
+/* Override badge-success for "approved" → clear green */
+.o_form_view .o_field_one2many .badge.text-bg-success,
+.o_form_view .o_field_one2many .o_badge.text-bg-success {
+    background-color : #198754 !important;
+    color            : #FFFFFF !important;
+    font-weight      : 600;
+}
+
+/* BOQ Status draft → explicit gray */
+.o_form_view .o_field_one2many .badge.text-bg-secondary,
+.o_form_view .o_field_one2many .o_badge.text-bg-secondary {
+    background-color : #6C757D !important;
+    color            : #FFFFFF !important;
+}
+
+/* ── PART 5: Bulk action buttons ─────────────────────────────────────────── */
+
+.boq-analysis-actions {
+    display    : flex;
+    gap        : 8px;
+    align-items: center;
+    margin-bottom: 10px;
+    padding    : 8px 12px;
+    background : #F8F9FA;
+    border     : 1px solid #DEE2E6;
+    border-radius: 6px;
+}
+
+.boq-analysis-actions .btn {
+    min-width   : 120px;
+    font-size   : 12px;
+    font-weight : 600;
+    padding     : 5px 12px;
+    border-radius: 4px;
+}
+
+/* ── PART 3: Indentation for tree levels ─────────────────────────────────── */
+
+/* Odoo's parent_field tree adds .o_indent spans; boost them for analysis */
+.o_form_view .o_field_one2many .o_list_view .o_indent {
+    display: inline-block;
+    width  : 18px;   /* same as default but explicit */
+}
+
+/* Give the code column a monospace feel */
+.o_form_view .o_field_one2many .o_list_view td[name="display_code"] {
+    font-family : "Courier New", Courier, monospace;
+    font-size   : 11px;
+    color       : #333333;
+}
+
+/* ── Analysis header KPI bar ─────────────────────────────────────────────── */
+
+.boq-analysis-kpi-bar {
+    display         : flex;
+    gap             : 12px;
+    padding         : 12px 16px;
+    background      : linear-gradient(135deg, #1A3A5C 0%, #2563EB 100%);
+    border-radius   : 8px;
+    margin-bottom   : 16px;
+    align-items     : center;
+}
+
+.boq-analysis-kpi-bar .kpi-item {
+    flex          : 1;
+    text-align    : center;
+    color         : #FFFFFF;
+    border-right  : 1px solid rgba(255,255,255,0.2);
+    padding-right : 12px;
+}
+.boq-analysis-kpi-bar .kpi-item:last-child {
+    border-right: none;
+}
+.boq-analysis-kpi-bar .kpi-label {
+    font-size  : 11px;
+    opacity    : 0.75;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.boq-analysis-kpi-bar .kpi-value {
+    font-size  : 18px;
+    font-weight: 700;
+    margin-top : 2px;
+}
+
+/* ── Export/Print button styling in header ───────────────────────────────── */
+
+.o_form_view .o_form_statusbar .btn-outline-primary {
+    border-color : #2563EB;
+    color        : #2563EB;
+    font-size    : 13px;
+    font-weight  : 600;
+}
+.o_form_view .o_form_statusbar .btn-outline-primary:hover {
+    background-color: #2563EB;
+    color           : #FFFFFF;
+}
+
+.o_form_view .o_form_statusbar .btn-outline-success {
+    border-color : #198754;
+    color        : #198754;
+    font-size    : 13px;
+    font-weight  : 600;
+}
+.o_form_view .o_form_statusbar .btn-outline-success:hover {
+    background-color: #198754;
+    color           : #FFFFFF;
+}

@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        BOQ ANALYSIS — PDF REPORT
+        ==========================
+        Engineering-grade analysis report.
+        Layout: A4 landscape, full colour hierarchy, cost/sale/profit/margin.
+
+        Template:  smart_farm_boq_analysis.template_boq_analysis_full
+        Columns :  Code | Description | Qty | Unit | Cost UP | Sale UP |
+                   Cost Total | Sale Total | Profit | Margin %
+    -->
+
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         IDENTITY BAR (shared sub-template)
+    ═══════════════════════════════════════════════════════════════════ -->
+
+    <template id="_analysis_id_bar">
+        <div style="font-family:Arial,Helvetica,sans-serif;
+                    font-size:13px; color:#000000;
+                    border-bottom:2px solid #1A3A5C;
+                    padding-bottom:8px; margin-bottom:16px;">
+            <strong><t t-esc="doc.name"/></strong>
+            &#160;&#160;|&#160;&#160;BOQ:&#160;<t t-esc="doc.boq_id.name or ''"/>
+            &#160;&#160;|&#160;&#160;<t t-esc="doc.project_id.name or ''"/>
+            &#160;&#160;|&#160;&#160;<t t-esc="doc.date or ''"/>
+            &#160;&#160;|&#160;&#160;<t t-esc="doc.currency_id.name or ''"/>
+        </div>
+    </template>
+
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         MAIN DETAIL TEMPLATE
+    ═══════════════════════════════════════════════════════════════════ -->
+
+    <template id="report_boq_analysis_detail">
+        <div class="page">
+
+            <!-- ── Page CSS ────────────────────────────────────────────── -->
+            <style>
+                @page  { size: A4 landscape; margin: 12mm 10mm; }
+                body   { font-family: Arial, Helvetica, sans-serif;
+                         font-size: 12px; color: #000000; }
+                table  { border-collapse: collapse; width: 100%; }
+                th, td { padding: 6px 8px; }
+
+                .boq-analysis-header th {
+                    background-color: #1A3A5C;
+                    color: #FFFFFF;
+                    font-size: 12px;
+                    font-weight: bold;
+                    border: 1px solid #0D2035;
+                }
+                .boq-analysis-header th.num { text-align: right; }
+                .boq-analysis-header th.ctr { text-align: center; }
+
+                /* Division row */
+                .row-div td {
+                    background-color: #EFE2B8;
+                    font-weight: bold;
+                    font-size: 13px;
+                    border-top: 2px solid #C8A84B;
+                    border-bottom: 1px solid #C8A84B;
+                }
+                /* Subdivision row */
+                .row-sub td {
+                    background-color: #FDF9EE;
+                    font-weight: 600;
+                    font-size: 12px;
+                    border-bottom: 1px solid #E0D5B0;
+                }
+                /* Sub-subdivision row */
+                .row-subsub td {
+                    background-color: #FFFDF5;
+                    font-style: italic;
+                    color: #444444;
+                    font-size: 12px;
+                    border-bottom: 1px solid #F0ECD8;
+                }
+                /* Subitem row */
+                .row-item td {
+                    background-color: #FFFFFF;
+                    font-size: 12px;
+                    border-bottom: 1px solid #EEEEEE;
+                }
+                /* Subtotal row */
+                .row-subtot td {
+                    background-color: #D5E8D4;
+                    font-weight: bold;
+                    font-size: 12px;
+                    border-top: 1px solid #82B366;
+                    border-bottom: 2px solid #82B366;
+                }
+                /* Grand total row */
+                .row-grandtot td {
+                    background-color: #1A3A5C;
+                    color: #FFFFFF;
+                    font-weight: bold;
+                    font-size: 13px;
+                    border-top: 2px solid #0D2035;
+                }
+                .num { text-align: right; }
+                .ctr { text-align: center; }
+                .indent1 { padding-left: 20px; }
+                .indent2 { padding-left: 36px; }
+                .indent3 { padding-left: 52px; }
+            </style>
+
+            <!-- ── Report title ─────────────────────────────────────────── -->
+            <div style="text-align:center; margin-bottom:14px;">
+                <div style="font-size:20px; font-weight:bold; color:#000000;">
+                    BOQ Analysis Report
+                </div>
+                <div style="font-size:13px; color:#555555; margin-top:3px;">
+                    تقرير تحليل جدول الكميات
+                </div>
+            </div>
+
+            <t t-call="smart_farm_boq_analysis._analysis_id_bar"/>
+
+            <!-- ── Detail table ─────────────────────────────────────────── -->
+            <table>
+                <thead>
+                    <tr class="boq-analysis-header">
+                        <th style="width:9%;">Code</th>
+                        <th style="width:22%;">Description</th>
+                        <th class="num" style="width:6%;">Qty</th>
+                        <th class="ctr" style="width:5%;">Unit</th>
+                        <th class="num" style="width:9%;">Cost UP<br/>(
+                            <t t-esc="doc.currency_id.name or ''"/>)</th>
+                        <th class="num" style="width:9%;">Sale UP<br/>(
+                            <t t-esc="doc.currency_id.name or ''"/>)</th>
+                        <th class="num" style="width:9%;">Cost Total<br/>(
+                            <t t-esc="doc.currency_id.name or ''"/>)</th>
+                        <th class="num" style="width:9%;">Sale Total<br/>(
+                            <t t-esc="doc.currency_id.name or ''"/>)</th>
+                        <th class="num" style="width:9%;">Profit<br/>(
+                            <t t-esc="doc.currency_id.name or ''"/>)</th>
+                        <th class="num" style="width:6%;">Margin %</th>
+                        <th class="ctr" style="width:7%;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <t t-foreach="rd['divisions']" t-as="div">
+
+                        <!-- Division header -->
+                        <t t-if="div['section']">
+                            <tr class="row-div">
+                                <td><t t-esc="div['section'].display_code"/></td>
+                                <td colspan="10">
+                                    <strong><t t-esc="div['section'].name"/></strong>
+                                </td>
+                            </tr>
+                        </t>
+
+                        <!-- Rows (subdiv / subsub / items) -->
+                        <t t-foreach="div['rows']" t-as="line">
+
+                            <!-- Subdivision -->
+                            <t t-if="line.display_type == 'line_subsection'">
+                                <tr class="row-sub">
+                                    <td class="indent1">
+                                        <t t-esc="line.display_code"/>
+                                    </td>
+                                    <td colspan="10">
+                                        <t t-esc="line.name"/>
+                                    </td>
+                                </tr>
+                            </t>
+
+                            <!-- Sub-Subdivision -->
+                            <t t-elif="line.display_type == 'line_sub_subsection'">
+                                <tr class="row-subsub">
+                                    <td class="indent2">
+                                        <t t-esc="line.display_code"/>
+                                    </td>
+                                    <td colspan="10">
+                                        <t t-esc="line.name"/>
+                                    </td>
+                                </tr>
+                            </t>
+
+                            <!-- Subitem -->
+                            <t t-else="">
+                                <tr class="row-item">
+                                    <td class="indent3">
+                                        <t t-esc="line.display_code"/>
+                                    </td>
+                                    <td><t t-esc="line.name"/></td>
+                                    <td class="num">
+                                        <t t-esc="'%.2f' % (line.boq_qty or 0.0)"/>
+                                    </td>
+                                    <td class="ctr">
+                                        <t t-esc="line.unit_id.name or ''"/>
+                                    </td>
+                                    <td class="num">
+                                        <t t-esc="'%.2f' % (line.cost_unit_price or 0.0)"/>
+                                    </td>
+                                    <td class="num">
+                                        <t t-esc="'%.2f' % (line.sale_unit_price or 0.0)"/>
+                                    </td>
+                                    <td class="num">
+                                        <t t-esc="'%.2f' % (line.cost_total or 0.0)"/>
+                                    </td>
+                                    <td class="num">
+                                        <t t-esc="'%.2f' % (line.sale_total or 0.0)"/>
+                                    </td>
+                                    <td t-att-style="'color:' + ('#006400' if (line.profit or 0) >= 0 else '#8B0000')"
+                                        class="num">
+                                        <t t-esc="'%.2f' % (line.profit or 0.0)"/>
+                                    </td>
+                                    <td t-att-style="'color:' + ('#006400' if (line.margin or 0) >= 10 else ('#8B4500' if (line.margin or 0) >= 0 else '#8B0000'))"
+                                        class="num">
+                                        <t t-esc="'%.1f' % (line.margin or 0.0)"/>%
+                                    </td>
+                                    <td class="ctr">
+                                        <span t-att-style="
+                                            'padding:2px 6px; border-radius:3px; font-size:11px; font-weight:bold; ' +
+                                            ('background:#d4edda; color:#155724;' if line.analysis_state == 'approved' else
+                                             'background:#fff3cd; color:#7a4f00;' if line.analysis_state == 'review' else
+                                             'background:#f0f0f0; color:#555;')">
+                                            <t t-esc="
+                                                'Approved' if line.analysis_state == 'approved' else
+                                                'Review'   if line.analysis_state == 'review'   else
+                                                'Draft'
+                                            "/>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </t>
+
+                        </t><!-- /rows loop -->
+
+                        <!-- Division subtotal -->
+                        <t t-if="div['section']">
+                            <tr class="row-subtot">
+                                <td colspan="6" style="text-align:right;">
+                                    Subtotal&#160;&#160;<t t-esc="div['section'].name"/>
+                                </td>
+                                <td class="num">
+                                    <t t-esc="'%.2f' % div['subtotal_cost']"/>
+                                </td>
+                                <td class="num">
+                                    <t t-esc="'%.2f' % div['subtotal_sale']"/>
+                                </td>
+                                <td class="num">
+                                    <t t-esc="'%.2f' % div['subtotal_profit']"/>
+                                </td>
+                                <td class="num">
+                                    <t t-esc="
+                                        '%.1f%%' % (div['subtotal_profit'] / div['subtotal_cost'] * 100.0)
+                                        if div['subtotal_cost'] else '—'
+                                    "/>
+                                </td>
+                                <td/>
+                            </tr>
+                            <!-- Spacer -->
+                            <tr style="height:6px;"><td colspan="11" style="background:#f8f8f8;"/></tr>
+                        </t>
+
+                    </t><!-- /divisions loop -->
+
+                </tbody>
+
+                <!-- Grand total -->
+                <tfoot>
+                    <tr class="row-grandtot">
+                        <td colspan="6" style="text-align:right; letter-spacing:0.5px;">
+                            GRAND TOTAL &#160;|&#160; الإجمالي الكلي
+                        </td>
+                        <td class="num">
+                            <t t-esc="'%.2f' % rd['total_cost']"/>
+                        </td>
+                        <td class="num">
+                            <t t-esc="'%.2f' % rd['total_sale']"/>
+                        </td>
+                        <td class="num">
+                            <t t-esc="'%.2f' % rd['total_profit']"/>
+                        </td>
+                        <td class="num">
+                            <t t-esc="'%.1f%%' % rd['total_margin']"/>
+                        </td>
+                        <td/>
+                    </tr>
+                </tfoot>
+
+            </table>
+
+            <!-- ── Summary block ────────────────────────────────────────── -->
+            <div style="margin-top:24px; page-break-inside:avoid;">
+                <div style="font-size:14px; font-weight:bold; color:#1A3A5C;
+                            border-bottom:2px solid #1A3A5C; margin-bottom:10px;
+                            padding-bottom:4px;">
+                    Financial Summary  &#160;|&#160;  الملخص المالي
+                </div>
+                <table style="width:340px; border-collapse:collapse;">
+                    <tr>
+                        <td style="padding:5px 12px 5px 0; font-weight:bold; color:#555555;">
+                            Total Cost
+                        </td>
+                        <td style="padding:5px 0; text-align:right; font-weight:bold;">
+                            <t t-esc="'%.2f' % rd['total_cost']"/>
+                            &#160;<t t-esc="rd['currency_symbol']"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:5px 12px 5px 0; font-weight:bold; color:#555555;">
+                            Total Sale
+                        </td>
+                        <td style="padding:5px 0; text-align:right; font-weight:bold;">
+                            <t t-esc="'%.2f' % rd['total_sale']"/>
+                            &#160;<t t-esc="rd['currency_symbol']"/>
+                        </td>
+                    </tr>
+                    <tr style="border-top:1px solid #ccc;">
+                        <td style="padding:5px 12px 5px 0; font-weight:bold; color:#006400;">
+                            Total Profit
+                        </td>
+                        <td t-att-style="'padding:5px 0; text-align:right; font-weight:bold; color:' + ('#006400' if rd['total_profit'] >= 0 else '#8B0000')">
+                            <t t-esc="'%.2f' % rd['total_profit']"/>
+                            &#160;<t t-esc="rd['currency_symbol']"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:5px 12px 5px 0; font-weight:bold; color:#555555;">
+                            Gross Margin
+                        </td>
+                        <td t-att-style="'padding:5px 0; text-align:right; font-weight:bold; font-size:14px; color:' + ('#006400' if rd['total_margin'] >= 10 else ('#8B4500' if rd['total_margin'] >= 0 else '#8B0000'))">
+                            <t t-esc="'%.1f' % rd['total_margin']"/>%
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- ── Notes ────────────────────────────────────────────────── -->
+            <t t-if="doc.notes">
+                <div style="margin-top:20px; border-top:1px solid #CCCCCC;
+                            padding-top:10px; font-size:12px; color:#000000;">
+                    <strong>Notes / ملاحظات:</strong>
+                    <p style="white-space:pre-wrap; margin-top:6px;">
+                        <t t-esc="doc.notes"/>
+                    </p>
+                </div>
+            </t>
+
+        </div>
+    </template>
+
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         TOP-LEVEL TEMPLATE (called by report action)
+    ═══════════════════════════════════════════════════════════════════ -->
+
+    <template id="template_boq_analysis_full">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <t t-if="not doc.line_ids">
+                        <p style="color:red; font-weight:700;">
+                            NO DATA — Analysis has no lines.
+                        </p>
+                    </t>
+                    <t t-set="rd" t-value="doc._get_analysis_report_data()"/>
+                    <t t-call="smart_farm_boq_analysis.report_boq_analysis_detail"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         REPORT ACTION
+    ═══════════════════════════════════════════════════════════════════ -->
+
+    <record id="action_report_boq_analysis_pdf" model="ir.actions.report">
+        <field name="name">BOQ Analysis Report</field>
+        <field name="model">farm.boq.analysis</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">smart_farm_boq_analysis.template_boq_analysis_full</field>
+        <field name="report_file">smart_farm_boq_analysis.template_boq_analysis_full</field>
+        <field name="print_report_name">'BOQ-Analysis-%s' % object.name</field>
+        <field name="binding_model_id" ref="model_farm_boq_analysis"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

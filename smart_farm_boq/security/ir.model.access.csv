@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_project_phase_master_user,project.phase.master user,model_project_phase_master,base.group_user,1,0,0,0
+access_project_phase_master_manager,project.phase.master manager,model_project_phase_master,base.group_system,1,1,1,1
+access_farm_boq_user,farm.boq user,model_farm_boq,base.group_user,1,1,1,1
+access_farm_boq_line_user,farm.boq.line user,model_farm_boq_line,base.group_user,1,1,1,1
+access_farm_boq_line_template_user,farm.boq.line.template user,model_farm_boq_line_template,base.group_user,1,1,1,1
+access_farm_boq_line_template_material_user,farm.boq.line.template.material user,model_farm_boq_line_template_material,base.group_user,1,1,1,1
+access_farm_boq_line_template_labor_user,farm.boq.line.template.labor user,model_farm_boq_line_template_labor,base.group_user,1,1,1,1
+access_farm_boq_line_template_overhead_user,farm.boq.line.template.overhead user,model_farm_boq_line_template_overhead,base.group_user,1,1,1,1
+access_farm_boq_line_template_subcontractor_user,farm.boq.line.template.subcontractor user,model_farm_boq_line_template_subcontractor,base.group_user,1,1,1,1
+access_farm_boq_line_template_equipment_user,farm.boq.line.template.equipment user,model_farm_boq_line_template_equipment,base.group_user,1,1,1,1
+access_farm_boq_line_template_tools_user,farm.boq.line.template.tools user,model_farm_boq_line_template_tools,base.group_user,1,1,1,1
+access_farm_boq_line_template_use_wizard_user,farm.boq.line.template.use.wizard user,model_farm_boq_line_template_use_wizard,base.group_user,1,1,1,1
+access_farm_boq_add_subitem_wizard_user,farm.boq.add.subitem.wizard user,model_farm_boq_add_subitem_wizard,base.group_user,1,1,1,1
+access_farm_boq_add_structure_wizard_user,farm.boq.add_structure.wizard user,model_farm_boq_add_structure_wizard,base.group_user,1,1,1,1
+access_farm_boq_print_wizard_user,farm.boq.print.wizard user,model_farm_boq_print_wizard,base.group_user,1,1,1,1

@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_farm_job_order_viewer,farm.job.order viewer,model_farm_job_order,group_smart_farm_execution_viewer,1,0,0,0
+access_farm_job_order_user,farm.job.order user,model_farm_job_order,group_smart_farm_execution_user,1,1,1,0
+access_farm_job_order_manager,farm.job.order manager,model_farm_job_order,group_smart_farm_execution_manager,1,1,1,1
+access_farm_material_consumption_viewer,farm.material.consumption viewer,model_farm_material_consumption,group_smart_farm_execution_viewer,1,0,0,0
+access_farm_material_consumption_user,farm.material.consumption user,model_farm_material_consumption,group_smart_farm_execution_user,1,1,1,0
+access_farm_material_consumption_manager,farm.material.consumption manager,model_farm_material_consumption,group_smart_farm_execution_manager,1,1,1,1
+access_farm_labour_entry_viewer,farm.labour.entry viewer,model_farm_labour_entry,group_smart_farm_execution_viewer,1,0,0,0
+access_farm_labour_entry_user,farm.labour.entry user,model_farm_labour_entry,group_smart_farm_execution_user,1,1,1,0
+access_farm_labour_entry_manager,farm.labour.entry manager,model_farm_labour_entry,group_smart_farm_execution_manager,1,1,1,1
+access_farm_job_progress_log_viewer,farm.job.progress.log viewer,model_farm_job_progress_log,group_smart_farm_execution_viewer,1,0,0,0
+access_farm_job_progress_log_user,farm.job.progress.log user,model_farm_job_progress_log,group_smart_farm_execution_user,1,1,1,0
+access_farm_job_progress_log_manager,farm.job.progress.log manager,model_farm_job_progress_log,group_smart_farm_execution_manager,1,1,1,1

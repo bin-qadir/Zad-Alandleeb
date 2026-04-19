@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            SMART FARM DASHBOARD — Project Health Visibility
+            =================================================
+
+            Adds health badge + risk flag fields to:
+            1. Farm Project list view — health badge column
+            2. Farm Project form view — health badge in header alongside phase badge
+            3. Executive project list — full management columns
+        -->
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             1 · LIST VIEW — add health badge after phase badge
+        ════════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_project_list_health_badge" model="ir.ui.view">
+            <field name="name">farm.project.list.health.badge</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_project.view_farm_project_list"/>
+            <field name="arch" type="xml">
+
+                <!-- Health badge after the phase badge -->
+                <xpath expr="//field[@name='project_phase'][@optional='show']" position="after">
+                    <field name="project_health"
+                           string="Health"
+                           optional="show"
+                           widget="badge"
+                           decoration-success="project_health == 'healthy'"
+                           decoration-warning="project_health == 'warning'"
+                           decoration-danger="project_health == 'critical'"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             2 · FORM VIEW — health badge in header + risk flags in header
+        ════════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_project_form_health" model="ir.ui.view">
+            <field name="name">farm.project.form.health</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Add health badge after the phase statusbar -->
+                <xpath expr="//field[@name='project_phase'][@widget='statusbar']" position="after">
+                    <field name="project_health"
+                           widget="badge"
+                           decoration-success="project_health == 'healthy'"
+                           decoration-warning="project_health == 'warning'"
+                           decoration-danger="project_health == 'critical'"/>
+                </xpath>
+
+                <!-- Add is_over_budget and is_negative_profit as invisible fields
+                     so they can be used in list view decoration rules -->
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <field name="is_over_budget" invisible="True"/>
+                    <field name="is_negative_profit" invisible="True"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             3 · EXECUTIVE PROJECT LIST — management-facing list view
+                 Used by dashboard drill-down actions
+        ════════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_project_executive_list" model="ir.ui.view">
+            <field name="name">farm.project.executive.list</field>
+            <field name="model">farm.project</field>
+            <field name="arch" type="xml">
+
+                <list string="Projects — Executive View"
+                      default_order="project_phase,project_health desc,name"
+                      decoration-danger="project_health == 'critical'"
+                      decoration-warning="project_health == 'warning'">
+
+                    <field name="name" string="Project"/>
+                    <field name="project_phase"
+                           string="Phase"
+                           widget="badge"
+                           decoration-success="project_phase == 'pre_tender'"
+                           decoration-warning="project_phase == 'tender'"
+                           decoration-primary="project_phase == 'contract'"
+                           decoration-danger="project_phase == 'execution'"
+                           decoration-muted="project_phase == 'closing'"/>
+                    <field name="project_health"
+                           string="Health"
+                           widget="badge"
+                           decoration-success="project_health == 'healthy'"
+                           decoration-warning="project_health == 'warning'"
+                           decoration-danger="project_health == 'critical'"/>
+                    <field name="project_manager_id" string="Manager" optional="show"/>
+
+                    <field name="contract_value"
+                           string="Contract Value"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"
+                           optional="show"/>
+                    <field name="estimated_cost"
+                           string="Estimated Cost"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"
+                           optional="show"/>
+                    <field name="total_committed_cost"
+                           string="Committed"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"
+                           optional="show"/>
+                    <field name="actual_total_cost"
+                           string="Actual Cost"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"
+                           optional="show"/>
+                    <field name="forecast_final_cost"
+                           string="Forecast Final"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"
+                           optional="show"/>
+                    <field name="projected_profit"
+                           string="Proj. Profit"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"
+                           decoration-success="projected_profit &gt; 0"
+                           decoration-danger="projected_profit &lt;= 0"
+                           optional="show"/>
+                    <field name="gross_margin_pct"
+                           string="Margin %"
+                           decoration-success="gross_margin_pct &gt; 10"
+                           decoration-warning="gross_margin_pct &gt; 0 and gross_margin_pct &lt;= 10"
+                           decoration-danger="gross_margin_pct &lt;= 0"
+                           optional="show"/>
+
+                    <field name="is_over_budget"
+                           string="Over Budget"
+                           widget="boolean"
+                           optional="show"/>
+                    <field name="is_negative_profit"
+                           string="Neg. Profit"
+                           widget="boolean"
+                           optional="hide"/>
+                    <field name="has_approved_contract"
+                           string="Contract ✓"
+                           widget="boolean"
+                           optional="show"/>
+
+                    <!-- Hidden for widget resolution -->
+                    <field name="currency_id" column_invisible="True"/>
+
+                </list>
+
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             4 · EXECUTIVE ACTIONS — used by dashboard drill-down buttons
+        ════════════════════════════════════════════════════════════════════ -->
+
+        <!-- Base executive action (list,form) using the executive list -->
+        <record id="action_farm_project_executive" model="ir.actions.act_window">
+            <field name="name">Projects — Executive View</field>
+            <field name="res_model">farm.project</field>
+            <field name="view_mode">list,form</field>
+            <field name="views" eval="[(ref('view_farm_project_executive_list'), 'list'), (False, 'form')]"/>
+        </record>
+
+        <!-- Dedicated search filters for executive use -->
+        <record id="view_farm_project_executive_search" model="ir.ui.view">
+            <field name="name">farm.project.executive.search</field>
+            <field name="model">farm.project</field>
+            <field name="arch" type="xml">
+                <search string="Executive Search">
+                    <field name="name" string="Project Name"/>
+                    <field name="project_manager_id" string="Manager"/>
+
+                    <filter string="Critical"      name="critical"   domain="[('project_health', '=', 'critical')]"/>
+                    <filter string="Warning"       name="warning"    domain="[('project_health', '=', 'warning')]"/>
+                    <filter string="Healthy"       name="healthy"    domain="[('project_health', '=', 'healthy')]"/>
+                    <separator/>
+                    <filter string="Pre-Tender"    name="pre_tender" domain="[('project_phase', '=', 'pre_tender')]"/>
+                    <filter string="Tender"        name="tender"     domain="[('project_phase', '=', 'tender')]"/>
+                    <filter string="Contract"      name="contract"   domain="[('project_phase', '=', 'contract')]"/>
+                    <filter string="Execution"     name="execution"  domain="[('project_phase', '=', 'execution')]"/>
+                    <filter string="Closing"       name="closing"    domain="[('project_phase', '=', 'closing')]"/>
+                    <separator/>
+                    <filter string="Over Budget"   name="over_budget"       domain="[('is_over_budget', '=', True)]"/>
+                    <filter string="Negative Profit" name="neg_profit"      domain="[('is_negative_profit', '=', True)]"/>
+                    <filter string="Has Contract"  name="has_contract"      domain="[('has_approved_contract', '=', True)]"/>
+
+                    <group expand="0" string="Group By">
+                        <filter string="Phase"   name="group_phase"  context="{'group_by': 'project_phase'}"/>
+                        <filter string="Health"  name="group_health" context="{'group_by': 'project_health'}"/>
+                        <filter string="Manager" name="group_pm"     context="{'group_by': 'project_manager_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+    </data>
+</odoo>

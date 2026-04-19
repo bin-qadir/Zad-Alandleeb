@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Contracts menu under Projects section (seq 30 = after Fields at seq 20) -->
+        <menuitem
+            id="menu_farm_contract"
+            name="Contracts"
+            parent="smart_farm_project.menu_smart_farm_projects"
+            action="action_farm_contract"
+            sequence="30"
+        />
+
+    </data>
+</odoo>

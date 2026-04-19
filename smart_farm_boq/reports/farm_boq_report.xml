@@ -1,0 +1,696 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         BOQ Report — Premium International Design
+         ─────────────────────────────────────────────────────────────────
+         Design system (all inline, wkhtmltopdf-safe):
+           Font  : Arial, Helvetica, sans-serif
+           Color : #000000 throughout — no grey, no faded tones
+           Body  : 14px
+           Important cols / headers : 16px bold
+           Grand total  : 18px bold
+           Division row : 16px bold, #f2f2f2 bg
+           Subdivision  : 14px 600, #fafafa bg
+           Sub-sub      : 14px italic, white bg
+           Detail item  : 14px, white bg
+           Grand total bar: 18px bold, 2px solid #000 top border
+
+         Templates (standalone, no data-dict):
+           template_boq_full             → all 3 sections
+           template_boq_details          → details table only
+           template_boq_division_summary → division+subdivision table
+           template_boq_overall_summary  → grand-total table
+
+         Report actions:
+           action_report_boq_full            (binding — Actions menu)
+           action_report_boq_details
+           action_report_boq_division_summary
+           action_report_boq_overall_summary
+    ═══════════════════════════════════════════════════════════════════ -->
+
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         UTILITY TEMPLATE — BOQ identification bar (shared by all pages)
+    ═══════════════════════════════════════════════════════════════════ -->
+
+    <template id="_boq_id_bar">
+        <div style="font-family:Arial,Helvetica,sans-serif;
+                    font-size:14px; color:#000000;
+                    border-bottom:1px solid #000000;
+                    padding-bottom:8px; margin-bottom:16px;">
+            <strong><t t-esc="doc.name"/></strong>
+            &#160;&#160;|&#160;&#160;<t t-esc="doc.project_id.name or ''"/>
+            &#160;&#160;|&#160;&#160;<t t-esc="doc.date or ''"/>
+            &#160;&#160;|&#160;&#160;<t t-esc="doc.currency_id.name or ''"/>
+        </div>
+    </template>
+
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         PAGE 1 — DIVISION + SUBDIVISION SUMMARY
+         Uses: ds  (from _get_division_summary)
+               mode (page 1 is always first — no page break here)
+    ═══════════════════════════════════════════════════════════════════ -->
+
+    <template id="report_division_summary">
+        <div class="page">
+
+            <!-- Report title -->
+            <div style="text-align:center; margin-bottom:18px;
+                        font-family:Arial,Helvetica,sans-serif;">
+                <div style="font-size:22px; font-weight:bold; color:#000000;">
+                    Division Summary
+                </div>
+                <div style="font-size:14px; color:#000000; margin-top:4px;">
+                    ملخص الأقسام والتقسيمات
+                </div>
+            </div>
+
+            <t t-call="smart_farm_boq._boq_id_bar"/>
+
+            <table style="width:100%; border-collapse:collapse;
+                          font-family:Arial,Helvetica,sans-serif;">
+                <thead>
+                    <tr>
+                        <th style="width:90px; padding:10px 10px;
+                                   font-size:16px; font-weight:bold; color:#000000;
+                                   text-align:left;
+                                   border-bottom:2px solid #000000;
+                                   background-color:#ffffff;">
+                            Code
+                        </th>
+                        <th style="width:36%; padding:10px 10px;
+                                   font-size:16px; font-weight:bold; color:#000000;
+                                   text-align:left;
+                                   border-bottom:2px solid #000000;
+                                   background-color:#ffffff;">
+                            Division | القسم
+                        </th>
+                        <th style="padding:10px 10px;
+                                   font-size:16px; font-weight:bold; color:#000000;
+                                   text-align:left;
+                                   border-bottom:2px solid #000000;
+                                   background-color:#ffffff;">
+                            Subdivision | التقسيم
+                        </th>
+                        <th style="width:140px; padding:10px 10px;
+                                   font-size:16px; font-weight:bold; color:#000000;
+                                   text-align:right;
+                                   border-bottom:2px solid #000000;
+                                   background-color:#ffffff;">
+                            Amount (<t t-esc="doc.currency_id.name or ''"/>)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="ds" t-as="div_item">
+
+                        <!-- Division header row -->
+                        <tr style="background-color:#f2f2f2;
+                                   border-top:2px solid #000000;
+                                   border-bottom:1px solid #cccccc;">
+                            <td style="padding:8px 10px;
+                                       font-family:Arial,Helvetica,sans-serif;
+                                       font-size:16px; font-weight:bold; color:#000000;">
+                                <t t-esc="div_item['code']"/>
+                            </td>
+                            <td colspan="2"
+                                style="padding:8px 10px;
+                                       font-size:16px; font-weight:bold; color:#000000;">
+                                <t t-esc="div_item['name']"/>
+                            </td>
+                            <td style="padding:8px 10px;"/>
+                        </tr>
+
+                        <!-- Subdivision rows -->
+                        <t t-foreach="div_item['subdivisions']" t-as="sub_item">
+                            <tr style="background-color:#fafafa;
+                                       border-bottom:1px solid #cccccc;">
+                                <td style="padding:8px 10px 8px 26px;
+                                           font-family:Arial,Helvetica,sans-serif;
+                                           font-size:14px; font-weight:500; color:#000000;">
+                                    <t t-esc="sub_item['code']"/>
+                                </td>
+                                <td style="padding:8px 10px; color:#000000;"/>
+                                <td style="padding:8px 10px;
+                                           font-size:14px; font-weight:500; color:#000000;">
+                                    <t t-esc="sub_item['name']"/>
+                                </td>
+                                <td style="padding:8px 10px; text-align:right;
+                                           font-size:14px; font-weight:500; color:#000000;">
+                                    <t t-esc="'%.2f' % sub_item['total']"/>
+                                </td>
+                            </tr>
+                        </t>
+
+                        <!-- Division total row -->
+                        <tr style="background-color:#f2f2f2; font-weight:bold;
+                                   border-top:2px solid #000000;
+                                   border-bottom:2px solid #000000;">
+                            <td style="padding:8px 10px;"/>
+                            <td colspan="2"
+                                style="padding:8px 10px; text-align:right;
+                                       font-size:16px; font-weight:bold; color:#000000;">
+                                Total&#160;<t t-esc="div_item['name']"/>
+                            </td>
+                            <td style="padding:8px 10px; text-align:right;
+                                       font-size:16px; font-weight:bold; color:#000000;">
+                                <t t-esc="'%.2f' % div_item['division_total']"/>
+                            </td>
+                        </tr>
+
+                        <!-- Spacer between divisions -->
+                        <tr style="height:8px; background-color:#ffffff;">
+                            <td colspan="4"/>
+                        </tr>
+
+                    </t>
+                </tbody>
+            </table>
+
+        </div>
+    </template>
+
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         PAGE 2 — OVERALL SUMMARY
+         Uses: rd   (from _get_boq_report_data)
+               mode (page break only when mode == 'full')
+    ═══════════════════════════════════════════════════════════════════ -->
+
+    <template id="report_overall_summary">
+        <div t-att-style="'page-break-before: always;' if mode == 'full' else ''"
+             class="page">
+
+            <!-- Report title -->
+            <div style="text-align:center; margin-bottom:18px;
+                        font-family:Arial,Helvetica,sans-serif;">
+                <div style="font-size:22px; font-weight:bold; color:#000000;">
+                    Overall Summary
+                </div>
+                <div style="font-size:14px; color:#000000; margin-top:4px;">
+                    الملخص الإجمالي
+                </div>
+            </div>
+
+            <t t-call="smart_farm_boq._boq_id_bar"/>
+
+            <table style="width:100%; border-collapse:collapse;
+                          font-family:Arial,Helvetica,sans-serif;">
+                <thead>
+                    <tr>
+                        <th style="width:90px; padding:10px 10px;
+                                   font-size:16px; font-weight:bold; color:#000000;
+                                   text-align:left;
+                                   border-bottom:2px solid #000000;
+                                   background-color:#ffffff;">
+                            Code
+                        </th>
+                        <th style="padding:10px 10px;
+                                   font-size:16px; font-weight:bold; color:#000000;
+                                   text-align:left;
+                                   border-bottom:2px solid #000000;
+                                   background-color:#ffffff;">
+                            Division | القسم
+                        </th>
+                        <th style="width:160px; padding:10px 10px;
+                                   font-size:16px; font-weight:bold; color:#000000;
+                                   text-align:right;
+                                   border-bottom:2px solid #000000;
+                                   background-color:#ffffff;">
+                            Amount (<t t-esc="doc.currency_id.name or ''"/>)
+                        </th>
+                        <th style="width:75px; padding:10px 10px;
+                                   font-size:16px; font-weight:bold; color:#000000;
+                                   text-align:right;
+                                   border-bottom:2px solid #000000;
+                                   background-color:#ffffff;">
+                            %
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="rd['divisions']" t-as="div">
+                        <t t-if="div['section']">
+                            <tr style="background-color:#ffffff;
+                                       border-bottom:1px solid #cccccc;">
+                                <td style="padding:8px 10px;
+                                           font-family:Arial,Helvetica,sans-serif;
+                                           font-size:16px; font-weight:500; color:#000000;">
+                                    <t t-esc="div['section'].display_code"/>
+                                </td>
+                                <td style="padding:8px 10px;
+                                           font-size:16px; font-weight:500; color:#000000;">
+                                    <t t-esc="div['section'].name"/>
+                                </td>
+                                <td style="padding:8px 10px; text-align:right;
+                                           font-size:16px; font-weight:500; color:#000000;">
+                                    <t t-esc="'%.2f' % div['subtotal']"/>
+                                </td>
+                                <td style="padding:8px 10px; text-align:right;
+                                           font-size:14px; font-weight:500; color:#000000;">
+                                    <t t-esc="'%.1f' % (
+                                        (div['subtotal'] / rd['grand_total'] * 100.0)
+                                        if rd['grand_total'] else 0.0
+                                    )"/>%
+                                </td>
+                            </tr>
+                        </t>
+                    </t>
+                </tbody>
+                <tfoot>
+                    <!-- Grand total bar -->
+                    <tr style="border-top:2px solid #000000;">
+                        <td colspan="2"
+                            style="padding:10px 10px; text-align:right;
+                                   font-family:Arial,Helvetica,sans-serif;
+                                   font-size:18px; font-weight:bold; color:#000000;
+                                   letter-spacing:0.5px;">
+                            GRAND TOTAL | الإجمالي الكلي
+                        </td>
+                        <td style="padding:10px 10px; text-align:right;
+                                   font-size:18px; font-weight:bold; color:#000000;">
+                            <t t-esc="'%.2f' % rd['grand_total']"/>
+                            &#160;<t t-esc="rd['currency_symbol']"/>
+                        </td>
+                        <td style="padding:10px 10px; text-align:right;
+                                   font-size:16px; font-weight:bold; color:#000000;">
+                            100.0%
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+
+        </div>
+    </template>
+
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         PAGE 3+ — FULL BOQ DETAILS
+         Uses: rd   (from _get_boq_report_data)
+               mode (page break only when mode == 'full')
+    ═══════════════════════════════════════════════════════════════════ -->
+
+    <template id="report_details">
+        <div t-att-style="'page-break-before: always;' if mode == 'full' else ''"
+             class="page">
+
+            <!-- Report title -->
+            <div style="text-align:center; margin-bottom:18px;
+                        font-family:Arial,Helvetica,sans-serif;">
+                <div style="font-size:22px; font-weight:bold; color:#000000;">
+                    Bill of Quantities
+                </div>
+                <div style="font-size:14px; color:#000000; margin-top:4px;">
+                    جدول الكميات
+                </div>
+            </div>
+
+            <!-- BOQ metadata block -->
+            <div style="margin-bottom:18px;">
+                <table style="font-family:Arial,Helvetica,sans-serif;
+                               font-size:14px; border-collapse:collapse;">
+                    <tr>
+                        <td style="font-weight:bold; color:#000000;
+                                   padding:3px 18px 3px 0; white-space:nowrap;">
+                            BOQ Reference
+                        </td>
+                        <td style="color:#000000; padding:3px 0;">
+                            <t t-esc="doc.name"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; color:#000000;
+                                   padding:3px 18px 3px 0;">
+                            Project
+                        </td>
+                        <td style="color:#000000; padding:3px 0;">
+                            <t t-esc="doc.project_id.name or ''"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; color:#000000;
+                                   padding:3px 18px 3px 0;">
+                            Date
+                        </td>
+                        <td style="color:#000000; padding:3px 0;">
+                            <t t-esc="doc.date or ''"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; color:#000000;
+                                   padding:3px 18px 3px 0;">
+                            Currency
+                        </td>
+                        <td style="color:#000000; padding:3px 0;">
+                            <t t-esc="doc.currency_id.name or ''"/>
+                        </td>
+                    </tr>
+                </table>
+                <t t-if="doc.is_revision">
+                    <div style="margin-top:8px; display:inline-block;
+                                background:#f0ad4e; color:#000000;
+                                padding:4px 12px; border-radius:3px;
+                                font-family:Arial,Helvetica,sans-serif;
+                                font-size:14px; font-weight:bold;">
+                        Revision <t t-esc="doc.revision_no"/>
+                    </div>
+                </t>
+                <div style="margin-top:6px;
+                            font-family:Arial,Helvetica,sans-serif;
+                            font-size:14px; color:#000000;">
+                    Status:&#160;
+                    <strong>
+                        <t t-esc="dict(doc.fields_get(['state'])['state']['selection'])[doc.state]"/>
+                    </strong>
+                </div>
+            </div>
+
+            <!-- Detail table -->
+            <table style="width:100%; border-collapse:collapse;
+                          font-family:Arial,Helvetica,sans-serif;">
+                <thead>
+                    <tr>
+                        <th style="width:90px; padding:10px 10px;
+                                   font-size:16px; font-weight:bold; color:#000000;
+                                   text-align:left;
+                                   border-bottom:2px solid #000000;
+                                   background-color:#ffffff;">
+                            Code
+                        </th>
+                        <th style="padding:10px 10px;
+                                   font-size:16px; font-weight:bold; color:#000000;
+                                   text-align:left;
+                                   border-bottom:2px solid #000000;
+                                   background-color:#ffffff;">
+                            Description
+                        </th>
+                        <th style="width:55px; padding:10px 10px;
+                                   font-size:16px; font-weight:bold; color:#000000;
+                                   text-align:center;
+                                   border-bottom:2px solid #000000;
+                                   background-color:#ffffff;">
+                            Unit
+                        </th>
+                        <th style="width:65px; padding:10px 10px;
+                                   font-size:16px; font-weight:bold; color:#000000;
+                                   text-align:right;
+                                   border-bottom:2px solid #000000;
+                                   background-color:#ffffff;">
+                            Qty
+                        </th>
+                        <th style="width:90px; padding:10px 10px;
+                                   font-size:16px; font-weight:bold; color:#000000;
+                                   text-align:right;
+                                   border-bottom:2px solid #000000;
+                                   background-color:#ffffff;">
+                            Unit Price
+                        </th>
+                        <th style="width:100px; padding:10px 10px;
+                                   font-size:16px; font-weight:bold; color:#000000;
+                                   text-align:right;
+                                   border-bottom:2px solid #000000;
+                                   background-color:#ffffff;">
+                            Total
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="rd['divisions']" t-as="div">
+
+                        <!-- Division section header -->
+                        <t t-if="div['section']">
+                            <tr style="background-color:#f2f2f2;
+                                       border-top:2px solid #000000;
+                                       border-bottom:1px solid #cccccc;">
+                                <td style="padding:8px 10px;
+                                           font-family:Arial,Helvetica,sans-serif;
+                                           font-size:16px; font-weight:bold; color:#000000;">
+                                    <t t-esc="div['section'].display_code"/>
+                                </td>
+                                <td colspan="5"
+                                    style="padding:8px 10px;
+                                           font-size:16px; font-weight:bold; color:#000000;">
+                                    <t t-esc="div['section'].name"/>
+                                </td>
+                            </tr>
+                        </t>
+
+                        <!-- All rows under this division -->
+                        <t t-foreach="div['rows']" t-as="line">
+
+                            <!-- Subdivision header -->
+                            <t t-if="line.display_type == 'line_subsection'">
+                                <tr style="background-color:#fafafa;
+                                           border-top:1px solid #cccccc;
+                                           border-bottom:1px solid #cccccc;">
+                                    <td style="padding:8px 10px 8px 22px;
+                                               font-family:Arial,Helvetica,sans-serif;
+                                               font-size:14px; font-weight:600; color:#000000;">
+                                        <t t-esc="line.display_code"/>
+                                    </td>
+                                    <td colspan="5"
+                                        style="padding:8px 10px;
+                                               font-size:14px; font-weight:600; color:#000000;">
+                                        <t t-esc="line.name"/>
+                                    </td>
+                                </tr>
+                            </t>
+
+                            <!-- Sub-subdivision header -->
+                            <t t-elif="line.display_type == 'line_sub_subsection'">
+                                <tr style="background-color:#ffffff;
+                                           border-bottom:1px solid #e0e0e0;">
+                                    <td style="padding:7px 10px 7px 36px;
+                                               font-family:Arial,Helvetica,sans-serif;
+                                               font-size:14px; color:#000000;">
+                                        <t t-esc="line.display_code"/>
+                                    </td>
+                                    <td colspan="5"
+                                        style="padding:7px 10px;
+                                               font-size:14px; color:#000000;
+                                               font-style:italic;">
+                                        <t t-esc="line.name"/>
+                                    </td>
+                                </tr>
+                            </t>
+
+                            <!-- Real item row -->
+                            <t t-else="">
+                                <tr style="background-color:#ffffff;
+                                           border-bottom:1px solid #e0e0e0;">
+                                    <td style="padding:8px 10px 8px 50px;
+                                               font-family:Arial,Helvetica,sans-serif;
+                                               font-size:14px; font-weight:500; color:#000000;">
+                                        <t t-esc="line.display_code"/>
+                                    </td>
+                                    <td style="padding:8px 10px;
+                                               font-size:14px; font-weight:500; color:#000000;">
+                                        <t t-esc="line.name"/>
+                                        <t t-if="line.description">
+                                            <br/>
+                                            <span style="font-size:12px; color:#000000;">
+                                                <t t-esc="line.description"/>
+                                            </span>
+                                        </t>
+                                    </td>
+                                    <td style="padding:8px 10px; text-align:center;
+                                               font-size:14px; font-weight:500; color:#000000;">
+                                        <t t-esc="line.unit_id.name or ''"/>
+                                    </td>
+                                    <td style="padding:8px 10px; text-align:right;
+                                               font-size:14px; font-weight:500; color:#000000;">
+                                        <t t-esc="'%.2f' % (line.quantity or 0.0)"/>
+                                    </td>
+                                    <td style="padding:8px 10px; text-align:right;
+                                               font-size:14px; font-weight:500; color:#000000;">
+                                        <t t-esc="'%.2f' % (line.unit_price or 0.0)"/>
+                                    </td>
+                                    <td style="padding:8px 10px; text-align:right;
+                                               font-size:16px; font-weight:bold; color:#000000;">
+                                        <t t-esc="'%.2f' % (line.total or 0.0)"/>
+                                    </td>
+                                </tr>
+                            </t>
+
+                        </t><!-- end rows loop -->
+
+                        <!-- Division subtotal row -->
+                        <t t-if="div['section']">
+                            <tr style="background-color:#f2f2f2; font-weight:bold;
+                                       border-top:2px solid #000000;
+                                       border-bottom:2px solid #000000;">
+                                <td style="padding:8px 10px;"/>
+                                <td colspan="4"
+                                    style="padding:8px 10px; text-align:right;
+                                           font-family:Arial,Helvetica,sans-serif;
+                                           font-size:16px; font-weight:bold; color:#000000;">
+                                    Total&#160;<t t-esc="div['section'].name"/>
+                                </td>
+                                <td style="padding:8px 10px; text-align:right;
+                                           font-size:16px; font-weight:bold; color:#000000;">
+                                    <t t-esc="'%.2f' % div['subtotal']"/>
+                                </td>
+                            </tr>
+                            <tr style="height:8px; background-color:#ffffff;">
+                                <td colspan="6"/>
+                            </tr>
+                        </t>
+
+                    </t><!-- end divisions loop -->
+                </tbody>
+            </table>
+
+            <!-- Notes -->
+            <t t-if="doc.note">
+                <div style="margin-top:18px; border-top:1px solid #000000;
+                            padding-top:12px;
+                            font-family:Arial,Helvetica,sans-serif;
+                            font-size:14px; color:#000000;">
+                    <strong>Notes:</strong>
+                    <p style="white-space:pre-wrap; margin-top:6px; color:#000000;">
+                        <t t-esc="doc.note"/>
+                    </p>
+                </div>
+            </t>
+
+        </div>
+    </template>
+
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         STANDALONE TOP-LEVEL TEMPLATES — one per print mode.
+
+         Each template is fully self-contained (no data dict dependency):
+           • sets mode explicitly
+           • pre-computes only the data objects required for that mode
+           • calls the relevant sub-template(s)
+           • includes a debug guard so blank PDFs surface immediately
+
+         Template IDs must match the report_name in the action records.
+         Page-break is governed by `mode` inside each sub-template.
+    ═══════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── Full: Division Summary + Overall Summary + Details ────────── -->
+    <template id="template_boq_full">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <t t-if="not doc.line_ids">
+                        <p style="color:red;font-weight:700;">NO DATA FOUND — BOQ has no lines.</p>
+                    </t>
+                    <t t-set="mode" t-value="'full'"/>
+                    <t t-set="ds"   t-value="doc._get_division_summary()"/>
+                    <t t-set="rd"   t-value="doc._get_boq_report_data()"/>
+                    <t t-call="smart_farm_boq.report_division_summary"/>
+                    <t t-call="smart_farm_boq.report_overall_summary"/>
+                    <t t-call="smart_farm_boq.report_details"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ── Details only ─────────────────────────────────────────────── -->
+    <template id="template_boq_details">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <t t-if="not doc.line_ids">
+                        <p style="color:red;font-weight:700;">NO DATA FOUND — BOQ has no lines.</p>
+                    </t>
+                    <t t-set="mode" t-value="'details'"/>
+                    <t t-set="rd"   t-value="doc._get_boq_report_data()"/>
+                    <t t-call="smart_farm_boq.report_details"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ── Division + Subdivision Summary only ──────────────────────── -->
+    <template id="template_boq_division_summary">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <t t-if="not doc.line_ids">
+                        <p style="color:red;font-weight:700;">NO DATA FOUND — BOQ has no lines.</p>
+                    </t>
+                    <t t-set="mode" t-value="'division_summary'"/>
+                    <t t-set="ds"   t-value="doc._get_division_summary()"/>
+                    <t t-call="smart_farm_boq.report_division_summary"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ── Overall Summary only ─────────────────────────────────────── -->
+    <template id="template_boq_overall_summary">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <t t-if="not doc.line_ids">
+                        <p style="color:red;font-weight:700;">NO DATA FOUND — BOQ has no lines.</p>
+                    </t>
+                    <t t-set="mode" t-value="'overall_summary'"/>
+                    <t t-set="rd"   t-value="doc._get_boq_report_data()"/>
+                    <t t-call="smart_farm_boq.report_overall_summary"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         REPORT ACTIONS
+         ┌───────────────────────────────────────────────────────────────┐
+         │  action_report_boq_full             → template_boq_full      │
+         │  action_report_boq_details          → template_boq_details   │
+         │  action_report_boq_division_summary → template_boq_div_summ  │
+         │  action_report_boq_overall_summary  → template_boq_ovr_summ  │
+         └───────────────────────────────────────────────────────────────┘
+         action_report_boq_full is also the binding action (⚙ menu).
+    ═══════════════════════════════════════════════════════════════════ -->
+
+    <!-- Full — binding action: appears in the ⚙ Print/Actions menu -->
+    <record id="action_report_boq_full" model="ir.actions.report">
+        <field name="name">BOQ Report</field>
+        <field name="model">farm.boq</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">smart_farm_boq.template_boq_full</field>
+        <field name="report_file">smart_farm_boq.template_boq_full</field>
+        <field name="print_report_name">'BOQ - %s' % object.name</field>
+        <field name="binding_model_id" ref="model_farm_boq"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Details only — wizard dispatch, no menu binding -->
+    <record id="action_report_boq_details" model="ir.actions.report">
+        <field name="name">BOQ — Details</field>
+        <field name="model">farm.boq</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">smart_farm_boq.template_boq_details</field>
+        <field name="report_file">smart_farm_boq.template_boq_details</field>
+        <field name="print_report_name">'BOQ Details - %s' % object.name</field>
+    </record>
+
+    <!-- Division + Subdivision Summary — wizard dispatch, no menu binding -->
+    <record id="action_report_boq_division_summary" model="ir.actions.report">
+        <field name="name">BOQ — Division Summary</field>
+        <field name="model">farm.boq</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">smart_farm_boq.template_boq_division_summary</field>
+        <field name="report_file">smart_farm_boq.template_boq_division_summary</field>
+        <field name="print_report_name">'BOQ Division Summary - %s' % object.name</field>
+    </record>
+
+    <!-- Overall Summary — wizard dispatch, no menu binding -->
+    <record id="action_report_boq_overall_summary" model="ir.actions.report">
+        <field name="name">BOQ — Overall Summary</field>
+        <field name="model">farm.boq</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">smart_farm_boq.template_boq_overall_summary</field>
+        <field name="report_file">smart_farm_boq.template_boq_overall_summary</field>
+        <field name="print_report_name">'BOQ Summary - %s' % object.name</field>
+    </record>
+
+</odoo>

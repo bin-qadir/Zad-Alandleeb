@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Extend the Farm Project form — adds the Project Phase field to the
+            project header area.
+
+            BOQ structure is accessed via Cost Structure → Project Cost Structure,
+            not from within the Farm Project form.
+        -->
+        <record id="view_farm_project_form_boq_inherit" model="ir.ui.view">
+            <field name="name">farm.project.form.boq.inherit</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Open BOQs stat button -->
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button class="oe_stat_button"
+                            type="object"
+                            name="action_open_boqs"
+                            icon="fa-sitemap">
+                        <field name="boq_count"
+                               widget="statinfo"
+                               string="Cost Structures"/>
+                    </button>
+                </xpath>
+
+                <!-- Project Phase — inserted into the Project Details group (left column) -->
+                <xpath expr="//group[@name='group_project_details']" position="inside">
+                    <field name="project_phase_id"
+                           string="Project Phase"
+                           options="{'no_create': True, 'no_open': True}"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

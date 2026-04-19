@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="crop_type_strawberry" model="farm.crop.type">
+            <field name="name">Strawberry</field>
+        </record>
+
+        <record id="crop_type_blueberry" model="farm.crop.type">
+            <field name="name">Blueberry</field>
+        </record>
+
+        <record id="crop_type_taif_rose" model="farm.crop.type">
+            <field name="name">Taif Rose</field>
+        </record>
+
+        <record id="crop_type_tomato" model="farm.crop.type">
+            <field name="name">Tomato</field>
+        </record>
+
+        <record id="crop_type_basil" model="farm.crop.type">
+            <field name="name">Basil</field>
+        </record>
+
+        <record id="crop_type_microgreens" model="farm.crop.type">
+            <field name="name">Microgreens</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,361 @@
+/* ============================================================
+   Smart Farm BOQ — Enhanced UI/UX stylesheet
+   Odoo 18  ·  branch dev-ai-work
+
+   Scope: .o_boq_form  (applied via <form class="o_boq_form">)
+          .o_list_view  (scoped where needed)
+
+   Design rules
+   ─────────────────────────────────────────────────────────
+   • ALL text stays black — no coloured fonts
+   • Row type differentiated by background colour only
+   • Dense but readable row height (professional grade)
+   • Sticky thead for long structures
+   • Soft hover on every row type
+   • Gold (#c8a84b) accent for active tab + division borders
+   ============================================================ */
+
+
+/* ══════════════════════════════════════════════════════════════
+   1.  COMPACT ROW HEIGHT
+   Target: 3–4 px vertical padding = professional density
+   ══════════════════════════════════════════════════════════════ */
+.o_boq_form .o_field_one2many .o_list_view .o_data_row > td {
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+    line-height: 1.45;
+}
+
+/* Header cells — slightly more padding to stay readable */
+.o_boq_form .o_field_one2many .o_list_view thead th {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   2.  HIERARCHY LEVELS — 4-level background differentiation
+   Odoo decoration mapping:
+     decoration-bf         → .fw-bold         (Division)
+     decoration-it         → .fst-italic      (Subdivision)
+     decoration-subsub_row → .text-subsub_row (Sub-Subdivision)
+     (no decoration)                          (Subitems)
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Level 1: Division — warm gold-beige, bold ─────────────── */
+.o_list_view .o_data_row.fw-bold > td {
+    background-color: #efe2b8 !important;
+    color: #000 !important;
+    font-weight: 700 !important;
+    font-style: normal !important;
+    border-top: 2px solid #c8a84b !important;
+    border-bottom: 1px solid #d4b86a !important;
+}
+.o_list_view .o_data_row.fw-bold:hover > td {
+    background-color: #e8d9a8 !important;
+    color: #000 !important;
+}
+
+/* ── Level 2: Subdivision — light beige, semi-bold ─────────── */
+.o_list_view .o_data_row.fst-italic > td {
+    background-color: #fdf9ee !important;
+    color: #000 !important;
+    font-weight: 600 !important;
+    font-style: normal !important;
+    border-top: 1px solid #e6ddb8 !important;
+}
+.o_list_view .o_data_row.fst-italic:hover > td {
+    background-color: #faf5e2 !important;
+    color: #000 !important;
+}
+
+/* ── Level 3: Sub-Subdivision — near-white, medium ─────────── */
+.o_list_view .o_data_row.text-subsub_row > td {
+    background-color: #fffdf7 !important;
+    color: #000 !important;
+    font-weight: 500 !important;
+    font-style: normal !important;
+    border-top: 1px solid #f0ecd8 !important;
+}
+.o_list_view .o_data_row.text-subsub_row:hover > td {
+    background-color: #fff9ed !important;
+    color: #000 !important;
+}
+
+/* ── Level 4: Subitems — pure white, normal ─────────────────── */
+.o_list_view .o_data_row:not(.fw-bold):not(.fst-italic):not(.text-subsub_row) > td {
+    background-color: #fff !important;
+    color: #000 !important;
+    font-style: normal !important;
+}
+.o_list_view .o_data_row:not(.fw-bold):not(.fst-italic):not(.text-subsub_row):hover > td {
+    background-color: #f5f8ff !important;
+    color: #000 !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   3.  COLUMN WIDTHS & TYPOGRAPHY
+   ══════════════════════════════════════════════════════════════ */
+
+/* Code column — monospace, narrow, non-wrapping */
+.o_list_view th[data-name="display_code"],
+.o_list_view td[name="display_code"] {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace !important;
+    font-size: 11.5px !important;
+    white-space: nowrap;
+    color: #000 !important;
+    width: 85px;
+    min-width: 75px;
+    max-width: 110px;
+}
+
+/* Name column — takes remaining space, graceful wrap */
+.o_list_view th[data-name="name"],
+.o_list_view td[name="name"] {
+    min-width: 180px;
+}
+
+/* Items count column */
+.o_list_view th[data-name="child_count"],
+.o_list_view td[name="child_count"] {
+    width: 55px;
+    text-align: center !important;
+    color: #555 !important;
+    font-size: 12px;
+}
+
+/* Quantity column */
+.o_list_view th[data-name="quantity"],
+.o_list_view td[name="quantity"] {
+    width: 80px;
+    min-width: 70px;
+    text-align: right !important;
+    white-space: nowrap;
+}
+
+/* Unit column — compact */
+.o_list_view th[data-name="unit_id"],
+.o_list_view td[name="unit_id"] {
+    width: 65px;
+    min-width: 55px;
+    max-width: 80px;
+    white-space: nowrap;
+    text-align: center !important;
+}
+
+/* Unit price column */
+.o_list_view th[data-name="unit_price"],
+.o_list_view td[name="unit_price"] {
+    width: 110px;
+    min-width: 100px;
+    text-align: right !important;
+    white-space: nowrap;
+}
+
+/* Total column */
+.o_list_view th[data-name="total"],
+.o_list_view td[name="total"] {
+    width: 110px;
+    min-width: 100px;
+    text-align: right !important;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+/* Ensure all monetary amounts are black */
+.o_list_view td[name="unit_price"] .o_monetary_value,
+.o_list_view td[name="total"] .o_monetary_value {
+    color: #000 !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   4.  STICKY HEADER
+   Keeps column headers visible while scrolling long structures.
+   ══════════════════════════════════════════════════════════════ */
+.o_boq_form .o_field_one2many .o_list_view thead tr th {
+    position: sticky;
+    top: 0;
+    z-index: 8;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   5.  HORIZONTAL SCROLL — smooth, no layout break
+   ══════════════════════════════════════════════════════════════ */
+.o_boq_form .o_field_one2many {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.o_boq_form .o_field_one2many .o_list_view {
+    min-width: 0;
+    width: 100%;
+}
+/* Prevent table from collapsing narrower than useful */
+.o_boq_form .o_field_one2many .o_list_view table {
+    min-width: 700px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   6.  ACTION BUTTONS (header toolbar)
+   ══════════════════════════════════════════════════════════════ */
+.o_boq_form .o_cp_buttons .o_boq_action_btn,
+.o_boq_form .o_statusbar_buttons .o_boq_action_btn {
+    padding: 3px 9px !important;
+    font-size: 12.5px !important;
+    margin-left: 2px;
+}
+
+/* Print / Excel / PDF — visually grouped */
+.o_boq_form .o_cp_buttons .o_boq_action_btn:first-of-type {
+    border-radius: 4px 0 0 4px !important;
+}
+.o_boq_form .o_cp_buttons .o_boq_action_btn + .o_boq_action_btn {
+    border-left-width: 0 !important;
+    border-radius: 0 !important;
+    margin-left: 0 !important;
+}
+.o_boq_form .o_cp_buttons .o_boq_action_btn:last-of-type {
+    border-radius: 0 4px 4px 0 !important;
+    border-left-width: 0 !important;
+    margin-left: 0 !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   7.  ROW ACTION BUTTONS (inline: + Item, + Sub)
+   Show at reduced opacity; full opacity on row hover.
+   ══════════════════════════════════════════════════════════════ */
+.o_list_view .o_data_row td .o_boq_row_btn {
+    padding: 1px 7px !important;
+    font-size: 11px !important;
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
+}
+.o_list_view .o_data_row:hover td .o_boq_row_btn {
+    opacity: 1;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   8.  NOTEBOOK TABS — cleaner, gold accent on active
+   ══════════════════════════════════════════════════════════════ */
+.o_boq_form .o_notebook .nav-tabs {
+    border-bottom: 2px solid #dee2e6;
+    gap: 1px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+.o_boq_form .o_notebook .nav-tabs .nav-link {
+    padding: 7px 20px;
+    font-size: 13px;
+    color: #555;
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 3px 3px 0 0;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+}
+.o_boq_form .o_notebook .nav-tabs .nav-link:hover {
+    color: #2c3e50;
+    border-bottom-color: #d4b86a;
+    background: rgba(200, 168, 75, 0.06);
+}
+.o_boq_form .o_notebook .nav-tabs .nav-link.active {
+    font-weight: 700;
+    color: #2c3e50 !important;
+    border-bottom: 3px solid #c8a84b;
+    background: transparent;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   9.  DIVISION SUMMARY TAB — polished HTML table
+   Targets: .o_field_html inside the summary tab
+   ══════════════════════════════════════════════════════════════ */
+.o_boq_form .o_notebook .tab-pane .o_field_html {
+    padding: 0;
+}
+.o_boq_form .o_notebook .tab-pane .o_field_html table {
+    font-size: 13px;
+    border-radius: 4px;
+    overflow: hidden;
+    width: 100%;
+    border-collapse: collapse;
+}
+.o_boq_form .o_notebook .tab-pane .o_field_html table thead th {
+    font-size: 12.5px;
+    letter-spacing: 0.3px;
+}
+/* Hover on summary table rows */
+.o_boq_form .o_notebook .tab-pane .o_field_html table tbody tr:hover td {
+    filter: brightness(0.96);
+    transition: filter 0.1s;
+}
+/* Grand total row — keep strong contrast */
+.o_boq_form .o_notebook .tab-pane .o_field_html table tfoot td {
+    font-size: 14px !important;
+    letter-spacing: 0.4px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   10.  FORM LAYOUT — chatter visibility managed by boq_chatter.css
+   (boq_chatter_toggle.js toggles .boq-chatter-open on .o_boq_form)
+   ══════════════════════════════════════════════════════════════ */
+
+/* Ensure sheet takes all available width regardless of chatter state */
+.o_boq_form .o_form_sheet_bg {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+/* On small screens: table font slightly smaller for legibility */
+@media (max-width: 767px) {
+    .o_boq_form .o_field_one2many {
+        font-size: 12px;
+    }
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   11.  REBUILD STRUCTURE BUTTON — subtle, not distracting
+   ══════════════════════════════════════════════════════════════ */
+.o_boq_form .btn.btn-secondary.btn-sm[name="action_rebuild_structure"] {
+    font-size: 12px;
+    opacity: 0.8;
+    transition: opacity 0.15s;
+}
+.o_boq_form .btn.btn-secondary.btn-sm[name="action_rebuild_structure"]:hover {
+    opacity: 1;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   12.  PROGRESS BAR — matches gold theme
+   ══════════════════════════════════════════════════════════════ */
+.o_boq_form .o_progressbar .o_progressbar_complete {
+    background-color: #c8a84b;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   13.  GENERAL LIST VIEW POLISH
+   ══════════════════════════════════════════════════════════════ */
+
+/* Remove default blue link colouring on the whole list */
+.o_boq_form .o_list_view td,
+.o_boq_form .o_list_view td a,
+.o_boq_form .o_list_view td span {
+    color: #000 !important;
+}
+
+/* Separator between Division blocks: bottom border on the
+   spacer row that follows each division total in the PDF
+   (no effect in screen list, but keeps the block feel) */
+.o_list_view .o_data_row.fw-bold + tr > td {
+    border-top: none !important;
+}

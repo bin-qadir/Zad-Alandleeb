@@ -1,0 +1,27 @@
+{
+    'name': 'Smart Farm Work Structure',
+    'version': '18.0.1.0.0',
+    'summary': 'Work classification structure for the Smart Farm system',
+    'description': 'Defines division and subdivision work categories used before BOQ.',
+    'category': 'Agriculture',
+    'author': 'Smart Farm',
+    'license': 'LGPL-3',
+    'depends': [
+        'smart_farm_base',
+        'smart_farm_master',
+    ],
+    'data': [
+        'security/ir.model.access.csv',
+        'views/farm_division_work_views.xml',
+        'views/farm_subdivision_work_views.xml',
+        'views/farm_sub_subdivision_work_views.xml',
+        'views/menu.xml',
+        'data/farm_division_work_data.xml',
+        'data/farm_subdivision_work_data.xml',
+        'data/farm_sub_subdivision_work_data.xml',
+        'data/farm_div05_mechanical_complete.xml',
+    ],
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+}

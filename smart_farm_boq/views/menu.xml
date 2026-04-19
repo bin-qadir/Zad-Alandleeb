@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ── Cost Structure section ── -->
+        <menuitem
+            id="menu_smart_farm_boq"
+            name="Cost Structure"
+            parent="smart_farm_base.menu_smart_farm_root"
+            sequence="20"
+        />
+
+        <!-- Project Cost Structures (BOQ documents) -->
+        <menuitem
+            id="menu_farm_boq"
+            name="Project Cost Structures"
+            parent="menu_smart_farm_boq"
+            action="action_farm_boq"
+            sequence="10"
+        />
+
+        <!-- B.O.Q Analysis — seq 20 injected by smart_farm_boq_analysis -->
+
+        <!-- Cost Item Templates -->
+        <menuitem
+            id="menu_farm_boq_line_template"
+            name="Cost Item Templates"
+            parent="menu_smart_farm_boq"
+            action="action_farm_boq_line_template"
+            sequence="30"
+        />
+
+        <!-- Procurement — seq 40+ injected by smart_farm_procurement -->
+
+    </data>
+</odoo>

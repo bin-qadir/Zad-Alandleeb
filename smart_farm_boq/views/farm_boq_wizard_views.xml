@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ── Legacy: create BOQ line directly from a template card ── -->
+        <record id="view_farm_boq_line_template_use_wizard_form" model="ir.ui.view">
+            <field name="name">farm.boq.line.template.use.wizard.form</field>
+            <field name="model">farm.boq.line.template.use.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Add Item from Template">
+                    <group>
+                        <field name="template_id" readonly="1"/>
+                        <field name="boq_id"/>
+                    </group>
+                    <footer>
+                        <button name="action_create" type="object"
+                                string="Add Item | إضافة بند" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════
+             Add Subitem Wizard  —  farm.boq.add.subitem.wizard
+             Opened from the "Add Subitem" button on each Subdivision row.
+        ═══════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_boq_add_subitem_wizard_form" model="ir.ui.view">
+            <field name="name">farm.boq.add.subitem.wizard.form</field>
+            <field name="model">farm.boq.add.subitem.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Add Subitem">
+
+                    <sheet>
+
+                        <div class="oe_title">
+                            <h2>Add Subitem</h2>
+                        </div>
+
+                        <!-- Hidden context fields -->
+                        <group>
+                            <field name="boq_id" invisible="1"/>
+                            <field name="sub_subsection_line_id" invisible="1"/>
+                            <field name="project_phase_id" invisible="1"/>
+                        </group>
+
+                        <!-- Location info (readonly — set from the sub-subdivision row) -->
+                        <group string="Location">
+                            <field name="division_id" readonly="1"/>
+                            <field name="subdivision_id" readonly="1"/>
+                            <field name="sub_subdivision_id" readonly="1"/>
+                        </group>
+
+                        <!-- Entry mode selection -->
+                        <group string="Entry Mode">
+                            <field name="mode" widget="radio" nolabel="1"/>
+                        </group>
+
+                        <!-- ── Template mode ──────────────────────────────── -->
+                        <group string="Template" invisible="mode != 'use_template'">
+                            <field name="template_id"
+                                   required="mode == 'use_template'"
+                                   options="{'no_quick_create': True}"
+                                   placeholder="Select a template…"/>
+                            <field name="boq_qty"
+                                   string="BOQ Qty | كمية البند"
+                                   required="mode == 'use_template'"
+                                   placeholder="Enter actual project quantity…"/>
+                        </group>
+
+                        <!-- ── Create New mode ───────────────────────────── -->
+                        <group string="New Subitem" invisible="mode != 'create_new'">
+                            <field name="name"
+                                   required="mode == 'create_new'"
+                                   placeholder="Name of the work item…"/>
+                            <field name="boq_qty"
+                                   string="BOQ Qty | كمية البند"
+                                   required="mode == 'create_new'"
+                                   placeholder="Enter actual project quantity…"/>
+                            <field name="unit_id"
+                                   string="Unit of Measure"
+                                   options="{'no_create': True, 'no_open': True}"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+
+                        <div class="text-muted" invisible="mode != 'create_new'">
+                            <small>
+                                Enter the item description, quantity and unit.
+                                Costing details (materials, labour, overhead) are entered
+                                separately in the Costing or Analysis stages.
+                            </small>
+                        </div>
+
+                    </sheet>
+
+                    <footer>
+                        <button name="action_confirm"
+                                type="object"
+                                string="Confirm"
+                                class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

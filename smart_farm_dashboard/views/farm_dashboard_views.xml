@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            SMART FARM — EXECUTIVE PORTFOLIO DASHBOARD
+            ===========================================
+            Modern SAP-level executive cockpit.
+
+            Layout:
+              HEADER      — title + refresh
+              KPI STRIP   — 4 large colored cards (total / active / at-risk / critical)
+              PHASE PILLS — 7 clickable phase pills
+              HEALTH      — 3 big health cards (the dominant visual element)
+              FINANCIALS  — 2-panel cost control + profitability
+              RISK        — 4 alert blocks (2×2 grid)
+              PMO ACTIONS — 2-row action grid (phase + risk)
+
+            Every clickable element calls a method on the singleton that
+            returns a filtered farm.project act_window.
+        -->
+
+        <record id="view_farm_dashboard_form" model="ir.ui.view">
+            <field name="name">farm.dashboard.form</field>
+            <field name="model">farm.dashboard</field>
+            <field name="arch" type="xml">
+
+                <form string="Executive Dashboard" create="false" delete="false">
+                    <sheet>
+
+                        <!-- ── invisible currency anchor (needed for monetary widgets) ── -->
+                        <field name="currency_id" invisible="True"/>
+
+                        <div class="sf-dashboard-root">
+
+                            <!-- ═══════════════════════════════════════════════
+                                 HEADER
+                            ════════════════════════════════════════════════ -->
+                            <div class="sf-dash-header">
+                                <div>
+                                    <div class="sf-dash-title">
+                                        <i class="fa fa-tachometer"/>
+                                        Executive Portfolio Dashboard
+                                    </div>
+                                    <div class="sf-dash-subtitle">
+                                        Smart Farm — Real-time portfolio intelligence
+                                    </div>
+                                </div>
+                                <div>
+                                    <button name="action_refresh" type="object"
+                                            class="btn btn-primary btn-sm px-3">
+                                        <i class="fa fa-refresh me-1"/> Refresh
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="sf-dash-body">
+
+                                <!-- ═══════════════════════════════════════════
+                                     SECTION 1 — KPI STRIP (4 top cards)
+                                ═══════════════════════════════════════════ -->
+                                <div class="sf-section-label">
+                                    <i class="fa fa-bar-chart"/> Portfolio KPIs
+                                </div>
+
+                                <div class="row g-3 sf-kpi-strip">
+
+                                    <!-- Card 1: Total Projects -->
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="sf-kpi-card sf-kpi-navy">
+                                            <div class="sf-kpi-top">
+                                                <i class="fa fa-folder-open sf-kpi-icon"/>
+                                                <span class="sf-kpi-badge">Portfolio</span>
+                                            </div>
+                                            <div class="sf-kpi-number">
+                                                <field name="total_projects" nolabel="1"/>
+                                            </div>
+                                            <div class="sf-kpi-label">Total Projects</div>
+                                            <button name="action_view_all" type="object"
+                                                    class="sf-card-btn" title="View All Projects"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Card 2: Active (Contract + Execution) -->
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="sf-kpi-card sf-kpi-blue">
+                                            <div class="sf-kpi-top">
+                                                <i class="fa fa-play-circle sf-kpi-icon"/>
+                                                <span class="sf-kpi-badge">Live</span>
+                                            </div>
+                                            <div class="sf-kpi-number">
+                                                <field name="count_active" nolabel="1"/>
+                                            </div>
+                                            <div class="sf-kpi-label">Active Projects</div>
+                                            <button name="action_view_active" type="object"
+                                                    class="sf-card-btn" title="Contract + Execution"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Card 3: At Risk (Warning + Critical) -->
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="sf-kpi-card sf-kpi-amber">
+                                            <div class="sf-kpi-top">
+                                                <i class="fa fa-exclamation-triangle sf-kpi-icon"/>
+                                                <span class="sf-kpi-badge">Risk</span>
+                                            </div>
+                                            <div class="sf-kpi-number">
+                                                <field name="count_at_risk" nolabel="1"/>
+                                            </div>
+                                            <div class="sf-kpi-label">At Risk</div>
+                                            <button name="action_view_at_risk" type="object"
+                                                    class="sf-card-btn" title="Warning + Critical"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Card 4: Critical -->
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="sf-kpi-card sf-kpi-crimson">
+                                            <div class="sf-kpi-top">
+                                                <i class="fa fa-fire sf-kpi-icon"/>
+                                                <span class="sf-kpi-badge">Alert</span>
+                                            </div>
+                                            <div class="sf-kpi-number">
+                                                <field name="count_critical" nolabel="1"/>
+                                            </div>
+                                            <div class="sf-kpi-label">Critical</div>
+                                            <button name="action_view_critical" type="object"
+                                                    class="sf-card-btn" title="Critical Projects"/>
+                                        </div>
+                                    </div>
+
+                                </div><!-- /KPI strip -->
+
+                                <hr class="sf-sep"/>
+
+                                <!-- ═══════════════════════════════════════════
+                                     SECTION 2 — PHASE DISTRIBUTION PILLS
+                                ═══════════════════════════════════════════ -->
+                                <div class="sf-section-label">
+                                    <i class="fa fa-sitemap"/> Phase Distribution
+                                </div>
+
+                                <div class="sf-phase-strip">
+
+                                    <div class="sf-phase-pill sf-pill-pre-tender position-relative">
+                                        <i class="fa fa-seedling"/>
+                                        Pre-Tender
+                                        <span class="sf-pill-ct">
+                                            <field name="count_pre_tender" nolabel="1"/>
+                                        </span>
+                                        <button name="action_view_pre_tender" type="object"
+                                                class="sf-pill-btn" title="Pre-Tender Projects"/>
+                                    </div>
+
+                                    <div class="sf-phase-pill sf-pill-tender position-relative">
+                                        <i class="fa fa-gavel"/>
+                                        Tender
+                                        <span class="sf-pill-ct">
+                                            <field name="count_tender" nolabel="1"/>
+                                        </span>
+                                        <button name="action_view_tender" type="object"
+                                                class="sf-pill-btn" title="Tender Projects"/>
+                                    </div>
+
+                                    <div class="sf-phase-pill sf-pill-contract position-relative">
+                                        <i class="fa fa-file-text-o"/>
+                                        Contract
+                                        <span class="sf-pill-ct">
+                                            <field name="count_contract" nolabel="1"/>
+                                        </span>
+                                        <button name="action_view_contract" type="object"
+                                                class="sf-pill-btn" title="Contract Projects"/>
+                                    </div>
+
+                                    <div class="sf-phase-pill sf-pill-execution position-relative">
+                                        <i class="fa fa-play-circle"/>
+                                        Execution
+                                        <span class="sf-pill-ct">
+                                            <field name="count_execution" nolabel="1"/>
+                                        </span>
+                                        <button name="action_view_execution" type="object"
+                                                class="sf-pill-btn" title="Execution Projects"/>
+                                    </div>
+
+                                    <div class="sf-phase-pill sf-pill-closing position-relative">
+                                        <i class="fa fa-flag-checkered"/>
+                                        Closing
+                                        <span class="sf-pill-ct">
+                                            <field name="count_closing" nolabel="1"/>
+                                        </span>
+                                        <button name="action_view_closing" type="object"
+                                                class="sf-pill-btn" title="Closing Projects"/>
+                                    </div>
+
+                                </div><!-- /phase pills -->
+
+                                <hr class="sf-sep"/>
+
+                                <!-- ═══════════════════════════════════════════
+                                     SECTION 2b — EXECUTION READINESS INDICATORS
+                                     (cross-cutting flags, NOT lifecycle phases)
+                                ═══════════════════════════════════════════ -->
+                                <div class="sf-section-label">
+                                    <i class="fa fa-flag-o"/> Execution Readiness
+                                </div>
+
+                                <div class="sf-readiness-strip">
+
+                                    <div class="sf-readiness-indicator sf-ri-locked position-relative">
+                                        <div class="sf-ri-icon-wrap">
+                                            <i class="fa fa-lock"/>
+                                        </div>
+                                        <div class="sf-ri-body">
+                                            <div class="sf-ri-count">
+                                                <field name="count_pre_exec" nolabel="1"/>
+                                            </div>
+                                            <div class="sf-ri-label">Pre-Execution</div>
+                                            <div class="sf-ri-sub">Pending phase gate</div>
+                                        </div>
+                                        <button name="action_view_pre_exec" type="object"
+                                                class="sf-ri-btn" title="Pre-Execution Projects"/>
+                                    </div>
+
+                                    <div class="sf-readiness-indicator sf-ri-contract-ok position-relative">
+                                        <div class="sf-ri-icon-wrap">
+                                            <i class="fa fa-check-circle"/>
+                                        </div>
+                                        <div class="sf-ri-body">
+                                            <div class="sf-ri-count">
+                                                <field name="count_with_contract" nolabel="1"/>
+                                            </div>
+                                            <div class="sf-ri-label">Approved Contract</div>
+                                            <div class="sf-ri-sub">EPC / sale contract signed</div>
+                                        </div>
+                                        <button name="action_view_with_contract" type="object"
+                                                class="sf-ri-btn" title="With Approved Contract"/>
+                                    </div>
+
+                                </div><!-- /readiness strip -->
+
+                                <hr class="sf-sep"/>
+
+                                <!-- ═══════════════════════════════════════════
+                                     SECTION 3 — PROJECT HEALTH (dominant)
+                                ═══════════════════════════════════════════ -->
+                                <div class="sf-section-label">
+                                    <i class="fa fa-heartbeat"/> Project Health
+                                </div>
+
+                                <div class="sf-health-row">
+
+                                    <!-- Healthy -->
+                                    <div class="sf-health-card sf-health-healthy position-relative">
+                                        <i class="fa fa-check-circle sf-health-icon"/>
+                                        <field name="count_healthy" nolabel="1"/>
+                                        <div class="sf-health-label">Healthy</div>
+                                        <button name="action_view_healthy" type="object"
+                                                class="sf-card-btn" title="Healthy Projects"/>
+                                    </div>
+
+                                    <!-- Warning -->
+                                    <div class="sf-health-card sf-health-warning position-relative">
+                                        <i class="fa fa-exclamation-triangle sf-health-icon"/>
+                                        <field name="count_warning" nolabel="1"/>
+                                        <div class="sf-health-label">Warning</div>
+                                        <button name="action_view_warning" type="object"
+                                                class="sf-card-btn" title="Warning Projects"/>
+                                    </div>
+
+                                    <!-- Critical -->
+                                    <div class="sf-health-card sf-health-critical position-relative">
+                                        <i class="fa fa-fire sf-health-icon"/>
+                                        <field name="count_critical" nolabel="1"/>
+                                        <div class="sf-health-label">Critical</div>
+                                        <button name="action_view_critical" type="object"
+                                                class="sf-card-btn" title="Critical Projects"/>
+                                    </div>
+
+                                </div><!-- /health row -->
+
+                                <hr class="sf-sep"/>
+
+                                <!-- ═══════════════════════════════════════════
+                                     SECTION 4 — FINANCIALS (2 panels)
+                                ═══════════════════════════════════════════ -->
+                                <div class="sf-section-label">
+                                    <i class="fa fa-money"/> Portfolio Financials
+                                </div>
+
+                                <div class="row g-3 mb-3">
+
+                                    <!-- LEFT: Cost Control -->
+                                    <div class="col-lg-6">
+                                        <div class="sf-fin-panel">
+                                            <div class="sf-fin-panel-title">
+                                                <i class="fa fa-calculator text-primary"/>
+                                                Cost Control
+                                            </div>
+
+                                            <div class="sf-fin-item">
+                                                <span class="sf-fin-item-label">
+                                                    <i class="fa fa-file-text-o me-1 text-primary"/>
+                                                    Contract Value
+                                                </span>
+                                                <field name="total_contract_value"
+                                                       widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"
+                                                       nolabel="1"
+                                                       decoration-success="total_contract_value &gt; 0"/>
+                                            </div>
+
+                                            <div class="sf-fin-item">
+                                                <span class="sf-fin-item-label">
+                                                    <i class="fa fa-clipboard me-1 text-muted"/>
+                                                    Estimated Cost
+                                                </span>
+                                                <field name="total_estimated_cost"
+                                                       widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"
+                                                       nolabel="1"/>
+                                            </div>
+
+                                            <div class="sf-fin-item">
+                                                <span class="sf-fin-item-label">
+                                                    <i class="fa fa-handshake-o me-1 text-warning"/>
+                                                    Committed Cost
+                                                </span>
+                                                <field name="total_committed_cost"
+                                                       widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"
+                                                       nolabel="1"
+                                                       decoration-warning="total_committed_cost &gt; 0"/>
+                                            </div>
+
+                                            <div class="sf-fin-item sf-fin-item-emphasis">
+                                                <span class="sf-fin-item-label">
+                                                    <i class="fa fa-check-square-o me-1"/>
+                                                    Actual Cost
+                                                </span>
+                                                <field name="total_actual_cost"
+                                                       widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"
+                                                       nolabel="1"/>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <!-- RIGHT: Profitability -->
+                                    <div class="col-lg-6">
+                                        <div class="sf-fin-panel">
+                                            <div class="sf-fin-panel-title">
+                                                <i class="fa fa-line-chart text-success"/>
+                                                Profitability
+                                            </div>
+
+                                            <div class="sf-fin-item">
+                                                <span class="sf-fin-item-label">
+                                                    <i class="fa fa-forward me-1 text-muted"/>
+                                                    Forecast Final Cost
+                                                </span>
+                                                <field name="total_forecast_final"
+                                                       widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"
+                                                       nolabel="1"/>
+                                            </div>
+
+                                            <div class="sf-fin-item">
+                                                <span class="sf-fin-item-label">
+                                                    <i class="fa fa-dollar me-1 text-muted"/>
+                                                    Current Profit
+                                                </span>
+                                                <field name="total_current_profit"
+                                                       widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"
+                                                       nolabel="1"
+                                                       decoration-success="total_current_profit &gt; 0"
+                                                       decoration-danger="total_current_profit &lt;= 0"/>
+                                            </div>
+
+                                            <div class="sf-fin-item sf-fin-item-emphasis">
+                                                <span class="sf-fin-item-label">
+                                                    <i class="fa fa-trophy me-1"/>
+                                                    Projected Profit
+                                                </span>
+                                                <field name="total_projected_profit"
+                                                       widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"
+                                                       nolabel="1"
+                                                       decoration-success="total_projected_profit &gt; 0"
+                                                       decoration-danger="total_projected_profit &lt;= 0"/>
+                                            </div>
+
+                                            <div class="sf-fin-item">
+                                                <span class="sf-fin-item-label">
+                                                    <i class="fa fa-percent me-1 text-muted"/>
+                                                    Avg Gross Margin %
+                                                </span>
+                                                <field name="avg_gross_margin_pct"
+                                                       nolabel="1"
+                                                       decoration-success="avg_gross_margin_pct &gt; 10"
+                                                       decoration-warning="avg_gross_margin_pct &gt; 0 and avg_gross_margin_pct &lt;= 10"
+                                                       decoration-danger="avg_gross_margin_pct &lt;= 0"/>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div><!-- /financials row -->
+
+                                <hr class="sf-sep"/>
+
+                                <!-- ═══════════════════════════════════════════
+                                     SECTION 5 — RISK INDICATORS (alert blocks)
+                                ═══════════════════════════════════════════ -->
+                                <div class="sf-section-label">
+                                    <i class="fa fa-shield"/> Risk Indicators
+                                </div>
+
+                                <div class="sf-risk-grid">
+
+                                    <!-- Critical Projects -->
+                                    <div class="sf-risk-block sf-risk-critical position-relative">
+                                        <i class="fa fa-times-circle sf-risk-icon"/>
+                                        <div class="sf-risk-content">
+                                            <field name="count_critical" nolabel="1"/>
+                                            <span class="sf-risk-label">Critical Projects</span>
+                                        </div>
+                                        <button name="action_view_critical" type="object"
+                                                class="sf-risk-btn" title="Critical Projects"/>
+                                    </div>
+
+                                    <!-- Warning Projects -->
+                                    <div class="sf-risk-block sf-risk-warning position-relative">
+                                        <i class="fa fa-exclamation sf-risk-icon"/>
+                                        <div class="sf-risk-content">
+                                            <field name="count_warning" nolabel="1"/>
+                                            <span class="sf-risk-label">Warning Projects</span>
+                                        </div>
+                                        <button name="action_view_warning" type="object"
+                                                class="sf-risk-btn" title="Warning Projects"/>
+                                    </div>
+
+                                    <!-- Over Budget -->
+                                    <div class="sf-risk-block sf-risk-budget position-relative">
+                                        <i class="fa fa-money sf-risk-icon"/>
+                                        <div class="sf-risk-content">
+                                            <field name="count_over_budget" nolabel="1"/>
+                                            <span class="sf-risk-label">Over Budget</span>
+                                        </div>
+                                        <button name="action_view_over_budget" type="object"
+                                                class="sf-risk-btn" title="Over-Budget Projects"/>
+                                    </div>
+
+                                    <!-- Negative Profit -->
+                                    <div class="sf-risk-block sf-risk-profit position-relative">
+                                        <i class="fa fa-arrow-down sf-risk-icon"/>
+                                        <div class="sf-risk-content">
+                                            <field name="count_negative_profit" nolabel="1"/>
+                                            <span class="sf-risk-label">Negative Profit</span>
+                                        </div>
+                                        <button name="action_view_negative_profit" type="object"
+                                                class="sf-risk-btn" title="Negative Profit Projects"/>
+                                    </div>
+
+                                </div><!-- /risk grid -->
+
+                                <hr class="sf-sep"/>
+
+                                <!-- ═══════════════════════════════════════════
+                                     SECTION 6 — PMO ACTION GRID
+                                ═══════════════════════════════════════════ -->
+                                <div class="sf-section-label">
+                                    <i class="fa fa-rocket"/> PMO Quick Actions
+                                </div>
+
+                                <div class="sf-action-section">
+
+                                    <!-- Row 1: Phase actions -->
+                                    <div class="sf-action-row-label">Phase Navigation</div>
+                                    <div class="sf-action-row mb-3">
+                                        <button name="action_view_execution" type="object"
+                                                class="sf-action-btn sf-btn-exec">
+                                            <i class="fa fa-play-circle"/> Execution
+                                        </button>
+                                        <button name="action_view_contract" type="object"
+                                                class="sf-action-btn sf-btn-contract">
+                                            <i class="fa fa-file-text-o"/> Contract
+                                        </button>
+                                        <button name="action_view_tender" type="object"
+                                                class="sf-action-btn sf-btn-tender">
+                                            <i class="fa fa-gavel"/> Tender
+                                        </button>
+                                        <button name="action_view_pre_tender" type="object"
+                                                class="sf-action-btn sf-btn-pretend">
+                                            <i class="fa fa-seedling"/> Pre-Tender
+                                        </button>
+                                        <button name="action_view_closing" type="object"
+                                                class="sf-action-btn sf-btn-closing">
+                                            <i class="fa fa-flag-checkered"/> Closing
+                                        </button>
+                                    </div>
+
+                                    <!-- Row 2: Risk / health actions -->
+                                    <div class="sf-action-row-label">Risk &amp; Health</div>
+                                    <div class="sf-action-row">
+                                        <button name="action_view_critical" type="object"
+                                                class="sf-action-btn sf-btn-crit">
+                                            <i class="fa fa-fire"/> Critical
+                                        </button>
+                                        <button name="action_view_warning" type="object"
+                                                class="sf-action-btn sf-btn-warn">
+                                            <i class="fa fa-exclamation-triangle"/> Warning
+                                        </button>
+                                        <button name="action_view_over_budget" type="object"
+                                                class="sf-action-btn sf-btn-budget">
+                                            <i class="fa fa-money"/> Over Budget
+                                        </button>
+                                        <button name="action_view_negative_profit" type="object"
+                                                class="sf-action-btn sf-btn-profit">
+                                            <i class="fa fa-arrow-down"/> Negative Profit
+                                        </button>
+                                        <button name="action_view_with_contract" type="object"
+                                                class="sf-action-btn sf-btn-green">
+                                            <i class="fa fa-check-circle"/> Approved Contract
+                                        </button>
+                                    </div>
+
+                                </div><!-- /action section -->
+
+                            </div><!-- /sf-dash-body -->
+                        </div><!-- /sf-dashboard-root -->
+
+                    </sheet>
+                </form>
+
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             SERVER ACTION — resolves singleton at runtime
+        ═════════════════════════════════════════════════════════════════ -->
+
+        <record id="action_open_farm_dashboard_server" model="ir.actions.server">
+            <field name="name">Open Executive Dashboard</field>
+            <field name="model_id" ref="model_farm_dashboard"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_open_dashboard()</field>
+        </record>
+
+    </data>
+</odoo>

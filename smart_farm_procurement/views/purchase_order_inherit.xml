@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Injects Smart Farm traceability fields into the Purchase Order form.
+            Adds a "Smart Farm" group showing the linked project, BOQ, and analysis.
+        -->
+
+        <record id="view_purchase_order_farm_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.farm.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Inject Smart Farm group after the main partner/date group -->
+                <xpath expr="//field[@name='partner_id']/.." position="after">
+                    <group string="Smart Farm" name="smart_farm_group"
+                           invisible="not farm_project_id and not farm_analysis_id">
+                        <field name="farm_project_id"  readonly="1"/>
+                        <field name="farm_boq_id"      readonly="1"/>
+                        <field name="farm_analysis_id" readonly="1"/>
+                    </group>
+                </xpath>
+
+                <!-- Add Smart Farm column to PO line list (optional) -->
+                <xpath expr="//field[@name='order_line']//field[@name='product_id']" position="after">
+                    <field name="farm_analysis_line_id"
+                           string="Analysis Line"
+                           readonly="1"
+                           optional="hide"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

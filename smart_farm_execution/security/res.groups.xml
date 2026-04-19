@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ── Execution Viewer (defined first — others imply it) ────────── -->
+        <record id="group_smart_farm_execution_viewer" model="res.groups">
+            <field name="name">Execution Viewer</field>
+            <field name="category_id" ref="smart_farm_base.module_category_smart_farm"/>
+            <field name="comment">Read-only access to all execution records.</field>
+        </record>
+
+        <!-- ── Execution User (defined second — Manager implies it) ─────── -->
+        <record id="group_smart_farm_execution_user" model="res.groups">
+            <field name="name">Execution User</field>
+            <field name="category_id" ref="smart_farm_base.module_category_smart_farm"/>
+            <field name="implied_ids" eval="[(4, ref('group_smart_farm_execution_viewer'))]"/>
+            <field name="comment">
+                Can update progress, add material consumption and labour entries.
+            </field>
+        </record>
+
+        <!-- ── Execution Manager (defined last — implies User) ───────────── -->
+        <record id="group_smart_farm_execution_manager" model="res.groups">
+            <field name="name">Execution Manager</field>
+            <field name="category_id" ref="smart_farm_base.module_category_smart_farm"/>
+            <field name="implied_ids" eval="[(4, ref('group_smart_farm_execution_user'))]"/>
+            <field name="comment">
+                Full write access: manage all Job Orders, change workflow states, close jobs.
+            </field>
+        </record>
+
+    </data>
+</odoo>

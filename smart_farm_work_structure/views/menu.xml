@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ── Configuration / Work Structure ── -->
+        <menuitem
+            id="menu_smart_farm_config_work_structure"
+            name="Work Structure"
+            parent="smart_farm_base.menu_smart_farm_config"
+            sequence="10"
+        />
+
+        <!-- Division Works -->
+        <menuitem
+            id="menu_farm_division_work"
+            name="Division Works"
+            parent="menu_smart_farm_config_work_structure"
+            action="action_farm_division_work"
+            sequence="10"
+        />
+
+        <!-- Subdivision Works -->
+        <menuitem
+            id="menu_farm_subdivision_work"
+            name="Subdivision Works"
+            parent="menu_smart_farm_config_work_structure"
+            action="action_farm_subdivision_work"
+            sequence="20"
+        />
+
+        <!-- Sub-Subdivision Works -->
+        <menuitem
+            id="menu_farm_sub_subdivision_work"
+            name="Sub-Subdivision Works"
+            parent="menu_smart_farm_config_work_structure"
+            action="action_farm_sub_subdivision_work"
+            sequence="30"
+        />
+
+    </data>
+</odoo>

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             SEQUENCE
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="seq_farm_contract" model="ir.sequence">
+            <field name="name">Farm Contract</field>
+            <field name="code">farm.contract</field>
+            <field name="prefix">CTR/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             SEARCH
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_contract_search" model="ir.ui.view">
+            <field name="name">farm.contract.search</field>
+            <field name="model">farm.contract</field>
+            <field name="arch" type="xml">
+                <search string="Contracts">
+                    <field name="name"       string="Reference"/>
+                    <field name="project_id"/>
+                    <field name="boq_id"     string="BOQ Document"/>
+                    <separator/>
+                    <filter name="draft"    string="Draft"
+                            domain="[('state','=','draft')]"/>
+                    <filter name="review"   string="Under Review"
+                            domain="[('state','=','review')]"/>
+                    <filter name="approved" string="Approved"
+                            domain="[('state','=','approved')]"/>
+                    <filter name="active"   string="Active"
+                            domain="[('state','=','active')]"/>
+                    <filter name="closed"   string="Closed"
+                            domain="[('state','=','closed')]"/>
+                    <separator/>
+                    <filter name="executable" string="Approved or Active"
+                            domain="[('state','in',['approved','active'])]"/>
+                    <group string="Group By">
+                        <filter name="by_project" string="Project"
+                                context="{'group_by':'project_id'}"/>
+                        <filter name="by_state"   string="Status"
+                                context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             LIST
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_contract_list" model="ir.ui.view">
+            <field name="name">farm.contract.list</field>
+            <field name="model">farm.contract</field>
+            <field name="arch" type="xml">
+                <list string="Contracts"
+                      decoration-muted="state == 'draft'"
+                      decoration-warning="state == 'review'"
+                      decoration-success="state in ('approved', 'active')"
+                      decoration-info="state == 'closed'">
+                    <field name="name"            string="Reference"/>
+                    <field name="project_id"      string="Project"/>
+                    <field name="boq_id"          string="BOQ Document"  optional="show"/>
+                    <field name="boq_analysis_id" string="BOQ Analysis"  optional="show"/>
+                    <field name="date_start"       string="Start Date"   optional="show"/>
+                    <field name="date_end"         string="End Date"     optional="show"/>
+                    <field name="currency_id"      column_invisible="1"/>
+                    <field name="contract_amount"  string="Contract Amount"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"/>
+                    <field name="state"            widget="badge"
+                           decoration-muted="state == 'draft'"
+                           decoration-warning="state == 'review'"
+                           decoration-success="state in ('approved', 'active')"
+                           decoration-info="state == 'closed'"/>
+                </list>
+            </field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             FORM
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_contract_form" model="ir.ui.view">
+            <field name="name">farm.contract.form</field>
+            <field name="model">farm.contract</field>
+            <field name="arch" type="xml">
+                <form string="Farm Contract">
+                    <header>
+                        <!-- Workflow buttons -->
+                        <button name="action_submit_review"
+                                type="object"
+                                string="Submit for Review"
+                                class="btn-primary"
+                                invisible="state != 'draft'"/>
+                        <button name="action_approve"
+                                type="object"
+                                string="Approve Contract"
+                                class="btn-success"
+                                invisible="state != 'review'"
+                                confirm="Approve this contract? Job Orders can be generated once approved."/>
+                        <button name="action_activate"
+                                type="object"
+                                string="Activate Contract"
+                                class="btn-primary"
+                                invisible="state != 'approved'"/>
+                        <button name="action_close"
+                                type="object"
+                                string="Close Contract"
+                                class="btn-secondary"
+                                invisible="state != 'active'"
+                                confirm="Close this contract? This marks the contract as fully executed."/>
+                        <button name="action_reset_draft"
+                                type="object"
+                                string="Reset to Draft"
+                                class="btn-secondary"
+                                invisible="state != 'review'"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,review,approved,active,closed"/>
+                    </header>
+
+                    <!-- ── Smart buttons ── -->
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button"
+                                type="object"
+                                name="action_open_job_orders"
+                                icon="fa-tasks">
+                            <field name="job_order_count"
+                                   widget="statinfo"
+                                   string="Job Orders"/>
+                        </button>
+                        <button class="oe_stat_button"
+                                type="object"
+                                name="action_open_boq"
+                                icon="fa-sitemap"
+                                invisible="not boq_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">BOQ</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button"
+                                type="object"
+                                name="action_open_analysis"
+                                icon="fa-bar-chart"
+                                invisible="not boq_analysis_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Analysis</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <!-- LEFT: Project / BOQ Links -->
+                            <group string="General" name="group_general">
+                                <field name="project_id"
+                                       options="{'no_create': True}"
+                                       readonly="state not in ('draft', 'review')"/>
+                                <field name="boq_id"
+                                       options="{'no_create': True}"
+                                       readonly="state not in ('draft', 'review')"/>
+                                <field name="boq_analysis_id"
+                                       options="{'no_create': True}"
+                                       readonly="state not in ('draft', 'review')"/>
+                                <field name="company_id"
+                                       groups="base.group_multi_company"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+
+                            <!-- RIGHT: Financial / Dates -->
+                            <group string="Financial &amp; Dates" name="group_financial">
+                                <field name="contract_amount"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="contract_qty"/>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                                <field name="date_signed" readonly="1"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Notes" name="notes_tab">
+                                <field name="notes"
+                                       placeholder="Contract scope, terms, special conditions, references…"/>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             ACTION
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="action_farm_contract" model="ir.actions.act_window">
+            <field name="name">Contracts</field>
+            <field name="res_model">farm.contract</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_farm_contract_search"/>
+            <field name="context">{'search_default_executable': 0}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No contracts yet.
+                </p>
+                <p>
+                    Create a contract for your project and approve it before
+                    generating <strong>Job Orders</strong>.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

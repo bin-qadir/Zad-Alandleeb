@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             DIVISION 05 — MECHANICAL WORKS  (authoritative complete source)
+             الأعمال الميكانيكية
+
+             This file is the single source of truth for Division 05.
+             It is loaded LAST among work-structure data files so that:
+               - All previously loaded subdivision / sub-subdivision records
+                 already exist in the DB and can be safely updated or
+                 deactivated here.
+               - Every record is written with noupdate="0", guaranteeing
+                 a clean, canonical state after every module upgrade.
+
+             Load order (manifest):
+               farm_division_work_data.xml
+               farm_subdivision_work_data.xml
+               farm_sub_subdivision_work_data.xml
+               farm_div05_mechanical_complete.xml   ← this file
+        ═══════════════════════════════════════════════════════════════════ -->
+
+
+        <!-- ════════════════════════════════════════════════════════════════
+             SECTION A — SUBDIVISIONS
+             Six canonical subdivisions for Division 05.
+             Sequences produce correct 5.01 … 5.06 ordering after legacy
+             Ducting / AHU / Ventilation subdivisions are deactivated below.
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <!-- 5.01 HVAC Systems | أعمال التكييف والتهوية (seq 10) -->
+        <record id="sub_mech_hvac" model="farm.subdivision.work">
+            <field name="name">HVAC Systems</field>
+            <field name="name_ar">أعمال التكييف والتهوية</field>
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="sequence">10</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Deactivate legacy standalone subdivisions that are now
+             represented as sub-subdivisions under 5.01 HVAC Systems. -->
+        <record id="sub_hvac_ducting" model="farm.subdivision.work">
+            <field name="active">False</field>
+            <field name="sequence">901</field>
+        </record>
+        <record id="sub_hvac_ahu" model="farm.subdivision.work">
+            <field name="active">False</field>
+            <field name="sequence">902</field>
+        </record>
+        <record id="sub_hvac_ventilation" model="farm.subdivision.work">
+            <field name="active">False</field>
+            <field name="sequence">903</field>
+        </record>
+
+        <!-- 5.02 Fire Fighting Systems | أعمال شبكة مكافحة الحريق (seq 50) -->
+        <record id="sub_mech_firefight" model="farm.subdivision.work">
+            <field name="name">Fire Fighting Systems</field>
+            <field name="name_ar">أعمال شبكة مكافحة الحريق</field>
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="sequence">50</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- 5.03 Water Supply System | أعمال شبكة المياه (seq 55) -->
+        <record id="sub_mech_water_supply" model="farm.subdivision.work">
+            <field name="name">Water Supply System</field>
+            <field name="name_ar">أعمال شبكة المياه</field>
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="sequence">55</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- 5.04 Drainage System | الأعمال الصحية (seq 57) -->
+        <record id="sub_mech_drainage" model="farm.subdivision.work">
+            <field name="name">Drainage System</field>
+            <field name="name_ar">الأعمال الصحية</field>
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="sequence">57</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- 5.05 LPG Systems (seq 60) -->
+        <record id="sub_mech_lpg" model="farm.subdivision.work">
+            <field name="name">LPG Systems</field>
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="sequence">60</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- 5.06 Equipment Works (Pumps) (seq 70) -->
+        <record id="sub_mech_equipment" model="farm.subdivision.work">
+            <field name="name">Equipment Works (Pumps)</field>
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="sequence">70</field>
+            <field name="active">True</field>
+        </record>
+
+
+        <!-- ════════════════════════════════════════════════════════════════
+             SECTION B — DEACTIVATE LEGACY SUB-SUBDIVISIONS
+             Old 4.xx records that clash with the new 5.xx structure.
+             Setting active=False hides them from _auto_create_structure()
+             and from all domain searches while preserving referential
+             integrity of any existing BOQ lines that reference them.
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <!-- Legacy items previously placed directly under HVAC Systems
+             (now grouped under 5.01.01 HVAC Equipments via BOQ items) -->
+        <record id="sub3_mech_chiller" model="farm.sub_subdivision.work">
+            <field name="active">False</field>
+        </record>
+        <record id="sub3_mech_fcu" model="farm.sub_subdivision.work">
+            <field name="active">False</field>
+        </record>
+        <record id="sub3_mech_split_ac" model="farm.sub_subdivision.work">
+            <field name="active">False</field>
+        </record>
+
+        <!-- Legacy items under old Ducting subdivision
+             (now BOQ items under 5.01.02 Ducting sub-subdivision) -->
+        <record id="sub3_mech_supply_duct" model="farm.sub_subdivision.work">
+            <field name="active">False</field>
+        </record>
+        <record id="sub3_mech_return_duct" model="farm.sub_subdivision.work">
+            <field name="active">False</field>
+        </record>
+        <record id="sub3_mech_flex_duct" model="farm.sub_subdivision.work">
+            <field name="active">False</field>
+        </record>
+
+        <!-- Legacy items under old Air Handling Units subdivision
+             (now BOQ items under 5.01.01 HVAC Equipments) -->
+        <record id="sub3_mech_ahu_unit" model="farm.sub_subdivision.work">
+            <field name="active">False</field>
+        </record>
+        <record id="sub3_mech_fahu" model="farm.sub_subdivision.work">
+            <field name="active">False</field>
+        </record>
+
+        <!-- Legacy items under old Ventilation Systems subdivision
+             (now BOQ items under 5.01.04 Ventilation Systems sub-subdivision) -->
+        <record id="sub3_mech_exhaust_fan" model="farm.sub_subdivision.work">
+            <field name="active">False</field>
+        </record>
+        <record id="sub3_mech_supply_fan" model="farm.sub_subdivision.work">
+            <field name="active">False</field>
+        </record>
+
+
+        <!-- ════════════════════════════════════════════════════════════════
+             SECTION C — 5.01 HVAC SYSTEMS  (sub-subdivisions)
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <record id="sub3_mech_hvac_equip" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_hvac"/>
+            <field name="name">HVAC Equipments</field>
+            <field name="code">5.01.01</field>
+            <field name="sequence">10</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_hvac_duct" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_hvac"/>
+            <field name="name">Ducting</field>
+            <field name="name_ar">قنوات التكييف</field>
+            <field name="code">5.01.02</field>
+            <field name="sequence">20</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_air_outlets" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_hvac"/>
+            <field name="name">Air Outlets</field>
+            <field name="name_ar">موزعات الهواء</field>
+            <field name="code">5.01.03</field>
+            <field name="sequence">30</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_hvac_vent" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_hvac"/>
+            <field name="name">Ventilation Systems</field>
+            <field name="code">5.01.04</field>
+            <field name="sequence">40</field>
+            <field name="active">True</field>
+        </record>
+
+
+        <!-- ════════════════════════════════════════════════════════════════
+             SECTION D — 5.02 FIRE FIGHTING SYSTEMS  (sub-subdivisions)
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <record id="sub3_mech_sprinkler" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_firefight"/>
+            <field name="name">Sprinkler System</field>
+            <field name="name_ar">نظام الرشاشات</field>
+            <field name="code">5.02.01</field>
+            <field name="sequence">10</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_hose_reel" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_firefight"/>
+            <field name="name">Fire Hose Reels</field>
+            <field name="name_ar">بكرات خراطيم الحريق</field>
+            <field name="code">5.02.02</field>
+            <field name="sequence">20</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_fire_alarm" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_firefight"/>
+            <field name="name">Fire Alarm System</field>
+            <field name="name_ar">نظام إنذار الحريق</field>
+            <field name="code">5.02.03</field>
+            <field name="sequence">30</field>
+            <field name="active">True</field>
+        </record>
+
+
+        <!-- ════════════════════════════════════════════════════════════════
+             SECTION E — 5.03 WATER SUPPLY SYSTEM  (sub-subdivisions)
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <record id="sub3_mech_cold_water" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_water_supply"/>
+            <field name="name">Cold Water Supply Pipes</field>
+            <field name="name_ar">مواسير المياه البارده</field>
+            <field name="code">5.03.01</field>
+            <field name="sequence">10</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_hot_water" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_water_supply"/>
+            <field name="name">Hot Water Supply Pipes</field>
+            <field name="name_ar">مواسير المياه الحارة</field>
+            <field name="code">5.03.02</field>
+            <field name="sequence">20</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_water_valves" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_water_supply"/>
+            <field name="name">Water Supply Valves</field>
+            <field name="name_ar">محابس الغلق والفصل للمياه</field>
+            <field name="code">5.03.03</field>
+            <field name="sequence">30</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_sanitary" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_water_supply"/>
+            <field name="name">Sanitary Fixtures</field>
+            <field name="name_ar">المراحيض والمغاسل والخلاطات</field>
+            <field name="code">5.03.04</field>
+            <field name="sequence">40</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_water_pumps" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_water_supply"/>
+            <field name="name">Water Pumps</field>
+            <field name="name_ar">مضخات المياه</field>
+            <field name="code">5.03.05</field>
+            <field name="sequence">50</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_water_filter" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_water_supply"/>
+            <field name="name">Water Filteration Unit</field>
+            <field name="name_ar">وحدة معالجة المياه للشرب</field>
+            <field name="code">5.03.06</field>
+            <field name="sequence">60</field>
+            <field name="active">True</field>
+        </record>
+
+
+        <!-- ════════════════════════════════════════════════════════════════
+             SECTION F — 5.04 DRAINAGE SYSTEM  (sub-subdivisions)
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <record id="sub3_mech_drain_pipes" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_drainage"/>
+            <field name="name">Drainage Pipes</field>
+            <field name="name_ar">مواسير الصرف الصحي</field>
+            <field name="code">5.04.01</field>
+            <field name="sequence">10</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_gutter_drains" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_drainage"/>
+            <field name="name">Drainage Gutter Drains</field>
+            <field name="code">5.04.02</field>
+            <field name="sequence">20</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_floor_drains" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_drainage"/>
+            <field name="name">Floor Drains</field>
+            <field name="code">5.04.03</field>
+            <field name="sequence">30</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_cleanouts" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_drainage"/>
+            <field name="name">Cleanouts Drain</field>
+            <field name="code">5.04.04</field>
+            <field name="sequence">40</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_manholes" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_drainage"/>
+            <field name="name">Manholes Drainage</field>
+            <field name="code">5.04.05</field>
+            <field name="sequence">50</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_oil_interceptors" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_drainage"/>
+            <field name="name">Oil Interceptors</field>
+            <field name="code">5.04.06</field>
+            <field name="sequence">60</field>
+            <field name="active">True</field>
+        </record>
+
+
+        <!-- ════════════════════════════════════════════════════════════════
+             SECTION G — 5.05 LPG SYSTEMS  (sub-subdivisions)
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <record id="sub3_mech_lpg_pipes" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_lpg"/>
+            <field name="name">LPG Supply Lines</field>
+            <field name="name_ar">خطوط توريد الغاز السائل</field>
+            <field name="code">5.05.01</field>
+            <field name="sequence">10</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_lpg_reg" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_lpg"/>
+            <field name="name">LPG Regulators &amp; Safety</field>
+            <field name="name_ar">منظمات وأمان الغاز السائل</field>
+            <field name="code">5.05.02</field>
+            <field name="sequence">20</field>
+            <field name="active">True</field>
+        </record>
+
+
+        <!-- ════════════════════════════════════════════════════════════════
+             SECTION H — 5.06 EQUIPMENT WORKS (PUMPS)  (sub-subdivisions)
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <record id="sub3_mech_pump_sets" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_equipment"/>
+            <field name="name">Pump Sets</field>
+            <field name="name_ar">مجموعات مضخات</field>
+            <field name="code">5.06.01</field>
+            <field name="sequence">10</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="sub3_mech_pressure_vessel" model="farm.sub_subdivision.work">
+            <field name="division_id" ref="div_mechanical"/>
+            <field name="subdivision_id" ref="sub_mech_equipment"/>
+            <field name="name">Pressure Vessels &amp; Tanks</field>
+            <field name="name_ar">أوعية ضغط وخزانات</field>
+            <field name="code">5.06.02</field>
+            <field name="sequence">20</field>
+            <field name="active">True</field>
+        </record>
+
+    </data>
+</odoo>

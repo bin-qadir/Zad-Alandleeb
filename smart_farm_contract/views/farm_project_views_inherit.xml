@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Extend the Farm Project form with:
+            1. Lifecycle phase statusbar (Pre-Tender → Tender → Contract → Execution)
+            2. Phase transition buttons in the header
+            3. Contracts stat button in button_box
+        -->
+
+        <record id="view_farm_project_contract_phase_inherit" model="ir.ui.view">
+            <field name="name">farm.project.contract.phase.inherit</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
+            <field name="arch" type="xml">
+
+                <!-- ── 1. Phase statusbar + transition buttons in header ── -->
+                <xpath expr="//header" position="inside">
+                    <!-- Phase progression buttons -->
+                    <button name="action_phase_to_tender"
+                            type="object"
+                            string="Move to Tender"
+                            class="btn-secondary"
+                            invisible="project_phase != 'pre_tender'"/>
+                    <button name="action_phase_to_contract"
+                            type="object"
+                            string="Move to Contract"
+                            class="btn-secondary"
+                            invisible="project_phase != 'tender'"/>
+                    <button name="action_phase_to_execution"
+                            type="object"
+                            string="Start Execution"
+                            class="btn-primary"
+                            invisible="project_phase != 'contract'"
+                            confirm="Move project to Execution phase? An approved contract is required."/>
+                    <button name="action_phase_reset"
+                            type="object"
+                            string="Reset to Contract Phase"
+                            class="btn-secondary"
+                            invisible="project_phase != 'execution'"
+                            groups="smart_farm_base.group_smart_farm_manager"/>
+                    <!-- Phase statusbar -->
+                    <field name="project_phase"
+                           widget="statusbar"
+                           statusbar_visible="pre_tender,tender,contract,execution"/>
+                </xpath>
+
+                <!-- ── 2. Contracts stat button ── -->
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button class="oe_stat_button"
+                            type="object"
+                            name="action_open_contracts"
+                            icon="fa-file-text-o">
+                        <field name="contract_count"
+                               widget="statinfo"
+                               string="Contracts"/>
+                    </button>
+                </xpath>
+
+                <!-- ── 3. Phase execution alert banner ── -->
+                <xpath expr="//sheet" position="inside">
+                    <div class="alert alert-info mb-3"
+                         role="alert"
+                         invisible="project_phase != 'pre_tender'">
+                        <strong>Pre-Tender Phase.</strong>
+                        Prepare your BOQ and BOQ Analysis. Click
+                        <strong>Move to Tender</strong> when ready for pricing negotiation.
+                    </div>
+                    <div class="alert alert-warning mb-3"
+                         role="alert"
+                         invisible="project_phase != 'tender'">
+                        <strong>Tender Phase.</strong>
+                        Perform RFQ and analysis pricing. Click
+                        <strong>Move to Contract</strong> when ready to create a contract.
+                    </div>
+                    <div class="alert alert-warning mb-3"
+                         role="alert"
+                         invisible="project_phase != 'contract'">
+                        <strong>Contract Phase.</strong>
+                        Create and approve a contract. Click
+                        <strong>Start Execution</strong> once a contract is approved.
+                    </div>
+                    <div class="alert alert-success mb-3"
+                         role="alert"
+                         invisible="project_phase != 'execution'">
+                        <strong>Execution Phase.</strong>
+                        Job Orders, Materials, Labour, and Progress Tracking are now active.
+                    </div>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

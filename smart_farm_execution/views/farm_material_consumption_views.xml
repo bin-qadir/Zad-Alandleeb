@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             SEARCH
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_material_consumption_search" model="ir.ui.view">
+            <field name="name">farm.material.consumption.search</field>
+            <field name="model">farm.material.consumption</field>
+            <field name="arch" type="xml">
+                <search string="Material Consumption">
+                    <field name="description"  string="Description"/>
+                    <field name="job_order_id"/>
+                    <field name="project_id"/>
+                    <field name="product_id"/>
+                    <separator/>
+                    <filter name="draft"     string="Draft"
+                            domain="[('state','=','draft')]"/>
+                    <filter name="requested" string="Requested"
+                            domain="[('state','=','requested')]"/>
+                    <filter name="issued"    string="Issued"
+                            domain="[('state','=','issued')]"/>
+                    <filter name="consumed"  string="Consumed"
+                            domain="[('state','=','consumed')]"/>
+                    <filter name="cancelled" string="Cancelled"
+                            domain="[('state','=','cancelled')]"/>
+                    <group string="Group By">
+                        <filter name="by_job_order" string="Job Order"
+                                context="{'group_by':'job_order_id'}"/>
+                        <filter name="by_project"   string="Project"
+                                context="{'group_by':'project_id'}"/>
+                        <filter name="by_product"   string="Product"
+                                context="{'group_by':'product_id'}"/>
+                        <filter name="by_state"     string="Status"
+                                context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             LIST
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_material_consumption_list" model="ir.ui.view">
+            <field name="name">farm.material.consumption.list</field>
+            <field name="model">farm.material.consumption</field>
+            <field name="arch" type="xml">
+                <list string="Material Consumption"
+                      decoration-muted="state in ('draft', 'cancelled')"
+                      decoration-info="state == 'requested'"
+                      decoration-warning="state == 'issued'"
+                      decoration-success="state == 'consumed'">
+                    <field name="job_order_id"  string="Job Order"/>
+                    <field name="project_id"    string="Project"/>
+                    <field name="boq_line_id"   string="BOQ Subitem" optional="show"/>
+                    <field name="product_id"    string="Product"/>
+                    <field name="description"   string="Description"/>
+                    <field name="uom_id"        string="UoM"/>
+                    <field name="planned_qty"   string="Plan Qty"/>
+                    <field name="requested_qty" string="Req. Qty"  optional="show"/>
+                    <field name="issued_qty"    string="Issued"    optional="show"/>
+                    <field name="consumed_qty"  string="Used Qty"/>
+                    <field name="unit_cost"     string="Unit Cost" optional="show"/>
+                    <field name="planned_cost"  string="Plan Cost" optional="show"/>
+                    <field name="actual_cost"   string="Actual Cost"
+                           decoration-danger="actual_cost &gt; planned_cost and planned_cost &gt; 0"
+                           decoration-success="actual_cost &lt;= planned_cost and actual_cost &gt; 0"/>
+                    <field name="state"         widget="badge"
+                           decoration-muted="state in ('draft', 'cancelled')"
+                           decoration-info="state == 'requested'"
+                           decoration-warning="state == 'issued'"
+                           decoration-success="state == 'consumed'"
+                           decoration-danger="state == 'cancelled'"/>
+                </list>
+            </field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             ACTION
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="action_farm_material_consumption" model="ir.actions.act_window">
+            <field name="name">Material Consumption</field>
+            <field name="res_model">farm.material.consumption</field>
+            <field name="view_mode">list</field>
+            <field name="search_view_id" ref="view_farm_material_consumption_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No material consumption records yet.
+                </p>
+                <p>
+                    Add materials inside a Job Order's
+                    <strong>Materials</strong> tab.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

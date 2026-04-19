@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════
+             farm.crop.type
+        ══════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_crop_type_search" model="ir.ui.view">
+            <field name="name">farm.crop.type.search</field>
+            <field name="model">farm.crop.type</field>
+            <field name="arch" type="xml">
+                <search string="Crop Types">
+                    <field name="name" string="Name"/>
+                    <filter name="active" string="Active" domain="[('active','=',True)]"/>
+                    <filter name="inactive" string="Archived"
+                            domain="[('active','=',False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_farm_crop_type_list" model="ir.ui.view">
+            <field name="name">farm.crop.type.list</field>
+            <field name="model">farm.crop.type</field>
+            <field name="arch" type="xml">
+                <list string="Crop Types">
+                    <field name="name"/>
+                    <field name="active" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_farm_crop_type_form" model="ir.ui.view">
+            <field name="name">farm.crop.type.form</field>
+            <field name="model">farm.crop.type</field>
+            <field name="arch" type="xml">
+                <form string="Crop Type">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Crop Type Name…"/></h1>
+                        </div>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_farm_crop_type" model="ir.actions.act_window">
+            <field name="name">Crop Types</field>
+            <field name="res_model">farm.crop.type</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════
+             farm.cost.type
+        ══════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_cost_type_search" model="ir.ui.view">
+            <field name="name">farm.cost.type.search</field>
+            <field name="model">farm.cost.type</field>
+            <field name="arch" type="xml">
+                <search string="Cost Types">
+                    <field name="name" string="Name"/>
+                    <filter name="active" string="Active" domain="[('active','=',True)]"/>
+                    <filter name="inactive" string="Archived"
+                            domain="[('active','=',False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_farm_cost_type_list" model="ir.ui.view">
+            <field name="name">farm.cost.type.list</field>
+            <field name="model">farm.cost.type</field>
+            <field name="arch" type="xml">
+                <list string="Cost Types">
+                    <field name="name"/>
+                    <field name="active" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_farm_cost_type_form" model="ir.ui.view">
+            <field name="name">farm.cost.type.form</field>
+            <field name="model">farm.cost.type</field>
+            <field name="arch" type="xml">
+                <form string="Cost Type">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Cost Type Name…"/></h1>
+                        </div>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_farm_cost_type" model="ir.actions.act_window">
+            <field name="name">Cost Types</field>
+            <field name="res_model">farm.cost.type</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════
+             farm.work.type
+        ══════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_work_type_search" model="ir.ui.view">
+            <field name="name">farm.work.type.search</field>
+            <field name="model">farm.work.type</field>
+            <field name="arch" type="xml">
+                <search string="Work Types">
+                    <field name="name" string="Name"/>
+                    <filter name="active" string="Active" domain="[('active','=',True)]"/>
+                    <filter name="inactive" string="Archived"
+                            domain="[('active','=',False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_farm_work_type_list" model="ir.ui.view">
+            <field name="name">farm.work.type.list</field>
+            <field name="model">farm.work.type</field>
+            <field name="arch" type="xml">
+                <list string="Work Types">
+                    <field name="name"/>
+                    <field name="active" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_farm_work_type_form" model="ir.ui.view">
+            <field name="name">farm.work.type.form</field>
+            <field name="model">farm.work.type</field>
+            <field name="arch" type="xml">
+                <form string="Work Type">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Work Type Name…"/></h1>
+                        </div>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_farm_work_type" model="ir.actions.act_window">
+            <field name="name">Work Types</field>
+            <field name="res_model">farm.work.type</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+
+        <!-- ══════════════════════════════════════════════════════
+             farm.sensor.type
+        ══════════════════════════════════════════════════════ -->
+
+        <record id="view_farm_sensor_type_search" model="ir.ui.view">
+            <field name="name">farm.sensor.type.search</field>
+            <field name="model">farm.sensor.type</field>
+            <field name="arch" type="xml">
+                <search string="Sensor Types">
+                    <field name="name" string="Name"/>
+                    <filter name="active" string="Active" domain="[('active','=',True)]"/>
+                    <filter name="inactive" string="Archived"
+                            domain="[('active','=',False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_farm_sensor_type_list" model="ir.ui.view">
+            <field name="name">farm.sensor.type.list</field>
+            <field name="model">farm.sensor.type</field>
+            <field name="arch" type="xml">
+                <list string="Sensor Types">
+                    <field name="name"/>
+                    <field name="active" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_farm_sensor_type_form" model="ir.ui.view">
+            <field name="name">farm.sensor.type.form</field>
+            <field name="model">farm.sensor.type</field>
+            <field name="arch" type="xml">
+                <form string="Sensor Type">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Sensor Type Name…"/></h1>
+                        </div>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_farm_sensor_type" model="ir.actions.act_window">
+            <field name="name">Sensor Types</field>
+            <field name="res_model">farm.sensor.type</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

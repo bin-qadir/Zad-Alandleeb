@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ===== farm.boq.line.template — list ===== -->
+
+        <record id="view_farm_boq_line_template_list" model="ir.ui.view">
+            <field name="name">farm.boq.line.template.list</field>
+            <field name="model">farm.boq.line.template</field>
+            <field name="arch" type="xml">
+                <list string="Cost Item Templates">
+                    <field name="name"/>
+                    <field name="division_id" optional="show"/>
+                    <field name="subdivision_id" optional="show"/>
+                    <field name="currency_id" column_invisible="1"/>
+                    <field name="quantity"/>
+                    <field name="unit_id" string="Unit" optional="show"/>
+                    <field name="unit_price" widget="monetary"
+                           options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                    <field name="total" widget="monetary"
+                           options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                    <field name="cost_total" widget="monetary"
+                           options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                    <field name="profit" widget="monetary"
+                           options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                    <field name="margin_percent" string="Margin %"
+                           help="Enter as a plain percentage, e.g. 30 for 30%"/>
+                </list>
+            </field>
+        </record>
+
+
+        <!-- ===== farm.boq.line.template — form ===== -->
+
+        <record id="view_farm_boq_line_template_form" model="ir.ui.view">
+            <field name="name">farm.boq.line.template.form</field>
+            <field name="model">farm.boq.line.template</field>
+            <field name="arch" type="xml">
+                <form string="Cost Item Template">
+                    <header>
+                        <button name="action_create_boq_line"
+                                type="object"
+                                string="Add to Cost Structure"
+                                class="btn-primary"/>
+                    </header>
+
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" placeholder="Template Name…"/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group string="Classification">
+                                <field name="division_id"/>
+                                <field name="subdivision_id"
+                                       domain="[('division_id', '=', division_id)]"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                            <group string="Quantities &amp; Pricing">
+                                <field name="quantity"/>
+                                <field name="unit_id" string="Unit"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="unit_price" readonly="1" widget="monetary"
+                                       options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                <field name="total" readonly="1" widget="monetary"
+                                       options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+
+                            <!-- ── Description ── -->
+                            <page string="Description" name="description_tab">
+                                <field name="description" placeholder="Add a description…"/>
+                            </page>
+
+                            <!-- ══════════════════════════════════════════════
+                                 MATERIALS
+                                 Allowed: Storable Product / Consumable / Service
+                                 Domain:  type in ('product', 'consu', 'service')
+                            ══════════════════════════════════════════════ -->
+                            <page string="Materials" name="materials_tab">
+                                <field name="currency_id" invisible="1"/>
+                                <field name="material_ids">
+                                    <list editable="bottom">
+                                        <field name="product_id"
+                                               domain="[('type', 'in', ['product', 'consu', 'service'])]"
+                                               options="{'no_create': True}"/>
+                                        <field name="product_type"
+                                               string="Type"
+                                               readonly="1"
+                                               optional="show"/>
+                                        <field name="description"/>
+                                        <field name="uom_id" string="Unit"
+                                               optional="show"/>
+                                        <field name="quantity"/>
+                                        <field name="unit_price" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                        <field name="currency_id" column_invisible="1"/>
+                                        <field name="total" readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                    </list>
+                                </field>
+                            </page>
+
+                            <!-- ══════════════════════════════════════════════
+                                 LABOUR
+                                 Allowed: Service only
+                                 Domain:  type = 'service'
+                                 Backward-compat: hours / cost_per_hour preserved
+                            ══════════════════════════════════════════════ -->
+                            <page string="Labour" name="labor_tab">
+                                <field name="currency_id" invisible="1"/>
+                                <field name="labor_ids">
+                                    <list editable="bottom">
+                                        <field name="product_id"
+                                               domain="[('type', '=', 'service')]"
+                                               options="{'no_create': True}"/>
+                                        <field name="description" string="Description"/>
+                                        <field name="uom_id" string="Unit" optional="show"/>
+                                        <field name="hours" string="Qty / Hours"/>
+                                        <field name="cost_per_hour" string="Unit Cost"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                        <field name="currency_id" column_invisible="1"/>
+                                        <field name="total" readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                    </list>
+                                </field>
+                            </page>
+
+                            <!-- ══════════════════════════════════════════════
+                                 SUBCONTRACTOR
+                                 Allowed: Service only
+                                 Domain:  type = 'service'
+                            ══════════════════════════════════════════════ -->
+                            <page string="Subcontractor" name="subcontractor_tab">
+                                <field name="currency_id" invisible="1"/>
+                                <field name="subcontractor_ids">
+                                    <list editable="bottom">
+                                        <field name="product_id"
+                                               domain="[('type', '=', 'service')]"
+                                               options="{'no_create': True}"/>
+                                        <field name="description"/>
+                                        <field name="uom_id" string="Unit" optional="show"/>
+                                        <field name="quantity"/>
+                                        <field name="unit_price" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                        <field name="currency_id" column_invisible="1"/>
+                                        <field name="total" readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                    </list>
+                                </field>
+                            </page>
+
+                            <!-- ══════════════════════════════════════════════
+                                 EQUIPMENT
+                                 Allowed: Service only
+                                 Domain:  type = 'service'
+                            ══════════════════════════════════════════════ -->
+                            <page string="Equipment" name="equipment_tab">
+                                <field name="currency_id" invisible="1"/>
+                                <field name="equipment_ids">
+                                    <list editable="bottom">
+                                        <field name="product_id"
+                                               domain="[('type', '=', 'service')]"
+                                               options="{'no_create': True}"/>
+                                        <field name="description"/>
+                                        <field name="uom_id" string="Unit" optional="show"/>
+                                        <field name="quantity"/>
+                                        <field name="unit_price" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                        <field name="currency_id" column_invisible="1"/>
+                                        <field name="total" readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                    </list>
+                                </field>
+                            </page>
+
+                            <!-- ══════════════════════════════════════════════
+                                 TOOLS
+                                 Allowed: Service only
+                                 Domain:  type = 'service'
+                            ══════════════════════════════════════════════ -->
+                            <page string="Tools" name="tools_tab">
+                                <field name="currency_id" invisible="1"/>
+                                <field name="tools_ids">
+                                    <list editable="bottom">
+                                        <field name="product_id"
+                                               domain="[('type', '=', 'service')]"
+                                               options="{'no_create': True}"/>
+                                        <field name="description"/>
+                                        <field name="uom_id" string="Unit" optional="show"/>
+                                        <field name="quantity"/>
+                                        <field name="unit_price" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                        <field name="currency_id" column_invisible="1"/>
+                                        <field name="total" readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                    </list>
+                                </field>
+                            </page>
+
+                            <!-- ══════════════════════════════════════════════
+                                 OTHERS  (was: Overhead — backward-compatible)
+                                 Allowed: Service only
+                                 Domain:  type = 'service'
+                                 Notes:
+                                   - product_id is OPTIONAL; existing rows with
+                                     only `name` + manual `amount` remain valid.
+                                   - `amount` is still stored (= quantity × unit_price).
+                                   - Tab renamed from "Overhead" to "Others".
+                            ══════════════════════════════════════════════ -->
+                            <page string="Others" name="overhead_tab">
+                                <field name="currency_id" invisible="1"/>
+                                <field name="overhead_ids">
+                                    <list editable="bottom">
+                                        <field name="product_id"
+                                               domain="[('type', '=', 'service')]"
+                                               options="{'no_create': True}"/>
+                                        <field name="name" string="Description"/>
+                                        <field name="uom_id" string="Unit" optional="show"/>
+                                        <field name="quantity"/>
+                                        <field name="unit_price" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                        <field name="currency_id" column_invisible="1"/>
+                                        <field name="total" readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                    </list>
+                                </field>
+                            </page>
+
+                            <!-- ── Cost Summary ── -->
+                            <page string="Cost Summary" name="cost_summary_tab">
+                                <field name="currency_id" invisible="1"/>
+                                <group>
+                                    <group string="Cost Breakdown">
+                                        <field name="material_total" readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                        <field name="labor_total" readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                        <field name="subcontractor_total" readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                        <field name="equipment_total" readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                        <field name="tools_total" readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                        <field name="overhead_total" string="Others Total"
+                                               readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                        <field name="cost_total" readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                    </group>
+                                    <group string="Profitability">
+                                        <field name="margin_percent" string="Margin (%)"
+                                               help="Enter as a plain percentage, e.g. 30 for 30%"/>
+                                        <field name="selling_total" readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                        <field name="profit" readonly="1" widget="monetary"
+                                               options="{'currency_field': 'currency_id', 'decimal_places': 2}"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- ===== Action ===== -->
+
+        <record id="action_farm_boq_line_template" model="ir.actions.act_window">
+            <field name="name">Cost Item Templates</field>
+            <field name="res_model">farm.boq.line.template</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

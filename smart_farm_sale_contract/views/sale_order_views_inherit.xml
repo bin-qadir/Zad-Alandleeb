@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Extend the standard Sale Order form with:
+            1. contract_stage statusbar + action buttons
+            2. farm_project_id + revision_ref in the header area
+            3. Job Orders stat button
+            4. boq_analysis_line_id column on order lines
+        -->
+
+        <record id="view_sale_order_contract_inherit" model="ir.ui.view">
+            <field name="name">sale.order.contract.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+
+                <!-- ── 1. Contract stage buttons + statusbar in header ── -->
+                <xpath expr="//header/field[@name='state']" position="before">
+
+                    <!-- Contract workflow action buttons -->
+                    <button name="action_contract_start"
+                            type="object"
+                            string="Start"
+                            class="btn-secondary"
+                            invisible="contract_stage != 'new'"/>
+                    <button name="action_contract_submit"
+                            type="object"
+                            string="Submit for Approval"
+                            class="btn-secondary"
+                            invisible="contract_stage != 'in_progress'"/>
+                    <button name="action_contract_reply_with_notes"
+                            type="object"
+                            string="Reply with Notes"
+                            class="btn-secondary"
+                            invisible="contract_stage not in ('submitted', 'in_progress')"/>
+                    <button name="action_contract_approve"
+                            type="object"
+                            string="Approve Contract"
+                            class="btn-primary"
+                            invisible="contract_stage not in ('submitted', 'reply_with_notes', 'in_progress')"
+                            confirm="Approve this Sales Order as the binding contract? Job Orders can then be generated."/>
+                    <button name="action_contract_reject"
+                            type="object"
+                            string="Reject"
+                            class="btn-danger"
+                            invisible="contract_stage in ('approved', 'canceled', 'rejected', 'new')"/>
+                    <button name="action_contract_cancel"
+                            type="object"
+                            string="Cancel Contract"
+                            class="btn-secondary"
+                            invisible="contract_stage in ('approved', 'canceled')"/>
+                    <button name="action_contract_reset_to_new"
+                            type="object"
+                            string="Reset to New"
+                            class="btn-secondary"
+                            invisible="contract_stage != 'rejected'"/>
+
+                    <!-- Generate Job Orders — only when approved -->
+                    <button name="action_generate_farm_job_orders"
+                            type="object"
+                            string="Generate Job Orders"
+                            icon="fa-tasks"
+                            class="btn-primary"
+                            invisible="not is_contract_approved"
+                            confirm="Generate Job Orders from all order lines that have a BOQ Analysis Line linked?"/>
+
+                    <!-- View Job Orders -->
+                    <button name="action_view_farm_job_orders"
+                            type="object"
+                            string="View Job Orders"
+                            icon="fa-list-ul"
+                            class="btn-secondary"
+                            invisible="farm_job_order_count == 0"/>
+
+                    <!-- Contract stage statusbar -->
+                    <field name="contract_stage"
+                           widget="statusbar"
+                           statusbar_visible="new,in_progress,submitted,approved"/>
+
+                </xpath>
+
+                <!-- ── 2. Farm Project + Revision Ref in the form ── -->
+                <xpath expr="//field[@name='client_order_ref']" position="after">
+                    <field name="farm_project_id"
+                           options="{'no_create': True}"/>
+                    <field name="revision_ref"
+                           placeholder="REV-00"/>
+                </xpath>
+
+                <!-- ── 3. Job Orders stat button ── -->
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button class="oe_stat_button"
+                            type="object"
+                            name="action_view_farm_job_orders"
+                            icon="fa-tasks"
+                            invisible="farm_job_order_count == 0">
+                        <field name="farm_job_order_count"
+                               widget="statinfo"
+                               string="Job Orders"/>
+                    </button>
+                </xpath>
+
+                <!-- ── 4. BOQ Analysis Line column in order lines ── -->
+                <xpath expr="//field[@name='order_line']//field[@name='product_id']" position="after">
+                    <field name="boq_analysis_line_id"
+                           string="Analysis Line"
+                           optional="show"
+                           options="{'no_create': True}"/>
+                    <field name="boq_line_display_code"
+                           string="BOQ Code"
+                           optional="show"
+                           readonly="1"/>
+                    <field name="job_order_id"
+                           string="Job Order"
+                           optional="show"
+                           readonly="1"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!--
+            Extend the Sale Order list view with contract_stage badge + project.
+        -->
+
+        <record id="view_sale_order_contract_list_inherit" model="ir.ui.view">
+            <field name="name">sale.order.contract.list.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="farm_project_id" string="Farm Project" optional="show"/>
+                    <field name="contract_stage"
+                           string="Contract Stage"
+                           optional="show"
+                           widget="badge"
+                           decoration-success="contract_stage == 'approved'"
+                           decoration-warning="contract_stage in ('submitted', 'reply_with_notes')"
+                           decoration-danger="contract_stage in ('rejected', 'canceled')"
+                           decoration-info="contract_stage == 'in_progress'"
+                           decoration-muted="contract_stage == 'new'"/>
+                    <field name="is_contract_approved" column_invisible="True"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

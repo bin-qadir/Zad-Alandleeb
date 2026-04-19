@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- ── Final fixed order (11 active divisions) ── -->
+
+        <record id="div_civil" model="farm.division.work">
+            <field name="name">Civil Works</field>
+            <field name="name_ar">أعمال مدنية</field>
+            <field name="code">CW</field>
+            <field name="sequence">10</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="div_structural" model="farm.division.work">
+            <field name="name">Structural Works</field>
+            <field name="name_ar">أعمال إنشائية</field>
+            <field name="code">SW</field>
+            <field name="sequence">20</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="div_architectural" model="farm.division.work">
+            <field name="name">Architectural Works</field>
+            <field name="name_ar">أعمال معمارية</field>
+            <field name="code">AW</field>
+            <field name="sequence">30</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="div_finishing" model="farm.division.work">
+            <field name="name">Finishing Works</field>
+            <field name="name_ar">أعمال التشطيب</field>
+            <field name="code">FW</field>
+            <field name="sequence">40</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="div_mechanical" model="farm.division.work">
+            <field name="name">Mechanical Works</field>
+            <field name="name_ar">أعمال ميكانيكية</field>
+            <field name="code">MW</field>
+            <field name="sequence">50</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="div_electrical" model="farm.division.work">
+            <field name="name">Electrical Works</field>
+            <field name="name_ar">أعمال كهربائية</field>
+            <field name="code">EW</field>
+            <field name="sequence">60</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="div_irrigation" model="farm.division.work">
+            <field name="name">Irrigation Works</field>
+            <field name="name_ar">أعمال الري</field>
+            <field name="code">IW</field>
+            <field name="sequence">70</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="div_agricultural" model="farm.division.work">
+            <field name="name">Agricultural Works</field>
+            <field name="name_ar">أعمال زراعية</field>
+            <field name="code">AG</field>
+            <field name="sequence">80</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="div_infrastructure" model="farm.division.work">
+            <field name="name">Infrastructure Works</field>
+            <field name="name_ar">أعمال البنية التحتية</field>
+            <field name="code">IF</field>
+            <field name="sequence">90</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="div_landscape" model="farm.division.work">
+            <field name="name">Landscape Works</field>
+            <field name="name_ar">أعمال التنسيق</field>
+            <field name="code">LW</field>
+            <field name="sequence">100</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="div_hvac" model="farm.division.work">
+            <field name="name">Control Works</field>
+            <field name="name_ar">أعمال الكنترول</field>
+            <field name="code">CT</field>
+            <field name="sequence">110</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Plumbing Works: deactivated — not part of the 11-division structure.
+             Subdivisions and sub-subdivisions are preserved in the DB but will
+             not appear in new BOQs. Existing linked data is untouched. -->
+        <record id="div_plumbing" model="farm.division.work">
+            <field name="name">Plumbing Works</field>
+            <field name="code">PW</field>
+            <field name="sequence">999</field>
+            <field name="active">False</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ── Cost Structure / Procurement ── -->
+        <menuitem
+            id="menu_smart_farm_procurement"
+            name="Procurement"
+            parent="smart_farm_boq.menu_smart_farm_boq"
+            sequence="30"
+        />
+
+        <!-- Purchase Orders linked to Farm projects -->
+        <menuitem
+            id="menu_smart_farm_purchase_orders"
+            name="Purchase Orders"
+            parent="menu_smart_farm_procurement"
+            action="purchase.purchase_rfq"
+            sequence="10"
+        />
+
+    </data>
+</odoo>
