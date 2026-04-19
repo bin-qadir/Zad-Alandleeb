@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Extend the Farm Contract form to display the originating Sale Order.
+            The sale_order_id field is added by farm_contract_inherit.py in this module.
+        -->
+        <record id="view_farm_contract_sale_inherit" model="ir.ui.view">
+            <field name="name">farm.contract.sale.inherit</field>
+            <field name="model">farm.contract</field>
+            <field name="inherit_id" ref="smart_farm_contract.view_farm_contract_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Insert Sale Order field at the top of the General group -->
+                <xpath expr="//group[@name='group_general']/field[@name='project_id']"
+                       position="before">
+                    <field name="sale_order_id"
+                           readonly="1"
+                           options="{'no_create': True, 'no_open': False}"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

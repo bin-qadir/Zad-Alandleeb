@@ -26,6 +26,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/sale_order_views_inherit.xml',
+        'views/farm_contract_views_inherit.xml',
         'views/farm_boq_analysis_views_inherit.xml',
         'views/farm_job_order_views_inherit.xml',
         'views/farm_project_views_inherit.xml',

@@ -43,3 +43,15 @@ class FarmProjectBoqInherit(models.Model):
             'domain': [('project_id', '=', self.id)],
             'context': {'default_project_id': self.id},
         }
+
+    def action_new_boq(self):
+        """Open a blank BOQ form pre-linked to this project."""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('New Cost Structure — %s') % self.name,
+            'res_model': 'farm.boq',
+            'view_mode': 'form',
+            'target': 'current',
+            'context': {'default_project_id': self.id},
+        }

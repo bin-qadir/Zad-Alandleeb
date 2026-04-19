@@ -61,6 +61,7 @@
             <field name="model">farm.contract</field>
             <field name="arch" type="xml">
                 <list string="Contracts"
+                      create="0"
                       decoration-muted="state == 'draft'"
                       decoration-warning="state == 'review'"
                       decoration-success="state in ('approved', 'active')"
@@ -93,7 +94,7 @@
             <field name="name">farm.contract.form</field>
             <field name="model">farm.contract</field>
             <field name="arch" type="xml">
-                <form string="Farm Contract">
+                <form string="Farm Contract" create="0">
                     <header>
                         <!-- Workflow buttons -->
                         <button name="action_submit_review"
@@ -223,8 +224,10 @@
                     No contracts yet.
                 </p>
                 <p>
-                    Create a contract for your project and approve it before
-                    generating <strong>Job Orders</strong>.
+                    Contracts are created automatically from an
+                    <strong>Approved Sale Order</strong>.
+                    Open a Sale Order, approve its contract stage, then click
+                    <strong>Create Contract</strong>.
                 </p>
             </field>
         </record>

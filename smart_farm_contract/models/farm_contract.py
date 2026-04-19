@@ -128,6 +128,12 @@ class FarmContract(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        if not self.env.context.get('from_sale_contract_approved'):
+            raise UserError(_(
+                'Contracts cannot be created manually.\n\n'
+                'Open an approved Sale Order and click "Create Contract" '
+                'to generate the contract automatically.'
+            ))
         seq = self.env['ir.sequence']
         for vals in vals_list:
             if vals.get('name', _('New')) == _('New'):

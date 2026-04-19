@@ -9,7 +9,6 @@
             <field name="model">farm.boq</field>
             <field name="arch" type="xml">
                 <list string="Cost Structures"
-                      create="false"
                       decoration-muted="state == 'draft'"
                       decoration-info="state == 'start'"
                       decoration-warning="state in ('in_progress', 'submitted')"

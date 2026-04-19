@@ -72,11 +72,16 @@ class SaleOrderContract(models.Model):
         help='Farm Project this Sales Order / Contract applies to.',
     )
 
-    # ── Stat button ───────────────────────────────────────────────────────────
+    # ── Stat buttons ──────────────────────────────────────────────────────────
 
     farm_job_order_count = fields.Integer(
         string='Job Orders',
         compute='_compute_farm_job_order_count',
+    )
+
+    farm_contract_count = fields.Integer(
+        string='Contracts',
+        compute='_compute_farm_contract_count',
     )
 
     # ────────────────────────────────────────────────────────────────────────
@@ -92,6 +97,13 @@ class SaleOrderContract(models.Model):
         JobOrder = self.env['farm.job.order']
         for rec in self:
             rec.farm_job_order_count = JobOrder.search_count(
+                [('sale_order_id', '=', rec.id)]
+            )
+
+    def _compute_farm_contract_count(self):
+        FarmContract = self.env['farm.contract']
+        for rec in self:
+            rec.farm_contract_count = FarmContract.search_count(
                 [('sale_order_id', '=', rec.id)]
             )
 
@@ -303,6 +315,87 @@ class SaleOrderContract(models.Model):
                     self.farm_project_id.id if self.farm_project_id else False
                 ),
             },
+        }
+
+    def action_create_farm_contract(self):
+        """Create a Farm Contract from this approved Sale Order.
+
+        Prerequisites:
+        - contract_stage must be 'approved'
+        - farm_project_id must be set
+        - No contract already linked to this Sale Order (idempotent guard)
+        """
+        self.ensure_one()
+
+        if not self.is_contract_approved:
+            raise UserError(_(
+                'A Farm Contract can only be created from an Approved Sale Order.\n\n'
+                'Current contract stage: %(stage)s\n\n'
+                'Click "Approve Contract" to approve this Sales Order first.',
+                stage=dict(
+                    self._fields['contract_stage'].selection
+                ).get(self.contract_stage, self.contract_stage),
+            ))
+
+        if not self.farm_project_id:
+            raise UserError(_(
+                'A Farm Project must be linked to this Sales Order '
+                'before creating a Farm Contract.\n\n'
+                'Set the "Farm Project" field and save first.'
+            ))
+
+        existing = self.env['farm.contract'].search(
+            [('sale_order_id', '=', self.id)], limit=1
+        )
+        if existing:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Contract — %s') % self.name,
+                'res_model': 'farm.contract',
+                'view_mode': 'form',
+                'res_id': existing.id,
+                'target': 'current',
+            }
+
+        contract = self.env['farm.contract'].with_context(
+            from_sale_contract_approved=True
+        ).create({
+            'project_id': self.farm_project_id.id,
+            'sale_order_id': self.id,
+            'contract_amount': self.amount_total,
+            'date_start': self.date_order.date() if self.date_order else False,
+        })
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Contract — %s') % self.name,
+            'res_model': 'farm.contract',
+            'view_mode': 'form',
+            'res_id': contract.id,
+            'target': 'current',
+        }
+
+    def action_view_farm_contracts(self):
+        """Open all Farm Contracts linked to this Sales Order."""
+        self.ensure_one()
+        contracts = self.env['farm.contract'].search(
+            [('sale_order_id', '=', self.id)]
+        )
+        if len(contracts) == 1:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Contract — %s') % self.name,
+                'res_model': 'farm.contract',
+                'view_mode': 'form',
+                'res_id': contracts.id,
+                'target': 'current',
+            }
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Contracts — %s') % self.name,
+            'res_model': 'farm.contract',
+            'view_mode': 'list,form',
+            'domain': [('sale_order_id', '=', self.id)],
         }
 
 

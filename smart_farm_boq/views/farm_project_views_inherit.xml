@@ -15,6 +15,15 @@
             <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
             <field name="arch" type="xml">
 
+                <!-- "New BOQ" action button in main_action_buttons -->
+                <xpath expr="//div[@name='main_action_buttons']" position="inside">
+                    <button name="action_new_boq"
+                            type="object"
+                            string="New BOQ"
+                            icon="fa-plus"
+                            class="btn btn-primary btn-lg px-4"/>
+                </xpath>
+
                 <!-- Open BOQs stat button -->
                 <xpath expr="//div[@name='button_box']" position="inside">
                     <button class="oe_stat_button"

@@ -57,6 +57,23 @@
                             class="btn-secondary"
                             invisible="contract_stage != 'rejected'"/>
 
+                    <!-- Create Farm Contract — only when approved and no contract yet -->
+                    <button name="action_create_farm_contract"
+                            type="object"
+                            string="Create Contract"
+                            icon="fa-file-text-o"
+                            class="btn-primary"
+                            invisible="not is_contract_approved or farm_contract_count != 0"
+                            confirm="Create a Farm Contract from this approved Sale Order?"/>
+
+                    <!-- View existing contracts -->
+                    <button name="action_view_farm_contracts"
+                            type="object"
+                            string="View Contract"
+                            icon="fa-file-text-o"
+                            class="btn-secondary"
+                            invisible="farm_contract_count == 0"/>
+
                     <!-- Generate Job Orders — only when approved -->
                     <button name="action_generate_farm_job_orders"
                             type="object"
@@ -89,8 +106,17 @@
                            placeholder="REV-00"/>
                 </xpath>
 
-                <!-- ── 3. Job Orders stat button ── -->
+                <!-- ── 3. Stat buttons: Contracts + Job Orders ── -->
                 <xpath expr="//div[@name='button_box']" position="inside">
+                    <button class="oe_stat_button"
+                            type="object"
+                            name="action_view_farm_contracts"
+                            icon="fa-file-text-o"
+                            invisible="farm_contract_count == 0">
+                        <field name="farm_contract_count"
+                               widget="statinfo"
+                               string="Contracts"/>
+                    </button>
                     <button class="oe_stat_button"
                             type="object"
                             name="action_view_farm_job_orders"
@@ -143,6 +169,7 @@
                            decoration-info="contract_stage == 'in_progress'"
                            decoration-muted="contract_stage == 'new'"/>
                     <field name="is_contract_approved" column_invisible="True"/>
+                    <field name="farm_contract_count" column_invisible="True"/>
                 </xpath>
 
             </field>
