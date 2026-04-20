@@ -76,6 +76,7 @@
             <field name="arch" type="xml">
 
                 <list string="Projects — Executive View"
+                      create="false"
                       default_order="project_phase,project_health desc,name"
                       decoration-danger="project_health == 'critical'"
                       decoration-warning="project_health == 'warning'">

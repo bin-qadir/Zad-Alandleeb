@@ -198,9 +198,15 @@ class FarmDashboard(models.Model):
     # Drill-down helpers
     # ────────────────────────────────────────────────────────────────────────
 
-    def _project_list_action(self, name, domain):
-        """Return an act_window for a filtered farm.project list."""
-        return {
+    def _project_list_action(self, name, domain, no_create=False):
+        """Return an act_window for a filtered farm.project list.
+
+        no_create=True  → uses the executive list view (create="false")
+                          for the four dashboard result screens that must be
+                          read-only (Approved Contract / Critical / At-Risk /
+                          Active).  All other drill-downs leave no_create=False.
+        """
+        action = {
             'type':      'ir.actions.act_window',
             'name':      name,
             'res_model': 'farm.project',
@@ -208,6 +214,14 @@ class FarmDashboard(models.Model):
             'domain':    domain,
             'target':    'current',
         }
+        if no_create:
+            view = self.env.ref(
+                'smart_farm_dashboard.view_farm_project_executive_list',
+                raise_if_not_found=False,
+            )
+            if view:
+                action['views'] = [(view.id, 'list'), (False, 'form')]
+        return action
 
     # ── Phase drill-down ─────────────────────────────────────────────────────
 
@@ -218,12 +232,14 @@ class FarmDashboard(models.Model):
         return self._project_list_action(
             _('Active Projects (Contract + Execution)'),
             [('project_phase', 'in', ['contract', 'execution'])],
+            no_create=True,
         )
 
     def action_view_at_risk(self):
         return self._project_list_action(
             _('At-Risk Projects (Warning + Critical)'),
             [('project_health', 'in', ['warning', 'critical'])],
+            no_create=True,
         )
 
     def action_view_pre_tender(self):
@@ -266,6 +282,7 @@ class FarmDashboard(models.Model):
         return self._project_list_action(
             _('Projects with Approved Contract'),
             [('has_approved_contract', '=', True)],
+            no_create=True,
         )
 
     # ── Health drill-down ────────────────────────────────────────────────────
@@ -286,6 +303,7 @@ class FarmDashboard(models.Model):
         return self._project_list_action(
             _('Critical Projects'),
             [('project_health', '=', 'critical')],
+            no_create=True,
         )
 
     # ── Risk drill-down ──────────────────────────────────────────────────────

@@ -476,24 +476,24 @@
 
                                 <div class="sf-action-section">
 
-                                    <!-- Row 1: Phase actions -->
+                                    <!-- Row 1: Phase actions (lifecycle order) -->
                                     <div class="sf-action-row-label">Phase Navigation</div>
                                     <div class="sf-action-row mb-3">
-                                        <button name="action_view_execution" type="object"
-                                                class="sf-action-btn sf-btn-exec">
-                                            <i class="fa fa-play-circle"/> Execution
-                                        </button>
-                                        <button name="action_view_contract" type="object"
-                                                class="sf-action-btn sf-btn-contract">
-                                            <i class="fa fa-file-text-o"/> Contract
+                                        <button name="action_view_pre_tender" type="object"
+                                                class="sf-action-btn sf-btn-pretend">
+                                            <i class="fa fa-seedling"/> Pre-Tender
                                         </button>
                                         <button name="action_view_tender" type="object"
                                                 class="sf-action-btn sf-btn-tender">
                                             <i class="fa fa-gavel"/> Tender
                                         </button>
-                                        <button name="action_view_pre_tender" type="object"
-                                                class="sf-action-btn sf-btn-pretend">
-                                            <i class="fa fa-seedling"/> Pre-Tender
+                                        <button name="action_view_contract" type="object"
+                                                class="sf-action-btn sf-btn-contract">
+                                            <i class="fa fa-file-text-o"/> Contract
+                                        </button>
+                                        <button name="action_view_execution" type="object"
+                                                class="sf-action-btn sf-btn-exec">
+                                            <i class="fa fa-play-circle"/> Execution
                                         </button>
                                         <button name="action_view_closing" type="object"
                                                 class="sf-action-btn sf-btn-closing">
@@ -501,9 +501,9 @@
                                         </button>
                                     </div>
 
-                                    <!-- Row 2: Risk / health actions -->
+                                    <!-- Row 2: Risk / health alerts -->
                                     <div class="sf-action-row-label">Risk &amp; Health</div>
-                                    <div class="sf-action-row">
+                                    <div class="sf-action-row mb-3">
                                         <button name="action_view_critical" type="object"
                                                 class="sf-action-btn sf-btn-crit">
                                             <i class="fa fa-fire"/> Critical
@@ -520,6 +520,11 @@
                                                 class="sf-action-btn sf-btn-profit">
                                             <i class="fa fa-arrow-down"/> Negative Profit
                                         </button>
+                                    </div>
+
+                                    <!-- Row 3: Execution readiness -->
+                                    <div class="sf-action-row-label">Readiness</div>
+                                    <div class="sf-action-row">
                                         <button name="action_view_with_contract" type="object"
                                                 class="sf-action-btn sf-btn-green">
                                             <i class="fa fa-check-circle"/> Approved Contract
