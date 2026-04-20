@@ -87,6 +87,42 @@ class FarmDashboard(models.Model):
     count_over_budget      = fields.Integer(compute='_compute_portfolio', string='Over-Budget Projects')
     count_negative_profit  = fields.Integer(compute='_compute_portfolio', string='Negative-Profit Projects')
 
+    # ── Execution KPIs (approved_qty driven) ─────────────────────────────────
+    # All amounts are based on APPROVED QTY, not executed qty.
+    # Business rule: progress % = approved_qty / contract_qty × 100
+
+    portfolio_approved_amount = fields.Monetary(
+        compute='_compute_execution_kpis',
+        string='Portfolio Approved Amount',
+        currency_field='currency_id',
+        help='Total approved_amount across all active Job Orders.\n'
+             'approved_amount = approved_qty × unit_price.',
+    )
+    portfolio_claimable_amount = fields.Monetary(
+        compute='_compute_execution_kpis',
+        string='Portfolio Claimable Amount',
+        currency_field='currency_id',
+        help='Total amount approved but not yet claimed (ready to extract).',
+    )
+    portfolio_claimed_amount = fields.Monetary(
+        compute='_compute_execution_kpis',
+        string='Portfolio Claimed Amount',
+        currency_field='currency_id',
+        help='Total amount already claimed/extracted.',
+    )
+    portfolio_execution_progress = fields.Float(
+        compute='_compute_execution_kpis',
+        string='Portfolio Execution Progress %',
+        digits=(16, 1),
+        help='Weighted-average execution progress across all active Job Orders '
+             '(weighted by contract qty).',
+    )
+    count_jo_total           = fields.Integer(compute='_compute_execution_kpis', string='Total Job Orders')
+    count_jo_in_progress     = fields.Integer(compute='_compute_execution_kpis', string='JOs In Progress')
+    count_jo_under_inspection = fields.Integer(compute='_compute_execution_kpis', string='JOs Under Inspection')
+    count_jo_ready_for_claim  = fields.Integer(compute='_compute_execution_kpis', string='JOs Ready for Claim')
+    count_jo_claimed          = fields.Integer(compute='_compute_execution_kpis', string='JOs Claimed')
+
     # ────────────────────────────────────────────────────────────────────────
     # Compute helpers
     # ────────────────────────────────────────────────────────────────────────
@@ -173,6 +209,49 @@ class FarmDashboard(models.Model):
 
             rec.count_over_budget     = over_budget
             rec.count_negative_profit = neg_profit
+
+    def _compute_execution_kpis(self):
+        """Aggregate Job Order execution KPIs across the entire portfolio.
+
+        All amounts are driven by approved_qty (not executed_qty).
+        This is the business rule: only inspected+approved work generates
+        financial entitlements and progress contributions.
+        """
+        JobOrder = self.env['farm.job.order']
+        jos = JobOrder.search([('jo_stage', '!=', 'closed')])
+
+        total_approved  = sum(jos.mapped('approved_amount'))
+        total_claimable = sum(jos.mapped('claimable_amount'))
+        total_claimed   = sum(jos.mapped('claim_amount'))
+
+        # Weighted progress: Σ approved_qty / Σ planned_qty × 100
+        total_planned_qty  = sum(jos.mapped('planned_qty'))
+        total_approved_qty = sum(jos.mapped('approved_qty'))
+        progress_pct = (
+            total_approved_qty / total_planned_qty * 100.0
+            if total_planned_qty else 0.0
+        )
+
+        stage_counts = {
+            'in_progress':     0,
+            'under_inspection': 0,
+            'ready_for_claim': 0,
+            'claimed':         0,
+        }
+        for jo in jos:
+            if jo.jo_stage in stage_counts:
+                stage_counts[jo.jo_stage] += 1
+
+        for rec in self:
+            rec.portfolio_approved_amount    = total_approved
+            rec.portfolio_claimable_amount   = total_claimable
+            rec.portfolio_claimed_amount     = total_claimed
+            rec.portfolio_execution_progress = progress_pct
+            rec.count_jo_total              = len(jos)
+            rec.count_jo_in_progress        = stage_counts['in_progress']
+            rec.count_jo_under_inspection   = stage_counts['under_inspection']
+            rec.count_jo_ready_for_claim    = stage_counts['ready_for_claim']
+            rec.count_jo_claimed            = stage_counts['claimed']
 
     # ────────────────────────────────────────────────────────────────────────
     # Singleton accessor
