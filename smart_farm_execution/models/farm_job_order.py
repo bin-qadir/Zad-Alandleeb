@@ -136,6 +136,21 @@ class FarmJobOrder(models.Model):
         ),
     )
 
+    # ── Department (auto-populated from division, overridable) ───────────────
+    department = fields.Selection(
+        selection=[
+            ('civil',       'Civil'),
+            ('structure',   'Structure'),
+            ('arch',        'Architectural'),
+            ('mechanical',  'Mechanical'),
+            ('electrical',  'Electrical'),
+            ('other',       'Other'),
+        ],
+        string='Department',
+        index=True,
+        tracking=True,
+    )
+
     # ── Work classification ───────────────────────────────────────────────────
     work_type_id = fields.Many2one(
         'farm.work.type',
@@ -159,6 +174,13 @@ class FarmJobOrder(models.Model):
         'uom.uom',
         string='Unit',
         ondelete='set null',
+    )
+    unit_price = fields.Float(
+        string='Unit Price',
+        related='boq_line_id.unit_price',
+        store=True,
+        readonly=True,
+        digits=(16, 2),
     )
 
     # ── Planning dates ────────────────────────────────────────────────────────
@@ -205,10 +227,144 @@ class FarmJobOrder(models.Model):
         copy=False,
     )
 
+    # ── Operational stage (primary UI stage, shown in statusbar) ─────────────
+    jo_stage = fields.Selection(
+        selection=[
+            ('new',               'New'),
+            ('approved',          'Approved'),
+            ('in_progress',       'In Progress'),
+            ('under_inspection',  'Under Inspection'),
+            ('accepted',          'Accepted'),
+            ('ready_for_claim',   'Ready for Claim'),
+            ('claimed',           'Claimed'),
+            ('closed',            'Closed'),
+        ],
+        string='JO Stage',
+        default='new',
+        required=True,
+        index=True,
+        tracking=True,
+        copy=False,
+        help=(
+            'Operational stage: New → Approved → In Progress → Under Inspection '
+            '→ Accepted → Ready for Claim → Claimed → Closed.\n'
+            'Drives the execution → inspection → acceptance → claim flow.'
+        ),
+    )
+
     # ── Notes ─────────────────────────────────────────────────────────────────
     notes             = fields.Text(string='General Notes')
     instruction_notes = fields.Text(string='Instructions')
     inspection_notes  = fields.Text(string='Inspection Notes')
+
+    # ── Inspection & Handover ─────────────────────────────────────────────────
+    inspection_request_date = fields.Date(
+        string='Inspection Request Date',
+        tracking=True,
+        copy=False,
+    )
+    inspection_result = fields.Selection(
+        selection=[
+            ('pending',      'Pending'),
+            ('passed',       'Passed'),
+            ('failed',       'Failed'),
+            ('conditional',  'Conditional'),
+        ],
+        string='Inspection Result',
+        default='pending',
+        tracking=True,
+        copy=False,
+    )
+    accepted_qty = fields.Float(
+        string='Accepted Qty',
+        digits=(16, 2),
+        default=0.0,
+        tracking=True,
+        copy=False,
+        help='Quantity accepted after inspection — drives claim calculation.',
+    )
+    handover_status = fields.Selection(
+        selection=[
+            ('pending',   'Pending'),
+            ('received',  'Received'),
+            ('rejected',  'Rejected'),
+        ],
+        string='Handover Status',
+        default='pending',
+        tracking=True,
+        copy=False,
+    )
+    handover_notes = fields.Text(string='Handover Notes')
+
+    # ── Approvals / Awarding ──────────────────────────────────────────────────
+    approval_status = fields.Selection(
+        selection=[
+            ('pending',   'Pending'),
+            ('approved',  'Approved'),
+            ('rejected',  'Rejected'),
+        ],
+        string='Approval Status',
+        default='pending',
+        tracking=True,
+        copy=False,
+    )
+    awarding_status = fields.Selection(
+        selection=[
+            ('not_awarded',   'Not Awarded'),
+            ('direct',        'Direct'),
+            ('subcontracted', 'Subcontracted'),
+        ],
+        string='Awarding Status',
+        default='not_awarded',
+        tracking=True,
+    )
+    approval_notes = fields.Text(string='Approval Notes')
+
+    # ── Claims / Extracts ─────────────────────────────────────────────────────
+    claimed_qty = fields.Float(
+        string='Claimed Qty',
+        digits=(16, 2),
+        default=0.0,
+        tracking=True,
+        copy=False,
+    )
+    remaining_claim_qty = fields.Float(
+        string='Remaining Claim Qty',
+        compute='_compute_claim_fields',
+        store=True,
+        readonly=True,
+        digits=(16, 2),
+    )
+    claim_percent = fields.Float(
+        string='Claim %',
+        compute='_compute_claim_fields',
+        store=True,
+        readonly=True,
+        digits=(16, 2),
+        help='accepted_qty / planned_qty × 100',
+    )
+    claim_amount = fields.Float(
+        string='Claim Amount',
+        compute='_compute_claim_fields',
+        store=True,
+        readonly=True,
+        digits=(16, 2),
+        help='accepted_qty × unit_price',
+    )
+    remaining_claim_amount = fields.Float(
+        string='Remaining Claim Amount',
+        compute='_compute_claim_fields',
+        store=True,
+        readonly=True,
+        digits=(16, 2),
+        help='(planned_qty − claimed_qty) × unit_price',
+    )
+
+    # ── Resource Notes ────────────────────────────────────────────────────────
+    tool_notes           = fields.Text(string='Tools Notes')
+    equipment_notes      = fields.Text(string='Equipment / Machinery Notes')
+    subcontractor_notes  = fields.Text(string='Subcontractor Notes')
+    control_device_notes = fields.Text(string='Control Devices Notes')
 
     # ── Child lines ───────────────────────────────────────────────────────────
     material_ids = fields.One2many(
@@ -391,6 +547,62 @@ class FarmJobOrder(models.Model):
             else:
                 rec.is_structural_line = False
 
+    @api.depends('accepted_qty', 'planned_qty', 'unit_price', 'claimed_qty')
+    def _compute_claim_fields(self):
+        """Compute all claim/extract KPIs from accepted qty and contract qty.
+
+        Formulas:
+          claim_percent        = accepted_qty / planned_qty × 100
+          claim_amount         = accepted_qty × unit_price
+          remaining_claim_qty  = planned_qty − claimed_qty
+          remaining_claim_amount = remaining_claim_qty × unit_price
+        """
+        for rec in self:
+            planned   = rec.planned_qty or 0.0
+            accepted  = rec.accepted_qty or 0.0
+            claimed   = rec.claimed_qty or 0.0
+            up        = rec.unit_price or 0.0
+
+            rec.claim_percent         = (accepted / planned * 100.0) if planned else 0.0
+            rec.claim_amount          = accepted * up
+            rec.remaining_claim_qty   = planned - claimed
+            rec.remaining_claim_amount = (planned - claimed) * up
+
+    @api.onchange('division_id')
+    def _onchange_division_id_department(self):
+        """Auto-populate department from division name when user changes division."""
+        if not self.division_id:
+            return
+        name = (self.division_id.name or '').lower()
+        code = (self.division_id.code or '').upper()
+        # Check code first (more stable), fall back to name substring
+        code_map = {
+            'CW': 'civil',   'SW': 'structure', 'AW': 'arch',
+            'MW': 'mechanical', 'EW': 'electrical',
+            'FW': 'arch',    # Finishing Works → Architectural
+        }
+        if code and code in code_map:
+            self.department = code_map[code]
+        elif 'civil' in name:
+            self.department = 'civil'
+        elif 'struct' in name:
+            self.department = 'structure'
+        elif 'arch' in name or 'finish' in name:
+            self.department = 'arch'
+        elif 'mech' in name:
+            self.department = 'mechanical'
+        elif 'elec' in name:
+            self.department = 'electrical'
+        else:
+            self.department = 'other'
+
+    @api.onchange('boq_line_id')
+    def _onchange_boq_line_id_department(self):
+        """When BOQ line changes, re-trigger department computation via division."""
+        # division_id is a related stored field so it updates synchronously
+        # after boq_line_id changes; call the division onchange to set department.
+        self._onchange_division_id_department()
+
     # ────────────────────────────────────────────────────────────────────────
     # ORM overrides
     # ────────────────────────────────────────────────────────────────────────
@@ -517,6 +729,113 @@ class FarmJobOrder(models.Model):
         ).write({
             'state': 'draft',
             'actual_start_date': False,
+        })
+
+    # ────────────────────────────────────────────────────────────────────────
+    # jo_stage progression (primary operational workflow)
+    #
+    # Each action advances jo_stage AND syncs the legacy state field so
+    # existing server actions, BOQ analysis summaries, and reports remain
+    # consistent without code changes.
+    #
+    # Stage parity:
+    #   new               → draft
+    #   approved          → ready
+    #   in_progress       → in_progress
+    #   under_inspection  → in_progress   (still executing, awaiting result)
+    #   accepted          → completed
+    #   ready_for_claim   → completed
+    #   claimed           → completed
+    #   closed            → closed
+    # ────────────────────────────────────────────────────────────────────────
+
+    def action_jo_approve(self):
+        """new → approved.  Validates analysis is approved."""
+        for rec in self.filtered(lambda r: r.jo_stage == 'new'):
+            if not rec.analysis_id:
+                raise UserError(_(
+                    'Cannot approve "%s": no BOQ Analysis is linked.', rec.name,
+                ))
+            if rec.analysis_id.analysis_state != 'approved':
+                raise UserError(_(
+                    'Cannot approve "%s": BOQ Analysis "%s" is not yet approved.',
+                    rec.name, rec.analysis_id.name,
+                ))
+            rec.write({'jo_stage': 'approved', 'state': 'ready'})
+
+    def action_jo_start(self):
+        """approved → in_progress.  Records actual start date."""
+        for rec in self.filtered(lambda r: r.jo_stage == 'approved'):
+            rec.write({
+                'jo_stage': 'in_progress',
+                'state': 'in_progress',
+                'actual_start_date': fields.Date.today(),
+            })
+
+    def action_jo_request_inspection(self):
+        """in_progress → under_inspection.  Requires executed qty > 0."""
+        for rec in self.filtered(lambda r: r.jo_stage == 'in_progress'):
+            if rec.executed_qty <= 0:
+                raise UserError(_(
+                    'Cannot request inspection on "%s": executed quantity is still 0.',
+                    rec.name,
+                ))
+            rec.write({
+                'jo_stage': 'under_inspection',
+                # state stays in_progress — execution continues until accepted
+                'inspection_request_date': fields.Date.today(),
+                'inspection_result': 'pending',
+            })
+
+    def action_jo_accept(self):
+        """under_inspection → accepted.  Requires inspection result is Pass or Conditional."""
+        for rec in self.filtered(lambda r: r.jo_stage == 'under_inspection'):
+            if rec.inspection_result not in ('passed', 'conditional'):
+                raise UserError(_(
+                    'Cannot accept "%s": inspection result must be Passed or Conditional.',
+                    rec.name,
+                ))
+            rec.write({
+                'jo_stage': 'accepted',
+                'state': 'completed',
+                'actual_end_date': fields.Date.today(),
+            })
+
+    def action_jo_ready_for_claim(self):
+        """accepted → ready_for_claim.  Requires accepted_qty > 0."""
+        for rec in self.filtered(lambda r: r.jo_stage == 'accepted'):
+            if rec.accepted_qty <= 0:
+                raise UserError(_(
+                    'Set Accepted Qty > 0 on the Inspection tab before marking '
+                    '"%s" as Ready for Claim.',
+                    rec.name,
+                ))
+            rec.write({'jo_stage': 'ready_for_claim'})
+
+    def action_jo_create_claim(self):
+        """ready_for_claim → claimed.  Auto-fills claimed_qty from accepted_qty."""
+        for rec in self.filtered(lambda r: r.jo_stage == 'ready_for_claim'):
+            claim_qty = rec.claimed_qty or rec.accepted_qty
+            rec.write({
+                'jo_stage': 'claimed',
+                'claimed_qty': claim_qty,
+            })
+
+    def action_jo_close(self):
+        """claimed → closed."""
+        self.filtered(lambda r: r.jo_stage == 'claimed').write(
+            {'jo_stage': 'closed', 'state': 'closed'}
+        )
+
+    def action_jo_reset_to_new(self):
+        """Manager override: revert to New from any pre-accepted stage."""
+        reversible = ('approved', 'in_progress', 'under_inspection')
+        self.filtered(lambda r: r.jo_stage in reversible).write({
+            'jo_stage': 'new',
+            'state': 'draft',
+            'actual_start_date': False,
+            'inspection_request_date': False,
+            'inspection_result': 'pending',
         })
 
     # ────────────────────────────────────────────────────────────────────────

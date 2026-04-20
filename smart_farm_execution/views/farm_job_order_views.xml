@@ -30,34 +30,57 @@
                     <field name="boq_line_id"  string="BOQ Subitem"/>
                     <field name="work_type_id"/>
                     <field name="division_id"/>
+                    <field name="department"/>
                     <separator/>
-                    <filter name="draft"       string="Draft"
-                            domain="[('state','=','draft')]"/>
-                    <filter name="ready"       string="Ready"
-                            domain="[('state','=','ready')]"/>
-                    <filter name="in_progress" string="In Progress"
-                            domain="[('state','=','in_progress')]"/>
-                    <filter name="completed"   string="Completed"
-                            domain="[('state','=','completed')]"/>
-                    <filter name="closed"      string="Closed"
-                            domain="[('state','=','closed')]"/>
+                    <!-- Department quick-filters -->
+                    <filter name="dept_civil"      string="Civil"
+                            domain="[('department','=','civil')]"/>
+                    <filter name="dept_structure"  string="Structure"
+                            domain="[('department','=','structure')]"/>
+                    <filter name="dept_arch"       string="Architectural"
+                            domain="[('department','=','arch')]"/>
+                    <filter name="dept_mechanical" string="Mechanical"
+                            domain="[('department','=','mechanical')]"/>
+                    <filter name="dept_electrical" string="Electrical"
+                            domain="[('department','=','electrical')]"/>
                     <separator/>
+                    <!-- JO Stage filters -->
+                    <filter name="jo_new"              string="New"
+                            domain="[('jo_stage','=','new')]"/>
+                    <filter name="jo_approved"         string="Approved"
+                            domain="[('jo_stage','=','approved')]"/>
+                    <filter name="jo_in_progress"      string="In Progress"
+                            domain="[('jo_stage','=','in_progress')]"/>
+                    <filter name="jo_under_inspection" string="Under Inspection"
+                            domain="[('jo_stage','=','under_inspection')]"/>
+                    <filter name="jo_accepted"         string="Accepted"
+                            domain="[('jo_stage','=','accepted')]"/>
+                    <filter name="jo_ready_for_claim"  string="Ready for Claim"
+                            domain="[('jo_stage','=','ready_for_claim')]"/>
+                    <filter name="jo_claimed"          string="Claimed"
+                            domain="[('jo_stage','=','claimed')]"/>
+                    <filter name="jo_closed"           string="Closed"
+                            domain="[('jo_stage','=','closed')]"/>
+                    <separator/>
+                    <!-- Legacy state filter (still useful for system queries) -->
                     <filter name="not_closed"  string="Active (excl. Closed)"
-                            domain="[('state','!=','closed')]"/>
-                    <!-- Data-integrity filter: find JOs linked to structural rows -->
+                            domain="[('jo_stage','!=','closed')]"/>
+                    <!-- Data-integrity filter -->
                     <separator/>
                     <filter name="structural_line_error"
                             string="⚠ Invalid BOQ Ref"
                             domain="[('is_structural_line','=',True)]"/>
                     <group string="Group By">
+                        <filter name="by_department"   string="Department"
+                                context="{'group_by':'department'}"/>
+                        <filter name="by_jo_stage"     string="JO Stage"
+                                context="{'group_by':'jo_stage'}"/>
                         <filter name="by_project"      string="Project"
                                 context="{'group_by':'project_id'}"/>
                         <filter name="by_division"     string="Division"
                                 context="{'group_by':'division_id'}"/>
                         <filter name="by_subdivision"  string="Subdivision"
                                 context="{'group_by':'subdivision_id'}"/>
-                        <filter name="by_state"        string="Status"
-                                context="{'group_by':'state'}"/>
                         <filter name="by_work_type"    string="Work Type"
                                 context="{'group_by':'work_type_id'}"/>
                     </group>
@@ -75,30 +98,36 @@
             <field name="model">farm.job.order</field>
             <field name="arch" type="xml">
                 <list string="Job Orders"
-                      decoration-muted="state == 'draft'"
-                      decoration-info="state == 'ready'"
-                      decoration-warning="state == 'in_progress'"
-                      decoration-success="state in ('completed', 'closed')"
+                      decoration-muted="jo_stage == 'closed'"
+                      decoration-info="jo_stage in ('new','approved')"
+                      decoration-warning="jo_stage in ('in_progress','under_inspection')"
+                      decoration-success="jo_stage in ('accepted','ready_for_claim','claimed')"
                       decoration-danger="is_structural_line">
-                    <!-- is_structural_line drives the danger row highlight; hidden from columns -->
                     <field name="is_structural_line" column_invisible="1"/>
                     <field name="name"              string="Job Order No"/>
                     <field name="display_code"      string="BOQ Code"/>
                     <field name="boq_line_id"       string="Subitem"/>
-                    <field name="boq_hierarchy"     string="BOQ Hierarchy"  optional="show"/>
                     <field name="project_id"        string="Project"/>
-                    <field name="boq_id"            string="BOQ"        optional="show"/>
+                    <field name="department"        string="Department" optional="show"/>
                     <field name="division_id"       string="Division"   optional="show"/>
                     <field name="subdivision_id"    string="Subdivision" optional="show"/>
+                    <field name="boq_hierarchy"     string="BOQ Hierarchy" optional="show"/>
                     <field name="work_type_id"      string="Work Type"  optional="show"/>
-                    <field name="planned_qty"       string="Plan Qty"/>
-                    <field name="unit_id"           string="Unit" optional="show"/>
+                    <field name="planned_qty"       string="Contract Qty"/>
+                    <field name="unit_id"           string="Unit"       optional="show"/>
                     <field name="executed_qty"      string="Exec. Qty"/>
+                    <field name="accepted_qty"      string="Accepted"   optional="show"/>
+                    <field name="claimed_qty"       string="Claimed"    optional="show"/>
                     <field name="progress_percent"  string="Progress %"
                            widget="progressbar"/>
-                    <field name="planned_start_date" string="Start" optional="show"/>
-                    <field name="planned_end_date"   string="End"   optional="show"/>
+                    <field name="claim_percent"     string="Claim %"    optional="show"/>
+                    <field name="planned_start_date" string="Start"     optional="show"/>
+                    <field name="planned_end_date"   string="End"       optional="show"/>
                     <field name="planned_cost"      string="Planned Cost"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"
+                           optional="show"/>
+                    <field name="claim_amount"      string="Claim Amount"
                            widget="monetary"
                            options="{'currency_field': 'currency_id'}"
                            optional="show"/>
@@ -106,18 +135,13 @@
                            widget="monetary"
                            options="{'currency_field': 'currency_id'}"
                            optional="show"/>
-                    <field name="cost_variance"     string="Variance"
-                           widget="monetary"
-                           options="{'currency_field': 'currency_id'}"
-                           decoration-danger="cost_variance &gt; 0"
-                           decoration-success="cost_variance &lt;= 0 and actual_total_cost &gt; 0"
-                           optional="show"/>
                     <field name="currency_id"       column_invisible="1"/>
-                    <field name="state"             widget="badge"
-                           decoration-muted="state == 'draft'"
-                           decoration-info="state == 'ready'"
-                           decoration-warning="state == 'in_progress'"
-                           decoration-success="state in ('completed', 'closed')"/>
+                    <field name="jo_stage"          string="JO Stage"
+                           widget="badge"
+                           decoration-info="jo_stage in ('new','approved')"
+                           decoration-warning="jo_stage in ('in_progress','under_inspection')"
+                           decoration-success="jo_stage in ('accepted','ready_for_claim','claimed')"
+                           decoration-muted="jo_stage == 'closed'"/>
                 </list>
             </field>
         </record>
@@ -133,45 +157,67 @@
             <field name="arch" type="xml">
                 <form string="Job Order">
                     <header>
-                        <!-- Workflow buttons -->
-                        <button name="action_set_ready"
+
+                        <!-- ── JO Stage: primary progression buttons ── -->
+                        <button name="action_jo_approve"
                                 type="object"
-                                string="Mark Ready"
-                                class="btn-secondary"
-                                invisible="state != 'draft'"
-                                groups="smart_farm_execution.group_smart_farm_execution_user"/>
-                        <button name="action_start"
+                                string="Approve"
+                                class="btn-primary"
+                                invisible="jo_stage != 'new'"
+                                groups="smart_farm_execution.group_smart_farm_execution_manager"/>
+                        <button name="action_jo_start"
                                 type="object"
                                 string="Start Work"
                                 class="btn-primary"
-                                invisible="state != 'ready'"
+                                invisible="jo_stage != 'approved'"
                                 groups="smart_farm_execution.group_smart_farm_execution_user"/>
-                        <button name="action_complete"
+                        <button name="action_jo_request_inspection"
                                 type="object"
-                                string="Complete"
-                                class="btn-success"
-                                invisible="state != 'in_progress'"
+                                string="Request Inspection"
+                                class="btn-warning"
+                                invisible="jo_stage != 'in_progress'"
                                 groups="smart_farm_execution.group_smart_farm_execution_user"/>
-                        <button name="action_close"
+                        <button name="action_jo_accept"
+                                type="object"
+                                string="Accept"
+                                class="btn-success"
+                                invisible="jo_stage != 'under_inspection'"
+                                groups="smart_farm_execution.group_smart_farm_execution_manager"/>
+                        <button name="action_jo_ready_for_claim"
+                                type="object"
+                                string="Mark Ready for Claim"
+                                class="btn-secondary"
+                                invisible="jo_stage != 'accepted'"
+                                groups="smart_farm_execution.group_smart_farm_execution_manager"/>
+                        <button name="action_jo_create_claim"
+                                type="object"
+                                string="Create Claim"
+                                class="btn-primary"
+                                invisible="jo_stage != 'ready_for_claim'"
+                                groups="smart_farm_execution.group_smart_farm_execution_manager"/>
+                        <button name="action_jo_close"
                                 type="object"
                                 string="Close"
                                 class="btn-secondary"
-                                invisible="state != 'completed'"
+                                invisible="jo_stage != 'claimed'"
                                 groups="smart_farm_execution.group_smart_farm_execution_manager"
-                                confirm="Close this Job Order? Ensure all materials, labour, and progress are fully recorded."/>
-                        <button name="action_reset_draft"
+                                confirm="Close this Job Order? Ensure all work, materials, and claims are fully recorded."/>
+
+                        <!-- ── Manager resets ── -->
+                        <button name="action_jo_reset_to_new"
                                 type="object"
-                                string="Reset to Draft"
+                                string="Reset to New"
                                 class="btn-secondary"
-                                invisible="state not in ('ready', 'in_progress')"
+                                invisible="jo_stage not in ('approved', 'in_progress', 'under_inspection')"
                                 groups="smart_farm_execution.group_smart_farm_execution_manager"/>
-                        <!-- Utility buttons -->
+
+                        <!-- ── Utility buttons ── -->
                         <button name="action_populate_resources"
                                 type="object"
                                 string="Populate Resources"
                                 icon="fa-magic"
                                 class="btn-secondary"
-                                invisible="state not in ('draft', 'ready')"
+                                invisible="jo_stage not in ('new', 'approved')"
                                 groups="smart_farm_execution.group_smart_farm_execution_user"
                                 confirm="Populate planned material lines from the BOQ template? Existing lines will be preserved."/>
                         <button name="action_request_materials"
@@ -179,7 +225,7 @@
                                 string="Request Materials"
                                 icon="fa-cubes"
                                 class="btn-warning"
-                                invisible="state not in ('ready', 'in_progress')"
+                                invisible="jo_stage not in ('approved', 'in_progress')"
                                 groups="smart_farm_execution.group_smart_farm_execution_user"
                                 confirm="Request all planned materials? This will create a stock transfer request."/>
                         <button name="action_view_analysis"
@@ -188,12 +234,17 @@
                                 icon="fa-bar-chart"
                                 class="btn-secondary"
                                 invisible="not analysis_id"/>
-                        <field name="state" widget="statusbar"
-                               statusbar_visible="draft,ready,in_progress,completed,closed"/>
+
+                        <!-- ── Primary statusbar: jo_stage ── -->
+                        <field name="jo_stage"
+                               widget="statusbar"
+                               statusbar_visible="new,approved,in_progress,under_inspection,accepted,ready_for_claim,claimed,closed"/>
+
                     </header>
 
                     <sheet>
-                        <!-- Smart buttons -->
+
+                        <!-- ── Smart buttons ── -->
                         <div class="oe_button_box" name="button_box">
                             <button class="oe_stat_button"
                                     type="object"
@@ -221,6 +272,7 @@
                             </button>
                         </div>
 
+                        <!-- ── Title ── -->
                         <div class="oe_title">
                             <label for="name"/>
                             <h1>
@@ -228,89 +280,151 @@
                             </h1>
                         </div>
 
+                        <!-- ── Department + key scope summary ── -->
+                        <div class="row mb-3">
+                            <div class="col-auto">
+                                <strong>Department: </strong>
+                                <field name="department"
+                                       widget="badge"
+                                       nolabel="1"
+                                       class="ms-1"/>
+                            </div>
+                            <div class="col-auto">
+                                <strong>BOQ Code: </strong>
+                                <field name="display_code" readonly="1" nolabel="1" class="ms-1"/>
+                            </div>
+                            <div class="col-auto">
+                                <strong>Claim %: </strong>
+                                <field name="claim_percent" readonly="1" nolabel="1" class="ms-1"/>
+                            </div>
+                        </div>
+
                         <notebook>
 
-                            <!-- ═════════════════════════════════════════════
-                                 TAB 1 — GENERAL
-                            ═════════════════════════════════════════════ -->
-                            <page string="General" name="general_tab">
+                            <!-- ═══════════════════════════════════════════
+                                 A — SCOPE / BOQ ITEM
+                            ═══════════════════════════════════════════ -->
+                            <page string="A. Scope / BOQ Item" name="scope_tab">
                                 <group>
-                                    <group string="Project &amp; Scope">
+                                    <group string="Project &amp; BOQ Traceability">
                                         <field name="project_id"
                                                options="{'no_create': True}"
-                                               readonly="state not in ('draft', 'ready')"/>
+                                               readonly="jo_stage not in ('new', 'approved')"/>
                                         <field name="analysis_id"
                                                options="{'no_create': True}"
-                                               readonly="state not in ('draft', 'ready')"/>
+                                               readonly="jo_stage not in ('new', 'approved')"/>
                                         <field name="boq_id" readonly="1"/>
                                         <field name="boq_line_id"
                                                options="{'no_create': True}"
-                                               readonly="state not in ('draft', 'ready')"/>
+                                               readonly="jo_stage not in ('new', 'approved')"/>
                                         <field name="analysis_line_id"
                                                options="{'no_create': True}"
-                                               readonly="state not in ('draft', 'ready')"/>
+                                               readonly="jo_stage not in ('new', 'approved')"/>
                                         <field name="display_code" readonly="1"/>
+                                        <field name="boq_hierarchy" readonly="1"/>
                                     </group>
-                                    <group string="Classification">
-                                        <field name="division_id"         readonly="1"/>
-                                        <field name="subdivision_id"      readonly="1"/>
-                                        <field name="sub_subdivision_id"  readonly="1"/>
+                                    <group string="Scope">
+                                        <field name="planned_qty"
+                                               string="Contract Qty"/>
+                                        <field name="unit_id"
+                                               options="{'no_create': True}"/>
+                                        <field name="unit_price" readonly="1"/>
+                                        <field name="department"/>
                                         <field name="work_type_id"
                                                options="{'no_create': True}"/>
                                         <field name="discipline"/>
                                     </group>
                                 </group>
                                 <group>
-                                    <group string="Planning">
-                                        <field name="planned_qty"/>
-                                        <field name="unit_id"
-                                               options="{'no_create': True}"/>
-                                        <field name="planned_start_date"/>
-                                        <field name="planned_end_date"/>
-                                    </group>
-                                    <group string="Actual Dates" invisible="state == 'draft'">
-                                        <field name="actual_start_date" readonly="1"/>
-                                        <field name="actual_end_date"   readonly="1"/>
+                                    <group string="Division Hierarchy">
+                                        <field name="division_id"         readonly="1"/>
+                                        <field name="subdivision_id"      readonly="1"/>
+                                        <field name="sub_subdivision_id"  readonly="1"/>
                                     </group>
                                 </group>
                             </page>
 
-                            <!-- ═════════════════════════════════════════════
-                                 TAB 2 — PROGRESS
-                            ═════════════════════════════════════════════ -->
-                            <page string="Progress" name="progress_tab">
-                                <!-- Alert: ready to complete -->
+                            <!-- ═══════════════════════════════════════════
+                                 B — STAGES
+                            ═══════════════════════════════════════════ -->
+                            <page string="B. Stages" name="stages_tab">
+                                <group>
+                                    <group string="Current Stage">
+                                        <field name="jo_stage"
+                                               widget="badge"
+                                               decoration-info="jo_stage in ('new','approved')"
+                                               decoration-warning="jo_stage in ('in_progress','under_inspection')"
+                                               decoration-success="jo_stage in ('accepted','ready_for_claim','claimed')"
+                                               decoration-muted="jo_stage == 'closed'"/>
+                                        <field name="approval_status"
+                                               widget="badge"
+                                               decoration-info="approval_status == 'pending'"
+                                               decoration-success="approval_status == 'approved'"
+                                               decoration-danger="approval_status == 'rejected'"/>
+                                    </group>
+                                    <group string="Planning Dates">
+                                        <field name="planned_start_date"/>
+                                        <field name="planned_end_date"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group string="Actual Dates"
+                                           invisible="jo_stage == 'new'">
+                                        <field name="actual_start_date" readonly="1"/>
+                                        <field name="actual_end_date"   readonly="1"/>
+                                    </group>
+                                    <group string="Inspection Status"
+                                           invisible="jo_stage not in ('under_inspection','accepted','ready_for_claim','claimed','closed')">
+                                        <field name="inspection_request_date" readonly="1"/>
+                                        <field name="inspection_result"
+                                               widget="badge"
+                                               decoration-info="inspection_result == 'pending'"
+                                               decoration-success="inspection_result == 'passed'"
+                                               decoration-danger="inspection_result == 'failed'"
+                                               decoration-warning="inspection_result == 'conditional'"/>
+                                    </group>
+                                </group>
+                                <!-- Stage flow guide -->
+                                <div class="alert alert-info mt-3" role="alert">
+                                    <strong>Stage Flow: </strong>
+                                    New → Approved → In Progress → Under Inspection → Accepted → Ready for Claim → Claimed → Closed
+                                </div>
+                            </page>
+
+                            <!-- ═══════════════════════════════════════════
+                                 C — EXECUTION
+                            ═══════════════════════════════════════════ -->
+                            <page string="C. Execution" name="execution_tab">
+                                <!-- Alerts -->
                                 <div class="alert alert-success mb-3"
                                      role="alert"
-                                     invisible="not (progress_percent &gt;= 100 and state == 'in_progress')">
-                                    <strong>✓ 100% Reached.</strong>
-                                    Executed quantity equals planned quantity.
-                                    Click <strong>Complete</strong> in the header to finalise this Job Order.
+                                     invisible="not (progress_percent &gt;= 100 and jo_stage == 'in_progress')">
+                                    <strong>100% Reached.</strong>
+                                    Click <strong>Request Inspection</strong> in the header to proceed to inspection.
                                 </div>
-                                <!-- Alert: over-executed -->
                                 <div class="alert alert-warning mb-3"
                                      role="alert"
-                                     invisible="not (progress_percent &gt; 100 and state in ('in_progress', 'completed'))">
-                                    <strong>⚠ Over-executed.</strong>
-                                    Executed quantity exceeds the planned quantity.
-                                    Review quantities before closing.
+                                     invisible="not (progress_percent &gt; 100 and jo_stage in ('in_progress','under_inspection','accepted'))">
+                                    <strong>Over-executed.</strong>
+                                    Executed quantity exceeds planned (contract) quantity. Review before proceeding.
                                 </div>
 
                                 <group>
                                     <group string="Execution Progress">
-                                        <field name="planned_qty"      readonly="1"/>
-                                        <field name="unit_id"          readonly="1"/>
-                                        <field name="executed_qty"
-                                               help="Auto-updated from Progress Logs below. Can also be entered manually."/>
+                                        <field name="planned_qty"
+                                               string="Contract Qty"
+                                               readonly="1"/>
+                                        <field name="unit_id"
+                                               readonly="1"/>
+                                        <field name="executed_qty"/>
                                         <field name="progress_percent"
                                                widget="progressbar"
                                                readonly="1"/>
                                     </group>
                                 </group>
 
-                                <!-- Progress log -->
-                                <separator string="Progress Log (Audit Trail — auto-syncs Executed Qty)"/>
-                                <div class="mb-2 d-flex gap-2">
+                                <separator string="Daily Progress Log"/>
+                                <div class="mb-2">
                                     <button name="action_sync_progress_from_logs"
                                             type="object"
                                             string="Re-sync from Logs"
@@ -324,7 +438,7 @@
                                         <field name="executed_increment"
                                                string="Qty Executed"/>
                                         <field name="note"
-                                               string="Site Note"/>
+                                               string="Daily Site Note"/>
                                         <field name="logged_by"
                                                readonly="1"
                                                optional="show"/>
@@ -332,10 +446,10 @@
                                 </field>
                             </page>
 
-                            <!-- ═════════════════════════════════════════════
-                                 TAB 3 — MATERIALS
-                            ═════════════════════════════════════════════ -->
-                            <page string="Materials" name="materials_tab">
+                            <!-- ═══════════════════════════════════════════
+                                 D — MATERIALS
+                            ═══════════════════════════════════════════ -->
+                            <page string="D. Materials" name="materials_tab">
                                 <field name="material_ids">
                                     <list string="Material Consumption"
                                           editable="bottom"
@@ -348,10 +462,8 @@
                                                string="UoM"
                                                options="{'no_create': True}"/>
                                         <field name="planned_qty"    string="Plan Qty"/>
-                                        <field name="requested_qty"  string="Req. Qty"
-                                               optional="show"/>
-                                        <field name="issued_qty"     string="Issued Qty"
-                                               optional="show"/>
+                                        <field name="requested_qty"  string="Req. Qty"  optional="show"/>
+                                        <field name="issued_qty"     string="Issued"    optional="show"/>
                                         <field name="consumed_qty"   string="Used Qty"/>
                                         <field name="unit_cost"      string="Unit Cost"/>
                                         <field name="planned_cost"   string="Plan Cost"
@@ -383,10 +495,13 @@
                                 </group>
                             </page>
 
-                            <!-- ═════════════════════════════════════════════
-                                 TAB 4 — LABOUR
-                            ═════════════════════════════════════════════ -->
-                            <page string="Labour" name="labour_tab">
+                            <!-- ═══════════════════════════════════════════
+                                 E — RESOURCES
+                            ═══════════════════════════════════════════ -->
+                            <page string="E. Resources" name="resources_tab">
+
+                                <!-- Labour -->
+                                <separator string="Labour"/>
                                 <field name="labour_ids">
                                     <list string="Labour Entries" editable="bottom">
                                         <field name="employee_id"
@@ -401,33 +516,206 @@
                                     </list>
                                 </field>
                                 <group>
-                                    <group string="Labour Cost Summary">
+                                    <group string="Labour Cost">
                                         <field name="actual_labour_cost"
                                                string="Actual Labour Cost"
                                                readonly="1"/>
                                     </group>
                                 </group>
+
+                                <!-- Notes for other resource types -->
+                                <separator string="Tools, Equipment &amp; Subcontractors"/>
+                                <group>
+                                    <group string="Tools">
+                                        <field name="tool_notes"
+                                               nolabel="1"
+                                               placeholder="List tools required or deployed on site…"/>
+                                    </group>
+                                    <group string="Equipment / Machinery">
+                                        <field name="equipment_notes"
+                                               nolabel="1"
+                                               placeholder="Heavy equipment, cranes, machinery notes…"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group string="Subcontractors">
+                                        <field name="subcontractor_notes"
+                                               nolabel="1"
+                                               placeholder="Subcontractor name, scope of work, notes…"/>
+                                    </group>
+                                    <group string="Control Devices">
+                                        <field name="control_device_notes"
+                                               nolabel="1"
+                                               placeholder="Control devices, instruments, sensors, monitoring equipment…"/>
+                                    </group>
+                                </group>
                             </page>
 
-                            <!-- ═════════════════════════════════════════════
-                                 TAB 5 — COST SUMMARY
-                            ═════════════════════════════════════════════ -->
-                            <page string="Cost Summary" name="cost_tab">
-                                <field name="currency_id" invisible="1"/>
+                            <!-- ═══════════════════════════════════════════
+                                 F — INSPECTION & HANDOVER
+                            ═══════════════════════════════════════════ -->
+                            <page string="F. Inspection &amp; Handover" name="inspection_tab">
                                 <group>
-                                    <group string="Planned">
-                                        <field name="planned_cost"
-                                               string="Planned Total (from Analysis)"
-                                               readonly="1"
-                                               widget="monetary"
-                                               options="{'currency_field': 'currency_id'}"/>
-                                        <field name="planned_material_cost"
-                                               string="Planned Material Cost"
-                                               readonly="1"
-                                               widget="monetary"
-                                               options="{'currency_field': 'currency_id'}"/>
+                                    <group string="Inspection">
+                                        <field name="inspection_request_date"/>
+                                        <field name="inspection_result"
+                                               widget="badge"
+                                               decoration-info="inspection_result == 'pending'"
+                                               decoration-success="inspection_result == 'passed'"
+                                               decoration-danger="inspection_result == 'failed'"
+                                               decoration-warning="inspection_result == 'conditional'"/>
+                                        <field name="accepted_qty"/>
                                     </group>
-                                    <group string="Actual">
+                                    <group string="Handover &amp; Receiving">
+                                        <field name="handover_status"
+                                               widget="badge"
+                                               decoration-info="handover_status == 'pending'"
+                                               decoration-success="handover_status == 'received'"
+                                               decoration-danger="handover_status == 'rejected'"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group string="Inspection Notes">
+                                        <field name="inspection_notes"
+                                               nolabel="1"
+                                               placeholder="QC findings, snag-list, sign-off notes…"/>
+                                    </group>
+                                    <group string="Handover Notes">
+                                        <field name="handover_notes"
+                                               nolabel="1"
+                                               placeholder="Handover punch-list, receiving confirmation…"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <!-- ═══════════════════════════════════════════
+                                 G — APPROVALS / AWARDING
+                            ═══════════════════════════════════════════ -->
+                            <page string="G. Approvals / Awarding" name="approvals_tab">
+                                <group>
+                                    <group string="Approval">
+                                        <field name="approval_status"
+                                               widget="badge"
+                                               decoration-info="approval_status == 'pending'"
+                                               decoration-success="approval_status == 'approved'"
+                                               decoration-danger="approval_status == 'rejected'"/>
+                                    </group>
+                                    <group string="Awarding">
+                                        <field name="awarding_status"
+                                               widget="badge"/>
+                                        <field name="actual_subcontract_cost"
+                                               string="Subcontract Cost"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group string="Approval Notes">
+                                        <field name="approval_notes"
+                                               nolabel="1"
+                                               placeholder="Approval authority, reference number, comments…"/>
+                                    </group>
+                                    <group string="Instructions">
+                                        <field name="instruction_notes"
+                                               nolabel="1"
+                                               placeholder="Work instructions, method statements, safety notes…"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group string="General Notes">
+                                        <field name="notes"
+                                               nolabel="1"
+                                               placeholder="General observations, context…"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <!-- ═══════════════════════════════════════════
+                                 H — CLAIMS / EXTRACTS
+                            ═══════════════════════════════════════════ -->
+                            <page string="H. Claims / Extracts" name="claims_tab">
+                                <field name="currency_id" invisible="1"/>
+
+                                <!-- Claim summary alert -->
+                                <div class="alert alert-success mb-3"
+                                     role="alert"
+                                     invisible="jo_stage not in ('ready_for_claim','claimed','closed')">
+                                    <strong>Claim-eligible.</strong>
+                                    Accepted qty: <field name="accepted_qty" readonly="1" nolabel="1" class="d-inline"/>
+                                    — Claim amount: <field name="claim_amount" readonly="1" nolabel="1"
+                                                          widget="monetary"
+                                                          options="{'currency_field': 'currency_id'}"
+                                                          class="d-inline"/>
+                                </div>
+
+                                <group>
+                                    <group string="Contract Basis">
+                                        <field name="planned_qty"
+                                               string="Contract Qty"
+                                               readonly="1"/>
+                                        <field name="unit_price"
+                                               readonly="1"/>
+                                        <field name="executed_qty"
+                                               readonly="1"/>
+                                    </group>
+                                    <group string="Accepted &amp; Claimed">
+                                        <field name="accepted_qty"
+                                               readonly="1"/>
+                                        <field name="claimed_qty"/>
+                                    </group>
+                                </group>
+
+                                <group>
+                                    <group string="Claim Calculation">
+                                        <field name="claim_percent"
+                                               string="Claim %"
+                                               readonly="1"
+                                               decoration-success="claim_percent &gt;= 100"
+                                               decoration-warning="claim_percent &gt; 0 and claim_percent &lt; 100"
+                                               decoration-muted="claim_percent == 0"/>
+                                        <field name="claim_amount"
+                                               string="Claim Amount"
+                                               readonly="1"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"
+                                               decoration-success="claim_amount &gt; 0"/>
+                                    </group>
+                                    <group string="Remaining">
+                                        <field name="remaining_claim_qty"
+                                               string="Remaining Claim Qty"
+                                               readonly="1"
+                                               decoration-warning="remaining_claim_qty &gt; 0"
+                                               decoration-success="remaining_claim_qty &lt;= 0"/>
+                                        <field name="remaining_claim_amount"
+                                               string="Remaining Claim Amount"
+                                               readonly="1"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"
+                                               decoration-warning="remaining_claim_amount &gt; 0"/>
+                                    </group>
+                                </group>
+
+                                <!-- Cost summary for reference -->
+                                <separator string="Cost Summary"/>
+                                <group>
+                                    <group string="Planned vs Actual">
+                                        <field name="planned_cost"
+                                               readonly="1"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                        <field name="actual_total_cost"
+                                               readonly="1"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                        <field name="cost_variance"
+                                               readonly="1"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"
+                                               decoration-danger="cost_variance &gt; 0"
+                                               decoration-success="cost_variance &lt;= 0 and actual_total_cost &gt; 0"/>
+                                    </group>
+                                    <group string="Actual Breakdown">
                                         <field name="actual_material_cost"
                                                readonly="1"
                                                widget="monetary"
@@ -443,55 +731,6 @@
                                                string="Other Cost"
                                                widget="monetary"
                                                options="{'currency_field': 'currency_id'}"/>
-                                        <field name="actual_total_cost"
-                                               readonly="1"
-                                               widget="monetary"
-                                               options="{'currency_field': 'currency_id'}"/>
-                                    </group>
-                                </group>
-                                <group>
-                                    <group string="Variance">
-                                        <field name="cost_variance"
-                                               readonly="1"
-                                               decoration-danger="cost_variance &gt; 0"
-                                               decoration-success="cost_variance &lt;= 0 and actual_total_cost &gt; 0"/>
-                                        <field name="cost_variance_percent"
-                                               string="Variance %"
-                                               readonly="1"
-                                               widget="percentage"/>
-                                    </group>
-                                    <group string="Progress">
-                                        <field name="planned_qty"      readonly="1"/>
-                                        <field name="executed_qty"     readonly="1"/>
-                                        <field name="progress_percent" readonly="1"
-                                               widget="progressbar"/>
-                                    </group>
-                                </group>
-                            </page>
-
-                            <!-- ═════════════════════════════════════════════
-                                 TAB 6 — NOTES
-                            ═════════════════════════════════════════════ -->
-                            <page string="Notes" name="notes_tab">
-                                <group>
-                                    <group string="General Notes">
-                                        <field name="notes"
-                                               nolabel="1"
-                                               placeholder="General observations, context, approvals…"/>
-                                    </group>
-                                </group>
-                                <group>
-                                    <group string="Instructions">
-                                        <field name="instruction_notes"
-                                               nolabel="1"
-                                               placeholder="Work instructions, safety notes, method statements…"/>
-                                    </group>
-                                </group>
-                                <group>
-                                    <group string="Inspection Notes">
-                                        <field name="inspection_notes"
-                                               nolabel="1"
-                                               placeholder="Quality control, inspection findings, sign-off…"/>
                                     </group>
                                 </group>
                             </page>
