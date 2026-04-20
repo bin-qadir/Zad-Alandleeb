@@ -8,8 +8,25 @@ class FarmBoqLineTemplate(models.Model):
     Each template represents a single reusable BOQ item (not a collection / header).
     Use the 'Create BOQ Line' button to instantiate it into a real BOQ document.
 
-    Ordered by Division → Subdivision → Name for consistent, predictable listing.
+    Ordered by Division → Subdivision → Code for consistent, predictable listing.
     Template names must be unique within the same Division + Subdivision scope.
+
+    ## Hierarchical Code
+
+    Mirrors the BOQ line display_code format:
+      Division rank  →  1, 2, …      (position sorted by sequence asc, name asc)
+      Subdivision rank → 01, 02, …   (position within division, same sort)
+      Template seq   → 01, 02, …     (creation order within same div+sub scope)
+
+    Examples:
+      Division 1, Subdivision 1, 1st template  →  1.01.01
+      Division 1, Subdivision 1, 2nd template  →  1.01.02
+      Division 1, Subdivision 2, 1st template  →  1.02.01
+      Division 2, Subdivision 1, 1st template  →  2.01.01
+      No division / No subdivision             →  0.00.01
+
+    The code is assigned at creation time and never changes automatically.
+    Use "Regenerate Codes" (manager button) to rebuild all codes after bulk imports.
 
     Resource tabs and their allowed product types:
       Materials     — Storable / Consumable / Service
@@ -22,7 +39,16 @@ class FarmBoqLineTemplate(models.Model):
 
     _name = 'farm.boq.line.template'
     _description = 'BOQ Item Template'
-    _order = 'division_id, subdivision_id, name'
+    _order = 'division_id, subdivision_id, code, name'
+
+    # ── Auto-generated hierarchical code ─────────────────────────────────────
+    code = fields.Char(
+        string='Code',
+        readonly=True,
+        index=True,
+        copy=False,
+        help='Auto-generated hierarchical code: Division.Subdivision.Seq (e.g. 1.01.03).',
+    )
 
     name = fields.Char(string='Name', required=True)
     description = fields.Text(string='Description')
@@ -181,6 +207,100 @@ class FarmBoqLineTemplate(models.Model):
         self.subdivision_id = False
 
     # ────────────────────────────────────────────────────────────────────────
+    # Code generation — mirrors farm.boq.line display_code logic
+    # ────────────────────────────────────────────────────────────────────────
+
+    @api.model
+    def _tmpl_div_rank(self, division_id):
+        """1-based rank of division_id in the global division list (seq asc, name asc).
+
+        Returns 0 when division_id is falsy (no division assigned).
+        """
+        if not division_id:
+            return 0
+        all_divs = self.env['farm.division.work'].search([], order='sequence asc, name asc')
+        ids = list(all_divs.ids)
+        return (ids.index(division_id) + 1) if division_id in ids else 0
+
+    @api.model
+    def _tmpl_sub_rank(self, subdivision_id):
+        """1-based rank of subdivision_id within its division (seq asc, name asc).
+
+        Returns 0 when subdivision_id is falsy (no subdivision assigned).
+        """
+        if not subdivision_id:
+            return 0
+        sub = self.env['farm.subdivision.work'].browse(subdivision_id)
+        all_subs = self.env['farm.subdivision.work'].search(
+            [('division_id', '=', sub.division_id.id)],
+            order='sequence asc, name asc',
+        )
+        ids = list(all_subs.ids)
+        return (ids.index(subdivision_id) + 1) if subdivision_id in ids else 0
+
+    @api.model
+    def _tmpl_next_seq(self, division_id, subdivision_id, already_used=None):
+        """Return the next available integer sequence for (division, subdivision).
+
+        ``already_used`` is an optional set of seq ints already reserved
+        in the current create() batch (avoids duplicates in bulk creates).
+        """
+        existing = self.search([
+            ('division_id', '=', division_id or False),
+            ('subdivision_id', '=', subdivision_id or False),
+        ])
+        used = already_used.copy() if already_used else set()
+        for t in existing:
+            if t.code:
+                parts = t.code.split('.')
+                if len(parts) >= 3:
+                    try:
+                        used.add(int(parts[-1]))
+                    except ValueError:
+                        pass
+        seq = 1
+        while seq in used:
+            seq += 1
+        return seq
+
+    @api.model
+    def _build_code(self, division_id, subdivision_id, seq):
+        """Format the 3-segment code string."""
+        div_r = self._tmpl_div_rank(division_id)
+        sub_r = self._tmpl_sub_rank(subdivision_id)
+        return f'{div_r}.{sub_r:02d}.{seq:02d}'
+
+    # ────────────────────────────────────────────────────────────────────────
+    # ORM overrides
+    # ────────────────────────────────────────────────────────────────────────
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Auto-assign a hierarchical code on creation.
+
+        Batch-safe: tracks sequences assigned within this create() call so
+        two templates created simultaneously in the same div+sub scope get
+        different codes.
+        """
+        # batch_reserved: (div_id, sub_id) → set of seq ints reserved so far
+        batch_reserved = {}
+
+        for vals in vals_list:
+            if vals.get('code'):
+                # Code explicitly provided — respect it
+                continue
+            div_id = vals.get('division_id') or False
+            sub_id = vals.get('subdivision_id') or False
+            key = (div_id, sub_id)
+            if key not in batch_reserved:
+                batch_reserved[key] = set()
+            seq = self._tmpl_next_seq(div_id, sub_id, already_used=batch_reserved[key])
+            batch_reserved[key].add(seq)
+            vals['code'] = self._build_code(div_id, sub_id, seq)
+
+        return super().create(vals_list)
+
+    # ────────────────────────────────────────────────────────────────────────
     # Constraints
     # ────────────────────────────────────────────────────────────────────────
 
@@ -221,6 +341,40 @@ class FarmBoqLineTemplate(models.Model):
             'target': 'new',
             'context': {
                 'default_template_id': self.id,
+            },
+        }
+
+    def action_regenerate_codes(self):
+        """Rebuild codes for ALL templates (manager utility).
+
+        Groups templates by (division_id, subdivision_id), sorts each group
+        by creation order (id asc), and assigns sequential codes 01, 02, …
+        Existing codes are replaced.
+
+        Safe to run multiple times (idempotent given stable master data).
+        """
+        all_templates = self.search([], order='division_id asc, subdivision_id asc, id asc')
+
+        # Group by (division_id, subdivision_id)
+        groups = {}
+        for t in all_templates:
+            key = (t.division_id.id or False, t.subdivision_id.id or False)
+            groups.setdefault(key, []).append(t)
+
+        for (div_id, sub_id), templates in groups.items():
+            div_r = self._tmpl_div_rank(div_id)
+            sub_r = self._tmpl_sub_rank(sub_id)
+            for seq, tmpl in enumerate(templates, start=1):
+                tmpl.code = f'{div_r}.{sub_r:02d}.{seq:02d}'
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Codes Regenerated'),
+                'message': _('%d template codes have been rebuilt.') % len(all_templates),
+                'type': 'success',
+                'sticky': False,
             },
         }
 

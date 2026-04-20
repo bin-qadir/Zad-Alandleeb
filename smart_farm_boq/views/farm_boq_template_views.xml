@@ -9,6 +9,16 @@
             <field name="model">farm.boq.line.template</field>
             <field name="arch" type="xml">
                 <list string="Cost Item Templates">
+                    <header>
+                        <button name="action_regenerate_codes"
+                                type="object"
+                                string="Regenerate Codes"
+                                display="always"
+                                class="btn-secondary"
+                                groups="smart_farm_base.group_smart_farm_manager"
+                                confirm="Rebuild hierarchical codes for ALL templates? Existing codes will be reassigned."/>
+                    </header>
+                    <field name="code" string="Code" decoration-muted="not code" optional="show"/>
                     <field name="name"/>
                     <field name="division_id" optional="show"/>
                     <field name="subdivision_id" optional="show"/>
@@ -42,6 +52,12 @@
                                 type="object"
                                 string="Add to Cost Structure"
                                 class="btn-primary"/>
+                        <button name="action_regenerate_codes"
+                                type="object"
+                                string="Regenerate Codes"
+                                class="btn-secondary"
+                                groups="smart_farm_base.group_smart_farm_manager"
+                                confirm="Rebuild hierarchical codes for ALL templates? Existing codes will be reassigned."/>
                     </header>
 
                     <sheet>
@@ -50,10 +66,14 @@
                             <h1>
                                 <field name="name" placeholder="Template Name…"/>
                             </h1>
+                            <h4 class="text-muted" invisible="not code">
+                                <field name="code" readonly="1"/>
+                            </h4>
                         </div>
 
                         <group>
                             <group string="Classification">
+                                <field name="code" readonly="1"/>
                                 <field name="division_id"/>
                                 <field name="subdivision_id"
                                        domain="[('division_id', '=', division_id)]"/>
