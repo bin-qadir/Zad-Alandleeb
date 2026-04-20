@@ -134,7 +134,6 @@ class FarmBoqAnalysisLineProcurement(models.Model):
         default='not_requested',
         copy=False,
         index=True,
-        tracking=True,
     )
 
     # ────────────────────────────────────────────────────────────────────────
