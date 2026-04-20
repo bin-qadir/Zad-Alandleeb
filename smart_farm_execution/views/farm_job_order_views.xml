@@ -299,6 +299,131 @@
                             </div>
                         </div>
 
+                        <!-- ══════════════════════════════════════════════════
+                             EXECUTION CONTROL PANEL
+                             6-card dashboard grid — click any card to jump
+                             to its corresponding operational tab below.
+                        ══════════════════════════════════════════════════ -->
+
+                        <!-- Currency anchor (required by claim_amount monetary widget) -->
+                        <field name="currency_id" invisible="1"/>
+
+                        <div class="ecp-container">
+
+                            <!-- Header -->
+                            <div class="ecp-header">
+                                <span class="ecp-header-icon">&#9881;</span>
+                                <span class="ecp-header-title">Execution Control Panel</span>
+                            </div>
+
+                            <!-- 2-row × 3-col card grid -->
+                            <div class="ecp-grid">
+
+                                <!-- ── Card 1: JOB ORDERS &amp; B.O.Q ITEMS ── -->
+                                <div class="ecp-card"
+                                     data-card="1"
+                                     data-tab="scope_tab"
+                                     role="button"
+                                     tabindex="0"
+                                     title="Open: Scope / BOQ Item">
+                                    <div class="ecp-badge">1</div>
+                                    <div class="ecp-card-title">Job Orders &amp; B.O.Q Items</div>
+                                    <div class="ecp-card-desc">
+                                        Contracted items coming from BOQ
+                                    </div>
+                                </div>
+
+                                <!-- ── Card 2: EXECUTION PROGRESS ── -->
+                                <div class="ecp-card"
+                                     data-card="2"
+                                     data-tab="execution_tab"
+                                     role="button"
+                                     tabindex="0"
+                                     title="Open: Execution Progress">
+                                    <div class="ecp-badge">2</div>
+                                    <div class="ecp-card-title">Execution Progress</div>
+                                    <div class="ecp-live">
+                                        <field name="progress_percent"
+                                               readonly="1"
+                                               nolabel="1"/>
+                                        <span class="ecp-live-unit">%</span>
+                                    </div>
+                                    <div class="ecp-card-desc">
+                                        Executed quantities and daily logs
+                                    </div>
+                                </div>
+
+                                <!-- ── Card 3: HANDOVER REQUESTS ── -->
+                                <div class="ecp-card"
+                                     data-card="3"
+                                     data-tab="inspection_tab"
+                                     role="button"
+                                     tabindex="0"
+                                     title="Open: Inspection &amp; Handover">
+                                    <div class="ecp-badge">3</div>
+                                    <div class="ecp-card-title">Handover Requests</div>
+                                    <div class="ecp-card-desc">
+                                        Request item inspection and delivery
+                                    </div>
+                                </div>
+
+                                <!-- ── Card 4: DELIVERIES &amp; APPROVALS ── -->
+                                <div class="ecp-card"
+                                     data-card="4"
+                                     data-tab="approvals_tab"
+                                     role="button"
+                                     tabindex="0"
+                                     title="Open: Approvals / Awarding">
+                                    <div class="ecp-badge">4</div>
+                                    <div class="ecp-card-title">Deliveries &amp; Approvals</div>
+                                    <div class="ecp-card-desc">
+                                        Inspection results and acceptance status
+                                    </div>
+                                </div>
+
+                                <!-- ── Card 5: APPROVED QUANTITIES ── -->
+                                <div class="ecp-card"
+                                     data-card="5"
+                                     data-tab="inspection_tab"
+                                     role="button"
+                                     tabindex="0"
+                                     title="Open: Inspection &amp; Handover">
+                                    <div class="ecp-badge">5</div>
+                                    <div class="ecp-card-title">Approved Quantities</div>
+                                    <div class="ecp-live">
+                                        <field name="accepted_qty"
+                                               readonly="1"
+                                               nolabel="1"/>
+                                    </div>
+                                    <div class="ecp-card-desc">
+                                        Approved quantities controlling progress
+                                    </div>
+                                </div>
+
+                                <!-- ── Card 6: CLAIMS / EXTRACTS ── -->
+                                <div class="ecp-card"
+                                     data-card="6"
+                                     data-tab="claims_tab"
+                                     role="button"
+                                     tabindex="0"
+                                     title="Open: Claims / Extracts">
+                                    <div class="ecp-badge">6</div>
+                                    <div class="ecp-card-title">Claims / Extracts</div>
+                                    <div class="ecp-live">
+                                        <field name="claim_amount"
+                                               readonly="1"
+                                               nolabel="1"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                    </div>
+                                    <div class="ecp-card-desc">
+                                        Financial extraction based on approved quantities
+                                    </div>
+                                </div>
+
+                            </div><!-- /ecp-grid -->
+                        </div><!-- /ecp-container -->
+
                         <notebook>
 
                             <!-- ═══════════════════════════════════════════

@@ -35,6 +35,12 @@
         'views/farm_project_views_inherit.xml',
         'views/menu.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'smart_farm_execution/static/src/css/execution_panel.css',
+            'smart_farm_execution/static/src/js/execution_panel.js',
+        ],
+    },
     'installable': True,
     'application': False,
     'auto_install': False,

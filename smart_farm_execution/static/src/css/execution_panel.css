@@ -1,0 +1,332 @@
+/* ================================================================
+   EXECUTION CONTROL PANEL
+   Smart Farm Execution  ·  Construction Project Control System
+   ================================================================ */
+
+/* ── Fade-in animation ──────────────────────────────────────── */
+@keyframes ecp-fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Container ──────────────────────────────────────────────── */
+.ecp-container {
+    margin: 4px 0 28px;
+    border: 2px solid #7c3aed;
+    border-radius: 16px;
+    overflow: hidden;
+    background: linear-gradient(140deg, #faf5ff 0%, #eef2ff 100%);
+    box-shadow:
+        0 4px 6px -1px rgba(124, 58, 237, 0.08),
+        0 12px 32px -4px rgba(124, 58, 237, 0.06);
+    animation: ecp-fade-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Header bar ─────────────────────────────────────────────── */
+.ecp-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 24px;
+    background: linear-gradient(90deg, #5b21b6 0%, #4f46e5 45%, #6d28d9 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ecp-header-icon {
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.ecp-header-title {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    color: #ffffff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* ── 6-card grid ────────────────────────────────────────────── */
+.ecp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 20px;
+}
+
+/* ── Card base ──────────────────────────────────────────────── */
+.ecp-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 22px 16px 16px;
+    gap: 9px;
+    background: #ffffff;
+    border: 1.5px solid #ede9fe;
+    border-radius: 12px;
+    cursor: pointer;
+    outline: none;
+    user-select: none;
+    min-height: 150px;
+    /* spring bounce on hover */
+    transition:
+        transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.25s ease,
+        border-color 0.25s ease,
+        background 0.25s ease;
+    box-shadow:
+        0 1px 3px rgba(109, 40, 217, 0.06),
+        0 4px 14px rgba(109, 40, 217, 0.04);
+}
+
+/* Forward-arrow hint (bottom-right) */
+.ecp-card::before {
+    content: '⟶';
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    font-size: 13px;
+    color: #d1d5db;
+    opacity: 0;
+    transition: opacity 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    transform: translateX(-4px);
+}
+
+/* Ripple overlay on active */
+.ecp-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: radial-gradient(circle at center, rgba(124, 58, 237, 0.09), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+}
+
+/* Hover state */
+.ecp-card:hover,
+.ecp-card:focus-visible {
+    transform: translateY(-5px) scale(1.015);
+    box-shadow:
+        0 10px 24px rgba(109, 40, 217, 0.14),
+        0 3px 8px rgba(109, 40, 217, 0.08);
+    border-color: #7c3aed;
+    background: linear-gradient(155deg, #fefcff, #f5f3ff);
+}
+
+.ecp-card:hover::before,
+.ecp-card:focus-visible::before {
+    opacity: 1;
+    color: #7c3aed;
+    transform: translateX(0);
+}
+
+/* Press state */
+.ecp-card:active {
+    transform: translateY(-2px) scale(0.985);
+    box-shadow: 0 3px 10px rgba(109, 40, 217, 0.10);
+}
+
+.ecp-card:active::after {
+    opacity: 1;
+}
+
+/* ── Badge (numbered circle) ────────────────────────────────── */
+.ecp-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    letter-spacing: -0.5px;
+    box-shadow:
+        0 4px 12px rgba(124, 58, 237, 0.35),
+        0 2px 4px rgba(124, 58, 237, 0.20);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ecp-card:hover .ecp-badge {
+    transform: scale(1.10);
+    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.40);
+}
+
+/* ── Card title ─────────────────────────────────────────────── */
+.ecp-card-title {
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #1e1b4b;
+    line-height: 1.35;
+    padding: 0 4px;
+}
+
+/* ── Live-data value row ─────────────────────────────────────── */
+.ecp-live {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 3px;
+    min-height: 32px;
+}
+
+/* Float / integer value rendered by Odoo field widget */
+.ecp-live .o_field_widget {
+    line-height: 1 !important;
+}
+
+.ecp-live .o_field_widget span {
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    color: #7c3aed !important;
+    line-height: 1 !important;
+}
+
+/* Monetary (claim_amount) */
+.ecp-live .o_field_monetary,
+.ecp-live .o_field_monetary .o_monetary_value {
+    font-size: 17px !important;
+    font-weight: 700 !important;
+    color: #7c3aed !important;
+    white-space: nowrap;
+}
+
+.ecp-live .o_field_monetary .o_currency_symbol {
+    font-size: 13px !important;
+}
+
+/* Unit suffix text (e.g., "%") */
+.ecp-live-unit {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b7280;
+    align-self: center;
+    line-height: 1;
+}
+
+/* ── Card description ───────────────────────────────────────── */
+.ecp-card-desc {
+    font-size: 10.5px;
+    color: #9ca3af;
+    line-height: 1.45;
+    padding: 0 6px;
+    margin-top: auto;
+}
+
+/* ── Per-card accent overrides ──────────────────────────────── */
+
+/* Card 1 — Violet (default, already set) */
+
+/* Card 2 — Blue  */
+.ecp-card[data-card="2"] .ecp-badge {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35), 0 2px 4px rgba(37, 99, 235, 0.20);
+}
+.ecp-card[data-card="2"]:hover { border-color: #2563eb; background: linear-gradient(155deg, #fafeff, #eff6ff); }
+.ecp-card[data-card="2"]:hover .ecp-badge { box-shadow: 0 6px 18px rgba(37, 99, 235, 0.40); }
+.ecp-card[data-card="2"] .ecp-live .o_field_widget span { color: #2563eb !important; }
+.ecp-card[data-card="2"]:hover::before { color: #2563eb; }
+
+/* Card 3 — Cyan  */
+.ecp-card[data-card="3"] .ecp-badge {
+    background: linear-gradient(135deg, #0891b2, #0e7490);
+    box-shadow: 0 4px 12px rgba(8, 145, 178, 0.35), 0 2px 4px rgba(8, 145, 178, 0.20);
+}
+.ecp-card[data-card="3"]:hover { border-color: #0891b2; background: linear-gradient(155deg, #fafeff, #ecfeff); }
+.ecp-card[data-card="3"]:hover .ecp-badge { box-shadow: 0 6px 18px rgba(8, 145, 178, 0.40); }
+.ecp-card[data-card="3"]:hover::before { color: #0891b2; }
+
+/* Card 4 — Amber  */
+.ecp-card[data-card="4"] .ecp-badge {
+    background: linear-gradient(135deg, #d97706, #b45309);
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.35), 0 2px 4px rgba(217, 119, 6, 0.20);
+}
+.ecp-card[data-card="4"]:hover { border-color: #d97706; background: linear-gradient(155deg, #fffdf8, #fffbeb); }
+.ecp-card[data-card="4"]:hover .ecp-badge { box-shadow: 0 6px 18px rgba(217, 119, 6, 0.40); }
+.ecp-card[data-card="4"]:hover::before { color: #d97706; }
+
+/* Card 5 — Emerald  */
+.ecp-card[data-card="5"] .ecp-badge {
+    background: linear-gradient(135deg, #059669, #047857);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35), 0 2px 4px rgba(5, 150, 105, 0.20);
+}
+.ecp-card[data-card="5"]:hover { border-color: #059669; background: linear-gradient(155deg, #f8fffc, #ecfdf5); }
+.ecp-card[data-card="5"]:hover .ecp-badge { box-shadow: 0 6px 18px rgba(5, 150, 105, 0.40); }
+.ecp-card[data-card="5"] .ecp-live .o_field_widget span { color: #059669 !important; }
+.ecp-card[data-card="5"]:hover::before { color: #059669; }
+
+/* Card 6 — Rose  */
+.ecp-card[data-card="6"] .ecp-badge {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35), 0 2px 4px rgba(220, 38, 38, 0.20);
+}
+.ecp-card[data-card="6"]:hover { border-color: #dc2626; background: linear-gradient(155deg, #fffafa, #fff1f2); }
+.ecp-card[data-card="6"]:hover .ecp-badge { box-shadow: 0 6px 18px rgba(220, 38, 38, 0.40); }
+.ecp-card[data-card="6"] .ecp-live .o_field_monetary,
+.ecp-card[data-card="6"] .ecp-live .o_field_monetary .o_monetary_value { color: #dc2626 !important; }
+.ecp-card[data-card="6"]:hover::before { color: #dc2626; }
+
+/* ── Active-card highlight (set by JS when tab opened) ──────── */
+.ecp-card.ecp-active {
+    border-width: 2px;
+    border-color: #7c3aed;
+    background: linear-gradient(155deg, #fefcff, #f5f3ff);
+}
+.ecp-card[data-card="2"].ecp-active { border-color: #2563eb; }
+.ecp-card[data-card="3"].ecp-active { border-color: #0891b2; }
+.ecp-card[data-card="4"].ecp-active { border-color: #d97706; }
+.ecp-card[data-card="5"].ecp-active { border-color: #059669; }
+.ecp-card[data-card="6"].ecp-active { border-color: #dc2626; }
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+    .ecp-grid {
+        gap: 14px;
+        padding: 18px;
+    }
+}
+
+@media (max-width: 900px) {
+    .ecp-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    .ecp-card { min-height: 136px; }
+}
+
+@media (max-width: 550px) {
+    .ecp-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 12px;
+    }
+    .ecp-header-title {
+        font-size: 11px;
+        letter-spacing: 2px;
+    }
+    .ecp-card {
+        min-height: 120px;
+        padding: 16px 10px 12px;
+        gap: 7px;
+    }
+    .ecp-badge {
+        width: 34px;
+        height: 34px;
+        font-size: 14px;
+    }
+    .ecp-card-title { font-size: 9.5px; letter-spacing: 1px; }
+    .ecp-card-desc  { display: none; }
+    .ecp-live .o_field_widget span { font-size: 18px !important; }
+}
