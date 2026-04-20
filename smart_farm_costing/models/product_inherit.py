@@ -82,33 +82,69 @@ class ProductTemplate(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        """Auto-set job_type='material' for goods products on create."""
+        """Auto-set job_type='material' for goods products on create.
+
+        Guard: only process records where job_type is explicitly present in
+        vals.  Standard Odoo modules (hr_expense, sale, purchase, …) never
+        pass job_type, so those products are left completely untouched.
+        Smart Farm UI always includes job_type via default_get + onchange.
+        """
         for vals in vals_list:
+            if 'job_type' not in vals:
+                # Not a Smart Farm product creation — skip all job_type logic.
+                continue
             prod_type = vals.get('type', 'consu')
             if prod_type != 'service':
-                vals.setdefault('job_type', 'material')
-                # If caller explicitly passed a non-material job_type for goods,
-                # override it silently — the constraint will catch any real mistake.
-                if vals.get('job_type') and vals['job_type'] != 'material':
-                    vals['job_type'] = 'material'
+                # Goods / Consumable / Storable → force material
+                vals['job_type'] = 'material'
+            elif vals.get('job_type') == 'material':
+                # Service product explicitly given 'material' — clear it
+                # (onchange should have done this already, but be safe)
+                vals['job_type'] = False
         return super().create(vals_list)
 
     def write(self, vals):
-        """Auto-correct job_type when product type changes programmatically."""
+        """Auto-correct job_type when product type changes programmatically.
+
+        Guard: only enforce job_type rules when the caller is explicitly
+        changing job_type OR type on a record that already has a job_type.
+        Standard Odoo writes that don't touch job_type at all are passed
+        through unchanged so they never trigger constraint errors.
+        """
         new_type = vals.get('type')
-        if new_type is not None:
-            if new_type != 'service':
-                # Switching to Goods → force job_type = material
-                vals['job_type'] = 'material'
-            else:
-                # Switching to Service → if job_type was material, clear it
-                for rec in self:
-                    current_jt = vals.get('job_type') or rec.job_type
-                    if current_jt == 'material' and 'job_type' not in vals:
-                        # Only clear if the caller isn't also changing job_type
-                        vals = dict(vals, job_type=False)
-                        break
-        return super().write(vals)
+        new_jt = vals.get('job_type')
+
+        # Nothing job_type-related in this write → nothing to enforce
+        if new_type is None and new_jt is None:
+            return super().write(vals)
+
+        # At least one of type / job_type is changing.
+        # Only act on records that have job_type set (Smart Farm products).
+        # For records with no job_type, pass through without modification.
+        smart_farm_recs = self.filtered(lambda r: r.job_type)
+        plain_recs = self - smart_farm_recs
+
+        if plain_recs:
+            # Standard products — only write if no job_type manipulation needed
+            # (new_jt may be False/None so it's fine to let super handle it)
+            super(ProductTemplate, plain_recs).write(vals)
+
+        if smart_farm_recs:
+            corrected = dict(vals)
+            if new_type is not None:
+                if new_type != 'service':
+                    # Switching to Goods → force material
+                    corrected['job_type'] = 'material'
+                else:
+                    # Switching to Service → clear material if not overridden
+                    for rec in smart_farm_recs:
+                        current_jt = new_jt or rec.job_type
+                        if current_jt == 'material' and new_jt is None:
+                            corrected = dict(corrected, job_type=False)
+                            break
+            super(ProductTemplate, smart_farm_recs).write(corrected)
+
+        return True
 
     # ────────────────────────────────────────────────────────────────────────
     # Layer 4 — constraint: final guard on every save
@@ -116,8 +152,14 @@ class ProductTemplate(models.Model):
 
     @api.constrains('type', 'job_type')
     def _check_job_type_consistency(self):
+        """Validate job_type consistency — only for Smart Farm products.
+
+        A record is considered a Smart Farm product if it has job_type set.
+        Standard Odoo products have job_type = False and are skipped entirely.
+        """
         for rec in self:
             if not rec.job_type:
+                # No job_type set → not a Smart Farm product, skip validation
                 continue
             if rec.type != 'service' and rec.job_type != 'material':
                 raise ValidationError(_(
