@@ -24,13 +24,22 @@
             <field name="model">farm.job.order</field>
             <field name="arch" type="xml">
                 <search string="Job Orders">
-                    <field name="name"         string="Job Order"/>
+                    <field name="name"              string="Job Order"/>
                     <field name="project_id"/>
                     <field name="analysis_id"/>
-                    <field name="boq_line_id"  string="BOQ Subitem"/>
+                    <field name="boq_line_id"       string="BOQ Subitem"/>
                     <field name="work_type_id"/>
                     <field name="division_id"/>
                     <field name="department"/>
+                    <field name="business_activity" string="Business Activity"/>
+                    <separator/>
+                    <!-- Business Activity quick-filters -->
+                    <filter name="act_construction"  string="Construction"
+                            domain="[('business_activity','=','construction')]"/>
+                    <filter name="act_agriculture"   string="Agriculture"
+                            domain="[('business_activity','=','agriculture')]"/>
+                    <filter name="act_manufacturing" string="Manufacturing / Packing"
+                            domain="[('business_activity','=','manufacturing')]"/>
                     <separator/>
                     <!-- Department quick-filters -->
                     <filter name="dept_civil"      string="Civil"
@@ -74,6 +83,10 @@
                             string="⚠ Invalid BOQ Ref"
                             domain="[('is_structural_line','=',True)]"/>
                     <group string="Group By">
+                        <filter name="by_activity"     string="Business Activity"
+                                context="{'group_by':'business_activity'}"/>
+                        <filter name="by_lifecycle"    string="Lifecycle Stage"
+                                context="{'group_by':'lifecycle_stage'}"/>
                         <filter name="by_department"   string="Department"
                                 context="{'group_by':'department'}"/>
                         <filter name="by_jo_stage"     string="JO Stage"
@@ -109,6 +122,8 @@
                     <field name="display_code"      string="BOQ Code"/>
                     <field name="boq_line_id"       string="Subitem"/>
                     <field name="project_id"        string="Project"/>
+                    <field name="business_activity" string="Activity"     optional="show" widget="badge"/>
+                    <field name="lifecycle_stage"   string="Lifecycle"    optional="hide"/>
                     <field name="department"        string="Department"   optional="show"/>
                     <field name="division_id"       string="Division"     optional="show"/>
                     <field name="planned_qty"       string="Contract Qty"/>
@@ -337,10 +352,12 @@
                         <!-- ══════════════════════════════════════════════
                              EXECUTION CONTROL PANEL
                              6 navigation cards  ·  click → jump to tab
+                             Cards adapt per Business Activity
                         ══════════════════════════════════════════════ -->
 
                         <!-- Currency anchor required by monetary widgets -->
-                        <field name="currency_id" invisible="1"/>
+                        <field name="currency_id"       invisible="1"/>
+                        <field name="business_activity" invisible="1"/>
 
                         <div class="ecp-container">
 
@@ -350,8 +367,11 @@
                                 <span class="ecp-header-title">Execution Control Panel</span>
                             </div>
 
-                            <!-- 2 × 3 grid -->
-                            <div class="ecp-grid">
+                            <!-- ══════════════════════════════════════
+                                 CARD SET A — CONSTRUCTION (default)
+                            ══════════════════════════════════════ -->
+                            <div class="ecp-grid"
+                                 invisible="business_activity not in ('construction', False)">
 
                                 <!-- Card 1: BOQ / Job Orders -->
                                 <div class="ecp-card"
@@ -426,7 +446,175 @@
                                     <div class="ecp-card-desc">Financial extraction based on approved quantities</div>
                                 </div>
 
-                            </div><!-- /ecp-grid -->
+                            </div><!-- /ecp-grid construction -->
+
+                            <!-- ══════════════════════════════════════
+                                 CARD SET B — AGRICULTURE
+                                 Crop Plan / Daily Ops / Irrigation /
+                                 Monitoring / Harvest Qty / Yield+Sales
+                            ══════════════════════════════════════ -->
+                            <div class="ecp-grid"
+                                 invisible="business_activity != 'agriculture'">
+
+                                <!-- Card 1: Crop Plan -->
+                                <div class="ecp-card"
+                                     data-card="1" data-tab="scope_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Crop Plan &amp; BOQ">
+                                    <div class="ecp-badge">1</div>
+                                    <div class="ecp-card-title">Crop Plan &amp; Scope</div>
+                                    <div class="ecp-card-desc">Planned crop items from BOQ</div>
+                                </div>
+
+                                <!-- Card 2: Daily Operations + live % -->
+                                <div class="ecp-card"
+                                     data-card="2" data-tab="execution_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Daily Field Operations">
+                                    <div class="ecp-badge">2</div>
+                                    <div class="ecp-card-title">Daily Field Ops</div>
+                                    <div class="ecp-live">
+                                        <field name="progress_percent" readonly="1" nolabel="1"/>
+                                        <span class="ecp-live-unit">%</span>
+                                    </div>
+                                    <div class="ecp-card-desc">Daily activities and field progress logs</div>
+                                </div>
+
+                                <!-- Card 3: Irrigation & Inputs -->
+                                <div class="ecp-card"
+                                     data-card="3" data-tab="handover_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Irrigation &amp; Inputs">
+                                    <div class="ecp-badge">3</div>
+                                    <div class="ecp-card-title">Irrigation &amp; Inputs</div>
+                                    <div class="ecp-card-desc">Water, fertilizer and field input records</div>
+                                </div>
+
+                                <!-- Card 4: Crop Monitoring -->
+                                <div class="ecp-card"
+                                     data-card="4" data-tab="inspection_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Crop Monitoring">
+                                    <div class="ecp-badge">4</div>
+                                    <div class="ecp-card-title">Crop Monitoring</div>
+                                    <div class="ecp-card-desc">Growth checks, pest/disease inspections</div>
+                                </div>
+
+                                <!-- Card 5: Harvest Qty + live approved_qty -->
+                                <div class="ecp-card"
+                                     data-card="5" data-tab="approved_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Harvest Quantities">
+                                    <div class="ecp-badge">5</div>
+                                    <div class="ecp-card-title">Harvest Quantities</div>
+                                    <div class="ecp-live">
+                                        <field name="approved_qty" readonly="1" nolabel="1"/>
+                                    </div>
+                                    <div class="ecp-card-desc">Certified harvest quantities for revenue</div>
+                                </div>
+
+                                <!-- Card 6: Yield & Sales + live claimable_amount -->
+                                <div class="ecp-card"
+                                     data-card="6" data-tab="claims_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Yield &amp; Sales">
+                                    <div class="ecp-badge">6</div>
+                                    <div class="ecp-card-title">Yield &amp; Sales</div>
+                                    <div class="ecp-live">
+                                        <field name="claimable_amount"
+                                               readonly="1" nolabel="1"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                    </div>
+                                    <div class="ecp-card-desc">Revenue from approved harvest quantities</div>
+                                </div>
+
+                            </div><!-- /ecp-grid agriculture -->
+
+                            <!-- ══════════════════════════════════════
+                                 CARD SET C — MANUFACTURING / PACKING
+                                 Packing Orders / Material Issue /
+                                 Packing Progress / QC /
+                                 Packed Qty / Finished Goods
+                            ══════════════════════════════════════ -->
+                            <div class="ecp-grid"
+                                 invisible="business_activity != 'manufacturing'">
+
+                                <!-- Card 1: Packing Orders -->
+                                <div class="ecp-card"
+                                     data-card="1" data-tab="scope_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Packing Orders">
+                                    <div class="ecp-badge">1</div>
+                                    <div class="ecp-card-title">Packing Orders</div>
+                                    <div class="ecp-card-desc">Planned packing scope from BOQ</div>
+                                </div>
+
+                                <!-- Card 2: Material Issue -->
+                                <div class="ecp-card"
+                                     data-card="2" data-tab="execution_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Material Issue &amp; Progress">
+                                    <div class="ecp-badge">2</div>
+                                    <div class="ecp-card-title">Material Issue</div>
+                                    <div class="ecp-live">
+                                        <field name="progress_percent" readonly="1" nolabel="1"/>
+                                        <span class="ecp-live-unit">%</span>
+                                    </div>
+                                    <div class="ecp-card-desc">Raw material consumption and issue logs</div>
+                                </div>
+
+                                <!-- Card 3: Packing Progress -->
+                                <div class="ecp-card"
+                                     data-card="3" data-tab="handover_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Packing Progress">
+                                    <div class="ecp-badge">3</div>
+                                    <div class="ecp-card-title">Packing Progress</div>
+                                    <div class="ecp-card-desc">Units packed, shift logs, line output</div>
+                                </div>
+
+                                <!-- Card 4: QC / Approvals -->
+                                <div class="ecp-card"
+                                     data-card="4" data-tab="inspection_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: QC &amp; Approvals">
+                                    <div class="ecp-badge">4</div>
+                                    <div class="ecp-card-title">QC &amp; Approvals</div>
+                                    <div class="ecp-card-desc">Quality checks, hold/release decisions</div>
+                                </div>
+
+                                <!-- Card 5: Packed Qty + live approved_qty -->
+                                <div class="ecp-card"
+                                     data-card="5" data-tab="approved_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Approved Packed Quantities">
+                                    <div class="ecp-badge">5</div>
+                                    <div class="ecp-card-title">Packed Qty (Approved)</div>
+                                    <div class="ecp-live">
+                                        <field name="approved_qty" readonly="1" nolabel="1"/>
+                                    </div>
+                                    <div class="ecp-card-desc">QC-released quantity ready for dispatch</div>
+                                </div>
+
+                                <!-- Card 6: Finished Goods + live claimable_amount -->
+                                <div class="ecp-card"
+                                     data-card="6" data-tab="claims_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Finished Goods &amp; Revenue">
+                                    <div class="ecp-badge">6</div>
+                                    <div class="ecp-card-title">Finished Goods</div>
+                                    <div class="ecp-live">
+                                        <field name="claimable_amount"
+                                               readonly="1" nolabel="1"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                    </div>
+                                    <div class="ecp-card-desc">Revenue value of approved packed goods</div>
+                                </div>
+
+                            </div><!-- /ecp-grid manufacturing -->
+
                         </div><!-- /ecp-container -->
 
                         <!-- ══════════════════════════════════════════════
@@ -458,11 +646,13 @@
                                         <field name="boq_hierarchy" readonly="1"/>
                                     </group>
                                     <group string="Scope">
-                                        <field name="planned_qty"  string="Contract Qty"/>
-                                        <field name="unit_id"      options="{'no_create': True}"/>
-                                        <field name="unit_price"   readonly="1"/>
+                                        <field name="planned_qty"        string="Contract Qty"/>
+                                        <field name="unit_id"            options="{'no_create': True}"/>
+                                        <field name="unit_price"         readonly="1"/>
+                                        <field name="business_activity"/>
+                                        <field name="lifecycle_stage"/>
                                         <field name="department"/>
-                                        <field name="work_type_id" options="{'no_create': True}"/>
+                                        <field name="work_type_id"       options="{'no_create': True}"/>
                                         <field name="discipline"/>
                                     </group>
                                 </group>

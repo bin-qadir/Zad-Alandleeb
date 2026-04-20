@@ -122,6 +122,50 @@ class FarmJobOrder(models.Model):
         readonly=True,
     )
 
+    # ── Business Activity ─────────────────────────────────────────────────────
+    business_activity = fields.Selection(
+        selection=[
+            ('construction',    'Construction'),
+            ('agriculture',     'Agriculture'),
+            ('manufacturing',   'Manufacturing / Packing'),
+        ],
+        string='Business Activity',
+        default='construction',
+        required=True,
+        index=True,
+        tracking=True,
+        help=(
+            'Determines the type of execution workflow and control-panel card labels.\n'
+            '• Construction — standard BOQ/Job Order civil/MEP workflow.\n'
+            '• Agriculture   — crop lifecycle: planning, daily ops, irrigation, '
+            'monitoring, harvest, yield & sales.\n'
+            '• Manufacturing — packing cycle: orders, material issue, packing '
+            'progress, QC, packed qty, finished goods.'
+        ),
+    )
+
+    lifecycle_stage = fields.Selection(
+        selection=[
+            # Construction
+            ('establishment', 'Establishment'),
+            ('operation',     'Operation'),
+            # Agriculture
+            ('land_prep',     'Land Preparation'),
+            ('planting',      'Planting'),
+            ('growing',       'Growing / Crop Care'),
+            ('harvest',       'Harvest'),
+            ('post_harvest',  'Post-Harvest'),
+            # Manufacturing / Packing
+            ('packing',       'Packing'),
+            ('quality_check', 'Quality Check'),
+            ('dispatch',      'Dispatch'),
+        ],
+        string='Lifecycle Stage',
+        index=True,
+        tracking=True,
+        help='Sub-stage within the selected business activity.',
+    )
+
     # ── Department ───────────────────────────────────────────────────────────
     department = fields.Selection(
         selection=[

@@ -117,11 +117,16 @@ class FarmDashboard(models.Model):
         help='Weighted-average execution progress across all active Job Orders '
              '(weighted by contract qty).',
     )
-    count_jo_total           = fields.Integer(compute='_compute_execution_kpis', string='Total Job Orders')
-    count_jo_in_progress     = fields.Integer(compute='_compute_execution_kpis', string='JOs In Progress')
+    count_jo_total            = fields.Integer(compute='_compute_execution_kpis', string='Total Job Orders')
+    count_jo_in_progress      = fields.Integer(compute='_compute_execution_kpis', string='JOs In Progress')
     count_jo_under_inspection = fields.Integer(compute='_compute_execution_kpis', string='JOs Under Inspection')
     count_jo_ready_for_claim  = fields.Integer(compute='_compute_execution_kpis', string='JOs Ready for Claim')
     count_jo_claimed          = fields.Integer(compute='_compute_execution_kpis', string='JOs Claimed')
+
+    # Per-activity breakdown
+    count_jo_construction   = fields.Integer(compute='_compute_execution_kpis', string='Construction JOs')
+    count_jo_agriculture    = fields.Integer(compute='_compute_execution_kpis', string='Agriculture JOs')
+    count_jo_manufacturing  = fields.Integer(compute='_compute_execution_kpis', string='Manufacturing JOs')
 
     # ────────────────────────────────────────────────────────────────────────
     # Compute helpers
@@ -233,14 +238,22 @@ class FarmDashboard(models.Model):
         )
 
         stage_counts = {
-            'in_progress':     0,
+            'in_progress':      0,
             'under_inspection': 0,
-            'ready_for_claim': 0,
-            'claimed':         0,
+            'ready_for_claim':  0,
+            'claimed':          0,
+        }
+        activity_counts = {
+            'construction':  0,
+            'agriculture':   0,
+            'manufacturing': 0,
         }
         for jo in jos:
             if jo.jo_stage in stage_counts:
                 stage_counts[jo.jo_stage] += 1
+            act = jo.business_activity or 'construction'
+            if act in activity_counts:
+                activity_counts[act] += 1
 
         for rec in self:
             rec.portfolio_approved_amount    = total_approved
@@ -252,6 +265,9 @@ class FarmDashboard(models.Model):
             rec.count_jo_under_inspection   = stage_counts['under_inspection']
             rec.count_jo_ready_for_claim    = stage_counts['ready_for_claim']
             rec.count_jo_claimed            = stage_counts['claimed']
+            rec.count_jo_construction       = activity_counts['construction']
+            rec.count_jo_agriculture        = activity_counts['agriculture']
+            rec.count_jo_manufacturing      = activity_counts['manufacturing']
 
     # ────────────────────────────────────────────────────────────────────────
     # Singleton accessor
