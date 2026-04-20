@@ -3,81 +3,172 @@
     <data>
 
         <!-- ══════════════════════════════════════════════════════════════════
-             Add BOQ Structure Wizard — Dialog Form
-             3-step: Division → Subdivisions (optional) → Sub-Subdivisions (optional)
+             Add BOQ Structure Wizard — Flexible Insert Modes
+             6 modes: full / division / subdivision / sub_subdivision /
+                      template / manual
         ══════════════════════════════════════════════════════════════════════ -->
+
         <record id="view_farm_boq_add_structure_wizard_form" model="ir.ui.view">
             <field name="name">farm.boq.add_structure.wizard.form</field>
             <field name="model">farm.boq.add_structure.wizard</field>
             <field name="arch" type="xml">
                 <form string="Add BOQ Structure">
 
-                    <div class="alert alert-info mb-3" role="alert">
-                        <strong>How it works:</strong>
-                        Select a Division (required). Optionally narrow to specific
-                        Subdivisions and/or Sub-Subdivisions.
-                        Leave Subdivisions empty → all branches are imported.
-                        Leave Sub-Subdivisions empty → all leaves are imported.
-                        Existing rows are safely skipped.
-                    </div>
+                    <sheet>
 
-                    <group>
-                        <field name="boq_id" readonly="1"/>
-                    </group>
+                        <!-- BOQ reference (readonly context) -->
+                        <group>
+                            <field name="boq_id" readonly="1"/>
+                        </group>
 
-                    <separator string="Step 1 — Select Division(s)  (required)"/>
-                    <group>
-                        <field name="division_ids"
-                               widget="many2many_tags"
-                               options="{'no_create': True, 'no_open': True}"
-                               placeholder="Select one or more divisions…"/>
-                    </group>
+                        <!-- ── Mode selector ──────────────────────────────── -->
+                        <separator string="Choose Insert Mode"/>
+                        <group>
+                            <field name="insert_mode" widget="radio" nolabel="1"/>
+                        </group>
 
-                    <separator string="Step 2 — Filter Subdivisions  (optional — leave empty = all)"/>
-                    <group>
-                        <field name="subdivision_ids"
-                               widget="many2many_tags"
-                               domain="[('division_id', 'in', division_ids)]"
-                               options="{'no_create': True, 'no_open': True}"
-                               placeholder="Leave empty to import ALL subdivisions under the selected division(s)…"
-                               invisible="not division_ids"/>
-                        <div class="text-muted small"
-                             invisible="division_ids">
-                            ← Select a Division first
+                        <!-- ── Mode help text ─────────────────────────────── -->
+
+                        <div class="alert alert-warning mb-0 mt-2"
+                             invisible="insert_mode != 'full'"
+                             role="alert">
+                            <strong>Full Structure:</strong>
+                            ALL divisions, subdivisions, and sub-subdivisions from the
+                            master catalogue will be imported into this BOQ.
+                            Rows that already exist are safely skipped.
+                            This may create a large number of rows.
                         </div>
-                    </group>
 
-                    <separator string="Step 3 — Filter Sub-Subdivisions  (optional — leave empty = all)"/>
-                    <group>
-                        <field name="sub_subdivision_ids"
-                               widget="many2many_tags"
-                               domain="[('subdivision_id', 'in', subdivision_ids)]"
-                               options="{'no_create': True, 'no_open': True}"
-                               placeholder="Leave empty to import ALL sub-subdivisions under the selected subdivision(s)…"
-                               invisible="not subdivision_ids"/>
-                        <div class="text-muted small"
-                             invisible="subdivision_ids">
-                            ← Select specific Subdivisions first to filter here
+                        <div class="alert alert-info mb-0 mt-2"
+                             invisible="insert_mode != 'division'"
+                             role="alert">
+                            <strong>By Division:</strong>
+                            Select one or more Divisions. All their Subdivisions and
+                            Sub-Subdivisions will be imported. Already-existing rows
+                            are skipped.
                         </div>
-                    </group>
 
+                        <div class="alert alert-info mb-0 mt-2"
+                             invisible="insert_mode != 'subdivision'"
+                             role="alert">
+                            <strong>By Subdivision:</strong>
+                            Select the Subdivision(s) you want. The parent Division row
+                            and all Sub-Subdivisions under each Subdivision are created
+                            automatically. Use the Division filter to narrow the list.
+                        </div>
+
+                        <div class="alert alert-info mb-0 mt-2"
+                             invisible="insert_mode != 'sub_subdivision'"
+                             role="alert">
+                            <strong>By Sub-Subdivision:</strong>
+                            Select specific Sub-Subdivisions only. Parent Division and
+                            Subdivision rows are created automatically if they are
+                            missing. Use the higher-level filters to narrow the picker.
+                        </div>
+
+                        <div class="alert alert-success mb-0 mt-2"
+                             invisible="insert_mode != 'template'"
+                             role="alert">
+                            <strong>By Template / Item:</strong>
+                            Click <em>Open Add Item Wizard</em> below.  You will be
+                            able to pick a ready-made template and choose exactly where
+                            to place it (Division → Subdivision → Sub-Subdivision).
+                        </div>
+
+                        <div class="alert alert-success mb-0 mt-2"
+                             invisible="insert_mode != 'manual'"
+                             role="alert">
+                            <strong>Manual (line by line):</strong>
+                            Click <em>Open Add Item Wizard</em> below.  You will fill
+                            in the item details (name, quantity, unit) and choose the
+                            location yourself.
+                        </div>
+
+                        <!-- ── Division selector ──────────────────────────── -->
+                        <!-- Shown for division mode (required) and
+                             subdivision/sub_subdivision modes (optional filter) -->
+                        <group string="Division"
+                               invisible="insert_mode not in ('division', 'subdivision', 'sub_subdivision')">
+                            <field name="division_ids"
+                                   widget="many2many_tags"
+                                   options="{'no_create': True, 'no_open': True}"
+                                   placeholder="Select division(s)…"
+                                   nolabel="1"/>
+                            <div class="text-muted small"
+                                 invisible="insert_mode == 'division'">
+                                Optional — leave empty to show all subdivisions
+                            </div>
+                        </group>
+
+                        <!-- ── Subdivision selector ───────────────────────── -->
+                        <!-- Shown for subdivision mode (required) and
+                             sub_subdivision mode (optional filter) -->
+                        <group string="Subdivision"
+                               invisible="insert_mode not in ('subdivision', 'sub_subdivision')">
+                            <field name="subdivision_ids"
+                                   widget="many2many_tags"
+                                   domain="[('division_id', 'in', division_ids)] if division_ids else []"
+                                   options="{'no_create': True, 'no_open': True}"
+                                   placeholder="Select subdivision(s)…"
+                                   nolabel="1"/>
+                            <div class="text-muted small"
+                                 invisible="insert_mode == 'subdivision'">
+                                Optional — leave empty to show all sub-subdivisions
+                            </div>
+                        </group>
+
+                        <!-- ── Sub-Subdivision selector ───────────────────── -->
+                        <group string="Sub-Subdivision"
+                               invisible="insert_mode != 'sub_subdivision'">
+                            <field name="sub_subdivision_ids"
+                                   widget="many2many_tags"
+                                   domain="[('subdivision_id', 'in', subdivision_ids)] if subdivision_ids else (([('division_id', 'in', division_ids)]) if division_ids else [])"
+                                   options="{'no_create': True, 'no_open': True}"
+                                   placeholder="Select sub-subdivision(s)…"
+                                   nolabel="1"/>
+                        </group>
+
+                    </sheet>
+
+                    <!-- ── Footer buttons ─────────────────────────────────── -->
                     <footer>
+
+                        <!-- Full structure: confirm dialog because it may create many rows -->
+                        <button name="action_import"
+                                type="object"
+                                string="Import Full Structure"
+                                class="btn-warning"
+                                close="1"
+                                confirm="This will import ALL work structure into the BOQ. Already-existing rows will be skipped. Continue?"
+                                invisible="insert_mode != 'full'"/>
+
+                        <!-- Division / Subdivision / Sub-Subdivision modes -->
                         <button name="action_import"
                                 type="object"
                                 string="Import Structure"
                                 class="btn-primary"
                                 close="1"
-                                invisible="not division_ids"/>
+                                invisible="insert_mode not in ('division', 'subdivision', 'sub_subdivision')"/>
+
+                        <!-- Template / Manual modes: open Add Item wizard -->
+                        <button name="action_import"
+                                type="object"
+                                string="Open Add Item Wizard"
+                                class="btn-primary"
+                                invisible="insert_mode not in ('template', 'manual')"/>
+
                         <button string="Cancel"
                                 class="btn-secondary"
                                 special="cancel"/>
+
                     </footer>
 
                 </form>
             </field>
         </record>
 
-        <!-- ── Action ─────────────────────────────────────────────────────── -->
+
+        <!-- ── Window action ─────────────────────────────────────────────── -->
         <record id="action_farm_boq_add_structure_wizard" model="ir.actions.act_window">
             <field name="name">Add BOQ Structure</field>
             <field name="res_model">farm.boq.add_structure.wizard</field>
@@ -85,8 +176,8 @@
             <field name="target">new</field>
         </record>
 
-        <!-- "Add BOQ Structure" button has been moved to the BOQ Structure screen list header.
-             See farm_boq_line_views.xml for the new location. -->
+        <!-- "Add BOQ Structure" button lives in the BOQ Structure screen list header.
+             See farm_boq_line_views.xml <header> section. -->
 
     </data>
 </odoo>

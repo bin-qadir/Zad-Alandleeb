@@ -797,6 +797,52 @@ class FarmBoqLine(models.Model):
             },
         }
 
+    def action_delete_single_line(self):
+        """Delete this single BOQ line and all its descendants.
+
+        Called from the per-row trash button in the Structure screen list.
+
+        Safety behaviour (identical to action_delete_selected_lines):
+          1. Expand the selection to include all hierarchy children.
+          2. Block if any subitems have downstream analysis or job-order links.
+          3. Delete everything, then rebuild the BOQ sequence.
+
+        Parent rows (Division / Subdivision / Sub-Subdivision) are deleted
+        together with all their children in one operation.
+        """
+        self.ensure_one()
+
+        to_delete = self._collect_with_children()
+        subitems  = to_delete.filtered(lambda l: not l.display_type)
+        warnings  = self._check_downstream_links(subitems)
+
+        if warnings:
+            raise UserError(_(
+                'Cannot delete — downstream links exist on items in this branch:\n\n'
+                '%s\n\n'
+                'Remove or re-link these records before deleting.',
+                '\n'.join('  • %s' % w for w in warnings),
+            ))
+
+        boq_id = self.boq_id.id
+        count  = len(to_delete)
+        to_delete.unlink()
+
+        boq = self.env['farm.boq'].browse(boq_id)
+        if boq.exists():
+            boq._rebuild_sequence()
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title':   _('Deleted'),
+                'message': _('%d BOQ line(s) removed and sequence rebuilt.', count),
+                'type':    'warning',
+                'sticky':  False,
+            },
+        }
+
     def _collect_with_children(self):
         """Expand a recordset to include all hierarchy descendants."""
         Line = self.env['farm.boq.line']

@@ -130,6 +130,16 @@
                             icon="fa-external-link-square"
                             class="btn-secondary btn-sm"
                             invisible="display_type != False"/>
+                    <!-- Per-row delete — visible on every row type.
+                         Deletes this row AND all its descendants.
+                         Downstream-link check fires server-side before any deletion. -->
+                    <button name="action_delete_single_line"
+                            type="object"
+                            string=""
+                            icon="fa-trash"
+                            title="Delete this line (and all its children)"
+                            class="btn-danger btn-sm"
+                            confirm="Delete this line and ALL its children? This cannot be undone."/>
                 </list>
             </field>
         </record>
