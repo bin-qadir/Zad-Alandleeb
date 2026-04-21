@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ── Submenu under Execution ──────────────────────────────────── -->
+
+        <menuitem
+            id="menu_smart_farm_material_request"
+            name="Material Requests"
+            parent="smart_farm_execution.menu_smart_farm_execution"
+            action="action_farm_material_request"
+            sequence="25"/>
+
+        <menuitem
+            id="menu_smart_farm_material_request_pending"
+            name="Pending Approvals"
+            parent="smart_farm_execution.menu_smart_farm_execution"
+            action="action_farm_material_request_pending"
+            sequence="26"/>
+
+    </data>
+</odoo>

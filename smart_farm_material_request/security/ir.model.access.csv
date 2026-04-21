@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_farm_material_request_user,farm.material.request user,model_farm_material_request,base.group_user,1,1,1,0
+access_farm_material_request_manager,farm.material.request manager,model_farm_material_request,base.group_system,1,1,1,1
+access_farm_material_request_line_user,farm.material.request.line user,model_farm_material_request_line,base.group_user,1,1,1,0
+access_farm_material_request_line_manager,farm.material.request.line manager,model_farm_material_request_line,base.group_system,1,1,1,1
+access_farm_mr_reject_wizard,farm.material.request.reject.wizard user,model_farm_material_request_reject_wizard,base.group_user,1,1,1,1

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inject Material Request stat button into farm.job.order form -->
+
+        <record id="view_farm_job_order_mr_inherit" model="ir.ui.view">
+            <field name="name">farm.job.order.form.mr.inherit</field>
+            <field name="model">farm.job.order</field>
+            <field name="inherit_id" ref="smart_farm_execution.view_farm_job_order_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button class="oe_stat_button"
+                            name="action_open_material_requests"
+                            type="object"
+                            icon="fa-truck"
+                            title="Material Requests">
+                        <field name="material_request_count"
+                               widget="statinfo"
+                               string="Mat. Requests"/>
+                    </button>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>
