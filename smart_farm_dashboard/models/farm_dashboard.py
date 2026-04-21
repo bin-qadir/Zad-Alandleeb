@@ -55,13 +55,15 @@ class FarmDashboard(models.Model):
 
     # ── Portfolio financials ──────────────────────────────────────────────────
 
-    total_contract_value  = fields.Monetary(compute='_compute_portfolio', string='Total Contract Value',  currency_field='currency_id')
-    total_estimated_cost  = fields.Monetary(compute='_compute_portfolio', string='Total Estimated Cost',  currency_field='currency_id')
-    total_committed_cost  = fields.Monetary(compute='_compute_portfolio', string='Total Committed Cost',  currency_field='currency_id')
-    total_actual_cost     = fields.Monetary(compute='_compute_portfolio', string='Total Actual Cost',     currency_field='currency_id')
-    total_forecast_final  = fields.Monetary(compute='_compute_portfolio', string='Total Forecast Final',  currency_field='currency_id')
-    total_current_profit  = fields.Monetary(compute='_compute_portfolio', string='Total Current Profit',  currency_field='currency_id')
+    total_contract_value   = fields.Monetary(compute='_compute_portfolio', string='Total Contract Value',   currency_field='currency_id')
+    total_estimated_cost   = fields.Monetary(compute='_compute_portfolio', string='Total Estimated Cost',   currency_field='currency_id')
+    total_committed_cost   = fields.Monetary(compute='_compute_portfolio', string='Total Committed Cost',   currency_field='currency_id')
+    total_actual_cost      = fields.Monetary(compute='_compute_portfolio', string='Total Actual Cost',      currency_field='currency_id')
+    total_forecast_final   = fields.Monetary(compute='_compute_portfolio', string='Total Forecast Final',   currency_field='currency_id')
+    total_current_profit   = fields.Monetary(compute='_compute_portfolio', string='Total Current Profit',   currency_field='currency_id')
     total_projected_profit = fields.Monetary(compute='_compute_portfolio', string='Total Projected Profit', currency_field='currency_id')
+    total_revenue          = fields.Monetary(compute='_compute_portfolio', string='Total Revenue',          currency_field='currency_id')
+    total_realized_profit  = fields.Monetary(compute='_compute_portfolio', string='Total Realized Profit',  currency_field='currency_id')
 
     avg_gross_margin_pct  = fields.Float(
         compute='_compute_portfolio',
@@ -172,6 +174,9 @@ class FarmDashboard(models.Model):
         total_forecast   = sum(projects.mapped('forecast_final_cost'))
         total_curr_pft   = sum(projects.mapped('current_profit'))
         total_proj_pft   = sum(projects.mapped('projected_profit'))
+        # Revenue & realized profit (from smart_farm_control engine)
+        total_revenue    = sum(projects.mapped('revenue'))
+        total_real_pft   = sum(projects.mapped('realized_profit'))
 
         # Average gross margin — execution + closing projects with contract only
         exec_proj = projects.filtered(
@@ -215,6 +220,8 @@ class FarmDashboard(models.Model):
             rec.total_current_profit   = total_curr_pft
             rec.total_projected_profit = total_proj_pft
             rec.avg_gross_margin_pct   = avg_margin
+            rec.total_revenue          = total_revenue
+            rec.total_realized_profit  = total_real_pft
 
             rec.count_active  = phase_map['contract'] + phase_map['execution']
             rec.count_at_risk = health_map.get('warning', 0) + health_map.get('critical', 0)

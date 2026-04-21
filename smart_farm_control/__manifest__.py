@@ -1,6 +1,6 @@
 {
     'name': 'Smart Farm Control',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.3.0',
     'summary': 'Enterprise project control: phase locking, committed cost, profit/variance engine',
     'description': (
         'Adds SAP-level project control discipline to Smart Farm:\n\n'

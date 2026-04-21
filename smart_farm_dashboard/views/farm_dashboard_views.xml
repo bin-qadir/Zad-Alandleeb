@@ -403,6 +403,31 @@
                                                        decoration-danger="avg_gross_margin_pct &lt;= 0"/>
                                             </div>
 
+                                            <div class="sf-fin-item">
+                                                <span class="sf-fin-item-label">
+                                                    <i class="fa fa-usd me-1 text-success"/>
+                                                    Revenue (Earned)
+                                                </span>
+                                                <field name="total_revenue"
+                                                       widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"
+                                                       nolabel="1"
+                                                       decoration-success="total_revenue &gt; 0"/>
+                                            </div>
+
+                                            <div class="sf-fin-item sf-fin-item-emphasis">
+                                                <span class="sf-fin-item-label">
+                                                    <i class="fa fa-star me-1"/>
+                                                    Realized Profit
+                                                </span>
+                                                <field name="total_realized_profit"
+                                                       widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"
+                                                       nolabel="1"
+                                                       decoration-success="total_realized_profit &gt; 0"
+                                                       decoration-danger="total_realized_profit &lt;= 0"/>
+                                            </div>
+
                                         </div>
                                     </div>
 

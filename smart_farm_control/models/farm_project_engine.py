@@ -61,6 +61,24 @@ class FarmProjectEngine(models.Model):
 
     _inherit = 'farm.project'
 
+    # ── BOQ one2many (for contract_value fallback + estimated_cost trigger) ──────
+
+    boq_ids = fields.One2many(
+        'farm.boq',
+        'project_id',
+        string='BOQs',
+    )
+
+    # ── Customer / Vendor Invoice one2many ────────────────────────────────────
+
+    invoice_ids = fields.One2many(
+        'account.move',
+        'farm_project_id',
+        string='Invoices',
+        domain=[('move_type', 'in', ('out_invoice', 'out_refund',
+                                     'in_invoice',  'in_refund'))],
+    )
+
     # ── Sales Orders one2many (for @depends on contract approval state) ─────────
 
     sale_order_ids = fields.One2many(
@@ -233,6 +251,47 @@ class FarmProjectEngine(models.Model):
         help='contract_value − forecast_final_cost (margin at completion).',
     )
 
+    # ── Revenue & realized profit ─────────────────────────────────────────────
+    # Revenue sources (priority order):
+    #   1. Posted customer invoices linked via farm_project_id on account.move
+    #   2. JO claim_amount (construction: approved claims as earned revenue proxy)
+    # realized_profit = revenue − actual_total_cost
+
+    revenue = fields.Float(
+        string='Revenue',
+        compute='_compute_project_engine',
+        store=True,
+        digits=(16, 2),
+        help=(
+            'Earned revenue for this project.\n'
+            'Source 1 (preferred): sum of posted customer invoices '
+            '(account.move, move_type=out_invoice) with farm_project_id = this project.\n'
+            'Source 2 (fallback): sum of Job Order claim_amount '
+            '(claimed/ready-for-claim JOs — acts as earned-revenue proxy).'
+        ),
+    )
+    vendor_bill_cost = fields.Float(
+        string='Vendor Bill Cost',
+        compute='_compute_project_engine',
+        store=True,
+        digits=(16, 2),
+        help=(
+            'Sum of amount_untaxed from posted vendor bills (account.move, '
+            'move_type=in_invoice) with farm_project_id = this project.'
+        ),
+    )
+    realized_profit = fields.Float(
+        string='Realized Profit',
+        compute='_compute_project_engine',
+        store=True,
+        digits=(16, 2),
+        help=(
+            'revenue − actual_total_cost.\n'
+            'Represents the margin earned on work completed so far, '
+            'vs all actual costs incurred.'
+        ),
+    )
+
     # ── Variance metrics ──────────────────────────────────────────────────────
 
     contract_vs_estimate_variance = fields.Float(
@@ -280,10 +339,15 @@ class FarmProjectEngine(models.Model):
         'job_order_ids.actual_other_cost',
         'job_order_ids.planned_cost',
         'job_order_ids.progress_percent',
+        'job_order_ids.claim_amount',
         'purchase_order_ids.state',
         'purchase_order_ids.amount_untaxed',
         'sale_order_ids.is_contract_approved',
         'sale_order_ids.amount_untaxed',
+        'boq_ids.total',
+        'invoice_ids.state',
+        'invoice_ids.move_type',
+        'invoice_ids.amount_untaxed',
     )
     def _compute_project_engine(self):
         """Compute ALL cost, profit, and variance metrics in one pass.
@@ -306,11 +370,15 @@ class FarmProjectEngine(models.Model):
             estimated = sum(analyses.mapped('total_cost'))
 
             # ── Contract value ────────────────────────────────────────────────
+            # Primary: approved Sales Orders (is_contract_approved = True)
+            # Fallback: BOQ grand total (BOQ = negotiated scope even without SO)
             approved_sos = SaleOrder.search([
                 ('farm_project_id', '=', rec.id),
                 ('is_contract_approved', '=', True),
             ])
             contract_val = sum(approved_sos.mapped('amount_untaxed'))
+            if not contract_val:
+                contract_val = sum(rec.boq_ids.mapped('total'))
 
             # ── Actual cost buckets from Job Orders ───────────────────────────
             jos = rec.job_order_ids
@@ -357,6 +425,26 @@ class FarmProjectEngine(models.Model):
             contract_vs_actual   = contract_val - actual_total    # + = under spend
             estimate_vs_actual   = estimated    - actual_total    # + = under budget
 
+            # ── Revenue ───────────────────────────────────────────────────────
+            # Primary: posted customer invoices directly linked to this project
+            posted_invoices = rec.invoice_ids.filtered(
+                lambda m: m.move_type == 'out_invoice' and m.state == 'posted'
+            )
+            revenue = sum(posted_invoices.mapped('amount_untaxed'))
+
+            # Fallback: JO claim_amount (proxy for earned revenue from claims)
+            if not revenue:
+                revenue = sum(jos.mapped('claim_amount'))
+
+            # Vendor bills linked to project (additional visibility)
+            posted_bills = rec.invoice_ids.filtered(
+                lambda m: m.move_type == 'in_invoice' and m.state == 'posted'
+            )
+            vendor_bill_cost = sum(posted_bills.mapped('amount_untaxed'))
+
+            # Realized profit: revenue vs actual costs
+            realized_profit = revenue - actual_total
+
             # ── Write all fields ──────────────────────────────────────────────
 
             # Re-write base cost fields so this method is self-contained
@@ -390,6 +478,11 @@ class FarmProjectEngine(models.Model):
             rec.contract_vs_estimate_variance  = contract_vs_estimate
             rec.contract_vs_actual_variance    = contract_vs_actual
             rec.estimate_vs_actual_variance    = estimate_vs_actual
+
+            # Revenue & realized profit
+            rec.revenue             = revenue
+            rec.vendor_bill_cost    = vendor_bill_cost
+            rec.realized_profit     = realized_profit
 
             _logger.debug(
                 'ProjectEngine [%s]: est=%.2f ctr=%.2f act=%.2f '
