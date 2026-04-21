@@ -177,6 +177,91 @@ class FarmConstructionProjectDashboard(models.Model):
             rec.dept_electrical = depts.get('electrical', 0)
 
     # ────────────────────────────────────────────────────────────────────────
+    # Internal helper — every action scoped to this project
+    # ────────────────────────────────────────────────────────────────────────
+
+    def _jo_action(self, label, extra_domain=None):
+        """Return an act_window for job orders, always filtered to this project."""
+        self.ensure_one()
+        domain = [
+            ('business_activity', '=', 'construction'),
+            ('project_id',        '=', self.project_id.id),
+        ]
+        if extra_domain:
+            domain += extra_domain
+        return {
+            'type':      'ir.actions.act_window',
+            'name':      _('%(label)s — %(project)s') % {
+                'label': label, 'project': self.project_id.name},
+            'res_model': 'farm.job.order',
+            'view_mode': 'list,form',
+            'domain':    domain,
+            'context': {
+                'default_business_activity': 'construction',
+                'default_project_id':        self.project_id.id,
+            },
+        }
+
+    # ────────────────────────────────────────────────────────────────────────
+    # KPI card actions  (Part 3)
+    # ────────────────────────────────────────────────────────────────────────
+
+    def action_view_contract(self):
+        """Open the project form (contract value source)."""
+        self.ensure_one()
+        return {
+            'type':      'ir.actions.act_window',
+            'name':      self.project_id.name,
+            'res_model': 'farm.project',
+            'res_id':    self.project_id.id,
+            'view_mode': 'form',
+            'target':    'current',
+        }
+
+    def action_view_approved_jos(self):
+        return self._jo_action('Approved JOs', [('approved_qty', '>', 0)])
+
+    def action_view_claimable_jos(self):
+        return self._jo_action('Claimable JOs', [('claimable_amount', '>', 0)])
+
+    def action_view_claimed_jos(self):
+        return self._jo_action('Claimed JOs', [('jo_stage', '=', 'claimed')])
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Stage box actions  (Part 2)
+    # ────────────────────────────────────────────────────────────────────────
+
+    def action_stage_draft(self):
+        return self._jo_action('Draft', [('jo_stage', '=', 'draft')])
+
+    def action_stage_approved(self):
+        return self._jo_action('Approved', [('jo_stage', '=', 'approved')])
+
+    def action_stage_in_progress(self):
+        return self._jo_action('In Progress', [('jo_stage', '=', 'in_progress')])
+
+    def action_stage_handover(self):
+        return self._jo_action(
+            'Handover Requested', [('jo_stage', '=', 'handover_requested')])
+
+    def action_stage_inspection(self):
+        return self._jo_action(
+            'Under Inspection', [('jo_stage', '=', 'under_inspection')])
+
+    def action_stage_accepted(self):
+        return self._jo_action(
+            'Accepted', [('jo_stage', 'in', ('accepted', 'partially_accepted'))])
+
+    def action_stage_ready_claim(self):
+        return self._jo_action('Ready for Claim', [('jo_stage', '=', 'ready_for_claim')])
+
+    def action_stage_claimed(self):
+        return self._jo_action('Claimed', [('jo_stage', '=', 'claimed')])
+
+    def action_stage_closed(self):
+        return self._jo_action('Closed', [('jo_stage', '=', 'closed')])
+
+    # ────────────────────────────────────────────────────────────────────────
     # Department drill-down actions  (Level 2 → Level 3)
     # ────────────────────────────────────────────────────────────────────────
 
