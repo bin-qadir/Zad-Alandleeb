@@ -384,6 +384,10 @@
                                     <div class="ecp-icon"><i class="fa fa-list-alt"/></div>
                                     <div class="ecp-card-title">Job Orders &amp; B.O.Q Items</div>
                                     <div class="ecp-card-desc">Contracted items coming from BOQ</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_approve" type="object" string="Approve JO" icon="fa-thumbs-up" class="btn btn-sm ecp-btn" invisible="jo_stage != 'draft'" title="Approve this Job Order to begin execution"/>
+                                        <button name="action_populate_resources" type="object" string="Load Resources" icon="fa-magic" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('draft','approved')" confirm="Populate planned material lines from the BOQ template? Existing lines will be preserved." title="Load BOQ resource lines into Materials tab"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 2: Execution Progress + live % -->
@@ -400,6 +404,10 @@
                                     </div>
                                     <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
                                     <div class="ecp-card-desc">Executed quantities and daily logs</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_start_execution" type="object" string="Start" icon="fa-play" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('draft','approved')" title="Start execution on this Job Order"/>
+                                        <button name="action_sync_progress_from_logs" type="object" string="Re-sync" icon="fa-refresh" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('in_progress','handover_requested')" confirm="Re-sync Executed Qty from the sum of all progress log increments?" title="Re-sync executed qty from daily logs"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 3: Handover Requests -->
@@ -411,6 +419,9 @@
                                     <div class="ecp-icon"><i class="fa fa-exchange"/></div>
                                     <div class="ecp-card-title">Handover Requests</div>
                                     <div class="ecp-card-desc">Request item inspection and delivery</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_request_handover" type="object" string="Request Handover" icon="fa-send" class="btn btn-sm ecp-btn" invisible="jo_stage != 'in_progress'" title="Submit this item for client inspection"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 4: Deliveries & Approvals -->
@@ -422,6 +433,9 @@
                                     <div class="ecp-icon"><i class="fa fa-search"/></div>
                                     <div class="ecp-card-title">Deliveries &amp; Approvals</div>
                                     <div class="ecp-card-desc">Inspection results and acceptance status</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_start_inspection" type="object" string="Start Inspection" icon="fa-search" class="btn btn-sm ecp-btn" invisible="jo_stage != 'handover_requested'" title="Begin the inspection process"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 5: Approved Quantities + live approved_qty -->
@@ -437,6 +451,11 @@
                                     </div>
                                     <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
                                     <div class="ecp-card-desc">Approved quantities controlling progress</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_approve_item" type="object" string="Approve" icon="fa-check" class="btn btn-sm ecp-btn" invisible="jo_stage != 'under_inspection'" title="Fully approve this item"/>
+                                        <button name="action_jo_partially_approve" type="object" string="Part. Approve" icon="fa-adjust" class="btn btn-sm ecp-btn" invisible="jo_stage != 'under_inspection'" title="Partially approve"/>
+                                        <button name="action_jo_ready_for_claim" type="object" string="Ready for Claim" icon="fa-flag" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('accepted','partially_accepted')" title="Mark ready to claim"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 6: Claims / Extracts + live claimable_amount -->
@@ -454,6 +473,10 @@
                                                options="{'currency_field': 'currency_id'}"/>
                                     </div>
                                     <div class="ecp-card-desc">Financial extraction based on approved quantities</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_create_claim" type="object" string="Create Claim" icon="fa-plus" class="btn btn-sm ecp-btn" invisible="jo_stage != 'ready_for_claim'" title="Create a new claim entry"/>
+                                        <button name="action_jo_close" type="object" string="Close Item" icon="fa-lock" class="btn btn-sm ecp-btn" invisible="jo_stage != 'claimed'" confirm="Close this Job Order? Ensure all claims are fully recorded." title="Close this Job Order"/>
+                                    </div>
                                 </div>
 
                             </div><!-- /ecp-grid construction -->
@@ -475,6 +498,10 @@
                                     <div class="ecp-icon"><i class="fa fa-list-alt"/></div>
                                     <div class="ecp-card-title">Crop Plan &amp; Scope</div>
                                     <div class="ecp-card-desc">Planned crop items from BOQ</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_approve" type="object" string="Approve JO" icon="fa-thumbs-up" class="btn btn-sm ecp-btn" invisible="jo_stage != 'draft'" title="Approve this Job Order to begin execution"/>
+                                        <button name="action_populate_resources" type="object" string="Load Resources" icon="fa-magic" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('draft','approved')" confirm="Populate planned material lines from the BOQ template? Existing lines will be preserved." title="Load BOQ resource lines"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 2: Daily Operations + live % -->
@@ -491,6 +518,10 @@
                                     </div>
                                     <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
                                     <div class="ecp-card-desc">Daily activities and field progress logs</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_start_execution" type="object" string="Start" icon="fa-play" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('draft','approved')" title="Start execution on this Job Order"/>
+                                        <button name="action_sync_progress_from_logs" type="object" string="Re-sync" icon="fa-refresh" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('in_progress','handover_requested')" confirm="Re-sync Executed Qty from the sum of all progress log increments?" title="Re-sync executed qty from daily logs"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 3: Irrigation & Inputs -->
@@ -502,6 +533,9 @@
                                     <div class="ecp-icon"><i class="fa fa-exchange"/></div>
                                     <div class="ecp-card-title">Irrigation &amp; Inputs</div>
                                     <div class="ecp-card-desc">Water, fertilizer and field input records</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_request_handover" type="object" string="Request Handover" icon="fa-send" class="btn btn-sm ecp-btn" invisible="jo_stage != 'in_progress'" title="Submit this item for client inspection"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 4: Crop Monitoring -->
@@ -513,6 +547,9 @@
                                     <div class="ecp-icon"><i class="fa fa-search"/></div>
                                     <div class="ecp-card-title">Crop Monitoring</div>
                                     <div class="ecp-card-desc">Growth checks, pest/disease inspections</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_start_inspection" type="object" string="Start Inspection" icon="fa-search" class="btn btn-sm ecp-btn" invisible="jo_stage != 'handover_requested'" title="Begin the inspection process"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 5: Harvest Qty + live approved_qty -->
@@ -528,6 +565,11 @@
                                     </div>
                                     <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
                                     <div class="ecp-card-desc">Certified harvest quantities for revenue</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_approve_item" type="object" string="Approve" icon="fa-check" class="btn btn-sm ecp-btn" invisible="jo_stage != 'under_inspection'" title="Fully approve this item"/>
+                                        <button name="action_jo_partially_approve" type="object" string="Part. Approve" icon="fa-adjust" class="btn btn-sm ecp-btn" invisible="jo_stage != 'under_inspection'" title="Partially approve"/>
+                                        <button name="action_jo_ready_for_claim" type="object" string="Ready for Claim" icon="fa-flag" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('accepted','partially_accepted')" title="Mark ready to claim"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 6: Yield & Sales + live claimable_amount -->
@@ -545,6 +587,10 @@
                                                options="{'currency_field': 'currency_id'}"/>
                                     </div>
                                     <div class="ecp-card-desc">Revenue from approved harvest quantities</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_create_claim" type="object" string="Create Claim" icon="fa-plus" class="btn btn-sm ecp-btn" invisible="jo_stage != 'ready_for_claim'" title="Create a new claim entry"/>
+                                        <button name="action_jo_close" type="object" string="Close Item" icon="fa-lock" class="btn btn-sm ecp-btn" invisible="jo_stage != 'claimed'" confirm="Close this Job Order? Ensure all claims are fully recorded." title="Close this Job Order"/>
+                                    </div>
                                 </div>
 
                             </div><!-- /ecp-grid agriculture -->
@@ -567,6 +613,10 @@
                                     <div class="ecp-icon"><i class="fa fa-list-alt"/></div>
                                     <div class="ecp-card-title">Packing Orders</div>
                                     <div class="ecp-card-desc">Planned packing scope from BOQ</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_approve" type="object" string="Approve JO" icon="fa-thumbs-up" class="btn btn-sm ecp-btn" invisible="jo_stage != 'draft'" title="Approve this Job Order to begin execution"/>
+                                        <button name="action_populate_resources" type="object" string="Load Resources" icon="fa-magic" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('draft','approved')" confirm="Populate planned material lines from the BOQ template? Existing lines will be preserved." title="Load BOQ resource lines"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 2: Material Issue -->
@@ -583,6 +633,10 @@
                                     </div>
                                     <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
                                     <div class="ecp-card-desc">Raw material consumption and issue logs</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_start_execution" type="object" string="Start" icon="fa-play" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('draft','approved')" title="Start execution on this Job Order"/>
+                                        <button name="action_sync_progress_from_logs" type="object" string="Re-sync" icon="fa-refresh" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('in_progress','handover_requested')" confirm="Re-sync Executed Qty from the sum of all progress log increments?" title="Re-sync executed qty from daily logs"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 3: Packing Progress -->
@@ -594,6 +648,9 @@
                                     <div class="ecp-icon"><i class="fa fa-exchange"/></div>
                                     <div class="ecp-card-title">Packing Progress</div>
                                     <div class="ecp-card-desc">Units packed, shift logs, line output</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_request_handover" type="object" string="Request Handover" icon="fa-send" class="btn btn-sm ecp-btn" invisible="jo_stage != 'in_progress'" title="Submit this item for client inspection"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 4: QC / Approvals -->
@@ -605,6 +662,9 @@
                                     <div class="ecp-icon"><i class="fa fa-search"/></div>
                                     <div class="ecp-card-title">QC &amp; Approvals</div>
                                     <div class="ecp-card-desc">Quality checks, hold/release decisions</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_start_inspection" type="object" string="Start Inspection" icon="fa-search" class="btn btn-sm ecp-btn" invisible="jo_stage != 'handover_requested'" title="Begin the inspection process"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 5: Packed Qty + live approved_qty -->
@@ -620,6 +680,11 @@
                                     </div>
                                     <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
                                     <div class="ecp-card-desc">QC-released quantity ready for dispatch</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_approve_item" type="object" string="Approve" icon="fa-check" class="btn btn-sm ecp-btn" invisible="jo_stage != 'under_inspection'" title="Fully approve this item"/>
+                                        <button name="action_jo_partially_approve" type="object" string="Part. Approve" icon="fa-adjust" class="btn btn-sm ecp-btn" invisible="jo_stage != 'under_inspection'" title="Partially approve"/>
+                                        <button name="action_jo_ready_for_claim" type="object" string="Ready for Claim" icon="fa-flag" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('accepted','partially_accepted')" title="Mark ready to claim"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 6: Finished Goods + live claimable_amount -->
@@ -637,6 +702,10 @@
                                                options="{'currency_field': 'currency_id'}"/>
                                     </div>
                                     <div class="ecp-card-desc">Revenue value of approved packed goods</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_create_claim" type="object" string="Create Claim" icon="fa-plus" class="btn btn-sm ecp-btn" invisible="jo_stage != 'ready_for_claim'" title="Create a new claim entry"/>
+                                        <button name="action_jo_close" type="object" string="Close Item" icon="fa-lock" class="btn btn-sm ecp-btn" invisible="jo_stage != 'claimed'" confirm="Close this Job Order? Ensure all claims are fully recorded." title="Close this Job Order"/>
+                                    </div>
                                 </div>
 
                             </div><!-- /ecp-grid manufacturing -->
@@ -659,6 +728,10 @@
                                     <div class="ecp-icon"><i class="fa fa-list-alt"/></div>
                                     <div class="ecp-card-title">Herd Plan &amp; Stock</div>
                                     <div class="ecp-card-desc">Planned herd scope and BOQ items</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_approve" type="object" string="Approve JO" icon="fa-thumbs-up" class="btn btn-sm ecp-btn" invisible="jo_stage != 'draft'" title="Approve this Job Order to begin execution"/>
+                                        <button name="action_populate_resources" type="object" string="Load Resources" icon="fa-magic" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('draft','approved')" confirm="Populate planned material lines from the BOQ template? Existing lines will be preserved." title="Load BOQ resource lines"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 2: Breeding & Births + live % -->
@@ -675,6 +748,10 @@
                                     </div>
                                     <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
                                     <div class="ecp-card-desc">Birth records, breeding logs, head count</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_start_execution" type="object" string="Start" icon="fa-play" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('draft','approved')" title="Start execution on this Job Order"/>
+                                        <button name="action_sync_progress_from_logs" type="object" string="Re-sync" icon="fa-refresh" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('in_progress','handover_requested')" confirm="Re-sync Executed Qty from the sum of all progress log increments?" title="Re-sync executed qty from daily logs"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 3: Feeding & Care -->
@@ -686,6 +763,9 @@
                                     <div class="ecp-icon"><i class="fa fa-exchange"/></div>
                                     <div class="ecp-card-title">Feeding &amp; Care</div>
                                     <div class="ecp-card-desc">Feed plans, ration costs, caretaking</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_request_handover" type="object" string="Request Handover" icon="fa-send" class="btn btn-sm ecp-btn" invisible="jo_stage != 'in_progress'" title="Submit this item for client inspection"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 4: Health & Monitoring -->
@@ -697,6 +777,9 @@
                                     <div class="ecp-icon"><i class="fa fa-search"/></div>
                                     <div class="ecp-card-title">Health &amp; Monitoring</div>
                                     <div class="ecp-card-desc">Vet checks, vaccinations, mortality</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_start_inspection" type="object" string="Start Inspection" icon="fa-search" class="btn btn-sm ecp-btn" invisible="jo_stage != 'handover_requested'" title="Begin the inspection process"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 5: Weight Gain / Approved Stock + live approved_qty -->
@@ -712,6 +795,11 @@
                                     </div>
                                     <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
                                     <div class="ecp-card-desc">Weight gain targets and sale-ready head</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_approve_item" type="object" string="Approve" icon="fa-check" class="btn btn-sm ecp-btn" invisible="jo_stage != 'under_inspection'" title="Fully approve this item"/>
+                                        <button name="action_jo_partially_approve" type="object" string="Part. Approve" icon="fa-adjust" class="btn btn-sm ecp-btn" invisible="jo_stage != 'under_inspection'" title="Partially approve"/>
+                                        <button name="action_jo_ready_for_claim" type="object" string="Ready for Claim" icon="fa-flag" class="btn btn-sm ecp-btn" invisible="jo_stage not in ('accepted','partially_accepted')" title="Mark ready to claim"/>
+                                    </div>
                                 </div>
 
                                 <!-- Card 6: Sales & Value + live claimable_amount -->
@@ -729,6 +817,10 @@
                                                options="{'currency_field': 'currency_id'}"/>
                                     </div>
                                     <div class="ecp-card-desc">Revenue from approved livestock sales</div>
+                                    <div class="ecp-actions">
+                                        <button name="action_jo_create_claim" type="object" string="Create Claim" icon="fa-plus" class="btn btn-sm ecp-btn" invisible="jo_stage != 'ready_for_claim'" title="Create a new claim entry"/>
+                                        <button name="action_jo_close" type="object" string="Close Item" icon="fa-lock" class="btn btn-sm ecp-btn" invisible="jo_stage != 'claimed'" confirm="Close this Job Order? Ensure all claims are fully recorded." title="Close this Job Order"/>
+                                    </div>
                                 </div>
 
                             </div><!-- /ecp-grid livestock -->

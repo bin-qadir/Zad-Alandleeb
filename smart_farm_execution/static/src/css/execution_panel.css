@@ -352,6 +352,77 @@
     background: linear-gradient(155deg, #fffafa, #fff1f2);
 }
 
+/* ── Action buttons inside cards ────────────────────────────── */
+.ecp-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    margin-top: 5px;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+/* Base style — overrides Bootstrap .btn .btn-sm */
+.ecp-btn {
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.4px !important;
+    text-transform: uppercase !important;
+    padding: 3px 10px !important;
+    border-radius: 20px !important;
+    line-height: 1.6 !important;
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.80) !important;
+    color: #6d28d9 !important;
+    border: 1.5px solid #ddd6fe !important;
+    box-shadow: none !important;
+    transition:
+        background 0.15s ease,
+        box-shadow 0.15s ease,
+        transform   0.12s ease !important;
+    cursor: pointer;
+}
+
+.ecp-btn:hover,
+.ecp-btn:focus {
+    background: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10) !important;
+    transform: translateY(-1px) !important;
+    text-decoration: none !important;
+}
+
+.ecp-btn:active {
+    transform: translateY(0) !important;
+    box-shadow: none !important;
+}
+
+/* Per-card accent colours */
+.ecp-card[data-card="2"] .ecp-btn { color: #1d4ed8 !important; border-color: #bfdbfe !important; }
+.ecp-card[data-card="3"] .ecp-btn { color: #0e7490 !important; border-color: #99f6e4 !important; }
+.ecp-card[data-card="4"] .ecp-btn { color: #b45309 !important; border-color: #fde68a !important; }
+.ecp-card[data-card="5"] .ecp-btn { color: #047857 !important; border-color: #a7f3d0 !important; }
+.ecp-card[data-card="6"] .ecp-btn { color: #b91c1c !important; border-color: #fecaca !important; }
+
+/* Solid variant for primary action */
+.ecp-btn-solid {
+    background: currentColor !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
+    opacity: 0.92;
+}
+
+.ecp-btn-solid:hover {
+    opacity: 1;
+    color: #ffffff !important;
+}
+
+/* Responsive — hide buttons on very small screens */
+@media (max-width: 550px) {
+    .ecp-actions { display: none; }
+}
+
 /* ── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 1200px) {
     .ecp-grid {

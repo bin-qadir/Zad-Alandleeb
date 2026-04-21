@@ -13,6 +13,8 @@
 
 // ─── Click handler ───────────────────────────────────────────────────────────
 document.addEventListener("click", (evt) => {
+    // Action buttons inside .ecp-actions handle their own Odoo RPC — skip tab switch
+    if (evt.target.closest(".ecp-actions")) return;
     const card = evt.target.closest(".ecp-card[data-tab]");
     if (!card) return;
     activateTab(card, card.dataset.tab);
@@ -21,6 +23,7 @@ document.addEventListener("click", (evt) => {
 // ─── Keyboard handler (Enter / Space) ────────────────────────────────────────
 document.addEventListener("keydown", (evt) => {
     if (evt.key !== "Enter" && evt.key !== " ") return;
+    if (evt.target.closest(".ecp-actions")) return;
     const card = evt.target.closest(".ecp-card[data-tab]");
     if (!card) return;
     evt.preventDefault();
