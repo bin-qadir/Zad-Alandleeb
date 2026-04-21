@@ -123,11 +123,17 @@ class FarmDashboard(models.Model):
     count_jo_ready_for_claim  = fields.Integer(compute='_compute_execution_kpis', string='JOs Ready for Claim')
     count_jo_claimed          = fields.Integer(compute='_compute_execution_kpis', string='JOs Claimed')
 
-    # Per-activity breakdown
+    # Per-activity breakdown (JOs)
     count_jo_construction   = fields.Integer(compute='_compute_execution_kpis', string='Construction JOs')
     count_jo_agriculture    = fields.Integer(compute='_compute_execution_kpis', string='Agriculture JOs')
     count_jo_manufacturing  = fields.Integer(compute='_compute_execution_kpis', string='Manufacturing JOs')
     count_jo_livestock      = fields.Integer(compute='_compute_execution_kpis', string='Livestock JOs')
+
+    # Per-activity breakdown (Projects)
+    count_proj_construction  = fields.Integer(compute='_compute_execution_kpis', string='Construction Projects')
+    count_proj_agriculture   = fields.Integer(compute='_compute_execution_kpis', string='Agriculture Projects')
+    count_proj_manufacturing = fields.Integer(compute='_compute_execution_kpis', string='Manufacturing Projects')
+    count_proj_livestock     = fields.Integer(compute='_compute_execution_kpis', string='Livestock Projects')
 
     # ────────────────────────────────────────────────────────────────────────
     # Compute helpers
@@ -257,6 +263,14 @@ class FarmDashboard(models.Model):
             if act in activity_counts:
                 activity_counts[act] += 1
 
+        # Project counts per activity
+        Project = self.env['farm.project']
+        proj_counts = {}
+        for act in ('construction', 'agriculture', 'manufacturing', 'livestock'):
+            proj_counts[act] = Project.search_count(
+                [('business_activity', '=', act)]
+            )
+
         for rec in self:
             rec.portfolio_approved_amount    = total_approved
             rec.portfolio_claimable_amount   = total_claimable
@@ -271,6 +285,10 @@ class FarmDashboard(models.Model):
             rec.count_jo_agriculture        = activity_counts['agriculture']
             rec.count_jo_manufacturing      = activity_counts['manufacturing']
             rec.count_jo_livestock          = activity_counts['livestock']
+            rec.count_proj_construction     = proj_counts['construction']
+            rec.count_proj_agriculture      = proj_counts['agriculture']
+            rec.count_proj_manufacturing    = proj_counts['manufacturing']
+            rec.count_proj_livestock        = proj_counts['livestock']
 
     # ────────────────────────────────────────────────────────────────────────
     # Singleton accessor
@@ -545,6 +563,31 @@ class FarmDashboard(models.Model):
 
     def action_view_jo_stage_closed(self):
         return self._jo_list_action('Closed Job Orders', [('jo_stage', '=', 'closed')])
+
+    # ── Project drill-downs per activity ─────────────────────────────────────
+
+    def _project_action(self, name, activity):
+        """Return a list action for farm.projects filtered by business_activity."""
+        return {
+            'type':      'ir.actions.act_window',
+            'name':      _(name),
+            'res_model': 'farm.project',
+            'view_mode': 'list,form',
+            'domain':    [('business_activity', '=', activity)],
+            'context':   {'default_business_activity': activity},
+        }
+
+    def action_view_proj_construction(self):
+        return self._project_action('Construction Projects', 'construction')
+
+    def action_view_proj_agriculture(self):
+        return self._project_action('Agriculture Projects', 'agriculture')
+
+    def action_view_proj_manufacturing(self):
+        return self._project_action('Manufacturing Projects', 'manufacturing')
+
+    def action_view_proj_livestock(self):
+        return self._project_action('Livestock Projects', 'livestock')
 
     # ── Refresh ──────────────────────────────────────────────────────────────
 

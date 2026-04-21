@@ -927,9 +927,19 @@
     opacity: 0.8;
 }
 
+.sf-act-proj-count {
+    font-size: 0.6rem;
+    opacity: 0.7;
+    margin-top: 0.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+}
+
 .sf-act-construction  { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #1e40af; }
 .sf-act-agriculture   { background: linear-gradient(135deg, #f0fdf4, #dcfce7); color: #166534; }
 .sf-act-manufacturing { background: linear-gradient(135deg, #fdf4ff, #f3e8ff); color: #6b21a8; }
+.sf-act-livestock     { background: linear-gradient(135deg, #fff7ed, #fed7aa); color: #92400e; }
 
 /* ── Stage chart (horizontal bars) ───────────────────────────────── */
 .sf-stage-chart {

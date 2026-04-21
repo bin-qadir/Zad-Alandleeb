@@ -10,6 +10,13 @@
             <field name="arch" type="xml">
                 <list string="Farm Projects">
                     <field name="name"/>
+                    <field name="business_activity" widget="badge"
+                           decoration-info="business_activity == 'construction'"
+                           decoration-success="business_activity == 'agriculture'"
+                           decoration-warning="business_activity == 'manufacturing'"
+                           decoration-danger="business_activity == 'livestock'"
+                           optional="show"/>
+                    <field name="lifecycle_stage" optional="show"/>
                     <field name="project_type" optional="show"/>
                     <field name="project_manager_id" optional="show"/>
                     <field name="start_date"/>
@@ -18,6 +25,7 @@
                            decoration-info="state == 'draft'"
                            decoration-success="state == 'running'"
                            decoration-muted="state == 'done'"/>
+                    <field name="analytic_account_id" optional="show"/>
                     <field name="odoo_project_id" optional="show"/>
                 </list>
             </field>
@@ -49,6 +57,15 @@
                                    widget="statinfo"
                                    string="Fields"/>
                         </button>
+                        <button class="oe_stat_button"
+                                type="object"
+                                name="action_open_tasks"
+                                icon="fa-check-square-o"
+                                invisible="not odoo_project_id">
+                            <field name="task_count"
+                                   widget="statinfo"
+                                   string="Tasks"/>
+                        </button>
                     </div>
 
                     <sheet>
@@ -69,6 +86,7 @@
 
                         <!-- ── MAIN INFO — 2-column ───────────────────────────
                              LEFT  (group_project_details):
+                               Business Activity, Lifecycle Stage
                                Analytic Account, Start Date, End Date
                                + Project Phase injected by smart_farm_boq
 
@@ -76,8 +94,11 @@
                                Odoo Project, Project Manager, Tags, Project Type
                         ──────────────────────────────────────────────────── -->
                         <group>
-                            <group string="Project Details"
+                            <group string="Activity &amp; Classification"
                                    name="group_project_details">
+                                <field name="business_activity" widget="radio"
+                                       options="{'horizontal': true}"/>
+                                <field name="lifecycle_stage"/>
                                 <field name="analytic_account_id"
                                        options="{'no_create': True}"/>
                                 <field name="start_date"/>
@@ -215,12 +236,56 @@
             </field>
         </record>
 
+        <!-- ===== Search view ===== -->
+
+        <record id="view_farm_project_search" model="ir.ui.view">
+            <field name="name">farm.project.search</field>
+            <field name="model">farm.project</field>
+            <field name="arch" type="xml">
+                <search string="Farm Projects">
+                    <field name="name"/>
+                    <field name="project_manager_id"/>
+                    <field name="analytic_account_id"/>
+                    <!-- Activity filters -->
+                    <filter string="Construction" name="filter_construction"
+                            domain="[('business_activity', '=', 'construction')]"/>
+                    <filter string="Agriculture" name="filter_agriculture"
+                            domain="[('business_activity', '=', 'agriculture')]"/>
+                    <filter string="Manufacturing" name="filter_manufacturing"
+                            domain="[('business_activity', '=', 'manufacturing')]"/>
+                    <filter string="Livestock" name="filter_livestock"
+                            domain="[('business_activity', '=', 'livestock')]"/>
+                    <separator/>
+                    <!-- State filters -->
+                    <filter string="Draft" name="filter_draft"
+                            domain="[('state', '=', 'draft')]"/>
+                    <filter string="Running" name="filter_running"
+                            domain="[('state', '=', 'running')]"/>
+                    <filter string="Done" name="filter_done"
+                            domain="[('state', '=', 'done')]"/>
+                    <separator/>
+                    <!-- Group by -->
+                    <group expand="0" string="Group By">
+                        <filter string="Business Activity" name="group_activity"
+                                context="{'group_by': 'business_activity'}"/>
+                        <filter string="Lifecycle Stage" name="group_stage"
+                                context="{'group_by': 'lifecycle_stage'}"/>
+                        <filter string="Status" name="group_state"
+                                context="{'group_by': 'state'}"/>
+                        <filter string="Project Manager" name="group_manager"
+                                context="{'group_by': 'project_manager_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
         <!-- ===== Action ===== -->
 
         <record id="action_farm_project" model="ir.actions.act_window">
             <field name="name">Farm Projects</field>
             <field name="res_model">farm.project</field>
             <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_farm_project_search"/>
         </record>
 
     </data>

@@ -1,5 +1,41 @@
 from odoo import api, fields, models, _
 
+# ── Default task templates per activity ──────────────────────────────────────
+_DEFAULT_TASKS = {
+    'construction': [
+        'BOQ / Scope',
+        'Execution',
+        'Handover',
+        'Inspection',
+        'Approved Quantities',
+        'Claims / Extracts',
+    ],
+    'agriculture': [
+        'Crop Plan',
+        'Daily Operations',
+        'Irrigation / Fertigation',
+        'Monitoring & Quality',
+        'Harvest',
+        'Yield / Sales',
+    ],
+    'manufacturing': [
+        'Packing Orders',
+        'Material Issue',
+        'Packing Progress',
+        'Quality Control',
+        'Packed Output',
+        'Finished Goods / Costing',
+    ],
+    'livestock': [
+        'Herd Planning',
+        'Breeding',
+        'Feeding & Care',
+        'Health Monitoring',
+        'Fattening',
+        'Sales',
+    ],
+}
+
 
 class FarmProject(models.Model):
     _name = 'farm.project'
@@ -19,6 +55,41 @@ class FarmProject(models.Model):
         default='draft',
         required=True,
         tracking=True,
+    )
+
+    # ── Business Activity & Lifecycle ─────────────────────────────────────────
+    business_activity = fields.Selection(
+        selection=[
+            ('construction',  'Construction'),
+            ('agriculture',   'Agriculture'),
+            ('manufacturing', 'Manufacturing / Packing'),
+            ('livestock',     'Livestock'),
+        ],
+        string='Business Activity',
+        tracking=True,
+        index=True,
+        help=(
+            'Primary business activity for this project.\n'
+            'Drives default task templates, dashboard isolation, and job order validation.\n'
+            '• Construction — civil/MEP BOQ-driven execution workflow\n'
+            '• Agriculture — crop lifecycle: planning, ops, harvest, sales\n'
+            '• Manufacturing — packing cycle: orders, QC, dispatch\n'
+            '• Livestock — herd: breeding, raising, fattening, sales'
+        ),
+    )
+    lifecycle_stage = fields.Selection(
+        selection=[
+            ('establishment', 'Establishment'),
+            ('operation',     'Operation'),
+            ('packing',       'Packing'),
+            ('breeding',      'Breeding'),
+            ('raising',       'Raising'),
+            ('fattening',     'Fattening'),
+            ('sales',         'Sales'),
+        ],
+        string='Lifecycle Stage',
+        tracking=True,
+        help='Current lifecycle stage of this project.',
     )
 
     # ── Project Classification ─────────────────────────────────────────────────
@@ -123,16 +194,105 @@ class FarmProject(models.Model):
         string='Fields',
     )
 
-    # ── Stat button ───────────────────────────────────────────────────────────
+    # ── Stat buttons ──────────────────────────────────────────────────────────
     field_count = fields.Integer(
         string='Field Count',
         compute='_compute_field_count',
+    )
+    task_count = fields.Integer(
+        string='Tasks',
+        compute='_compute_task_count',
     )
 
     @api.depends('field_ids')
     def _compute_field_count(self):
         for rec in self:
             rec.field_count = len(rec.field_ids)
+
+    def _compute_task_count(self):
+        for rec in self:
+            if rec.odoo_project_id:
+                rec.task_count = self.env['project.task'].search_count(
+                    [('project_id', '=', rec.odoo_project_id.id)]
+                )
+            else:
+                rec.task_count = 0
+
+    # ────────────────────────────────────────────────────────────────────────
+    # ORM overrides
+    # ────────────────────────────────────────────────────────────────────────
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        for proj in records:
+            # 1. Auto-create a linked Odoo project (project.project) if not set
+            proj._ensure_odoo_project()
+            # 2. Auto-create analytic account if not set
+            proj._ensure_analytic_account()
+            # 3. Auto-create default tasks based on business_activity
+            if proj.business_activity:
+                proj._create_default_tasks()
+        return records
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Auto-creation helpers
+    # ────────────────────────────────────────────────────────────────────────
+
+    def _ensure_odoo_project(self):
+        """Auto-create a project.project if this farm project has no link yet."""
+        self.ensure_one()
+        if self.odoo_project_id:
+            return
+        create_vals = {'name': self.name}
+        if self.project_manager_id:
+            create_vals['user_id'] = self.project_manager_id.id
+        odoo_proj = self.env['project.project'].create(create_vals)
+        self.odoo_project_id = odoo_proj
+
+    def _ensure_analytic_account(self):
+        """Auto-create / link an analytic account for this farm project."""
+        self.ensure_one()
+        if self.analytic_account_id:
+            return
+        # Prefer the account from the linked Odoo project (Odoo auto-creates it)
+        if self.odoo_project_id and self.odoo_project_id.account_id:
+            self.analytic_account_id = self.odoo_project_id.account_id
+            return
+        # Fallback: create directly using the first available analytic plan
+        plan = self.env['account.analytic.plan'].search(
+            [('company_id', 'in', [False, self.env.company.id])],
+            order='id asc',
+            limit=1,
+        )
+        try:
+            create_vals = {'name': self.name, 'company_id': self.env.company.id}
+            if plan:
+                create_vals['plan_id'] = plan.id
+            account = self.env['account.analytic.account'].create(create_vals)
+            self.analytic_account_id = account
+        except Exception:
+            # Analytic account creation is non-critical — silently skip
+            pass
+
+    def _create_default_tasks(self):
+        """Create default project.task records based on business_activity."""
+        self.ensure_one()
+        task_names = _DEFAULT_TASKS.get(self.business_activity, [])
+        if not task_names or not self.odoo_project_id:
+            return
+        Task = self.env['project.task']
+        for seq, task_name in enumerate(task_names, start=1):
+            Task.create({
+                'name': task_name,
+                'project_id': self.odoo_project_id.id,
+                'sequence': seq * 10,
+                'description': '',
+            })
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Actions
+    # ────────────────────────────────────────────────────────────────────────
 
     def action_open_fields(self):
         """Open Farm Fields filtered to this project."""
@@ -144,4 +304,18 @@ class FarmProject(models.Model):
             'view_mode': 'list,form',
             'domain': [('project_id', '=', self.id)],
             'context': {'default_project_id': self.id},
+        }
+
+    def action_open_tasks(self):
+        """Open Odoo tasks for this project."""
+        self.ensure_one()
+        if not self.odoo_project_id:
+            return {}
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Tasks — %s') % self.name,
+            'res_model': 'project.task',
+            'view_mode': 'list,form',
+            'domain': [('project_id', '=', self.odoo_project_id.id)],
+            'context': {'default_project_id': self.odoo_project_id.id},
         }

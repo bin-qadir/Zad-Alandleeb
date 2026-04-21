@@ -42,6 +42,12 @@ class FarmActivityDashboard(models.Model):
         string='Currency',
     )
 
+    # ── Project-level KPIs ────────────────────────────────────────────────────
+
+    project_count    = fields.Integer(compute='_compute_projects', string='Projects')
+    project_running  = fields.Integer(compute='_compute_projects', string='Running Projects')
+    project_draft    = fields.Integer(compute='_compute_projects', string='Draft Projects')
+
     # ── Common KPIs (all activities) ──────────────────────────────────────────
 
     total_jo_count         = fields.Integer(compute='_compute_common', string='Total Job Orders')
@@ -134,6 +140,16 @@ class FarmActivityDashboard(models.Model):
     def _compute_currency(self):
         for rec in self:
             rec.currency_id = rec.env.company.currency_id
+
+    def _compute_projects(self):
+        """Count farm.project records for this activity."""
+        for rec in self:
+            projs = self.env['farm.project'].search(
+                [('business_activity', '=', rec.business_activity)]
+            )
+            rec.project_count   = len(projs)
+            rec.project_running = sum(1 for p in projs if p.state == 'running')
+            rec.project_draft   = sum(1 for p in projs if p.state == 'draft')
 
     def _compute_meta(self):
         meta = {
@@ -568,3 +584,32 @@ class FarmActivityDashboard(models.Model):
             ('medical_cost', '>', 0),
             ('caretaking_cost', '>', 0),
         ])
+
+    # ── Project drill-downs ──────────────────────────────────────────────────
+
+    def action_view_projects(self):
+        """Open all farm.projects for this activity."""
+        self.ensure_one()
+        return {
+            'type':      'ir.actions.act_window',
+            'name':      _('Projects — %s') % self.activity_label,
+            'res_model': 'farm.project',
+            'view_mode': 'list,form',
+            'domain':    [('business_activity', '=', self.business_activity)],
+            'context':   {'default_business_activity': self.business_activity},
+        }
+
+    def action_view_running_projects(self):
+        """Open running farm.projects for this activity."""
+        self.ensure_one()
+        return {
+            'type':      'ir.actions.act_window',
+            'name':      _('Running Projects — %s') % self.activity_label,
+            'res_model': 'farm.project',
+            'view_mode': 'list,form',
+            'domain':    [
+                ('business_activity', '=', self.business_activity),
+                ('state', '=', 'running'),
+            ],
+            'context':   {'default_business_activity': self.business_activity},
+        }

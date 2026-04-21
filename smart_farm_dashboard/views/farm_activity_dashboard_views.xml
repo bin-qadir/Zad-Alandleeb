@@ -25,6 +25,13 @@
                         <span class="act-dash-header__sub">Live execution snapshot · auto-computed on open</span>
                     </div>
                     <div class="act-dash-header__actions">
+                        <!-- Project count badge -->
+                        <button name="action_view_projects" type="object"
+                                class="btn btn-sm btn-outline-primary me-2">
+                            <i class="fa fa-folder-open me-1"/>
+                            <field name="project_count" readonly="1" nolabel="1"/>
+                            Projects
+                        </button>
                         <button name="action_refresh" type="object"
                                 class="btn btn-sm btn-light act-dash-refresh">
                             <i class="fa fa-refresh"/> Refresh

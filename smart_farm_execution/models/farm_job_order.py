@@ -891,6 +891,31 @@ class FarmJobOrder(models.Model):
     # Constraints
     # ────────────────────────────────────────────────────────────────────────
 
+    @api.constrains('business_activity', 'project_id')
+    def _check_activity_matches_project(self):
+        """Enforce that a job order's business activity matches its project's activity."""
+        for rec in self:
+            proj = rec.project_id
+            if not proj or not proj.business_activity:
+                # Project has no activity set yet — skip (backward compat)
+                continue
+            if rec.business_activity != proj.business_activity:
+                activity_label = dict(
+                    rec._fields['business_activity'].selection
+                ).get(rec.business_activity, rec.business_activity)
+                proj_activity_label = dict(
+                    rec._fields['business_activity'].selection
+                ).get(proj.business_activity, proj.business_activity)
+                raise ValidationError(_(
+                    'Job Order "%(jo)s" has activity "%(jo_act)s" but project '
+                    '"%(proj)s" is a %(proj_act)s project.\n'
+                    'Each project is isolated to a single business activity.',
+                    jo=rec.name,
+                    jo_act=activity_label,
+                    proj=proj.name,
+                    proj_act=proj_activity_label,
+                ))
+
     @api.constrains('project_id', 'boq_line_id', 'analysis_id')
     def _check_traceability(self):
         for rec in self:

@@ -576,6 +576,10 @@
                                                         <field name="count_jo_construction" nolabel="1"/>
                                                     </div>
                                                     <div class="sf-act-label">Construction</div>
+                                                    <div class="sf-act-proj-count">
+                                                        <field name="count_proj_construction" nolabel="1"/>
+                                                        <span> projects</span>
+                                                    </div>
                                                 </div>
 
                                                 <div class="sf-activity-card sf-act-agriculture">
@@ -586,6 +590,10 @@
                                                         <field name="count_jo_agriculture" nolabel="1"/>
                                                     </div>
                                                     <div class="sf-act-label">Agriculture</div>
+                                                    <div class="sf-act-proj-count">
+                                                        <field name="count_proj_agriculture" nolabel="1"/>
+                                                        <span> projects</span>
+                                                    </div>
                                                 </div>
 
                                                 <div class="sf-activity-card sf-act-manufacturing">
@@ -596,6 +604,10 @@
                                                         <field name="count_jo_manufacturing" nolabel="1"/>
                                                     </div>
                                                     <div class="sf-act-label">Manufacturing</div>
+                                                    <div class="sf-act-proj-count">
+                                                        <field name="count_proj_manufacturing" nolabel="1"/>
+                                                        <span> projects</span>
+                                                    </div>
                                                 </div>
 
                                                 <div class="sf-activity-card sf-act-livestock">
@@ -606,6 +618,10 @@
                                                         <field name="count_jo_livestock" nolabel="1"/>
                                                     </div>
                                                     <div class="sf-act-label">Livestock</div>
+                                                    <div class="sf-act-proj-count">
+                                                        <field name="count_proj_livestock" nolabel="1"/>
+                                                        <span> projects</span>
+                                                    </div>
                                                 </div>
 
                                             </div>
