@@ -775,3 +775,213 @@
     .sf-phase-strip { gap: 0.4rem; }
     .sf-phase-pill  { font-size: 0.76rem; padding: 0.45rem 0.85rem 0.45rem 0.7rem; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   EXECUTION KPI SECTION
+══════════════════════════════════════════════════════════════════ */
+
+/* 5-card execution KPI strip */
+.sf-exec-kpi-strip {
+    margin-bottom: 0;
+}
+
+.sf-exec-kpi-card {
+    position: relative;
+    border-radius: 12px;
+    padding: 1rem 0.875rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.25rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    min-height: 120px;
+}
+
+.sf-exec-kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.sf-exec-kpi-icon {
+    font-size: 1.5rem;
+    opacity: 0.75;
+    line-height: 1;
+    margin-bottom: 0.15rem;
+}
+
+.sf-exec-kpi-number {
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 0.15rem;
+}
+
+.sf-exec-kpi-unit {
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+.sf-exec-kpi-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-top: 0.15rem;
+}
+
+/* Monetary KPI — smaller font */
+.sf-exec-monetary .o_field_monetary,
+.sf-exec-monetary .o_field_monetary .o_monetary_value {
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
+}
+.sf-exec-monetary .o_currency_symbol {
+    font-size: 0.75rem !important;
+}
+
+/* Mini progress bar inside exec card */
+.sf-exec-mini-bar {
+    width: 70%;
+    height: 5px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 3px;
+    margin-top: 0.25rem;
+    overflow: hidden;
+}
+.sf-exec-mini-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.65);
+    transition: width 0.6s ease;
+}
+
+/* Color variants */
+.sf-exec-navy    { background: linear-gradient(135deg, #1e3a5f, #2d4a7a); color: #fff; }
+.sf-exec-blue    { background: linear-gradient(135deg, #1d4ed8, #2563eb); color: #fff; }
+.sf-exec-emerald { background: linear-gradient(135deg, #047857, #059669); color: #fff; }
+.sf-exec-purple  { background: linear-gradient(135deg, #5b21b6, #7c3aed); color: #fff; }
+.sf-exec-rose    { background: linear-gradient(135deg, #9f1239, #dc2626); color: #fff; }
+
+/* ── Exec panels (activity + stage) ─────────────────────────────── */
+.sf-exec-panel {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    height: 100%;
+}
+
+.sf-exec-panel-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #475569;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* ── Activity breakdown cards ────────────────────────────────────── */
+.sf-activity-row {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.sf-activity-card {
+    flex: 1;
+    border-radius: 10px;
+    padding: 0.75rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.3rem;
+}
+
+.sf-act-icon {
+    font-size: 1.4rem;
+    opacity: 0.8;
+}
+
+.sf-act-count {
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.sf-act-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.8;
+}
+
+.sf-act-construction  { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #1e40af; }
+.sf-act-agriculture   { background: linear-gradient(135deg, #f0fdf4, #dcfce7); color: #166534; }
+.sf-act-manufacturing { background: linear-gradient(135deg, #fdf4ff, #f3e8ff); color: #6b21a8; }
+
+/* ── Stage chart (horizontal bars) ───────────────────────────────── */
+.sf-stage-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sf-stage-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sf-stage-lbl {
+    font-size: 0.72rem;
+    color: #475569;
+    white-space: nowrap;
+    width: 130px;
+    flex-shrink: 0;
+}
+
+.sf-stage-bar-wrap {
+    flex: 1;
+    height: 10px;
+    background: #f1f5f9;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.sf-stage-bar {
+    height: 100%;
+    border-radius: 5px;
+    width: 30%; /* placeholder — will look good statically */
+}
+
+.sf-stage-blue    { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+.sf-stage-amber   { background: linear-gradient(90deg, #d97706, #fbbf24); }
+.sf-stage-emerald { background: linear-gradient(90deg, #059669, #34d399); }
+.sf-stage-purple  { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+
+.sf-stage-ct {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #374151;
+    width: 20px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+/* Purple action button for job order section */
+.sf-btn-purple {
+    background: #7c3aed;
+    color: #fff;
+    border: none;
+}
+.sf-btn-purple:hover { background: #6d28d9; }

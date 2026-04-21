@@ -457,6 +457,114 @@ class FarmJobOrder(models.Model):
         digits=(16, 2),
     )
 
+    # ── Agriculture-specific fields ───────────────────────────────────────────
+    # Only relevant when business_activity == 'agriculture'
+    # Core engine mapping:
+    #   executed_qty  → field operations progress
+    #   approved_qty  → accepted/certified harvest qty
+    #   approved_amount → harvest revenue value
+    crop_type_id = fields.Many2one(
+        'farm.crop.type',
+        string='Crop Type',
+        ondelete='set null',
+        tracking=True,
+        help='Type of crop being grown or harvested on this job order.',
+    )
+    field_id = fields.Many2one(
+        'farm.field',
+        string='Farm Field',
+        ondelete='set null',
+        tracking=True,
+        domain="[('project_id', '=', project_id)]",
+        help='Farm field or plot this job order operates on.',
+    )
+    operation_type = fields.Selection(
+        selection=[
+            ('land_preparation', 'Land Preparation'),
+            ('planting',         'Planting'),
+            ('irrigation',       'Irrigation'),
+            ('fertilization',    'Fertilization / Spraying'),
+            ('pest_control',     'Pest & Disease Control'),
+            ('monitoring',       'Crop Monitoring'),
+            ('harvest',          'Harvest'),
+            ('post_harvest',     'Post-Harvest Processing'),
+        ],
+        string='Operation Type',
+        tracking=True,
+        help='Type of agricultural operation performed on this job order.',
+    )
+    harvest_qty = fields.Float(
+        string='Harvest Qty',
+        digits=(16, 2),
+        default=0.0,
+        tracking=True,
+        copy=False,
+        help=(
+            'Total harvested quantity (raw weight, volume, units).\n'
+            'Set executed_qty = harvest_qty for progress tracking.\n'
+            'Set approved_qty = certified/accepted harvest for revenue.'
+        ),
+    )
+    waste_qty = fields.Float(
+        string='Waste / Loss Qty',
+        digits=(16, 2),
+        default=0.0,
+        tracking=True,
+        copy=False,
+        help='Harvest waste or field loss quantity.',
+    )
+    net_harvest_qty = fields.Float(
+        string='Net Harvest Qty',
+        compute='_compute_net_harvest',
+        store=True,
+        digits=(16, 2),
+        help='harvest_qty − waste_qty',
+    )
+
+    # ── Manufacturing / Packing-specific fields ───────────────────────────────
+    # Only relevant when business_activity == 'manufacturing'
+    # Core engine mapping:
+    #   executed_qty   → total units packed (raw output)
+    #   approved_qty   → QC-released units (packed & accepted)
+    #   approved_amount → finished goods revenue value
+    packing_order_ref = fields.Char(
+        string='Packing Order Ref',
+        copy=False,
+        tracking=True,
+        help='Reference to the packing/production order driving this job.',
+    )
+    raw_material_qty = fields.Float(
+        string='Raw Material Qty',
+        digits=(16, 2),
+        default=0.0,
+        tracking=True,
+        help='Quantity of raw material issued/consumed for this packing run.',
+    )
+    packed_qty = fields.Float(
+        string='Packed Qty (Output)',
+        digits=(16, 2),
+        default=0.0,
+        tracking=True,
+        copy=False,
+        help=(
+            'Total units packed (raw output before QC).\n'
+            'Mirrors executed_qty — set both when recording packing progress.'
+        ),
+    )
+    qc_result = fields.Selection(
+        selection=[
+            ('pending',     'Pending QC'),
+            ('passed',      'Passed'),
+            ('failed',      'Failed'),
+            ('conditional', 'Conditional Pass'),
+        ],
+        string='QC Result',
+        default='pending',
+        tracking=True,
+        copy=False,
+        help='QC release result for this packing job.',
+    )
+
     # ── Notes ─────────────────────────────────────────────────────────────────
     notes             = fields.Text(string='General Notes')
     instruction_notes = fields.Text(string='Instructions')
@@ -623,6 +731,11 @@ class FarmJobOrder(models.Model):
         for rec in self:
             bl = rec.boq_line_id
             rec.is_structural_line = bool(bl and (bl.display_type or not bl.parent_id))
+
+    @api.depends('harvest_qty', 'waste_qty')
+    def _compute_net_harvest(self):
+        for rec in self:
+            rec.net_harvest_qty = max(0.0, (rec.harvest_qty or 0.0) - (rec.waste_qty or 0.0))
 
     # ── Onchange helpers ──────────────────────────────────────────────────────
 

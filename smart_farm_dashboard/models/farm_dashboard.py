@@ -415,6 +415,53 @@ class FarmDashboard(models.Model):
             [('is_negative_profit', '=', True)],
         )
 
+    # ── Job Order drill-down ─────────────────────────────────────────────────
+
+    def action_view_jo_in_progress(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Job Orders — In Progress'),
+            'res_model': 'farm.job.order',
+            'view_mode': 'list,form',
+            'domain': [('jo_stage', '=', 'in_progress')],
+        }
+
+    def action_view_jo_under_inspection(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Job Orders — Under Inspection'),
+            'res_model': 'farm.job.order',
+            'view_mode': 'list,form',
+            'domain': [('jo_stage', '=', 'under_inspection')],
+        }
+
+    def action_view_jo_ready_for_claim(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Job Orders — Ready for Claim'),
+            'res_model': 'farm.job.order',
+            'view_mode': 'list,form',
+            'domain': [('jo_stage', '=', 'ready_for_claim')],
+        }
+
+    def action_view_jo_claimed(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Job Orders — Claimed'),
+            'res_model': 'farm.job.order',
+            'view_mode': 'list,form',
+            'domain': [('jo_stage', '=', 'claimed')],
+        }
+
+    def action_view_all_jo(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('All Job Orders'),
+            'res_model': 'farm.job.order',
+            'view_mode': 'list,form',
+            'domain': [('jo_stage', '!=', 'closed')],
+        }
+
     # ── Refresh ──────────────────────────────────────────────────────────────
 
     def action_refresh(self):

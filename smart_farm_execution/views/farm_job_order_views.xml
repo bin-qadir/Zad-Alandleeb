@@ -379,6 +379,7 @@
                                      role="button" tabindex="0"
                                      title="Open: Scope / BOQ Item">
                                     <div class="ecp-badge">1</div>
+                                    <div class="ecp-icon"><i class="fa fa-list-alt"/></div>
                                     <div class="ecp-card-title">Job Orders &amp; B.O.Q Items</div>
                                     <div class="ecp-card-desc">Contracted items coming from BOQ</div>
                                 </div>
@@ -389,11 +390,13 @@
                                      role="button" tabindex="0"
                                      title="Open: Execution Progress">
                                     <div class="ecp-badge">2</div>
+                                    <div class="ecp-icon"><i class="fa fa-tasks"/></div>
                                     <div class="ecp-card-title">Execution Progress</div>
                                     <div class="ecp-live">
                                         <field name="progress_percent" readonly="1" nolabel="1"/>
                                         <span class="ecp-live-unit">%</span>
                                     </div>
+                                    <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
                                     <div class="ecp-card-desc">Executed quantities and daily logs</div>
                                 </div>
 
@@ -403,6 +406,7 @@
                                      role="button" tabindex="0"
                                      title="Open: Handover Requests">
                                     <div class="ecp-badge">3</div>
+                                    <div class="ecp-icon"><i class="fa fa-exchange"/></div>
                                     <div class="ecp-card-title">Handover Requests</div>
                                     <div class="ecp-card-desc">Request item inspection and delivery</div>
                                 </div>
@@ -413,6 +417,7 @@
                                      role="button" tabindex="0"
                                      title="Open: Inspection &amp; Approvals">
                                     <div class="ecp-badge">4</div>
+                                    <div class="ecp-icon"><i class="fa fa-search"/></div>
                                     <div class="ecp-card-title">Deliveries &amp; Approvals</div>
                                     <div class="ecp-card-desc">Inspection results and acceptance status</div>
                                 </div>
@@ -423,10 +428,12 @@
                                      role="button" tabindex="0"
                                      title="Open: Approved Quantities">
                                     <div class="ecp-badge">5</div>
+                                    <div class="ecp-icon"><i class="fa fa-check-circle"/></div>
                                     <div class="ecp-card-title">Approved Quantities</div>
                                     <div class="ecp-live">
                                         <field name="approved_qty" readonly="1" nolabel="1"/>
                                     </div>
+                                    <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
                                     <div class="ecp-card-desc">Approved quantities controlling progress</div>
                                 </div>
 
@@ -436,6 +443,7 @@
                                      role="button" tabindex="0"
                                      title="Open: Claims / Extracts">
                                     <div class="ecp-badge">6</div>
+                                    <div class="ecp-icon"><i class="fa fa-money"/></div>
                                     <div class="ecp-card-title">Claims / Extracts</div>
                                     <div class="ecp-live">
                                         <field name="claimable_amount"
@@ -462,6 +470,7 @@
                                      role="button" tabindex="0"
                                      title="Open: Crop Plan &amp; BOQ">
                                     <div class="ecp-badge">1</div>
+                                    <div class="ecp-icon"><i class="fa fa-list-alt"/></div>
                                     <div class="ecp-card-title">Crop Plan &amp; Scope</div>
                                     <div class="ecp-card-desc">Planned crop items from BOQ</div>
                                 </div>
@@ -472,11 +481,13 @@
                                      role="button" tabindex="0"
                                      title="Open: Daily Field Operations">
                                     <div class="ecp-badge">2</div>
+                                    <div class="ecp-icon"><i class="fa fa-tasks"/></div>
                                     <div class="ecp-card-title">Daily Field Ops</div>
                                     <div class="ecp-live">
                                         <field name="progress_percent" readonly="1" nolabel="1"/>
                                         <span class="ecp-live-unit">%</span>
                                     </div>
+                                    <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
                                     <div class="ecp-card-desc">Daily activities and field progress logs</div>
                                 </div>
 
@@ -486,6 +497,7 @@
                                      role="button" tabindex="0"
                                      title="Open: Irrigation &amp; Inputs">
                                     <div class="ecp-badge">3</div>
+                                    <div class="ecp-icon"><i class="fa fa-exchange"/></div>
                                     <div class="ecp-card-title">Irrigation &amp; Inputs</div>
                                     <div class="ecp-card-desc">Water, fertilizer and field input records</div>
                                 </div>
@@ -496,6 +508,7 @@
                                      role="button" tabindex="0"
                                      title="Open: Crop Monitoring">
                                     <div class="ecp-badge">4</div>
+                                    <div class="ecp-icon"><i class="fa fa-search"/></div>
                                     <div class="ecp-card-title">Crop Monitoring</div>
                                     <div class="ecp-card-desc">Growth checks, pest/disease inspections</div>
                                 </div>
@@ -506,10 +519,12 @@
                                      role="button" tabindex="0"
                                      title="Open: Harvest Quantities">
                                     <div class="ecp-badge">5</div>
+                                    <div class="ecp-icon"><i class="fa fa-check-circle"/></div>
                                     <div class="ecp-card-title">Harvest Quantities</div>
                                     <div class="ecp-live">
                                         <field name="approved_qty" readonly="1" nolabel="1"/>
                                     </div>
+                                    <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
                                     <div class="ecp-card-desc">Certified harvest quantities for revenue</div>
                                 </div>
 
@@ -519,6 +534,7 @@
                                      role="button" tabindex="0"
                                      title="Open: Yield &amp; Sales">
                                     <div class="ecp-badge">6</div>
+                                    <div class="ecp-icon"><i class="fa fa-money"/></div>
                                     <div class="ecp-card-title">Yield &amp; Sales</div>
                                     <div class="ecp-live">
                                         <field name="claimable_amount"
@@ -546,6 +562,7 @@
                                      role="button" tabindex="0"
                                      title="Open: Packing Orders">
                                     <div class="ecp-badge">1</div>
+                                    <div class="ecp-icon"><i class="fa fa-list-alt"/></div>
                                     <div class="ecp-card-title">Packing Orders</div>
                                     <div class="ecp-card-desc">Planned packing scope from BOQ</div>
                                 </div>
@@ -556,11 +573,13 @@
                                      role="button" tabindex="0"
                                      title="Open: Material Issue &amp; Progress">
                                     <div class="ecp-badge">2</div>
+                                    <div class="ecp-icon"><i class="fa fa-tasks"/></div>
                                     <div class="ecp-card-title">Material Issue</div>
                                     <div class="ecp-live">
                                         <field name="progress_percent" readonly="1" nolabel="1"/>
                                         <span class="ecp-live-unit">%</span>
                                     </div>
+                                    <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
                                     <div class="ecp-card-desc">Raw material consumption and issue logs</div>
                                 </div>
 
@@ -570,6 +589,7 @@
                                      role="button" tabindex="0"
                                      title="Open: Packing Progress">
                                     <div class="ecp-badge">3</div>
+                                    <div class="ecp-icon"><i class="fa fa-exchange"/></div>
                                     <div class="ecp-card-title">Packing Progress</div>
                                     <div class="ecp-card-desc">Units packed, shift logs, line output</div>
                                 </div>
@@ -580,6 +600,7 @@
                                      role="button" tabindex="0"
                                      title="Open: QC &amp; Approvals">
                                     <div class="ecp-badge">4</div>
+                                    <div class="ecp-icon"><i class="fa fa-search"/></div>
                                     <div class="ecp-card-title">QC &amp; Approvals</div>
                                     <div class="ecp-card-desc">Quality checks, hold/release decisions</div>
                                 </div>
@@ -590,10 +611,12 @@
                                      role="button" tabindex="0"
                                      title="Open: Approved Packed Quantities">
                                     <div class="ecp-badge">5</div>
+                                    <div class="ecp-icon"><i class="fa fa-check-circle"/></div>
                                     <div class="ecp-card-title">Packed Qty (Approved)</div>
                                     <div class="ecp-live">
                                         <field name="approved_qty" readonly="1" nolabel="1"/>
                                     </div>
+                                    <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
                                     <div class="ecp-card-desc">QC-released quantity ready for dispatch</div>
                                 </div>
 
@@ -603,6 +626,7 @@
                                      role="button" tabindex="0"
                                      title="Open: Finished Goods &amp; Revenue">
                                     <div class="ecp-badge">6</div>
+                                    <div class="ecp-icon"><i class="fa fa-money"/></div>
                                     <div class="ecp-card-title">Finished Goods</div>
                                     <div class="ecp-live">
                                         <field name="claimable_amount"
@@ -1121,6 +1145,110 @@
                                                placeholder="General observations, context…"/>
                                     </group>
                                 </group>
+                            </page>
+
+                            <!-- ═══════════════════════════════════════
+                                 I — AGRICULTURE OPERATIONS
+                                 (visible only when business_activity = agriculture)
+                            ═══════════════════════════════════════ -->
+                            <page string="I. Agriculture Operations" name="agri_tab"
+                                  invisible="business_activity != 'agriculture'">
+
+                                <div class="alert alert-success mb-3" role="alert"
+                                     invisible="business_activity != 'agriculture'">
+                                    <strong>Agriculture Mode.</strong>
+                                    Record field operations, irrigation, and harvest data here.
+                                    <strong>approved_qty = certified harvest quantity</strong> drives revenue.
+                                </div>
+
+                                <group>
+                                    <group string="Crop &amp; Field">
+                                        <field name="crop_type_id" options="{'no_create': True}"/>
+                                        <field name="field_id"     options="{'no_create': True}"/>
+                                        <field name="operation_type"/>
+                                        <field name="lifecycle_stage"/>
+                                    </group>
+                                    <group string="Execution Quantities">
+                                        <field name="executed_qty"  string="Field Ops Progress (executed)"/>
+                                        <field name="approved_qty"  string="Certified Harvest Qty (approved)"
+                                               readonly="jo_stage not in ('under_inspection','partially_accepted','accepted')"/>
+                                        <field name="rejected_qty"  string="Rejected / Failed Harvest"/>
+                                    </group>
+                                </group>
+
+                                <group>
+                                    <group string="Harvest Quantities">
+                                        <field name="harvest_qty"/>
+                                        <field name="waste_qty"/>
+                                        <field name="net_harvest_qty" readonly="1"
+                                               decoration-success="net_harvest_qty &gt; 0"
+                                               decoration-warning="net_harvest_qty &lt;= 0"/>
+                                        <field name="unit_id" readonly="1" string="Harvest Unit"/>
+                                    </group>
+                                    <group string="Revenue Basis">
+                                        <field name="unit_price"       readonly="1" string="Price per Unit"/>
+                                        <field name="approved_amount"  readonly="1" string="Harvest Revenue (approved)"
+                                               widget="monetary" options="{'currency_field': 'currency_id'}"
+                                               decoration-success="approved_amount &gt; 0"/>
+                                        <field name="claimable_amount" readonly="1" string="Unclaimed Revenue"
+                                               widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    </group>
+                                </group>
+
+                            </page>
+
+                            <!-- ═══════════════════════════════════════
+                                 J — MANUFACTURING / PACKING
+                                 (visible only when business_activity = manufacturing)
+                            ═══════════════════════════════════════ -->
+                            <page string="J. Manufacturing / Packing" name="mfg_tab"
+                                  invisible="business_activity != 'manufacturing'">
+
+                                <div class="alert alert-info mb-3" role="alert">
+                                    <strong>Manufacturing Mode.</strong>
+                                    Record packing output and QC results here.
+                                    <strong>approved_qty = QC-released units</strong> drives finished goods value.
+                                </div>
+
+                                <group>
+                                    <group string="Packing Order">
+                                        <field name="packing_order_ref"/>
+                                        <field name="lifecycle_stage"/>
+                                        <field name="qc_result"
+                                               widget="badge"
+                                               decoration-info="qc_result == 'pending'"
+                                               decoration-success="qc_result == 'passed'"
+                                               decoration-danger="qc_result == 'failed'"
+                                               decoration-warning="qc_result == 'conditional'"/>
+                                    </group>
+                                    <group string="Quantities">
+                                        <field name="raw_material_qty"/>
+                                        <field name="packed_qty"   string="Total Packed (output)"/>
+                                        <field name="executed_qty" string="Confirmed Packed (progress)"/>
+                                        <field name="rejected_qty" string="QC Rejected Units"/>
+                                    </group>
+                                </group>
+
+                                <group>
+                                    <group string="Approved / Released">
+                                        <field name="approved_qty"  string="QC-Released Qty (approved)"
+                                               readonly="jo_stage not in ('under_inspection','partially_accepted','accepted')"/>
+                                        <field name="approved_amount" readonly="1"
+                                               string="Finished Goods Value"
+                                               widget="monetary" options="{'currency_field': 'currency_id'}"
+                                               decoration-success="approved_amount &gt; 0"/>
+                                    </group>
+                                    <group string="Claims / Revenue">
+                                        <field name="claimable_qty"    readonly="1"/>
+                                        <field name="claimable_amount" readonly="1"
+                                               widget="monetary" options="{'currency_field': 'currency_id'}"
+                                               decoration-success="claimable_amount &gt; 0"/>
+                                        <field name="claim_amount"     readonly="1"
+                                               string="Already Claimed"
+                                               widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    </group>
+                                </group>
+
                             </page>
 
                         </notebook>

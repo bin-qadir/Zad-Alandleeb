@@ -468,6 +468,210 @@
                                 <hr class="sf-sep"/>
 
                                 <!-- ═══════════════════════════════════════════
+                                     SECTION 7 — JOB ORDER EXECUTION (New)
+                                ═══════════════════════════════════════════ -->
+                                <div class="sf-section-label">
+                                    <i class="fa fa-cogs"/> Job Order Execution
+                                </div>
+
+                                <!-- Top 5 KPI cards -->
+                                <div class="row g-3 sf-exec-kpi-strip mb-3">
+
+                                    <!-- Total JOs -->
+                                    <div class="col-lg col-md-4 col-sm-6">
+                                        <div class="sf-exec-kpi-card sf-exec-navy">
+                                            <div class="sf-exec-kpi-icon"><i class="fa fa-list-alt"/></div>
+                                            <div class="sf-exec-kpi-number">
+                                                <field name="count_jo_total" nolabel="1"/>
+                                            </div>
+                                            <div class="sf-exec-kpi-label">Total Job Orders</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Portfolio Execution Progress % -->
+                                    <div class="col-lg col-md-4 col-sm-6">
+                                        <div class="sf-exec-kpi-card sf-exec-blue">
+                                            <div class="sf-exec-kpi-icon"><i class="fa fa-tasks"/></div>
+                                            <div class="sf-exec-kpi-number">
+                                                <field name="portfolio_execution_progress" nolabel="1"/>
+                                                <span class="sf-exec-kpi-unit">%</span>
+                                            </div>
+                                            <div class="sf-exec-kpi-label">Portfolio Progress</div>
+                                            <div class="sf-exec-mini-bar">
+                                                <div class="sf-exec-mini-bar-fill sf-exec-fill-blue" style="width:0%"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Total Approved Amount -->
+                                    <div class="col-lg col-md-4 col-sm-6">
+                                        <div class="sf-exec-kpi-card sf-exec-emerald">
+                                            <div class="sf-exec-kpi-icon"><i class="fa fa-check-circle"/></div>
+                                            <div class="sf-exec-kpi-number sf-exec-monetary">
+                                                <field name="portfolio_approved_amount"
+                                                       widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"
+                                                       nolabel="1"/>
+                                            </div>
+                                            <div class="sf-exec-kpi-label">Approved Amount</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Total Claimable Amount -->
+                                    <div class="col-lg col-md-4 col-sm-6">
+                                        <div class="sf-exec-kpi-card sf-exec-purple">
+                                            <div class="sf-exec-kpi-icon"><i class="fa fa-money"/></div>
+                                            <div class="sf-exec-kpi-number sf-exec-monetary">
+                                                <field name="portfolio_claimable_amount"
+                                                       widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"
+                                                       nolabel="1"/>
+                                            </div>
+                                            <div class="sf-exec-kpi-label">Claimable Now</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Total Claimed Amount -->
+                                    <div class="col-lg col-md-4 col-sm-6">
+                                        <div class="sf-exec-kpi-card sf-exec-rose">
+                                            <div class="sf-exec-kpi-icon"><i class="fa fa-flag-checkered"/></div>
+                                            <div class="sf-exec-kpi-number sf-exec-monetary">
+                                                <field name="portfolio_claimed_amount"
+                                                       widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"
+                                                       nolabel="1"/>
+                                            </div>
+                                            <div class="sf-exec-kpi-label">Total Claimed</div>
+                                        </div>
+                                    </div>
+
+                                </div><!-- /exec KPI strip -->
+
+                                <!-- Activity Breakdown + Stage Distribution (2-col) -->
+                                <div class="row g-3 mb-3">
+
+                                    <!-- LEFT: Activity breakdown (3 cards) -->
+                                    <div class="col-lg-5">
+                                        <div class="sf-exec-panel">
+                                            <div class="sf-exec-panel-title">
+                                                <i class="fa fa-th-large text-primary"/> Activity Breakdown
+                                            </div>
+                                            <div class="sf-activity-row">
+
+                                                <div class="sf-activity-card sf-act-construction">
+                                                    <div class="sf-act-icon"><i class="fa fa-building"/></div>
+                                                    <div class="sf-act-count">
+                                                        <field name="count_jo_construction" nolabel="1"/>
+                                                    </div>
+                                                    <div class="sf-act-label">Construction</div>
+                                                </div>
+
+                                                <div class="sf-activity-card sf-act-agriculture">
+                                                    <div class="sf-act-icon"><i class="fa fa-leaf"/></div>
+                                                    <div class="sf-act-count">
+                                                        <field name="count_jo_agriculture" nolabel="1"/>
+                                                    </div>
+                                                    <div class="sf-act-label">Agriculture</div>
+                                                </div>
+
+                                                <div class="sf-activity-card sf-act-manufacturing">
+                                                    <div class="sf-act-icon"><i class="fa fa-industry"/></div>
+                                                    <div class="sf-act-count">
+                                                        <field name="count_jo_manufacturing" nolabel="1"/>
+                                                    </div>
+                                                    <div class="sf-act-label">Manufacturing</div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- RIGHT: Stage distribution (bar chart style) -->
+                                    <div class="col-lg-7">
+                                        <div class="sf-exec-panel">
+                                            <div class="sf-exec-panel-title">
+                                                <i class="fa fa-bar-chart text-info"/> Stage Distribution
+                                            </div>
+                                            <div class="sf-stage-chart">
+
+                                                <div class="sf-stage-row">
+                                                    <span class="sf-stage-lbl">In Progress</span>
+                                                    <div class="sf-stage-bar-wrap">
+                                                        <div class="sf-stage-bar sf-stage-blue"/>
+                                                    </div>
+                                                    <span class="sf-stage-ct">
+                                                        <field name="count_jo_in_progress" nolabel="1"/>
+                                                    </span>
+                                                </div>
+
+                                                <div class="sf-stage-row">
+                                                    <span class="sf-stage-lbl">Under Inspection</span>
+                                                    <div class="sf-stage-bar-wrap">
+                                                        <div class="sf-stage-bar sf-stage-amber"/>
+                                                    </div>
+                                                    <span class="sf-stage-ct">
+                                                        <field name="count_jo_under_inspection" nolabel="1"/>
+                                                    </span>
+                                                </div>
+
+                                                <div class="sf-stage-row">
+                                                    <span class="sf-stage-lbl">Ready for Claim</span>
+                                                    <div class="sf-stage-bar-wrap">
+                                                        <div class="sf-stage-bar sf-stage-emerald"/>
+                                                    </div>
+                                                    <span class="sf-stage-ct">
+                                                        <field name="count_jo_ready_for_claim" nolabel="1"/>
+                                                    </span>
+                                                </div>
+
+                                                <div class="sf-stage-row">
+                                                    <span class="sf-stage-lbl">Claimed</span>
+                                                    <div class="sf-stage-bar-wrap">
+                                                        <div class="sf-stage-bar sf-stage-purple"/>
+                                                    </div>
+                                                    <span class="sf-stage-ct">
+                                                        <field name="count_jo_claimed" nolabel="1"/>
+                                                    </span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div><!-- /activity + stage row -->
+
+                                <!-- PMO quick actions for Job Orders -->
+                                <div class="sf-exec-panel mb-3">
+                                    <div class="sf-exec-panel-title">
+                                        <i class="fa fa-rocket text-warning"/> Job Order Actions
+                                    </div>
+                                    <div class="sf-action-row">
+                                        <button name="action_view_jo_in_progress" type="object"
+                                                class="sf-action-btn sf-btn-exec">
+                                            <i class="fa fa-play-circle"/> In Progress
+                                        </button>
+                                        <button name="action_view_jo_under_inspection" type="object"
+                                                class="sf-action-btn sf-btn-warn">
+                                            <i class="fa fa-search"/> Under Inspection
+                                        </button>
+                                        <button name="action_view_jo_ready_for_claim" type="object"
+                                                class="sf-action-btn sf-btn-green">
+                                            <i class="fa fa-check-circle"/> Ready for Claim
+                                        </button>
+                                        <button name="action_view_jo_claimed" type="object"
+                                                class="sf-action-btn sf-btn-purple">
+                                            <i class="fa fa-flag-checkered"/> Claimed
+                                        </button>
+                                        <button name="action_view_all_jo" type="object"
+                                                class="sf-action-btn sf-btn-contract">
+                                            <i class="fa fa-list-alt"/> All Job Orders
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <hr class="sf-sep"/>
+
+                                <!-- ═══════════════════════════════════════════
                                      SECTION 6 — PMO ACTION GRID
                                 ═══════════════════════════════════════════ -->
                                 <div class="sf-section-label">
