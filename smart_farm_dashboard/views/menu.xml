@@ -39,13 +39,31 @@
 
         <!-- ── Activity Dashboards separator ── -->
 
-        <!-- 3 — Construction Dashboard -->
+        <!-- 3 — Construction Projects Portfolio Dashboard (Level 1+2) -->
         <menuitem
             id="menu_farm_dashboard_construction"
             name="Construction"
             parent="smart_farm_dashboard.menu_executive_hub"
-            action="smart_farm_dashboard.action_open_construction_dashboard"
+            action="smart_farm_dashboard.action_open_construction_projects_dashboard"
             sequence="30"
+        />
+
+        <!-- 3a — Construction Execution Dashboard (activity-level, all JOs) — kept for direct access, deactivated below -->
+        <menuitem
+            id="menu_farm_dashboard_construction_execution"
+            name="Construction Execution"
+            parent="smart_farm_dashboard.menu_executive_hub"
+            action="smart_farm_dashboard.action_open_construction_dashboard"
+            sequence="32"
+        />
+
+        <!-- 3b — Civil Division Dashboard (under Construction) — kept for direct access, deactivated below -->
+        <menuitem
+            id="menu_farm_dashboard_civil"
+            name="Civil Division"
+            parent="smart_farm_dashboard.menu_executive_hub"
+            action="smart_farm_dashboard.action_open_civil_dashboard"
+            sequence="35"
         />
 
         <!-- 4 — Agriculture Dashboard -->
@@ -74,6 +92,18 @@
             action="smart_farm_dashboard.action_open_livestock_dashboard"
             sequence="60"
         />
+
+        <!-- ══ Hard-deactivate menus that must never appear in the dropdown ══
+             active=False is enforced at DB level and is not group-dependent.
+             The action records and views are preserved for programmatic access. -->
+
+        <record id="menu_farm_dashboard_construction_execution" model="ir.ui.menu">
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="menu_farm_dashboard_civil" model="ir.ui.menu">
+            <field name="active" eval="False"/>
+        </record>
 
     </data>
 </odoo>
