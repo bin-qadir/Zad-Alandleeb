@@ -985,3 +985,6 @@
     border: none;
 }
 .sf-btn-purple:hover { background: #6d28d9; }
+
+/* Livestock activity card */
+.sf-act-livestock { background: linear-gradient(135deg, #fff7ed, #ffedd5); color: #9a3412; }

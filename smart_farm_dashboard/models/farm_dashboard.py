@@ -127,6 +127,7 @@ class FarmDashboard(models.Model):
     count_jo_construction   = fields.Integer(compute='_compute_execution_kpis', string='Construction JOs')
     count_jo_agriculture    = fields.Integer(compute='_compute_execution_kpis', string='Agriculture JOs')
     count_jo_manufacturing  = fields.Integer(compute='_compute_execution_kpis', string='Manufacturing JOs')
+    count_jo_livestock      = fields.Integer(compute='_compute_execution_kpis', string='Livestock JOs')
 
     # ────────────────────────────────────────────────────────────────────────
     # Compute helpers
@@ -247,6 +248,7 @@ class FarmDashboard(models.Model):
             'construction':  0,
             'agriculture':   0,
             'manufacturing': 0,
+            'livestock':     0,
         }
         for jo in jos:
             if jo.jo_stage in stage_counts:
@@ -268,6 +270,7 @@ class FarmDashboard(models.Model):
             rec.count_jo_construction       = activity_counts['construction']
             rec.count_jo_agriculture        = activity_counts['agriculture']
             rec.count_jo_manufacturing      = activity_counts['manufacturing']
+            rec.count_jo_livestock          = activity_counts['livestock']
 
     # ────────────────────────────────────────────────────────────────────────
     # Singleton accessor

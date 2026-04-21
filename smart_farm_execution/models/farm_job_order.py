@@ -128,6 +128,7 @@ class FarmJobOrder(models.Model):
             ('construction',    'Construction'),
             ('agriculture',     'Agriculture'),
             ('manufacturing',   'Manufacturing / Packing'),
+            ('livestock',       'Livestock'),
         ],
         string='Business Activity',
         default='construction',
@@ -140,7 +141,9 @@ class FarmJobOrder(models.Model):
             '• Agriculture   — crop lifecycle: planning, daily ops, irrigation, '
             'monitoring, harvest, yield & sales.\n'
             '• Manufacturing — packing cycle: orders, material issue, packing '
-            'progress, QC, packed qty, finished goods.'
+            'progress, QC, packed qty, finished goods.\n'
+            '• Livestock     — herd management: breeding, raising, fattening, '
+            'sales; approved_qty = approved sale head/weight.'
         ),
     )
 
@@ -159,6 +162,11 @@ class FarmJobOrder(models.Model):
             ('packing',       'Packing'),
             ('quality_check', 'Quality Check'),
             ('dispatch',      'Dispatch'),
+            # Livestock
+            ('breeding',      'Breeding'),
+            ('raising',       'Raising'),
+            ('fattening',     'Fattening'),
+            ('ls_sales',      'Sales'),
         ],
         string='Lifecycle Stage',
         index=True,
@@ -565,6 +573,93 @@ class FarmJobOrder(models.Model):
         help='QC release result for this packing job.',
     )
 
+    # ── Livestock-specific fields ─────────────────────────────────────────────
+    # Only relevant when business_activity == 'livestock'
+    # Core engine mapping:
+    #   executed_qty  → total animals processed / managed (head count)
+    #   approved_qty  → approved sale head OR approved live weight for sales
+    #   approved_amount → livestock sale revenue value
+    livestock_type = fields.Selection(
+        selection=[
+            ('sheep',   'Sheep'),
+            ('goats',   'Goats'),
+            ('cattle',  'Cattle'),
+            ('camel',   'Camel'),
+            ('poultry', 'Poultry'),
+            ('other',   'Other'),
+        ],
+        string='Livestock Type',
+        tracking=True,
+        help='Species or category of livestock on this job order.',
+    )
+    breed_id = fields.Many2one(
+        'farm.crop.type',
+        string='Breed / Variety',
+        ondelete='set null',
+        tracking=True,
+        help='Breed or variety — reuses the crop.type master as a generic category table.',
+    )
+    herd_group_id = fields.Many2one(
+        'farm.field',
+        string='Herd Group / Pen',
+        ondelete='set null',
+        tracking=True,
+        domain="[('project_id', '=', project_id)]",
+        help='Pen, paddock, or herd group — reuses the farm.field model.',
+    )
+
+    # ── Herd composition ─────────────────────────────────────────────────────
+    animal_count   = fields.Integer(string='Total Head Count',   default=0, tracking=True)
+    male_count     = fields.Integer(string='Male Count',         default=0, tracking=True)
+    female_count   = fields.Integer(string='Female Count',       default=0, tracking=True)
+    birth_count    = fields.Integer(string='Births',             default=0, tracking=True, copy=False)
+    death_count    = fields.Integer(string='Deaths / Losses',    default=0, tracking=True, copy=False)
+    purchase_count = fields.Integer(string='Purchased',          default=0, tracking=True, copy=False)
+    sold_count     = fields.Integer(string='Sold',               default=0, tracking=True, copy=False)
+
+    # ── Weight & growth ───────────────────────────────────────────────────────
+    avg_weight    = fields.Float(string='Avg Live Weight (kg)',  digits=(16, 2), default=0.0, tracking=True)
+    target_weight = fields.Float(string='Target Sale Weight (kg)', digits=(16, 2), default=0.0, tracking=True)
+
+    # ── Livestock costs ───────────────────────────────────────────────────────
+    feed_cost       = fields.Float(string='Feed Cost',        digits=(16, 2), default=0.0, tracking=True)
+    medical_cost    = fields.Float(string='Medical / Vet Cost', digits=(16, 2), default=0.0, tracking=True)
+    caretaking_cost = fields.Float(string='Caretaking Cost',  digits=(16, 2), default=0.0, tracking=True)
+    total_livestock_cost = fields.Float(
+        string='Total Livestock Cost',
+        compute='_compute_livestock_cost',
+        store=True,
+        digits=(16, 2),
+        help='feed_cost + medical_cost + caretaking_cost',
+    )
+
+    # ── Sale approval quantities ──────────────────────────────────────────────
+    # These mirror the core engine: approved_qty = approved_sale_qty
+    approved_sale_qty    = fields.Float(
+        string='Approved Sale Qty (head)',
+        digits=(16, 2),
+        default=0.0,
+        tracking=True,
+        copy=False,
+        help='Number of animals formally approved for sale.\n'
+             'Maps to approved_qty — drives progress % and sale value.',
+    )
+    approved_sale_weight = fields.Float(
+        string='Approved Sale Weight (kg)',
+        digits=(16, 2),
+        default=0.0,
+        tracking=True,
+        copy=False,
+        help='Total live weight of approved-for-sale animals.',
+    )
+    approved_sale_amount = fields.Float(
+        string='Approved Sale Amount',
+        compute='_compute_approved_sale_amount',
+        store=True,
+        digits=(16, 2),
+        help='approved_sale_qty × unit_price — mirrors approved_amount.',
+    )
+
     # ── Notes ─────────────────────────────────────────────────────────────────
     notes             = fields.Text(string='General Notes')
     instruction_notes = fields.Text(string='Instructions')
@@ -736,6 +831,24 @@ class FarmJobOrder(models.Model):
     def _compute_net_harvest(self):
         for rec in self:
             rec.net_harvest_qty = max(0.0, (rec.harvest_qty or 0.0) - (rec.waste_qty or 0.0))
+
+    @api.depends('feed_cost', 'medical_cost', 'caretaking_cost')
+    def _compute_livestock_cost(self):
+        for rec in self:
+            rec.total_livestock_cost = (
+                (rec.feed_cost       or 0.0)
+                + (rec.medical_cost    or 0.0)
+                + (rec.caretaking_cost or 0.0)
+            )
+
+    @api.depends('approved_sale_qty', 'unit_price')
+    def _compute_approved_sale_amount(self):
+        """approved_sale_amount mirrors approved_amount for livestock.
+
+        approved_sale_qty maps to approved_qty — same financial driver rule.
+        """
+        for rec in self:
+            rec.approved_sale_amount = (rec.approved_sale_qty or 0.0) * (rec.unit_price or 0.0)
 
     # ── Onchange helpers ──────────────────────────────────────────────────────
 

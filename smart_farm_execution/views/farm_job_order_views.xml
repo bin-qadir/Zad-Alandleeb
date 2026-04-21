@@ -40,6 +40,8 @@
                             domain="[('business_activity','=','agriculture')]"/>
                     <filter name="act_manufacturing" string="Manufacturing / Packing"
                             domain="[('business_activity','=','manufacturing')]"/>
+                    <filter name="act_livestock"     string="Livestock"
+                            domain="[('business_activity','=','livestock')]"/>
                     <separator/>
                     <!-- Department quick-filters -->
                     <filter name="dept_civil"      string="Civil"
@@ -638,6 +640,98 @@
                                 </div>
 
                             </div><!-- /ecp-grid manufacturing -->
+
+                            <!-- ══════════════════════════════════════
+                                 CARD SET D — LIVESTOCK
+                                 Herd Plan / Breeding & Births /
+                                 Feeding & Care / Health & Monitoring /
+                                 Weight Gain / Sales & Value
+                            ══════════════════════════════════════ -->
+                            <div class="ecp-grid"
+                                 invisible="business_activity != 'livestock'">
+
+                                <!-- Card 1: Herd Plan & Stock -->
+                                <div class="ecp-card"
+                                     data-card="1" data-tab="scope_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Herd Plan &amp; Stock">
+                                    <div class="ecp-badge">1</div>
+                                    <div class="ecp-icon"><i class="fa fa-list-alt"/></div>
+                                    <div class="ecp-card-title">Herd Plan &amp; Stock</div>
+                                    <div class="ecp-card-desc">Planned herd scope and BOQ items</div>
+                                </div>
+
+                                <!-- Card 2: Breeding & Births + live % -->
+                                <div class="ecp-card"
+                                     data-card="2" data-tab="execution_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Breeding &amp; Births">
+                                    <div class="ecp-badge">2</div>
+                                    <div class="ecp-icon"><i class="fa fa-tasks"/></div>
+                                    <div class="ecp-card-title">Breeding &amp; Births</div>
+                                    <div class="ecp-live">
+                                        <field name="progress_percent" readonly="1" nolabel="1"/>
+                                        <span class="ecp-live-unit">%</span>
+                                    </div>
+                                    <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
+                                    <div class="ecp-card-desc">Birth records, breeding logs, head count</div>
+                                </div>
+
+                                <!-- Card 3: Feeding & Care -->
+                                <div class="ecp-card"
+                                     data-card="3" data-tab="handover_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Feeding &amp; Care">
+                                    <div class="ecp-badge">3</div>
+                                    <div class="ecp-icon"><i class="fa fa-exchange"/></div>
+                                    <div class="ecp-card-title">Feeding &amp; Care</div>
+                                    <div class="ecp-card-desc">Feed plans, ration costs, caretaking</div>
+                                </div>
+
+                                <!-- Card 4: Health & Monitoring -->
+                                <div class="ecp-card"
+                                     data-card="4" data-tab="inspection_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Health &amp; Monitoring">
+                                    <div class="ecp-badge">4</div>
+                                    <div class="ecp-icon"><i class="fa fa-search"/></div>
+                                    <div class="ecp-card-title">Health &amp; Monitoring</div>
+                                    <div class="ecp-card-desc">Vet checks, vaccinations, mortality</div>
+                                </div>
+
+                                <!-- Card 5: Weight Gain / Approved Stock + live approved_qty -->
+                                <div class="ecp-card"
+                                     data-card="5" data-tab="approved_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Approved Stock for Sale">
+                                    <div class="ecp-badge">5</div>
+                                    <div class="ecp-icon"><i class="fa fa-check-circle"/></div>
+                                    <div class="ecp-card-title">Approved Stock</div>
+                                    <div class="ecp-live">
+                                        <field name="approved_qty" readonly="1" nolabel="1"/>
+                                    </div>
+                                    <div class="ecp-bar"><div class="ecp-bar-fill" style="width:0%"/></div>
+                                    <div class="ecp-card-desc">Weight gain targets and sale-ready head</div>
+                                </div>
+
+                                <!-- Card 6: Sales & Value + live claimable_amount -->
+                                <div class="ecp-card"
+                                     data-card="6" data-tab="claims_tab"
+                                     role="button" tabindex="0"
+                                     title="Open: Sales &amp; Value">
+                                    <div class="ecp-badge">6</div>
+                                    <div class="ecp-icon"><i class="fa fa-money"/></div>
+                                    <div class="ecp-card-title">Sales &amp; Value</div>
+                                    <div class="ecp-live">
+                                        <field name="claimable_amount"
+                                               readonly="1" nolabel="1"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                    </div>
+                                    <div class="ecp-card-desc">Revenue from approved livestock sales</div>
+                                </div>
+
+                            </div><!-- /ecp-grid livestock -->
 
                         </div><!-- /ecp-container -->
 
@@ -1246,6 +1340,105 @@
                                         <field name="claim_amount"     readonly="1"
                                                string="Already Claimed"
                                                widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    </group>
+                                </group>
+
+                            </page>
+
+                            <!-- ═══════════════════════════════════════
+                                 K — LIVESTOCK OPERATIONS
+                                 (visible only when business_activity = livestock)
+                            ═══════════════════════════════════════ -->
+                            <page string="K. Livestock Operations" name="livestock_tab"
+                                  invisible="business_activity != 'livestock'">
+
+                                <div class="alert alert-warning mb-3" role="alert">
+                                    <strong>Livestock Mode.</strong>
+                                    Record herd composition, breeding, health and sale data here.
+                                    <strong>approved_qty = approved head / weight for sale</strong>
+                                    drives all revenue calculations.
+                                </div>
+
+                                <group>
+                                    <group string="Herd Identity">
+                                        <field name="livestock_type"/>
+                                        <field name="breed_id"      string="Breed"
+                                               options="{'no_create': True}"/>
+                                        <field name="herd_group_id" string="Herd Group / Pen"
+                                               options="{'no_create': True}"/>
+                                        <field name="lifecycle_stage"/>
+                                    </group>
+                                    <group string="Head Counts">
+                                        <field name="animal_count"   string="Total Head"/>
+                                        <field name="male_count"/>
+                                        <field name="female_count"/>
+                                        <field name="birth_count"/>
+                                        <field name="death_count"/>
+                                        <field name="purchase_count"/>
+                                        <field name="sold_count"/>
+                                    </group>
+                                </group>
+
+                                <group>
+                                    <group string="Weight &amp; Growth">
+                                        <field name="avg_weight"    string="Avg Live Weight (kg)"/>
+                                        <field name="target_weight" string="Target Sale Weight (kg)"/>
+                                        <field name="executed_qty"  string="Managed Head Count (progress)"/>
+                                    </group>
+                                    <group string="Livestock Costs">
+                                        <field name="feed_cost"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                        <field name="medical_cost"
+                                               string="Medical / Vet Cost"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                        <field name="caretaking_cost"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                        <field name="total_livestock_cost"
+                                               readonly="1"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"
+                                               decoration-warning="total_livestock_cost &gt; 0"/>
+                                    </group>
+                                </group>
+
+                                <separator string="Sale Approval (Financial Driver)"/>
+                                <group>
+                                    <group string="Approved for Sale">
+                                        <field name="approved_sale_qty"
+                                               string="Approved Sale Qty (head)"
+                                               readonly="jo_stage not in ('under_inspection','partially_accepted','accepted')"/>
+                                        <field name="approved_qty"
+                                               string="Approved Qty (engine)"
+                                               readonly="1"
+                                               decoration-success="approved_qty &gt; 0"/>
+                                        <field name="approved_sale_weight"
+                                               string="Approved Live Weight (kg)"/>
+                                        <field name="approved_sale_amount"
+                                               readonly="1"
+                                               string="Approved Sale Amount"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"
+                                               decoration-success="approved_sale_amount &gt; 0"/>
+                                    </group>
+                                    <group string="Revenue Status">
+                                        <field name="approved_amount"
+                                               readonly="1"
+                                               string="Engine Approved Amount"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                        <field name="claimable_qty"    readonly="1"/>
+                                        <field name="claimable_amount" readonly="1"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"
+                                               decoration-success="claimable_amount &gt; 0"/>
+                                        <field name="claim_amount"
+                                               readonly="1"
+                                               string="Already Claimed"
+                                               widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
                                     </group>
                                 </group>
 

@@ -582,6 +582,14 @@
                                                     <div class="sf-act-label">Manufacturing</div>
                                                 </div>
 
+                                                <div class="sf-activity-card sf-act-livestock">
+                                                    <div class="sf-act-icon"><i class="fa fa-paw"/></div>
+                                                    <div class="sf-act-count">
+                                                        <field name="count_jo_livestock" nolabel="1"/>
+                                                    </div>
+                                                    <div class="sf-act-label">Livestock</div>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
