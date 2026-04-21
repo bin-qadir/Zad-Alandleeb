@@ -1,0 +1,815 @@
+/* ==========================================================================
+   FARM ACTIVITY DASHBOARD — Activity-specific Dashboard CSS
+   Themes: construction (blue) · agriculture (green) · manufacturing (purple)
+            livestock (amber)
+   ========================================================================== */
+
+/* ── CSS Variables ─────────────────────────────────────────────────────── */
+:root {
+    --act-construction-primary: #1d4ed8;
+    --act-construction-light:   #eff6ff;
+    --act-construction-mid:     #93c5fd;
+
+    --act-agriculture-primary:  #15803d;
+    --act-agriculture-light:    #f0fdf4;
+    --act-agriculture-mid:      #86efac;
+
+    --act-manufacturing-primary: #7c3aed;
+    --act-manufacturing-light:   #f5f3ff;
+    --act-manufacturing-mid:     #c4b5fd;
+
+    --act-livestock-primary:    #b45309;
+    --act-livestock-light:      #fff7ed;
+    --act-livestock-mid:        #fcd34d;
+}
+
+/* ── Header Banner ─────────────────────────────────────────────────────── */
+.act-dash-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,.12);
+}
+
+.act-dash-header--construction { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); }
+.act-dash-header--agriculture  { background: linear-gradient(135deg, #14532d 0%, #16a34a 100%); }
+.act-dash-header--manufacturing { background: linear-gradient(135deg, #3b0764 0%, #7c3aed 100%); }
+.act-dash-header--livestock    { background: linear-gradient(135deg, #78350f 0%, #d97706 100%); }
+
+.act-dash-header__icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(255,255,255,.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.act-dash-header__icon .fa { color: #fff; }
+
+.act-dash-header__title { flex: 1; }
+.act-dash-header__title h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+}
+.act-dash-header__sub {
+    font-size: 12px;
+    color: rgba(255,255,255,.7);
+    display: block;
+    margin-top: 2px;
+}
+
+.act-dash-header__actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.act-dash-refresh {
+    background: rgba(255,255,255,.15) !important;
+    color: #fff !important;
+    border-color: rgba(255,255,255,.3) !important;
+    border-radius: 8px !important;
+}
+.act-dash-refresh:hover {
+    background: rgba(255,255,255,.25) !important;
+}
+
+/* ── Sections ──────────────────────────────────────────────────────────── */
+.act-dash-section {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+
+.act-dash-section__title {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #374151;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f3f4f6;
+}
+.act-dash-section--construction .act-dash-section__title { border-bottom-color: var(--act-construction-mid); }
+.act-dash-section--agriculture  .act-dash-section__title { border-bottom-color: var(--act-agriculture-mid); }
+.act-dash-section--manufacturing .act-dash-section__title { border-bottom-color: var(--act-manufacturing-mid); }
+.act-dash-section--livestock    .act-dash-section__title { border-bottom-color: var(--act-livestock-mid); }
+
+/* ── KPI Strip (5 cards) ───────────────────────────────────────────────── */
+.act-kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+@media (max-width: 1200px) {
+    .act-kpi-strip { grid-template-columns: repeat(3, 1fr); }
+}
+
+.act-kpi-card {
+    border-radius: 10px;
+    padding: 16px 14px 12px;
+    position: relative;
+    border: 1px solid transparent;
+    transition: transform .15s ease, box-shadow .15s ease;
+    background: #f8fafc;
+}
+.act-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,.1);
+}
+
+.act-kpi-card--primary  { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-color: #bae6fd; }
+.act-kpi-card--navy     { background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: #93c5fd; }
+.act-kpi-card--blue     { background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: #60a5fa; }
+.act-kpi-card--emerald  { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: #86efac; }
+.act-kpi-card--purple   { background: linear-gradient(135deg, #faf5ff, #ede9fe); border-color: #c4b5fd; }
+
+.act-kpi-card__icon {
+    font-size: 20px;
+    margin-bottom: 8px;
+    color: #6b7280;
+}
+.act-kpi-card--primary  .act-kpi-card__icon { color: #0284c7; }
+.act-kpi-card--navy     .act-kpi-card__icon { color: #1d4ed8; }
+.act-kpi-card--blue     .act-kpi-card__icon { color: #2563eb; }
+.act-kpi-card--emerald  .act-kpi-card__icon { color: #15803d; }
+.act-kpi-card--purple   .act-kpi-card__icon { color: #7c3aed; }
+
+.act-kpi-card__value .o_field_widget,
+.act-kpi-card__value .o_field_integer,
+.act-kpi-card__value .o_field_float {
+    font-size: 28px !important;
+    font-weight: 800 !important;
+    line-height: 1.1 !important;
+    color: #111827 !important;
+    display: block;
+}
+.act-kpi-card__value--monetary .o_field_monetary span {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: #111827 !important;
+}
+
+.act-kpi-card__label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #6b7280;
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+.act-kpi-card__pct {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+/* KPI progress bars inside cards */
+.act-kpi-progress {
+    height: 4px;
+    background: rgba(0,0,0,.08);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 6px 0 2px;
+}
+.act-kpi-progress__bar {
+    height: 100%;
+    background: #2563eb;
+    border-radius: 2px;
+    transition: width .4s ease;
+    max-width: 100%;
+}
+.act-kpi-progress__bar--purple { background: #7c3aed; }
+
+/* ── Execution Progress bar ─────────────────────────────────────────── */
+.act-progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+}
+.act-progress-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+    min-width: 180px;
+    white-space: nowrap;
+}
+.act-progress-track {
+    flex: 1;
+    height: 10px;
+    background: #e5e7eb;
+    border-radius: 5px;
+    overflow: hidden;
+}
+.act-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2563eb, #0891b2);
+    border-radius: 5px;
+    transition: width .5s ease;
+    max-width: 100%;
+}
+.act-progress-fill--amber { background: linear-gradient(90deg, #d97706, #f59e0b); }
+.act-progress-pct {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1d4ed8;
+    min-width: 60px;
+    text-align: right;
+}
+
+/* ── Stage Distribution Grid ─────────────────────────────────────────── */
+.act-stage-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+@media (max-width: 1100px) {
+    .act-stage-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.act-stage-item {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 12px 10px 10px;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+    position: relative;
+    transition: box-shadow .15s ease;
+}
+.act-stage-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+
+.act-stage-item__count .o_field_integer {
+    font-size: 26px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    display: block;
+}
+.act-stage-item__label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    font-weight: 600;
+    color: #6b7280;
+    margin-top: 4px;
+}
+.act-stage-item__drill {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    color: #9ca3af !important;
+    font-size: 10px !important;
+    line-height: 1 !important;
+    padding: 2px 4px !important;
+}
+.act-stage-item__drill:hover { color: #2563eb !important; }
+
+/* Stage color accents */
+.act-stage-item--draft       { border-left: 3px solid #d1d5db; }
+.act-stage-item--draft       .act-stage-item__count .o_field_integer { color: #9ca3af; }
+.act-stage-item--approved    { border-left: 3px solid #3b82f6; }
+.act-stage-item--approved    .act-stage-item__count .o_field_integer { color: #2563eb; }
+.act-stage-item--inprogress  { border-left: 3px solid #0891b2; }
+.act-stage-item--inprogress  .act-stage-item__count .o_field_integer { color: #0891b2; }
+.act-stage-item--handover    { border-left: 3px solid #f59e0b; }
+.act-stage-item--handover    .act-stage-item__count .o_field_integer { color: #d97706; }
+.act-stage-item--inspection  { border-left: 3px solid #7c3aed; }
+.act-stage-item--inspection  .act-stage-item__count .o_field_integer { color: #7c3aed; }
+.act-stage-item--accepted    { border-left: 3px solid #16a34a; }
+.act-stage-item--accepted    .act-stage-item__count .o_field_integer { color: #15803d; }
+.act-stage-item--readyclaim  { border-left: 3px solid #059669; }
+.act-stage-item--readyclaim  .act-stage-item__count .o_field_integer { color: #059669; }
+.act-stage-item--claimed     { border-left: 3px solid #0f766e; }
+.act-stage-item--claimed     .act-stage-item__count .o_field_integer { color: #0f766e; }
+.act-stage-item--closed      { border-left: 3px solid #374151; }
+.act-stage-item--closed      .act-stage-item__count .o_field_integer { color: #374151; }
+.act-stage-item--overdue     { border-left: 3px solid #dc2626; background: #fff5f5; }
+.act-stage-item--overdue     .act-stage-item__count .o_field_integer { color: #dc2626; }
+
+/* ── Quick Actions ──────────────────────────────────────────────────── */
+.act-quick-actions {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #f3f4f6;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.act-quick-actions .btn { border-radius: 8px !important; font-size: 13px; }
+
+/* ==========================================================================
+   CONSTRUCTION SECTION
+   ========================================================================== */
+
+.act-con-summary {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 20px;
+}
+.act-con-summary__item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+.act-con-summary__num .o_field_integer {
+    font-size: 32px !important;
+    font-weight: 800 !important;
+    color: var(--act-construction-primary) !important;
+}
+.act-con-summary__lbl {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.act-dept-chart {
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+}
+.act-dept-chart__title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #4b5563;
+    margin-bottom: 14px;
+}
+
+.act-dept-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.act-dept-row:last-child { margin-bottom: 0; }
+.act-dept-row__name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+    min-width: 100px;
+}
+.act-dept-row__track {
+    flex: 1;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.act-dept-row__fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width .5s ease;
+}
+.act-dept-row__fill--civil      { background: #2563eb; }
+.act-dept-row__fill--structure  { background: #0891b2; }
+.act-dept-row__fill--arch       { background: #7c3aed; }
+.act-dept-row__fill--mechanical { background: #d97706; }
+.act-dept-row__fill--electrical { background: #dc2626; }
+
+.act-dept-row__count .o_field_integer {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #374151 !important;
+    min-width: 24px;
+    text-align: right;
+}
+
+/* ==========================================================================
+   AGRICULTURE SECTION
+   ========================================================================== */
+
+.act-agri-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+@media (max-width: 1100px) {
+    .act-agri-kpi-row { grid-template-columns: repeat(3, 1fr); }
+}
+
+.act-agri-kpi {
+    background: var(--act-agriculture-light);
+    border: 1px solid var(--act-agriculture-mid);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+}
+.act-agri-kpi__icon {
+    font-size: 18px;
+    color: var(--act-agriculture-primary);
+    margin-bottom: 6px;
+    display: block;
+}
+.act-agri-kpi__icon--green  { color: #16a34a; }
+.act-agri-kpi__icon--amber  { color: #d97706; }
+.act-agri-kpi__icon--red    { color: #dc2626; }
+.act-agri-kpi__icon--navy   { color: #1d4ed8; }
+.act-agri-kpi__val {
+    font-size: 20px;
+    font-weight: 800;
+    color: #111827;
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+.act-agri-kpi__val--monetary .o_field_monetary span {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #111827 !important;
+}
+.act-agri-kpi__lbl {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #6b7280;
+}
+
+/* Operation type pills */
+.act-op-breakdown {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+}
+.act-op-breakdown__title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #15803d;
+    margin-bottom: 12px;
+}
+.act-op-breakdown__grid {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.act-op-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+.act-op-pill--planting  { background: #dcfce7; color: #15803d; }
+.act-op-pill--harvest   { background: #d1fae5; color: #065f46; }
+.act-op-pill--irrigation { background: #e0f2fe; color: #0369a1; }
+
+.act-op-pill__count .o_field_integer {
+    font-size: 18px !important;
+    font-weight: 800 !important;
+}
+
+/* Harvest ratio bar */
+.act-harvest-ratio {
+    margin-bottom: 16px;
+}
+.act-harvest-ratio__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 6px;
+}
+.act-harvest-ratio__track {
+    height: 14px;
+    border-radius: 7px;
+    overflow: hidden;
+    display: flex;
+    background: #e5e7eb;
+}
+.act-harvest-ratio__net   { background: #16a34a; }
+.act-harvest-ratio__waste { background: #fca5a5; }
+.act-harvest-ratio__legend {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 11px;
+    color: #6b7280;
+}
+
+/* ==========================================================================
+   MANUFACTURING SECTION
+   ========================================================================== */
+
+.act-mfg-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+}
+@media (max-width: 900px) {
+    .act-mfg-kpi-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+.act-mfg-kpi {
+    background: var(--act-manufacturing-light);
+    border: 1px solid var(--act-manufacturing-mid);
+    border-radius: 10px;
+    padding: 16px 14px;
+    text-align: center;
+}
+.act-mfg-kpi__icon {
+    font-size: 20px;
+    color: var(--act-manufacturing-primary);
+    display: block;
+    margin-bottom: 8px;
+}
+.act-mfg-kpi__icon--blue   { color: #2563eb; }
+.act-mfg-kpi__icon--purple { color: #7c3aed; }
+.act-mfg-kpi__icon--navy   { color: #1d4ed8; }
+
+.act-mfg-kpi__val {
+    font-size: 24px;
+    font-weight: 800;
+    color: #111827;
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+.act-mfg-kpi__val--monetary .o_field_monetary span {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    color: #111827 !important;
+}
+.act-mfg-kpi__lbl {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #6b7280;
+}
+
+/* QC Panel */
+.act-qc-panel {
+    background: #faf5ff;
+    border: 1px solid #c4b5fd;
+    border-radius: 10px;
+    padding: 16px;
+}
+.act-qc-panel__title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #6d28d9;
+    margin-bottom: 14px;
+}
+
+.act-qc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+@media (max-width: 800px) {
+    .act-qc-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.act-qc-card {
+    border-radius: 8px;
+    padding: 14px 10px;
+    text-align: center;
+    border: 1px solid transparent;
+}
+.act-qc-card--pass        { background: #d1fae5; border-color: #6ee7b7; }
+.act-qc-card--fail        { background: #fee2e2; border-color: #fca5a5; }
+.act-qc-card--conditional { background: #fef3c7; border-color: #fde68a; }
+.act-qc-card--pending     { background: #f3f4f6; border-color: #d1d5db; }
+
+.act-qc-card__icon .fa {
+    font-size: 20px;
+    display: block;
+    margin-bottom: 6px;
+}
+.act-qc-card--pass        .act-qc-card__icon .fa { color: #059669; }
+.act-qc-card--fail        .act-qc-card__icon .fa { color: #dc2626; }
+.act-qc-card--conditional .act-qc-card__icon .fa { color: #d97706; }
+.act-qc-card--pending     .act-qc-card__icon .fa { color: #6b7280; }
+
+.act-qc-card__count .o_field_integer {
+    font-size: 28px !important;
+    font-weight: 800 !important;
+    display: block;
+    line-height: 1;
+}
+.act-qc-card--pass        .act-qc-card__count .o_field_integer { color: #065f46 !important; }
+.act-qc-card--fail        .act-qc-card__count .o_field_integer { color: #991b1b !important; }
+.act-qc-card--conditional .act-qc-card__count .o_field_integer { color: #92400e !important; }
+.act-qc-card--pending     .act-qc-card__count .o_field_integer { color: #374151 !important; }
+
+.act-qc-card__label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #6b7280;
+    margin-top: 4px;
+}
+.act-qc-card__pct {
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 4px;
+    color: #065f46;
+}
+
+/* QC pass rate bar */
+.act-qc-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.act-qc-bar-row__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6d28d9;
+    min-width: 100px;
+}
+.act-qc-bar-row__track {
+    flex: 1;
+    height: 8px;
+    background: #ede9fe;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.act-qc-bar-row__fill {
+    height: 100%;
+    background: #7c3aed;
+    border-radius: 4px;
+    transition: width .5s ease;
+    max-width: 100%;
+}
+.act-qc-bar-row__pct {
+    font-size: 13px;
+    font-weight: 700;
+    color: #7c3aed;
+    min-width: 50px;
+    text-align: right;
+}
+
+/* ==========================================================================
+   LIVESTOCK SECTION
+   ========================================================================== */
+
+.act-ls-herd-row,
+.act-ls-prod-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 14px;
+}
+@media (max-width: 900px) {
+    .act-ls-herd-row,
+    .act-ls-prod-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+.act-ls-kpi {
+    background: var(--act-livestock-light);
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+}
+
+.act-ls-kpi--deaths {
+    background: #fff1f2;
+    border-color: #fecdd3;
+}
+.act-ls-kpi--mortality {
+    background: #fff1f2;
+    border-color: #fda4af;
+}
+
+.act-ls-kpi__icon {
+    font-size: 18px;
+    color: var(--act-livestock-primary);
+    display: block;
+    margin-bottom: 6px;
+}
+.act-ls-kpi__icon--green   { color: #16a34a; }
+.act-ls-kpi__icon--red     { color: #dc2626; }
+.act-ls-kpi__icon--rose    { color: #e11d48; }
+.act-ls-kpi__icon--amber   { color: #d97706; }
+.act-ls-kpi__icon--emerald { color: #059669; }
+
+.act-ls-kpi__val {
+    font-size: 22px;
+    font-weight: 800;
+    color: #111827;
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+.act-ls-kpi__lbl {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #6b7280;
+}
+
+/* Cost breakdown panel */
+.act-ls-cost-panel {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 14px;
+}
+.act-ls-cost-panel__title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #92400e;
+    margin-bottom: 14px;
+}
+
+.act-ls-cost-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.act-ls-cost-item {
+    border-radius: 8px;
+    padding: 14px 12px;
+    text-align: center;
+    border: 1px solid transparent;
+}
+.act-ls-cost-item--feed    { background: #fef9c3; border-color: #fde68a; }
+.act-ls-cost-item--medical { background: #fee2e2; border-color: #fca5a5; }
+.act-ls-cost-item--total   { background: #fef3c7; border-color: #fcd34d; }
+
+.act-ls-cost-item .fa {
+    font-size: 18px;
+    margin-bottom: 6px;
+    display: block;
+}
+.act-ls-cost-item--feed    .fa { color: #ca8a04; }
+.act-ls-cost-item--medical .fa { color: #dc2626; }
+.act-ls-cost-item--total   .fa { color: #b45309; }
+
+.act-ls-cost-item__amt .o_field_monetary span {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #111827 !important;
+}
+.act-ls-cost-item__lbl {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+/* Revenue banner */
+.act-ls-revenue-banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(135deg, #78350f, #d97706);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-top: 14px;
+    color: #fff;
+}
+.act-ls-revenue-banner__icon {
+    font-size: 32px;
+    color: #fcd34d;
+    flex-shrink: 0;
+}
+.act-ls-revenue-banner__label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: rgba(255,255,255,.8);
+    margin-bottom: 4px;
+}
+.act-ls-revenue-banner__value .o_field_monetary span {
+    font-size: 26px !important;
+    font-weight: 800 !important;
+    color: #fff !important;
+}

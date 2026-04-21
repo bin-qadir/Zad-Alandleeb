@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_farm_dashboard_user,farm.dashboard user,model_farm_dashboard,smart_farm_base.group_smart_farm_user,1,0,0,0
 access_farm_dashboard_manager,farm.dashboard manager,model_farm_dashboard,smart_farm_base.group_smart_farm_manager,1,1,1,1
+access_farm_activity_dashboard_user,farm.activity.dashboard user,model_farm_activity_dashboard,smart_farm_base.group_smart_farm_user,1,0,0,0
+access_farm_activity_dashboard_manager,farm.activity.dashboard manager,model_farm_activity_dashboard,smart_farm_base.group_smart_farm_manager,1,1,1,1

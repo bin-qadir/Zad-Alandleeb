@@ -37,5 +37,43 @@
             sequence="20"
         />
 
+        <!-- ── Activity Dashboards separator ── -->
+
+        <!-- 3 — Construction Dashboard -->
+        <menuitem
+            id="menu_farm_dashboard_construction"
+            name="Construction"
+            parent="smart_farm_dashboard.menu_executive_hub"
+            action="smart_farm_dashboard.action_open_construction_dashboard"
+            sequence="30"
+        />
+
+        <!-- 4 — Agriculture Dashboard -->
+        <menuitem
+            id="menu_farm_dashboard_agriculture"
+            name="Agriculture"
+            parent="smart_farm_dashboard.menu_executive_hub"
+            action="smart_farm_dashboard.action_open_agriculture_dashboard"
+            sequence="40"
+        />
+
+        <!-- 5 — Manufacturing Dashboard -->
+        <menuitem
+            id="menu_farm_dashboard_manufacturing"
+            name="Manufacturing"
+            parent="smart_farm_dashboard.menu_executive_hub"
+            action="smart_farm_dashboard.action_open_manufacturing_dashboard"
+            sequence="50"
+        />
+
+        <!-- 6 — Livestock Dashboard -->
+        <menuitem
+            id="menu_farm_dashboard_livestock"
+            name="Livestock"
+            parent="smart_farm_dashboard.menu_executive_hub"
+            action="smart_farm_dashboard.action_open_livestock_dashboard"
+            sequence="60"
+        />
+
     </data>
 </odoo>

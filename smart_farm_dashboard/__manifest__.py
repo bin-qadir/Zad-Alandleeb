@@ -27,6 +27,7 @@
         'security/ir.model.access.csv',
         'views/farm_project_health_views.xml',
         'views/farm_dashboard_views.xml',
+        'views/farm_activity_dashboard_views.xml',
         'views/analytics_actions.xml',   # client action must precede menu
         'views/menu.xml',
     ],
@@ -34,6 +35,8 @@
         'web.assets_backend': [
             # Executive PMO cockpit styles
             'smart_farm_dashboard/static/src/css/farm_dashboard.css',
+            # Activity-specific dashboard styles
+            'smart_farm_dashboard/static/src/css/activity_dashboard.css',
             # Analytics dashboard (Owl + Chart.js)
             'smart_farm_dashboard/static/src/css/analytics_dashboard.css',
             'smart_farm_dashboard/static/src/xml/analytics_dashboard.xml',

@@ -1,0 +1,697 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ╔══════════════════════════════════════════════════════════════════════╗
+     ║  FARM ACTIVITY DASHBOARD — Unified Form View                       ║
+     ║  One record per business activity (construction / agriculture /    ║
+     ║  manufacturing / livestock).  All KPIs are non-stored computed.    ║
+     ╚══════════════════════════════════════════════════════════════════════╝ -->
+
+<record id="view_farm_activity_dashboard_form" model="ir.ui.view">
+    <field name="name">farm.activity.dashboard.form</field>
+    <field name="model">farm.activity.dashboard</field>
+    <field name="arch" type="xml">
+        <form string="Activity Dashboard" create="false" delete="false" edit="false">
+            <sheet>
+
+                <!-- ── Activity Header Banner ─────────────────────────── -->
+                <div class="act-dash-header">
+                    <div class="act-dash-header__icon">
+                        <i class="fa fa-tachometer fa-2x"/>
+                    </div>
+                    <div class="act-dash-header__title">
+                        <h2><field name="activity_label" readonly="1"/></h2>
+                        <span class="act-dash-header__sub">Live execution snapshot · auto-computed on open</span>
+                    </div>
+                    <div class="act-dash-header__actions">
+                        <button name="action_refresh" type="object"
+                                class="btn btn-sm btn-light act-dash-refresh">
+                            <i class="fa fa-refresh"/> Refresh
+                        </button>
+                        <button name="action_view_all_jos" type="object"
+                                class="btn btn-sm btn-outline-secondary ms-2">
+                            <i class="fa fa-list"/> All Job Orders
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ── Section 1 — Common KPI Strip (5 cards) ─────────── -->
+                <div class="act-dash-section">
+                    <div class="act-dash-section__title">Portfolio KPIs</div>
+                    <div class="act-kpi-strip">
+
+                        <!-- Card 1 — Total JOs -->
+                        <div class="act-kpi-card act-kpi-card--primary">
+                            <div class="act-kpi-card__icon"><i class="fa fa-briefcase"/></div>
+                            <div class="act-kpi-card__value">
+                                <field name="total_jo_count" readonly="1"/>
+                            </div>
+                            <div class="act-kpi-card__label">Total JOs</div>
+                        </div>
+
+                        <!-- Card 2 — Planned Value -->
+                        <div class="act-kpi-card act-kpi-card--navy">
+                            <div class="act-kpi-card__icon"><i class="fa fa-file-text-o"/></div>
+                            <div class="act-kpi-card__value act-kpi-card__value--monetary">
+                                <field name="total_planned_amount" readonly="1"
+                                       widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </div>
+                            <div class="act-kpi-card__label">Planned Value</div>
+                        </div>
+
+                        <!-- Card 3 — Approved Amount -->
+                        <div class="act-kpi-card act-kpi-card--blue">
+                            <div class="act-kpi-card__icon"><i class="fa fa-check-circle"/></div>
+                            <div class="act-kpi-card__value act-kpi-card__value--monetary">
+                                <field name="total_approved_amount" readonly="1"
+                                       widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </div>
+                            <div class="act-kpi-card__label">Approved Amount</div>
+                            <div class="act-kpi-card__pct">
+                                <field name="approved_pct" readonly="1" widget="progressbar"/>
+                            </div>
+                        </div>
+
+                        <!-- Card 4 — Claimable Amount -->
+                        <div class="act-kpi-card act-kpi-card--emerald">
+                            <div class="act-kpi-card__icon"><i class="fa fa-money"/></div>
+                            <div class="act-kpi-card__value act-kpi-card__value--monetary">
+                                <field name="total_claimable_amount" readonly="1"
+                                       widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </div>
+                            <div class="act-kpi-card__label">Claimable Now</div>
+                        </div>
+
+                        <!-- Card 5 — Claimed Amount -->
+                        <div class="act-kpi-card act-kpi-card--purple">
+                            <div class="act-kpi-card__icon"><i class="fa fa-check-square-o"/></div>
+                            <div class="act-kpi-card__value act-kpi-card__value--monetary">
+                                <field name="total_claimed_amount" readonly="1"
+                                       widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </div>
+                            <div class="act-kpi-card__label">Claimed</div>
+                            <div class="act-kpi-card__pct">
+                                <field name="claim_completion_pct" readonly="1" widget="progressbar"/>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Execution Progress -->
+                    <div class="act-progress-row">
+                        <span class="act-progress-label">Execution Progress</span>
+                        <div class="act-progress-track">
+                            <field name="execution_progress_pct" readonly="1" widget="progressbar"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Section 2 — Stage Distribution ────────────────── -->
+                <div class="act-dash-section">
+                    <div class="act-dash-section__title">Stage Distribution</div>
+                    <div class="act-stage-grid">
+
+                        <div class="act-stage-item act-stage-item--draft">
+                            <div class="act-stage-item__count">
+                                <field name="jo_count_draft" readonly="1"/>
+                            </div>
+                            <div class="act-stage-item__label">Draft</div>
+                        </div>
+
+                        <div class="act-stage-item act-stage-item--approved">
+                            <div class="act-stage-item__count">
+                                <field name="jo_count_approved" readonly="1"/>
+                            </div>
+                            <div class="act-stage-item__label">Approved</div>
+                        </div>
+
+                        <div class="act-stage-item act-stage-item--inprogress">
+                            <div class="act-stage-item__count">
+                                <field name="jo_count_in_progress" readonly="1"/>
+                            </div>
+                            <div class="act-stage-item__label">In Progress</div>
+                            <button name="action_view_in_progress" type="object"
+                                    class="act-stage-item__drill btn btn-link btn-sm p-0"
+                                    invisible="jo_count_in_progress == 0">
+                                <i class="fa fa-arrow-right"/>
+                            </button>
+                        </div>
+
+                        <div class="act-stage-item act-stage-item--handover">
+                            <div class="act-stage-item__count">
+                                <field name="jo_count_handover" readonly="1"/>
+                            </div>
+                            <div class="act-stage-item__label">Handover Req.</div>
+                        </div>
+
+                        <div class="act-stage-item act-stage-item--inspection">
+                            <div class="act-stage-item__count">
+                                <field name="jo_count_under_inspection" readonly="1"/>
+                            </div>
+                            <div class="act-stage-item__label">Inspection</div>
+                            <button name="action_view_under_inspection" type="object"
+                                    class="act-stage-item__drill btn btn-link btn-sm p-0"
+                                    invisible="jo_count_under_inspection == 0">
+                                <i class="fa fa-arrow-right"/>
+                            </button>
+                        </div>
+
+                        <div class="act-stage-item act-stage-item--accepted">
+                            <div class="act-stage-item__count">
+                                <field name="jo_count_accepted" readonly="1"/>
+                            </div>
+                            <div class="act-stage-item__label">Accepted</div>
+                        </div>
+
+                        <div class="act-stage-item act-stage-item--readyclaim">
+                            <div class="act-stage-item__count">
+                                <field name="jo_count_ready_for_claim" readonly="1"/>
+                            </div>
+                            <div class="act-stage-item__label">Ready to Claim</div>
+                            <button name="action_view_ready_for_claim" type="object"
+                                    class="act-stage-item__drill btn btn-link btn-sm p-0"
+                                    invisible="jo_count_ready_for_claim == 0">
+                                <i class="fa fa-arrow-right"/>
+                            </button>
+                        </div>
+
+                        <div class="act-stage-item act-stage-item--claimed">
+                            <div class="act-stage-item__count">
+                                <field name="jo_count_claimed" readonly="1"/>
+                            </div>
+                            <div class="act-stage-item__label">Claimed</div>
+                        </div>
+
+                        <div class="act-stage-item act-stage-item--closed">
+                            <div class="act-stage-item__count">
+                                <field name="jo_count_closed" readonly="1"/>
+                            </div>
+                            <div class="act-stage-item__label">Closed</div>
+                        </div>
+
+                        <div class="act-stage-item act-stage-item--overdue">
+                            <div class="act-stage-item__count">
+                                <field name="overdue_count" readonly="1"/>
+                            </div>
+                            <div class="act-stage-item__label">Overdue</div>
+                            <button name="action_view_overdue" type="object"
+                                    class="act-stage-item__drill btn btn-link btn-sm p-0"
+                                    invisible="overdue_count == 0">
+                                <i class="fa fa-arrow-right"/>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════
+                     CONSTRUCTION-SPECIFIC SECTION
+                     ══════════════════════════════════════════════════════ -->
+                <div class="act-dash-section act-dash-section--construction"
+                     invisible="business_activity != 'construction'">
+                    <div class="act-dash-section__title">
+                        <i class="fa fa-building me-2"/>Construction Breakdown
+                    </div>
+
+                    <!-- Summary row -->
+                    <div class="act-con-summary">
+                        <div class="act-con-summary__item">
+                            <span class="act-con-summary__num">
+                                <field name="con_total_items" readonly="1"/>
+                            </span>
+                            <span class="act-con-summary__lbl">Total BOQ Items</span>
+                        </div>
+                    </div>
+
+                    <!-- Department breakdown — count pills -->
+                    <div class="act-dept-chart">
+                        <div class="act-dept-chart__title">Job Orders by Department</div>
+                        <div class="act-dept-pills">
+
+                            <div class="act-dept-pill act-dept-pill--civil">
+                                <i class="fa fa-building-o"/>
+                                <span class="act-dept-pill__count">
+                                    <field name="con_dept_civil" readonly="1"/>
+                                </span>
+                                <span class="act-dept-pill__name">Civil</span>
+                            </div>
+
+                            <div class="act-dept-pill act-dept-pill--structure">
+                                <i class="fa fa-th-large"/>
+                                <span class="act-dept-pill__count">
+                                    <field name="con_dept_structure" readonly="1"/>
+                                </span>
+                                <span class="act-dept-pill__name">Structure</span>
+                            </div>
+
+                            <div class="act-dept-pill act-dept-pill--arch">
+                                <i class="fa fa-home"/>
+                                <span class="act-dept-pill__count">
+                                    <field name="con_dept_arch" readonly="1"/>
+                                </span>
+                                <span class="act-dept-pill__name">Architectural</span>
+                            </div>
+
+                            <div class="act-dept-pill act-dept-pill--mechanical">
+                                <i class="fa fa-cog"/>
+                                <span class="act-dept-pill__count">
+                                    <field name="con_dept_mechanical" readonly="1"/>
+                                </span>
+                                <span class="act-dept-pill__name">Mechanical</span>
+                            </div>
+
+                            <div class="act-dept-pill act-dept-pill--electrical">
+                                <i class="fa fa-bolt"/>
+                                <span class="act-dept-pill__count">
+                                    <field name="con_dept_electrical" readonly="1"/>
+                                </span>
+                                <span class="act-dept-pill__name">Electrical</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="act-quick-actions">
+                        <button name="action_view_claimable" type="object"
+                                class="btn btn-success btn-sm">
+                            <i class="fa fa-money me-1"/>View Claimable
+                        </button>
+                        <button name="action_view_overdue" type="object"
+                                class="btn btn-danger btn-sm ms-2">
+                            <i class="fa fa-exclamation-triangle me-1"/>View Overdue
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════
+                     AGRICULTURE-SPECIFIC SECTION
+                     ══════════════════════════════════════════════════════ -->
+                <div class="act-dash-section act-dash-section--agriculture"
+                     invisible="business_activity != 'agriculture'">
+                    <div class="act-dash-section__title">
+                        <i class="fa fa-leaf me-2"/>Agriculture Harvest Analytics
+                    </div>
+
+                    <div class="act-agri-kpi-row">
+
+                        <div class="act-agri-kpi">
+                            <i class="fa fa-tint act-agri-kpi__icon"/>
+                            <div class="act-agri-kpi__val">
+                                <field name="agri_total_harvest_qty" readonly="1"/> t
+                            </div>
+                            <div class="act-agri-kpi__lbl">Total Harvest</div>
+                        </div>
+
+                        <div class="act-agri-kpi">
+                            <i class="fa fa-check-circle act-agri-kpi__icon act-agri-kpi__icon--green"/>
+                            <div class="act-agri-kpi__val">
+                                <field name="agri_total_net_harvest_qty" readonly="1"/> t
+                            </div>
+                            <div class="act-agri-kpi__lbl">Net Harvest</div>
+                        </div>
+
+                        <div class="act-agri-kpi">
+                            <i class="fa fa-trash act-agri-kpi__icon act-agri-kpi__icon--amber"/>
+                            <div class="act-agri-kpi__val">
+                                <field name="agri_total_waste_qty" readonly="1"/> t
+                            </div>
+                            <div class="act-agri-kpi__lbl">Waste Qty</div>
+                        </div>
+
+                        <div class="act-agri-kpi">
+                            <i class="fa fa-percent act-agri-kpi__icon act-agri-kpi__icon--red"/>
+                            <div class="act-agri-kpi__val">
+                                <field name="agri_waste_pct" readonly="1"/>%
+                            </div>
+                            <div class="act-agri-kpi__lbl">Waste %</div>
+                        </div>
+
+                        <div class="act-agri-kpi">
+                            <i class="fa fa-usd act-agri-kpi__icon act-agri-kpi__icon--navy"/>
+                            <div class="act-agri-kpi__val act-agri-kpi__val--monetary">
+                                <field name="agri_total_input_cost" readonly="1"
+                                       widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </div>
+                            <div class="act-agri-kpi__lbl">Total Input Cost</div>
+                        </div>
+
+                        <div class="act-agri-kpi">
+                            <i class="fa fa-thumbs-up act-agri-kpi__icon act-agri-kpi__icon--green"/>
+                            <div class="act-agri-kpi__val">
+                                <field name="agri_harvest_approved_pct" readonly="1"/>%
+                            </div>
+                            <div class="act-agri-kpi__lbl">Harvest Approved %</div>
+                        </div>
+
+                    </div>
+
+                    <!-- Harvest Approved progress -->
+                    <div class="act-progress-row">
+                        <span class="act-progress-label">Harvest Approved %</span>
+                        <div class="act-progress-track act-progress-track--green">
+                            <field name="agri_harvest_approved_pct" readonly="1" widget="progressbar"/>
+                        </div>
+                    </div>
+
+                    <!-- Operation type breakdown -->
+                    <div class="act-op-breakdown">
+                        <div class="act-op-breakdown__title">Operations by Type</div>
+                        <div class="act-op-breakdown__grid">
+                            <div class="act-op-pill act-op-pill--planting">
+                                <i class="fa fa-leaf"/>
+                                <span class="act-op-pill__count">
+                                    <field name="agri_count_planting" readonly="1"/>
+                                </span>
+                                <span class="act-op-pill__lbl">Planting</span>
+                            </div>
+                            <div class="act-op-pill act-op-pill--harvest">
+                                <i class="fa fa-leaf"/>
+                                <span class="act-op-pill__count">
+                                    <field name="agri_count_harvest" readonly="1"/>
+                                </span>
+                                <span class="act-op-pill__lbl">Harvest</span>
+                            </div>
+                            <div class="act-op-pill act-op-pill--irrigation">
+                                <i class="fa fa-tint"/>
+                                <span class="act-op-pill__count">
+                                    <field name="agri_count_irrigation" readonly="1"/>
+                                </span>
+                                <span class="act-op-pill__lbl">Irrigation</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="act-quick-actions">
+                        <button name="action_view_claimable" type="object"
+                                class="btn btn-success btn-sm">
+                            <i class="fa fa-money me-1"/>View Claimable
+                        </button>
+                        <button name="action_view_overdue" type="object"
+                                class="btn btn-warning btn-sm ms-2">
+                            <i class="fa fa-exclamation-triangle me-1"/>View Overdue
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════
+                     MANUFACTURING-SPECIFIC SECTION
+                     ══════════════════════════════════════════════════════ -->
+                <div class="act-dash-section act-dash-section--manufacturing"
+                     invisible="business_activity != 'manufacturing'">
+                    <div class="act-dash-section__title">
+                        <i class="fa fa-industry me-2"/>Manufacturing &amp; QC Analytics
+                    </div>
+
+                    <div class="act-mfg-kpi-row">
+
+                        <div class="act-mfg-kpi">
+                            <i class="fa fa-cube act-mfg-kpi__icon"/>
+                            <div class="act-mfg-kpi__val">
+                                <field name="mfg_total_packed_qty" readonly="1"/>
+                            </div>
+                            <div class="act-mfg-kpi__lbl">Total Packed Qty</div>
+                        </div>
+
+                        <div class="act-mfg-kpi">
+                            <i class="fa fa-cogs act-mfg-kpi__icon act-mfg-kpi__icon--blue"/>
+                            <div class="act-mfg-kpi__val">
+                                <field name="mfg_total_executed_qty" readonly="1"/>
+                            </div>
+                            <div class="act-mfg-kpi__lbl">Executed Qty</div>
+                        </div>
+
+                        <div class="act-mfg-kpi">
+                            <i class="fa fa-tachometer act-mfg-kpi__icon act-mfg-kpi__icon--purple"/>
+                            <div class="act-mfg-kpi__val">
+                                <field name="mfg_efficiency_pct" readonly="1"/>%
+                            </div>
+                            <div class="act-mfg-kpi__lbl">Efficiency (Approved/Packed)</div>
+                        </div>
+
+                        <div class="act-mfg-kpi">
+                            <i class="fa fa-usd act-mfg-kpi__icon act-mfg-kpi__icon--navy"/>
+                            <div class="act-mfg-kpi__val act-mfg-kpi__val--monetary">
+                                <field name="mfg_total_actual_cost" readonly="1"
+                                       widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </div>
+                            <div class="act-mfg-kpi__lbl">Total Actual Cost</div>
+                        </div>
+
+                    </div>
+
+                    <!-- QC Result breakdown -->
+                    <div class="act-qc-panel">
+                        <div class="act-qc-panel__title">QC Result Distribution</div>
+                        <div class="act-qc-grid">
+
+                            <div class="act-qc-card act-qc-card--pass">
+                                <div class="act-qc-card__icon"><i class="fa fa-check-circle"/></div>
+                                <div class="act-qc-card__count">
+                                    <field name="mfg_qc_pass_count" readonly="1"/>
+                                </div>
+                                <div class="act-qc-card__label">Passed</div>
+                            </div>
+
+                            <div class="act-qc-card act-qc-card--fail">
+                                <div class="act-qc-card__icon"><i class="fa fa-times-circle"/></div>
+                                <div class="act-qc-card__count">
+                                    <field name="mfg_qc_fail_count" readonly="1"/>
+                                </div>
+                                <div class="act-qc-card__label">Failed</div>
+                            </div>
+
+                            <div class="act-qc-card act-qc-card--conditional">
+                                <div class="act-qc-card__icon"><i class="fa fa-exclamation-circle"/></div>
+                                <div class="act-qc-card__count">
+                                    <field name="mfg_qc_conditional_count" readonly="1"/>
+                                </div>
+                                <div class="act-qc-card__label">Conditional</div>
+                            </div>
+
+                            <div class="act-qc-card act-qc-card--pending">
+                                <div class="act-qc-card__icon"><i class="fa fa-clock-o"/></div>
+                                <div class="act-qc-card__count">
+                                    <field name="mfg_qc_pending_count" readonly="1"/>
+                                </div>
+                                <div class="act-qc-card__label">Pending</div>
+                            </div>
+
+                        </div>
+
+                        <!-- QC pass rate progress -->
+                        <div class="act-progress-row">
+                            <span class="act-progress-label">QC Pass Rate</span>
+                            <div class="act-progress-track act-progress-track--purple">
+                                <field name="mfg_qc_pass_pct" readonly="1" widget="progressbar"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="act-quick-actions">
+                        <button name="action_view_claimable" type="object"
+                                class="btn btn-success btn-sm">
+                            <i class="fa fa-money me-1"/>View Claimable
+                        </button>
+                        <button name="action_view_overdue" type="object"
+                                class="btn btn-danger btn-sm ms-2">
+                            <i class="fa fa-exclamation-triangle me-1"/>View Overdue
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════
+                     LIVESTOCK-SPECIFIC SECTION
+                     ══════════════════════════════════════════════════════ -->
+                <div class="act-dash-section act-dash-section--livestock"
+                     invisible="business_activity != 'livestock'">
+                    <div class="act-dash-section__title">
+                        <i class="fa fa-paw me-2"/>Livestock Herd Analytics
+                    </div>
+
+                    <!-- Herd composition row -->
+                    <div class="act-ls-herd-row">
+
+                        <div class="act-ls-kpi act-ls-kpi--count">
+                            <i class="fa fa-paw act-ls-kpi__icon"/>
+                            <div class="act-ls-kpi__val">
+                                <field name="ls_total_animal_count" readonly="1"/>
+                            </div>
+                            <div class="act-ls-kpi__lbl">Total Head Count</div>
+                        </div>
+
+                        <div class="act-ls-kpi act-ls-kpi--births">
+                            <i class="fa fa-plus-circle act-ls-kpi__icon act-ls-kpi__icon--green"/>
+                            <div class="act-ls-kpi__val">
+                                <field name="ls_total_births" readonly="1"/>
+                            </div>
+                            <div class="act-ls-kpi__lbl">Births</div>
+                        </div>
+
+                        <div class="act-ls-kpi act-ls-kpi--deaths">
+                            <i class="fa fa-minus-circle act-ls-kpi__icon act-ls-kpi__icon--red"/>
+                            <div class="act-ls-kpi__val">
+                                <field name="ls_total_deaths" readonly="1"/>
+                            </div>
+                            <div class="act-ls-kpi__lbl">Deaths</div>
+                        </div>
+
+                        <div class="act-ls-kpi act-ls-kpi--mortality">
+                            <i class="fa fa-heartbeat act-ls-kpi__icon act-ls-kpi__icon--rose"/>
+                            <div class="act-ls-kpi__val">
+                                <field name="ls_mortality_pct" readonly="1"/>%
+                            </div>
+                            <div class="act-ls-kpi__lbl">Mortality Rate</div>
+                        </div>
+
+                    </div>
+
+                    <!-- Weight and production row -->
+                    <div class="act-ls-prod-row">
+
+                        <div class="act-ls-kpi">
+                            <i class="fa fa-balance-scale act-ls-kpi__icon act-ls-kpi__icon--amber"/>
+                            <div class="act-ls-kpi__val">
+                                <field name="ls_avg_live_weight" readonly="1"/> kg
+                            </div>
+                            <div class="act-ls-kpi__lbl">Avg Live Weight</div>
+                        </div>
+
+                        <div class="act-ls-kpi">
+                            <i class="fa fa-line-chart act-ls-kpi__icon act-ls-kpi__icon--amber"/>
+                            <div class="act-ls-kpi__val">
+                                <field name="ls_fattening_pct" readonly="1"/>%
+                            </div>
+                            <div class="act-ls-kpi__lbl">Fattening Progress</div>
+                        </div>
+
+                        <div class="act-ls-kpi">
+                            <i class="fa fa-shopping-cart act-ls-kpi__icon act-ls-kpi__icon--emerald"/>
+                            <div class="act-ls-kpi__val">
+                                <field name="ls_total_approved_sale_qty" readonly="1"/>
+                            </div>
+                            <div class="act-ls-kpi__lbl">Approved Sale (head)</div>
+                        </div>
+
+                        <div class="act-ls-kpi">
+                            <i class="fa fa-check-square act-ls-kpi__icon act-ls-kpi__icon--emerald"/>
+                            <div class="act-ls-kpi__val">
+                                <field name="ls_ready_for_sale_count" readonly="1"/>
+                            </div>
+                            <div class="act-ls-kpi__lbl">Ready for Sale</div>
+                        </div>
+
+                    </div>
+
+                    <!-- Fattening progress bar -->
+                    <div class="act-progress-row">
+                        <span class="act-progress-label">Fattening Progress (Avg/Target)</span>
+                        <div class="act-progress-track act-progress-track--amber">
+                            <field name="ls_fattening_pct" readonly="1" widget="progressbar"/>
+                        </div>
+                    </div>
+
+                    <!-- Cost breakdown -->
+                    <div class="act-ls-cost-panel">
+                        <div class="act-ls-cost-panel__title">Operating Cost Breakdown</div>
+                        <div class="act-ls-cost-row">
+                            <div class="act-ls-cost-item act-ls-cost-item--feed">
+                                <i class="fa fa-cutlery"/>
+                                <div class="act-ls-cost-item__amt">
+                                    <field name="ls_total_feed_cost" readonly="1"
+                                           widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </div>
+                                <div class="act-ls-cost-item__lbl">Feed Cost</div>
+                            </div>
+                            <div class="act-ls-cost-item act-ls-cost-item--medical">
+                                <i class="fa fa-medkit"/>
+                                <div class="act-ls-cost-item__amt">
+                                    <field name="ls_total_medical_cost" readonly="1"
+                                           widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </div>
+                                <div class="act-ls-cost-item__lbl">Medical / Vet</div>
+                            </div>
+                            <div class="act-ls-cost-item act-ls-cost-item--total">
+                                <i class="fa fa-calculator"/>
+                                <div class="act-ls-cost-item__amt">
+                                    <field name="ls_total_operating_cost" readonly="1"
+                                           widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </div>
+                                <div class="act-ls-cost-item__lbl">Total Operating</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Revenue banner -->
+                    <div class="act-ls-revenue-banner">
+                        <i class="fa fa-trophy act-ls-revenue-banner__icon"/>
+                        <div class="act-ls-revenue-banner__content">
+                            <div class="act-ls-revenue-banner__label">Expected Revenue (Approved Sales)</div>
+                            <div class="act-ls-revenue-banner__value">
+                                <field name="ls_expected_revenue" readonly="1"
+                                       widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="act-quick-actions">
+                        <button name="action_view_claimable" type="object"
+                                class="btn btn-success btn-sm">
+                            <i class="fa fa-money me-1"/>View Claimable
+                        </button>
+                        <button name="action_view_overdue" type="object"
+                                class="btn btn-warning btn-sm ms-2">
+                            <i class="fa fa-exclamation-triangle me-1"/>View Overdue
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hidden technical fields -->
+                <field name="business_activity" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="activity_icon" invisible="1"/>
+                <field name="activity_theme" invisible="1"/>
+
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     ir.actions.server — 4 activity opener server actions
+     ════════════════════════════════════════════════════════════════════ -->
+
+<record id="action_open_construction_dashboard" model="ir.actions.server">
+    <field name="name">Construction Dashboard</field>
+    <field name="model_id" ref="model_farm_activity_dashboard"/>
+    <field name="binding_model_id" ref="model_farm_activity_dashboard"/>
+    <field name="state">code</field>
+    <field name="code">action = model.action_open_construction()</field>
+</record>
+
+<record id="action_open_agriculture_dashboard" model="ir.actions.server">
+    <field name="name">Agriculture Dashboard</field>
+    <field name="model_id" ref="model_farm_activity_dashboard"/>
+    <field name="binding_model_id" ref="model_farm_activity_dashboard"/>
+    <field name="state">code</field>
+    <field name="code">action = model.action_open_agriculture()</field>
+</record>
+
+<record id="action_open_manufacturing_dashboard" model="ir.actions.server">
+    <field name="name">Manufacturing Dashboard</field>
+    <field name="model_id" ref="model_farm_activity_dashboard"/>
+    <field name="binding_model_id" ref="model_farm_activity_dashboard"/>
+    <field name="state">code</field>
+    <field name="code">action = model.action_open_manufacturing()</field>
+</record>
+
+<record id="action_open_livestock_dashboard" model="ir.actions.server">
+    <field name="name">Livestock Dashboard</field>
+    <field name="model_id" ref="model_farm_activity_dashboard"/>
+    <field name="binding_model_id" ref="model_farm_activity_dashboard"/>
+    <field name="state">code</field>
+    <field name="code">action = model.action_open_livestock()</field>
+</record>
+
+</data>
+</odoo>
