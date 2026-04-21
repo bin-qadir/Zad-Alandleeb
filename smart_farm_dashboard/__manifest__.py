@@ -28,6 +28,9 @@
         'views/farm_project_health_views.xml',
         'views/farm_dashboard_views.xml',
         'views/farm_activity_dashboard_views.xml',
+        'views/farm_civil_dashboard_views.xml',
+        'views/farm_construction_projects_dashboard_views.xml',
+        'views/farm_construction_project_dashboard_views.xml',
         'views/analytics_actions.xml',   # client action must precede menu
         'views/menu.xml',
     ],

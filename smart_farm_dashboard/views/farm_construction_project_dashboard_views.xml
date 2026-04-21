@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- Level 2: Construction Project Dashboard
+     One record per construction project.
+     Shows project-specific KPIs, stage distribution, and
+     department cards that link to Level 3 dashboards. -->
+
+<record id="view_farm_construction_project_dashboard_form" model="ir.ui.view">
+    <field name="name">farm.construction.project.dashboard.form</field>
+    <field name="model">farm.construction.project.dashboard</field>
+    <field name="arch" type="xml">
+        <form string="Construction Project Dashboard" create="0" delete="0" edit="0">
+            <sheet>
+
+                <!-- ── Header banner ──────────────────────────────────────── -->
+                <div class="cpjd-header">
+
+                    <!-- Back to portfolio -->
+                    <button name="action_back_to_portfolio" type="object"
+                            class="cpjd-header__back" title="Back to Portfolio">
+                        <i class="fa fa-arrow-left me-1"/>Portfolio
+                    </button>
+
+                    <div class="cpjd-header__centre">
+                        <div class="cpjd-header__icon-wrap">
+                            <i class="fa fa-building"/>
+                        </div>
+                        <div>
+                            <div class="cpjd-header__title">
+                                <field name="project_id" readonly="1" nolabel="1"
+                                       options="{'no_open': True}"/>
+                            </div>
+                            <div class="cpjd-header__sub">Construction Project Dashboard</div>
+                        </div>
+                    </div>
+
+                    <div class="cpjd-header__right">
+                        <button name="action_view_all_jos" type="object"
+                                class="cpjd-header__btn-jo" title="View All Job Orders">
+                            <i class="fa fa-list me-1"/>All JOs
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ── KPI cards strip ────────────────────────────────────── -->
+                <div class="cpjd-kpi-strip">
+
+                    <!-- Contract Value -->
+                    <div class="cpjd-kpi cpjd-kpi--contract">
+                        <div class="cpjd-kpi__icon"><i class="fa fa-file-text-o"/></div>
+                        <div class="cpjd-kpi__val">
+                            <field name="contract_value" readonly="1" widget="monetary"/>
+                        </div>
+                        <div class="cpjd-kpi__lbl">Contract Value</div>
+                    </div>
+
+                    <!-- Total JOs -->
+                    <div class="cpjd-kpi cpjd-kpi--total">
+                        <button name="action_view_all_jos" type="object"
+                                class="sf-card-btn--light" title="View All JOs"/>
+                        <div class="cpjd-kpi__icon"><i class="fa fa-briefcase"/></div>
+                        <div class="cpjd-kpi__val">
+                            <field name="total_jos" readonly="1"/>
+                        </div>
+                        <div class="cpjd-kpi__lbl">Total JOs</div>
+                    </div>
+
+                    <!-- Approved -->
+                    <div class="cpjd-kpi cpjd-kpi--approved">
+                        <div class="cpjd-kpi__icon"><i class="fa fa-check-circle"/></div>
+                        <div class="cpjd-kpi__val">
+                            <field name="approved_amount" readonly="1" widget="monetary"/>
+                        </div>
+                        <div class="cpjd-kpi__lbl">Approved</div>
+                    </div>
+
+                    <!-- Claimable -->
+                    <div class="cpjd-kpi cpjd-kpi--claimable">
+                        <div class="cpjd-kpi__icon"><i class="fa fa-flag"/></div>
+                        <div class="cpjd-kpi__val">
+                            <field name="claimable_amount" readonly="1" widget="monetary"/>
+                        </div>
+                        <div class="cpjd-kpi__lbl">Claimable</div>
+                    </div>
+
+                    <!-- Claimed -->
+                    <div class="cpjd-kpi cpjd-kpi--claimed">
+                        <div class="cpjd-kpi__icon"><i class="fa fa-money"/></div>
+                        <div class="cpjd-kpi__val">
+                            <field name="claimed_amount" readonly="1" widget="monetary"/>
+                        </div>
+                        <div class="cpjd-kpi__lbl">Claimed</div>
+                    </div>
+
+                    <!-- Overdue -->
+                    <div class="cpjd-kpi cpjd-kpi--overdue">
+                        <button name="action_view_overdue" type="object"
+                                class="sf-card-btn--light" title="View Overdue JOs"/>
+                        <div class="cpjd-kpi__icon"><i class="fa fa-clock-o"/></div>
+                        <div class="cpjd-kpi__val">
+                            <field name="overdue_count" readonly="1"/>
+                        </div>
+                        <div class="cpjd-kpi__lbl">Overdue</div>
+                    </div>
+
+                </div>
+
+                <!-- ── Stage distribution ─────────────────────────────────── -->
+                <div class="cpjd-section">
+                    <div class="cpjd-section__title">
+                        <i class="fa fa-tasks me-2"/>Stage Distribution
+                    </div>
+                    <div class="cpjd-stage-grid">
+
+                        <div class="cpjd-stage cpjd-stage--draft">
+                            <div class="cpjd-stage__num">
+                                <field name="jo_count_draft" readonly="1"/>
+                            </div>
+                            <div class="cpjd-stage__lbl">Draft</div>
+                        </div>
+
+                        <div class="cpjd-stage cpjd-stage--approved">
+                            <div class="cpjd-stage__num">
+                                <field name="jo_count_approved" readonly="1"/>
+                            </div>
+                            <div class="cpjd-stage__lbl">Approved</div>
+                        </div>
+
+                        <div class="cpjd-stage cpjd-stage--inprogress">
+                            <div class="cpjd-stage__num">
+                                <field name="jo_count_in_progress" readonly="1"/>
+                            </div>
+                            <div class="cpjd-stage__lbl">In Progress</div>
+                        </div>
+
+                        <div class="cpjd-stage cpjd-stage--handover">
+                            <div class="cpjd-stage__num">
+                                <field name="jo_count_handover" readonly="1"/>
+                            </div>
+                            <div class="cpjd-stage__lbl">Handover</div>
+                        </div>
+
+                        <div class="cpjd-stage cpjd-stage--inspection">
+                            <div class="cpjd-stage__num">
+                                <field name="jo_count_inspection" readonly="1"/>
+                            </div>
+                            <div class="cpjd-stage__lbl">Inspection</div>
+                        </div>
+
+                        <div class="cpjd-stage cpjd-stage--accepted">
+                            <div class="cpjd-stage__num">
+                                <field name="jo_count_accepted" readonly="1"/>
+                            </div>
+                            <div class="cpjd-stage__lbl">Accepted</div>
+                        </div>
+
+                        <div class="cpjd-stage cpjd-stage--readyclaim">
+                            <div class="cpjd-stage__num">
+                                <field name="jo_count_ready_claim" readonly="1"/>
+                            </div>
+                            <div class="cpjd-stage__lbl">Ready Claim</div>
+                        </div>
+
+                        <div class="cpjd-stage cpjd-stage--claimed">
+                            <div class="cpjd-stage__num">
+                                <field name="jo_count_claimed" readonly="1"/>
+                            </div>
+                            <div class="cpjd-stage__lbl">Claimed</div>
+                        </div>
+
+                        <div class="cpjd-stage cpjd-stage--closed">
+                            <div class="cpjd-stage__num">
+                                <field name="jo_count_closed" readonly="1"/>
+                            </div>
+                            <div class="cpjd-stage__lbl">Closed</div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- ── Department cards (Level 2 → Level 3) ──────────────── -->
+                <div class="cpjd-section">
+                    <div class="cpjd-section__title">
+                        <i class="fa fa-sitemap me-2"/>Departments — click to drill down
+                    </div>
+                    <div class="cpjd-dept-grid">
+
+                        <!-- Civil — opens Level 3 Civil Dashboard (project-filtered) -->
+                        <div class="cpjd-dept-card cpjd-dept-card--civil">
+                            <button name="action_open_civil" type="object"
+                                    class="sf-card-btn--light" title="Open Civil Division Dashboard"/>
+                            <div class="cpjd-dept-card__icon"><i class="fa fa-hard-hat"/></div>
+                            <div class="cpjd-dept-card__count">
+                                <field name="dept_civil" readonly="1"/>
+                            </div>
+                            <div class="cpjd-dept-card__name">Civil</div>
+                            <div class="cpjd-dept-card__badge">Subdivision view</div>
+                        </div>
+
+                        <!-- Structure -->
+                        <div class="cpjd-dept-card cpjd-dept-card--structure">
+                            <button name="action_open_structure" type="object"
+                                    class="sf-card-btn--light" title="View Structure JOs"/>
+                            <div class="cpjd-dept-card__icon"><i class="fa fa-columns"/></div>
+                            <div class="cpjd-dept-card__count">
+                                <field name="dept_structure" readonly="1"/>
+                            </div>
+                            <div class="cpjd-dept-card__name">Structure</div>
+                            <div class="cpjd-dept-card__badge">Job orders</div>
+                        </div>
+
+                        <!-- Architectural -->
+                        <div class="cpjd-dept-card cpjd-dept-card--arch">
+                            <button name="action_open_arch" type="object"
+                                    class="sf-card-btn--light" title="View Architectural JOs"/>
+                            <div class="cpjd-dept-card__icon"><i class="fa fa-pencil-square-o"/></div>
+                            <div class="cpjd-dept-card__count">
+                                <field name="dept_arch" readonly="1"/>
+                            </div>
+                            <div class="cpjd-dept-card__name">Architectural</div>
+                            <div class="cpjd-dept-card__badge">Job orders</div>
+                        </div>
+
+                        <!-- Mechanical -->
+                        <div class="cpjd-dept-card cpjd-dept-card--mechanical">
+                            <button name="action_open_mechanical" type="object"
+                                    class="sf-card-btn--light" title="View Mechanical JOs"/>
+                            <div class="cpjd-dept-card__icon"><i class="fa fa-cog"/></div>
+                            <div class="cpjd-dept-card__count">
+                                <field name="dept_mechanical" readonly="1"/>
+                            </div>
+                            <div class="cpjd-dept-card__name">Mechanical</div>
+                            <div class="cpjd-dept-card__badge">Job orders</div>
+                        </div>
+
+                        <!-- Electrical -->
+                        <div class="cpjd-dept-card cpjd-dept-card--electrical">
+                            <button name="action_open_electrical" type="object"
+                                    class="sf-card-btn--light" title="View Electrical JOs"/>
+                            <div class="cpjd-dept-card__icon"><i class="fa fa-bolt"/></div>
+                            <div class="cpjd-dept-card__count">
+                                <field name="dept_electrical" readonly="1"/>
+                            </div>
+                            <div class="cpjd-dept-card__name">Electrical</div>
+                            <div class="cpjd-dept-card__badge">Job orders</div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </sheet>
+        </form>
+    </field>
+</record>
+
+</data>
+</odoo>

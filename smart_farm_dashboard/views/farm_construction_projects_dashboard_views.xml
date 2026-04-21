@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     CONSTRUCTION PROJECTS DASHBOARD  —  farm.construction.projects.dashboard
+     Level 1 : Top KPI cards  +  Level 2 : Project cards kanban grid
+     ════════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_farm_construction_projects_dashboard_form" model="ir.ui.view">
+    <field name="name">farm.construction.projects.dashboard.form</field>
+    <field name="model">farm.construction.projects.dashboard</field>
+    <field name="arch" type="xml">
+        <form string="Construction Projects Dashboard" create="0" delete="0" edit="0">
+            <sheet>
+
+                <!-- ── Header banner ──────────────────────────────────── -->
+                <div class="cpd-header">
+                    <div class="cpd-header__left">
+                        <div class="cpd-header__icon-wrap">
+                            <i class="fa fa-building"/>
+                        </div>
+                        <div>
+                            <div class="cpd-header__title">Construction Projects</div>
+                            <div class="cpd-header__sub">Portfolio Overview — All Construction Projects</div>
+                        </div>
+                    </div>
+                    <div class="cpd-header__actions">
+                        <button name="action_open_execution_dashboard" type="object"
+                                class="cpd-header__btn-exec" title="Open Execution Dashboard">
+                            <i class="fa fa-tachometer me-1"/>Execution View
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ── KPI cards strip ────────────────────────────────── -->
+                <div class="cpd-kpi-strip">
+
+                    <!-- Total Projects -->
+                    <div class="cpd-kpi-card cpd-kpi-card--primary">
+                        <button name="action_view_all_projects" type="object"
+                                class="sf-card-btn--light" title="View All Construction Projects"/>
+                        <div class="cpd-kpi-card__icon"><i class="fa fa-folder-open"/></div>
+                        <div class="cpd-kpi-card__val">
+                            <field name="total_projects" readonly="1"/>
+                        </div>
+                        <div class="cpd-kpi-card__lbl">Total Projects</div>
+                    </div>
+
+                    <!-- Contract Value -->
+                    <div class="cpd-kpi-card cpd-kpi-card--contract">
+                        <button name="action_view_all_projects" type="object"
+                                class="sf-card-btn--light" title="View All Construction Projects"/>
+                        <div class="cpd-kpi-card__icon"><i class="fa fa-file-text-o"/></div>
+                        <div class="cpd-kpi-card__val cpd-kpi-card__val--monetary">
+                            <field name="total_contract_value" readonly="1" widget="monetary"/>
+                        </div>
+                        <div class="cpd-kpi-card__lbl">Contract Value</div>
+                    </div>
+
+                    <!-- Approved Amount -->
+                    <div class="cpd-kpi-card cpd-kpi-card--approved">
+                        <button name="action_view_approved_jos" type="object"
+                                class="sf-card-btn--light" title="View Approved JOs"/>
+                        <div class="cpd-kpi-card__icon"><i class="fa fa-check-circle"/></div>
+                        <div class="cpd-kpi-card__val cpd-kpi-card__val--monetary">
+                            <field name="total_approved_amount" readonly="1" widget="monetary"/>
+                        </div>
+                        <div class="cpd-kpi-card__lbl">Approved Amount</div>
+                    </div>
+
+                    <!-- Claimable Amount -->
+                    <div class="cpd-kpi-card cpd-kpi-card--claimable">
+                        <button name="action_view_claimable_jos" type="object"
+                                class="sf-card-btn--light" title="View Claimable JOs"/>
+                        <div class="cpd-kpi-card__icon"><i class="fa fa-flag"/></div>
+                        <div class="cpd-kpi-card__val cpd-kpi-card__val--monetary">
+                            <field name="total_claimable_amount" readonly="1" widget="monetary"/>
+                        </div>
+                        <div class="cpd-kpi-card__lbl">Claimable Amount</div>
+                    </div>
+
+                    <!-- Claimed Amount -->
+                    <div class="cpd-kpi-card cpd-kpi-card--claimed">
+                        <button name="action_view_claimed_jos" type="object"
+                                class="sf-card-btn--light" title="View Claimed JOs"/>
+                        <div class="cpd-kpi-card__icon"><i class="fa fa-money"/></div>
+                        <div class="cpd-kpi-card__val cpd-kpi-card__val--monetary">
+                            <field name="total_claimed_amount" readonly="1" widget="monetary"/>
+                        </div>
+                        <div class="cpd-kpi-card__lbl">Claimed Amount</div>
+                    </div>
+
+                    <!-- Over Budget -->
+                    <div class="cpd-kpi-card cpd-kpi-card--overbudget">
+                        <button name="action_view_over_budget" type="object"
+                                class="sf-card-btn--light" title="View Over-Budget Projects"/>
+                        <div class="cpd-kpi-card__icon"><i class="fa fa-exclamation-triangle"/></div>
+                        <div class="cpd-kpi-card__val">
+                            <field name="over_budget_count" readonly="1"/>
+                        </div>
+                        <div class="cpd-kpi-card__lbl">Over Budget</div>
+                    </div>
+
+                    <!-- Delayed -->
+                    <div class="cpd-kpi-card cpd-kpi-card--delayed">
+                        <button name="action_view_delayed" type="object"
+                                class="sf-card-btn--light" title="View Delayed Projects"/>
+                        <div class="cpd-kpi-card__icon"><i class="fa fa-clock-o"/></div>
+                        <div class="cpd-kpi-card__val">
+                            <field name="delayed_count" readonly="1"/>
+                        </div>
+                        <div class="cpd-kpi-card__lbl">Delayed Projects</div>
+                    </div>
+
+                </div>
+
+                <!-- ── Section heading ────────────────────────────────── -->
+                <div class="cpd-section-label">
+                    <i class="fa fa-th-large me-2"/>Project Portfolio
+                    <span class="cpd-section-label__count">
+                        <field name="total_projects" readonly="1"/> projects
+                    </span>
+                </div>
+
+                <!-- ── Project cards kanban (Level 2) ─────────────────── -->
+                <field name="project_ids" nolabel="1" readonly="1">
+                    <kanban
+                        records_draggable="false"
+                        class="cpd-project-kanban"
+                        group_create="false"
+                        quick_create="false">
+
+                        <!-- Fields to load on each project record -->
+                        <field name="name"/>
+                        <field name="state"/>
+                        <field name="business_activity"/>
+                        <field name="project_phase"/>
+                        <field name="project_health"/>
+                        <field name="contract_value"/>
+                        <field name="currency_id"/>
+                        <field name="is_over_budget"/>
+                        <field name="is_negative_profit"/>
+                        <field name="project_manager_id"/>
+
+                        <templates>
+                            <t t-name="card">
+                                <!-- Overlay button — intercepts card click → opens Level 2 dashboard -->
+                                <button name="action_open_project_construction_dashboard"
+                                        type="object"
+                                        class="sf-card-btn--light"
+                                        title="Open Construction Project Dashboard"/>
+
+                                <!-- Health stripe (top-border accent) -->
+                                <div t-attf-class="cpd-proj-card__health-stripe cpd-proj-card__health-stripe--#{record.project_health.raw_value or 'healthy'}"/>
+
+                                <!-- Card body -->
+                                <div class="cpd-proj-card__body">
+
+                                    <!-- Row 1: health badge + state badge -->
+                                    <div class="cpd-proj-card__badges">
+                                        <span t-attf-class="cpd-badge cpd-badge--health cpd-badge--#{record.project_health.raw_value or 'healthy'}">
+                                            <i t-attf-class="fa #{record.project_health.raw_value == 'healthy' ? 'fa-check-circle' : record.project_health.raw_value == 'warning' ? 'fa-exclamation-triangle' : 'fa-times-circle'} me-1"/>
+                                            <t t-esc="record.project_health.value or 'Healthy'"/>
+                                        </span>
+                                        <span t-attf-class="cpd-badge cpd-badge--state cpd-badge--state-#{record.state.raw_value}">
+                                            <t t-esc="record.state.value"/>
+                                        </span>
+                                    </div>
+
+                                    <!-- Row 2: Project name -->
+                                    <div class="cpd-proj-card__name" t-esc="record.name.value"/>
+
+                                    <!-- Row 3: Phase + Manager -->
+                                    <div class="cpd-proj-card__meta">
+                                        <span class="cpd-proj-card__meta-item" t-if="record.project_phase.value">
+                                            <i class="fa fa-sitemap me-1 text-muted"/>
+                                            <t t-esc="record.project_phase.value"/>
+                                        </span>
+                                        <span class="cpd-proj-card__meta-item" t-if="record.project_manager_id.value">
+                                            <i class="fa fa-user me-1 text-muted"/>
+                                            <t t-esc="record.project_manager_id.value"/>
+                                        </span>
+                                    </div>
+
+                                    <!-- Row 4: Contract value -->
+                                    <div class="cpd-proj-card__financials">
+                                        <div class="cpd-proj-card__fin-item">
+                                            <div class="cpd-proj-card__fin-lbl">Contract Value</div>
+                                            <div class="cpd-proj-card__fin-val">
+                                                <field name="contract_value" widget="monetary" readonly="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Row 5: Risk flags -->
+                                    <div class="cpd-proj-card__flags" t-if="record.is_over_budget.raw_value or record.is_negative_profit.raw_value">
+                                        <span class="cpd-flag cpd-flag--overbudget" t-if="record.is_over_budget.raw_value">
+                                            <i class="fa fa-exclamation me-1"/>Over Budget
+                                        </span>
+                                        <span class="cpd-flag cpd-flag--loss" t-if="record.is_negative_profit.raw_value">
+                                            <i class="fa fa-arrow-down me-1"/>Neg. Profit
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </t>
+                        </templates>
+                    </kanban>
+                </field>
+
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     Server action — Construction Projects Dashboard opener
+     ════════════════════════════════════════════════════════════════════════ -->
+
+<record id="action_open_construction_projects_dashboard" model="ir.actions.server">
+    <field name="name">Construction Projects Dashboard</field>
+    <field name="model_id" ref="model_farm_construction_projects_dashboard"/>
+    <field name="binding_model_id" ref="model_farm_construction_projects_dashboard"/>
+    <field name="state">code</field>
+    <field name="code">action = model.action_open_construction_projects_dashboard()</field>
+</record>
+
+</data>
+</odoo>
