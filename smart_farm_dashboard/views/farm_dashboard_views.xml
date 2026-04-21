@@ -480,6 +480,8 @@
                                     <!-- Total JOs -->
                                     <div class="col-lg col-md-4 col-sm-6">
                                         <div class="sf-exec-kpi-card sf-exec-navy">
+                                            <button name="action_view_all_jo" type="object"
+                                                    class="sf-card-btn" title="View all Job Orders"/>
                                             <div class="sf-exec-kpi-icon"><i class="fa fa-list-alt"/></div>
                                             <div class="sf-exec-kpi-number">
                                                 <field name="count_jo_total" nolabel="1"/>
@@ -491,6 +493,8 @@
                                     <!-- Portfolio Execution Progress % -->
                                     <div class="col-lg col-md-4 col-sm-6">
                                         <div class="sf-exec-kpi-card sf-exec-blue">
+                                            <button name="action_view_jo_in_progress" type="object"
+                                                    class="sf-card-btn" title="View In-Progress Job Orders"/>
                                             <div class="sf-exec-kpi-icon"><i class="fa fa-tasks"/></div>
                                             <div class="sf-exec-kpi-number">
                                                 <field name="portfolio_execution_progress" nolabel="1"/>
@@ -506,6 +510,8 @@
                                     <!-- Total Approved Amount -->
                                     <div class="col-lg col-md-4 col-sm-6">
                                         <div class="sf-exec-kpi-card sf-exec-emerald">
+                                            <button name="action_view_jo_approved_amount" type="object"
+                                                    class="sf-card-btn" title="View Approved Job Orders"/>
                                             <div class="sf-exec-kpi-icon"><i class="fa fa-check-circle"/></div>
                                             <div class="sf-exec-kpi-number sf-exec-monetary">
                                                 <field name="portfolio_approved_amount"
@@ -520,6 +526,8 @@
                                     <!-- Total Claimable Amount -->
                                     <div class="col-lg col-md-4 col-sm-6">
                                         <div class="sf-exec-kpi-card sf-exec-purple">
+                                            <button name="action_view_jo_claimable_now" type="object"
+                                                    class="sf-card-btn" title="View Claimable Job Orders"/>
                                             <div class="sf-exec-kpi-icon"><i class="fa fa-money"/></div>
                                             <div class="sf-exec-kpi-number sf-exec-monetary">
                                                 <field name="portfolio_claimable_amount"
@@ -534,6 +542,8 @@
                                     <!-- Total Claimed Amount -->
                                     <div class="col-lg col-md-4 col-sm-6">
                                         <div class="sf-exec-kpi-card sf-exec-rose">
+                                            <button name="action_view_jo_claimed_amount" type="object"
+                                                    class="sf-card-btn" title="View Claimed Job Orders"/>
                                             <div class="sf-exec-kpi-icon"><i class="fa fa-flag-checkered"/></div>
                                             <div class="sf-exec-kpi-number sf-exec-monetary">
                                                 <field name="portfolio_claimed_amount"
@@ -559,6 +569,8 @@
                                             <div class="sf-activity-row">
 
                                                 <div class="sf-activity-card sf-act-construction">
+                                                    <button name="action_view_jo_construction" type="object"
+                                                            class="sf-card-btn" title="View Construction Job Orders"/>
                                                     <div class="sf-act-icon"><i class="fa fa-building"/></div>
                                                     <div class="sf-act-count">
                                                         <field name="count_jo_construction" nolabel="1"/>
@@ -567,6 +579,8 @@
                                                 </div>
 
                                                 <div class="sf-activity-card sf-act-agriculture">
+                                                    <button name="action_view_jo_agriculture" type="object"
+                                                            class="sf-card-btn" title="View Agriculture Job Orders"/>
                                                     <div class="sf-act-icon"><i class="fa fa-leaf"/></div>
                                                     <div class="sf-act-count">
                                                         <field name="count_jo_agriculture" nolabel="1"/>
@@ -575,6 +589,8 @@
                                                 </div>
 
                                                 <div class="sf-activity-card sf-act-manufacturing">
+                                                    <button name="action_view_jo_manufacturing" type="object"
+                                                            class="sf-card-btn" title="View Manufacturing Job Orders"/>
                                                     <div class="sf-act-icon"><i class="fa fa-industry"/></div>
                                                     <div class="sf-act-count">
                                                         <field name="count_jo_manufacturing" nolabel="1"/>
@@ -583,6 +599,8 @@
                                                 </div>
 
                                                 <div class="sf-activity-card sf-act-livestock">
+                                                    <button name="action_view_jo_livestock" type="object"
+                                                            class="sf-card-btn" title="View Livestock Job Orders"/>
                                                     <div class="sf-act-icon"><i class="fa fa-paw"/></div>
                                                     <div class="sf-act-count">
                                                         <field name="count_jo_livestock" nolabel="1"/>
@@ -603,6 +621,8 @@
                                             <div class="sf-stage-chart">
 
                                                 <div class="sf-stage-row">
+                                                    <button name="action_view_jo_in_progress" type="object"
+                                                            class="sf-card-btn" title="View In-Progress Job Orders"/>
                                                     <span class="sf-stage-lbl">In Progress</span>
                                                     <div class="sf-stage-bar-wrap">
                                                         <div class="sf-stage-bar sf-stage-blue"/>
@@ -613,6 +633,8 @@
                                                 </div>
 
                                                 <div class="sf-stage-row">
+                                                    <button name="action_view_jo_under_inspection" type="object"
+                                                            class="sf-card-btn" title="View Under-Inspection Job Orders"/>
                                                     <span class="sf-stage-lbl">Under Inspection</span>
                                                     <div class="sf-stage-bar-wrap">
                                                         <div class="sf-stage-bar sf-stage-amber"/>
@@ -623,6 +645,8 @@
                                                 </div>
 
                                                 <div class="sf-stage-row">
+                                                    <button name="action_view_jo_ready_for_claim" type="object"
+                                                            class="sf-card-btn" title="View Ready-for-Claim Job Orders"/>
                                                     <span class="sf-stage-lbl">Ready for Claim</span>
                                                     <div class="sf-stage-bar-wrap">
                                                         <div class="sf-stage-bar sf-stage-emerald"/>
@@ -633,6 +657,8 @@
                                                 </div>
 
                                                 <div class="sf-stage-row">
+                                                    <button name="action_view_jo_claimed" type="object"
+                                                            class="sf-card-btn" title="View Claimed Job Orders"/>
                                                     <span class="sf-stage-lbl">Claimed</span>
                                                     <div class="sf-stage-bar-wrap">
                                                         <div class="sf-stage-bar sf-stage-purple"/>

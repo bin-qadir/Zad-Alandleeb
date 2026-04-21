@@ -447,3 +447,124 @@ class FarmActivityDashboard(models.Model):
             ('planned_end_date', '<', fields.Date.today()),
             ('jo_stage', 'not in', ('claimed', 'closed')),
         ])
+
+    # ── KPI strip drill-downs ────────────────────────────────────────────────
+
+    def action_view_total_jos(self):
+        return self._jo_action('All Job Orders', [('jo_stage', '!=', 'closed')])
+
+    def action_view_planned_jos(self):
+        return self._jo_action('Planned Job Orders', [('planned_qty', '>', 0)])
+
+    def action_view_approved_jos(self):
+        return self._jo_action('Approved Job Orders', [('approved_qty', '>', 0)])
+
+    def action_view_claimed_jos(self):
+        return self._jo_action('Claimed Job Orders', [('jo_stage', '=', 'claimed')])
+
+    # ── Stage tile drill-downs ───────────────────────────────────────────────
+
+    def action_view_stage_draft(self):
+        return self._jo_action('Draft', [('jo_stage', '=', 'draft')])
+
+    def action_view_stage_approved_state(self):
+        return self._jo_action('Approved', [('jo_stage', '=', 'approved')])
+
+    def action_view_stage_handover(self):
+        return self._jo_action('Handover Requested', [('jo_stage', '=', 'handover_requested')])
+
+    def action_view_stage_accepted(self):
+        return self._jo_action('Accepted', [('jo_stage', 'in', ('accepted', 'partially_accepted'))])
+
+    def action_view_stage_claimed_s(self):
+        return self._jo_action('Claimed', [('jo_stage', '=', 'claimed')])
+
+    def action_view_stage_closed(self):
+        return self._jo_action('Closed', [('jo_stage', '=', 'closed')])
+
+    # ── Construction drill-downs ─────────────────────────────────────────────
+
+    def action_view_con_total(self):
+        return self._jo_action('All Construction JOs')
+
+    def action_view_dept_civil(self):
+        return self._jo_action('Civil Department', [('department', '=', 'civil')])
+
+    def action_view_dept_structure(self):
+        return self._jo_action('Structure Department', [('department', '=', 'structure')])
+
+    def action_view_dept_arch(self):
+        return self._jo_action('Architectural Department', [('department', '=', 'arch')])
+
+    def action_view_dept_mechanical(self):
+        return self._jo_action('Mechanical Department', [('department', '=', 'mechanical')])
+
+    def action_view_dept_electrical(self):
+        return self._jo_action('Electrical Department', [('department', '=', 'electrical')])
+
+    # ── Agriculture drill-downs ──────────────────────────────────────────────
+
+    def action_view_agri_harvest_total(self):
+        return self._jo_action('Harvest JOs (Total Harvest)', [('harvest_qty', '>', 0)])
+
+    def action_view_agri_net_harvest(self):
+        return self._jo_action('Net Harvest JOs', [('net_harvest_qty', '>', 0)])
+
+    def action_view_agri_waste(self):
+        return self._jo_action('Waste JOs', [('waste_qty', '>', 0)])
+
+    def action_view_agri_planting(self):
+        return self._jo_action('Planting Operations', [('operation_type', '=', 'planting')])
+
+    def action_view_agri_harvest_op(self):
+        return self._jo_action('Harvest Operations', [('operation_type', '=', 'harvest')])
+
+    def action_view_agri_irrigation(self):
+        return self._jo_action('Irrigation Operations', [('operation_type', '=', 'irrigation')])
+
+    # ── Manufacturing drill-downs ────────────────────────────────────────────
+
+    def action_view_mfg_total_qty(self):
+        return self._jo_action('All Manufacturing JOs')
+
+    def action_view_mfg_packed(self):
+        return self._jo_action('Packed Qty JOs', [('packed_qty', '>', 0)])
+
+    def action_view_mfg_qc_passed(self):
+        return self._jo_action('QC Passed', [('qc_result', '=', 'passed')])
+
+    def action_view_mfg_qc_failed(self):
+        return self._jo_action('QC Failed', [('qc_result', '=', 'failed')])
+
+    def action_view_mfg_qc_conditional(self):
+        return self._jo_action('QC Conditional', [('qc_result', '=', 'conditional')])
+
+    def action_view_mfg_qc_pending(self):
+        return self._jo_action('QC Pending', [('qc_result', 'in', (False, 'pending'))])
+
+    # ── Livestock drill-downs ────────────────────────────────────────────────
+
+    def action_view_ls_herd_total(self):
+        return self._jo_action('All Livestock JOs', [('animal_count', '>', 0)])
+
+    def action_view_ls_births(self):
+        return self._jo_action('Livestock — Births', [('birth_count', '>', 0)])
+
+    def action_view_ls_deaths(self):
+        return self._jo_action('Livestock — Deaths', [('death_count', '>', 0)])
+
+    def action_view_ls_approved_sale(self):
+        return self._jo_action('Approved for Sale', [('approved_sale_qty', '>', 0)])
+
+    def action_view_ls_ready_for_sale(self):
+        return self._jo_action('Ready for Sale', [
+            ('jo_stage', 'in', ('ready_for_claim', 'accepted', 'partially_accepted')),
+        ])
+
+    def action_view_ls_costs(self):
+        return self._jo_action('Livestock JOs with Costs', [
+            '|', '|',
+            ('feed_cost', '>', 0),
+            ('medical_cost', '>', 0),
+            ('caretaking_cost', '>', 0),
+        ])

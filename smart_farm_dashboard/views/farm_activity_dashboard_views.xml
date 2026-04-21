@@ -43,6 +43,8 @@
 
                         <!-- Card 1 — Total JOs -->
                         <div class="act-kpi-card act-kpi-card--primary">
+                            <button name="action_view_total_jos" type="object"
+                                    class="sf-card-btn--light" title="View All Job Orders"/>
                             <div class="act-kpi-card__icon"><i class="fa fa-briefcase"/></div>
                             <div class="act-kpi-card__value">
                                 <field name="total_jo_count" readonly="1"/>
@@ -52,6 +54,8 @@
 
                         <!-- Card 2 — Planned Value -->
                         <div class="act-kpi-card act-kpi-card--navy">
+                            <button name="action_view_planned_jos" type="object"
+                                    class="sf-card-btn--light" title="View Planned Job Orders"/>
                             <div class="act-kpi-card__icon"><i class="fa fa-file-text-o"/></div>
                             <div class="act-kpi-card__value act-kpi-card__value--monetary">
                                 <field name="total_planned_amount" readonly="1"
@@ -62,6 +66,8 @@
 
                         <!-- Card 3 — Approved Amount -->
                         <div class="act-kpi-card act-kpi-card--blue">
+                            <button name="action_view_approved_jos" type="object"
+                                    class="sf-card-btn--light" title="View Approved Job Orders"/>
                             <div class="act-kpi-card__icon"><i class="fa fa-check-circle"/></div>
                             <div class="act-kpi-card__value act-kpi-card__value--monetary">
                                 <field name="total_approved_amount" readonly="1"
@@ -75,6 +81,8 @@
 
                         <!-- Card 4 — Claimable Amount -->
                         <div class="act-kpi-card act-kpi-card--emerald">
+                            <button name="action_view_claimable" type="object"
+                                    class="sf-card-btn--light" title="View Claimable Job Orders"/>
                             <div class="act-kpi-card__icon"><i class="fa fa-money"/></div>
                             <div class="act-kpi-card__value act-kpi-card__value--monetary">
                                 <field name="total_claimable_amount" readonly="1"
@@ -85,6 +93,8 @@
 
                         <!-- Card 5 — Claimed Amount -->
                         <div class="act-kpi-card act-kpi-card--purple">
+                            <button name="action_view_claimed_jos" type="object"
+                                    class="sf-card-btn--light" title="View Claimed Job Orders"/>
                             <div class="act-kpi-card__icon"><i class="fa fa-check-square-o"/></div>
                             <div class="act-kpi-card__value act-kpi-card__value--monetary">
                                 <field name="total_claimed_amount" readonly="1"
@@ -113,6 +123,8 @@
                     <div class="act-stage-grid">
 
                         <div class="act-stage-item act-stage-item--draft">
+                            <button name="action_view_stage_draft" type="object"
+                                    class="sf-card-btn--light" title="View Draft Job Orders"/>
                             <div class="act-stage-item__count">
                                 <field name="jo_count_draft" readonly="1"/>
                             </div>
@@ -120,6 +132,8 @@
                         </div>
 
                         <div class="act-stage-item act-stage-item--approved">
+                            <button name="action_view_stage_approved_state" type="object"
+                                    class="sf-card-btn--light" title="View Approved Job Orders"/>
                             <div class="act-stage-item__count">
                                 <field name="jo_count_approved" readonly="1"/>
                             </div>
@@ -127,18 +141,17 @@
                         </div>
 
                         <div class="act-stage-item act-stage-item--inprogress">
+                            <button name="action_view_in_progress" type="object"
+                                    class="sf-card-btn--light" title="View In-Progress Job Orders"/>
                             <div class="act-stage-item__count">
                                 <field name="jo_count_in_progress" readonly="1"/>
                             </div>
                             <div class="act-stage-item__label">In Progress</div>
-                            <button name="action_view_in_progress" type="object"
-                                    class="act-stage-item__drill btn btn-link btn-sm p-0"
-                                    invisible="jo_count_in_progress == 0">
-                                <i class="fa fa-arrow-right"/>
-                            </button>
                         </div>
 
                         <div class="act-stage-item act-stage-item--handover">
+                            <button name="action_view_stage_handover" type="object"
+                                    class="sf-card-btn--light" title="View Handover-Requested Job Orders"/>
                             <div class="act-stage-item__count">
                                 <field name="jo_count_handover" readonly="1"/>
                             </div>
@@ -146,18 +159,17 @@
                         </div>
 
                         <div class="act-stage-item act-stage-item--inspection">
+                            <button name="action_view_under_inspection" type="object"
+                                    class="sf-card-btn--light" title="View Under-Inspection Job Orders"/>
                             <div class="act-stage-item__count">
                                 <field name="jo_count_under_inspection" readonly="1"/>
                             </div>
                             <div class="act-stage-item__label">Inspection</div>
-                            <button name="action_view_under_inspection" type="object"
-                                    class="act-stage-item__drill btn btn-link btn-sm p-0"
-                                    invisible="jo_count_under_inspection == 0">
-                                <i class="fa fa-arrow-right"/>
-                            </button>
                         </div>
 
                         <div class="act-stage-item act-stage-item--accepted">
+                            <button name="action_view_stage_accepted" type="object"
+                                    class="sf-card-btn--light" title="View Accepted Job Orders"/>
                             <div class="act-stage-item__count">
                                 <field name="jo_count_accepted" readonly="1"/>
                             </div>
@@ -165,18 +177,17 @@
                         </div>
 
                         <div class="act-stage-item act-stage-item--readyclaim">
+                            <button name="action_view_ready_for_claim" type="object"
+                                    class="sf-card-btn--light" title="View Ready-for-Claim Job Orders"/>
                             <div class="act-stage-item__count">
                                 <field name="jo_count_ready_for_claim" readonly="1"/>
                             </div>
                             <div class="act-stage-item__label">Ready to Claim</div>
-                            <button name="action_view_ready_for_claim" type="object"
-                                    class="act-stage-item__drill btn btn-link btn-sm p-0"
-                                    invisible="jo_count_ready_for_claim == 0">
-                                <i class="fa fa-arrow-right"/>
-                            </button>
                         </div>
 
                         <div class="act-stage-item act-stage-item--claimed">
+                            <button name="action_view_stage_claimed_s" type="object"
+                                    class="sf-card-btn--light" title="View Claimed Job Orders"/>
                             <div class="act-stage-item__count">
                                 <field name="jo_count_claimed" readonly="1"/>
                             </div>
@@ -184,6 +195,8 @@
                         </div>
 
                         <div class="act-stage-item act-stage-item--closed">
+                            <button name="action_view_stage_closed" type="object"
+                                    class="sf-card-btn--light" title="View Closed Job Orders"/>
                             <div class="act-stage-item__count">
                                 <field name="jo_count_closed" readonly="1"/>
                             </div>
@@ -191,15 +204,12 @@
                         </div>
 
                         <div class="act-stage-item act-stage-item--overdue">
+                            <button name="action_view_overdue" type="object"
+                                    class="sf-card-btn--light" title="View Overdue Job Orders"/>
                             <div class="act-stage-item__count">
                                 <field name="overdue_count" readonly="1"/>
                             </div>
                             <div class="act-stage-item__label">Overdue</div>
-                            <button name="action_view_overdue" type="object"
-                                    class="act-stage-item__drill btn btn-link btn-sm p-0"
-                                    invisible="overdue_count == 0">
-                                <i class="fa fa-arrow-right"/>
-                            </button>
                         </div>
 
                     </div>
@@ -217,6 +227,8 @@
                     <!-- Summary row -->
                     <div class="act-con-summary">
                         <div class="act-con-summary__item">
+                            <button name="action_view_con_total" type="object"
+                                    class="sf-card-btn--light" title="View All Construction JOs"/>
                             <span class="act-con-summary__num">
                                 <field name="con_total_items" readonly="1"/>
                             </span>
@@ -230,6 +242,8 @@
                         <div class="act-dept-pills">
 
                             <div class="act-dept-pill act-dept-pill--civil">
+                                <button name="action_view_dept_civil" type="object"
+                                        class="sf-card-btn--light" title="View Civil Dept JOs"/>
                                 <i class="fa fa-building-o"/>
                                 <span class="act-dept-pill__count">
                                     <field name="con_dept_civil" readonly="1"/>
@@ -238,6 +252,8 @@
                             </div>
 
                             <div class="act-dept-pill act-dept-pill--structure">
+                                <button name="action_view_dept_structure" type="object"
+                                        class="sf-card-btn--light" title="View Structure Dept JOs"/>
                                 <i class="fa fa-th-large"/>
                                 <span class="act-dept-pill__count">
                                     <field name="con_dept_structure" readonly="1"/>
@@ -246,6 +262,8 @@
                             </div>
 
                             <div class="act-dept-pill act-dept-pill--arch">
+                                <button name="action_view_dept_arch" type="object"
+                                        class="sf-card-btn--light" title="View Architectural Dept JOs"/>
                                 <i class="fa fa-home"/>
                                 <span class="act-dept-pill__count">
                                     <field name="con_dept_arch" readonly="1"/>
@@ -254,6 +272,8 @@
                             </div>
 
                             <div class="act-dept-pill act-dept-pill--mechanical">
+                                <button name="action_view_dept_mechanical" type="object"
+                                        class="sf-card-btn--light" title="View Mechanical Dept JOs"/>
                                 <i class="fa fa-cog"/>
                                 <span class="act-dept-pill__count">
                                     <field name="con_dept_mechanical" readonly="1"/>
@@ -262,6 +282,8 @@
                             </div>
 
                             <div class="act-dept-pill act-dept-pill--electrical">
+                                <button name="action_view_dept_electrical" type="object"
+                                        class="sf-card-btn--light" title="View Electrical Dept JOs"/>
                                 <i class="fa fa-bolt"/>
                                 <span class="act-dept-pill__count">
                                     <field name="con_dept_electrical" readonly="1"/>
@@ -296,6 +318,8 @@
                     <div class="act-agri-kpi-row">
 
                         <div class="act-agri-kpi">
+                            <button name="action_view_agri_harvest_total" type="object"
+                                    class="sf-card-btn--light" title="View Harvest JOs"/>
                             <i class="fa fa-tint act-agri-kpi__icon"/>
                             <div class="act-agri-kpi__val">
                                 <field name="agri_total_harvest_qty" readonly="1"/> t
@@ -304,6 +328,8 @@
                         </div>
 
                         <div class="act-agri-kpi">
+                            <button name="action_view_agri_net_harvest" type="object"
+                                    class="sf-card-btn--light" title="View Net Harvest JOs"/>
                             <i class="fa fa-check-circle act-agri-kpi__icon act-agri-kpi__icon--green"/>
                             <div class="act-agri-kpi__val">
                                 <field name="agri_total_net_harvest_qty" readonly="1"/> t
@@ -312,6 +338,8 @@
                         </div>
 
                         <div class="act-agri-kpi">
+                            <button name="action_view_agri_waste" type="object"
+                                    class="sf-card-btn--light" title="View JOs with Waste"/>
                             <i class="fa fa-trash act-agri-kpi__icon act-agri-kpi__icon--amber"/>
                             <div class="act-agri-kpi__val">
                                 <field name="agri_total_waste_qty" readonly="1"/> t
@@ -320,6 +348,8 @@
                         </div>
 
                         <div class="act-agri-kpi">
+                            <button name="action_view_agri_waste" type="object"
+                                    class="sf-card-btn--light" title="View JOs with Waste"/>
                             <i class="fa fa-percent act-agri-kpi__icon act-agri-kpi__icon--red"/>
                             <div class="act-agri-kpi__val">
                                 <field name="agri_waste_pct" readonly="1"/>%
@@ -328,6 +358,8 @@
                         </div>
 
                         <div class="act-agri-kpi">
+                            <button name="action_view_all_jos" type="object"
+                                    class="sf-card-btn--light" title="View All Agriculture JOs"/>
                             <i class="fa fa-usd act-agri-kpi__icon act-agri-kpi__icon--navy"/>
                             <div class="act-agri-kpi__val act-agri-kpi__val--monetary">
                                 <field name="agri_total_input_cost" readonly="1"
@@ -337,6 +369,8 @@
                         </div>
 
                         <div class="act-agri-kpi">
+                            <button name="action_view_approved_jos" type="object"
+                                    class="sf-card-btn--light" title="View Approved Agriculture JOs"/>
                             <i class="fa fa-thumbs-up act-agri-kpi__icon act-agri-kpi__icon--green"/>
                             <div class="act-agri-kpi__val">
                                 <field name="agri_harvest_approved_pct" readonly="1"/>%
@@ -359,6 +393,8 @@
                         <div class="act-op-breakdown__title">Operations by Type</div>
                         <div class="act-op-breakdown__grid">
                             <div class="act-op-pill act-op-pill--planting">
+                                <button name="action_view_agri_planting" type="object"
+                                        class="sf-card-btn--light" title="View Planting JOs"/>
                                 <i class="fa fa-leaf"/>
                                 <span class="act-op-pill__count">
                                     <field name="agri_count_planting" readonly="1"/>
@@ -366,6 +402,8 @@
                                 <span class="act-op-pill__lbl">Planting</span>
                             </div>
                             <div class="act-op-pill act-op-pill--harvest">
+                                <button name="action_view_agri_harvest_op" type="object"
+                                        class="sf-card-btn--light" title="View Harvest JOs"/>
                                 <i class="fa fa-leaf"/>
                                 <span class="act-op-pill__count">
                                     <field name="agri_count_harvest" readonly="1"/>
@@ -373,6 +411,8 @@
                                 <span class="act-op-pill__lbl">Harvest</span>
                             </div>
                             <div class="act-op-pill act-op-pill--irrigation">
+                                <button name="action_view_agri_irrigation" type="object"
+                                        class="sf-card-btn--light" title="View Irrigation JOs"/>
                                 <i class="fa fa-tint"/>
                                 <span class="act-op-pill__count">
                                     <field name="agri_count_irrigation" readonly="1"/>
@@ -406,6 +446,8 @@
                     <div class="act-mfg-kpi-row">
 
                         <div class="act-mfg-kpi">
+                            <button name="action_view_mfg_packed" type="object"
+                                    class="sf-card-btn--light" title="View JOs with Packed Qty"/>
                             <i class="fa fa-cube act-mfg-kpi__icon"/>
                             <div class="act-mfg-kpi__val">
                                 <field name="mfg_total_packed_qty" readonly="1"/>
@@ -414,6 +456,8 @@
                         </div>
 
                         <div class="act-mfg-kpi">
+                            <button name="action_view_mfg_total_qty" type="object"
+                                    class="sf-card-btn--light" title="View All Manufacturing JOs"/>
                             <i class="fa fa-cogs act-mfg-kpi__icon act-mfg-kpi__icon--blue"/>
                             <div class="act-mfg-kpi__val">
                                 <field name="mfg_total_executed_qty" readonly="1"/>
@@ -422,6 +466,8 @@
                         </div>
 
                         <div class="act-mfg-kpi">
+                            <button name="action_view_mfg_qc_passed" type="object"
+                                    class="sf-card-btn--light" title="View QC-Passed JOs"/>
                             <i class="fa fa-tachometer act-mfg-kpi__icon act-mfg-kpi__icon--purple"/>
                             <div class="act-mfg-kpi__val">
                                 <field name="mfg_efficiency_pct" readonly="1"/>%
@@ -430,6 +476,8 @@
                         </div>
 
                         <div class="act-mfg-kpi">
+                            <button name="action_view_all_jos" type="object"
+                                    class="sf-card-btn--light" title="View All Manufacturing JOs"/>
                             <i class="fa fa-usd act-mfg-kpi__icon act-mfg-kpi__icon--navy"/>
                             <div class="act-mfg-kpi__val act-mfg-kpi__val--monetary">
                                 <field name="mfg_total_actual_cost" readonly="1"
@@ -446,6 +494,8 @@
                         <div class="act-qc-grid">
 
                             <div class="act-qc-card act-qc-card--pass">
+                                <button name="action_view_mfg_qc_passed" type="object"
+                                        class="sf-card-btn--light" title="View QC Passed JOs"/>
                                 <div class="act-qc-card__icon"><i class="fa fa-check-circle"/></div>
                                 <div class="act-qc-card__count">
                                     <field name="mfg_qc_pass_count" readonly="1"/>
@@ -454,6 +504,8 @@
                             </div>
 
                             <div class="act-qc-card act-qc-card--fail">
+                                <button name="action_view_mfg_qc_failed" type="object"
+                                        class="sf-card-btn--light" title="View QC Failed JOs"/>
                                 <div class="act-qc-card__icon"><i class="fa fa-times-circle"/></div>
                                 <div class="act-qc-card__count">
                                     <field name="mfg_qc_fail_count" readonly="1"/>
@@ -462,6 +514,8 @@
                             </div>
 
                             <div class="act-qc-card act-qc-card--conditional">
+                                <button name="action_view_mfg_qc_conditional" type="object"
+                                        class="sf-card-btn--light" title="View QC Conditional JOs"/>
                                 <div class="act-qc-card__icon"><i class="fa fa-exclamation-circle"/></div>
                                 <div class="act-qc-card__count">
                                     <field name="mfg_qc_conditional_count" readonly="1"/>
@@ -470,6 +524,8 @@
                             </div>
 
                             <div class="act-qc-card act-qc-card--pending">
+                                <button name="action_view_mfg_qc_pending" type="object"
+                                        class="sf-card-btn--light" title="View QC Pending JOs"/>
                                 <div class="act-qc-card__icon"><i class="fa fa-clock-o"/></div>
                                 <div class="act-qc-card__count">
                                     <field name="mfg_qc_pending_count" readonly="1"/>
@@ -513,6 +569,8 @@
                     <div class="act-ls-herd-row">
 
                         <div class="act-ls-kpi act-ls-kpi--count">
+                            <button name="action_view_ls_herd_total" type="object"
+                                    class="sf-card-btn--light" title="View Livestock JOs"/>
                             <i class="fa fa-paw act-ls-kpi__icon"/>
                             <div class="act-ls-kpi__val">
                                 <field name="ls_total_animal_count" readonly="1"/>
@@ -521,6 +579,8 @@
                         </div>
 
                         <div class="act-ls-kpi act-ls-kpi--births">
+                            <button name="action_view_ls_births" type="object"
+                                    class="sf-card-btn--light" title="View JOs with Births"/>
                             <i class="fa fa-plus-circle act-ls-kpi__icon act-ls-kpi__icon--green"/>
                             <div class="act-ls-kpi__val">
                                 <field name="ls_total_births" readonly="1"/>
@@ -529,6 +589,8 @@
                         </div>
 
                         <div class="act-ls-kpi act-ls-kpi--deaths">
+                            <button name="action_view_ls_deaths" type="object"
+                                    class="sf-card-btn--light" title="View JOs with Deaths"/>
                             <i class="fa fa-minus-circle act-ls-kpi__icon act-ls-kpi__icon--red"/>
                             <div class="act-ls-kpi__val">
                                 <field name="ls_total_deaths" readonly="1"/>
@@ -537,6 +599,8 @@
                         </div>
 
                         <div class="act-ls-kpi act-ls-kpi--mortality">
+                            <button name="action_view_ls_herd_total" type="object"
+                                    class="sf-card-btn--light" title="View Livestock JOs"/>
                             <i class="fa fa-heartbeat act-ls-kpi__icon act-ls-kpi__icon--rose"/>
                             <div class="act-ls-kpi__val">
                                 <field name="ls_mortality_pct" readonly="1"/>%
@@ -550,6 +614,8 @@
                     <div class="act-ls-prod-row">
 
                         <div class="act-ls-kpi">
+                            <button name="action_view_ls_herd_total" type="object"
+                                    class="sf-card-btn--light" title="View Livestock JOs"/>
                             <i class="fa fa-balance-scale act-ls-kpi__icon act-ls-kpi__icon--amber"/>
                             <div class="act-ls-kpi__val">
                                 <field name="ls_avg_live_weight" readonly="1"/> kg
@@ -558,6 +624,8 @@
                         </div>
 
                         <div class="act-ls-kpi">
+                            <button name="action_view_ls_herd_total" type="object"
+                                    class="sf-card-btn--light" title="View Livestock JOs"/>
                             <i class="fa fa-line-chart act-ls-kpi__icon act-ls-kpi__icon--amber"/>
                             <div class="act-ls-kpi__val">
                                 <field name="ls_fattening_pct" readonly="1"/>%
@@ -566,6 +634,8 @@
                         </div>
 
                         <div class="act-ls-kpi">
+                            <button name="action_view_ls_approved_sale" type="object"
+                                    class="sf-card-btn--light" title="View Approved-for-Sale JOs"/>
                             <i class="fa fa-shopping-cart act-ls-kpi__icon act-ls-kpi__icon--emerald"/>
                             <div class="act-ls-kpi__val">
                                 <field name="ls_total_approved_sale_qty" readonly="1"/>
@@ -574,6 +644,8 @@
                         </div>
 
                         <div class="act-ls-kpi">
+                            <button name="action_view_ls_ready_for_sale" type="object"
+                                    class="sf-card-btn--light" title="View Ready-for-Sale JOs"/>
                             <i class="fa fa-check-square act-ls-kpi__icon act-ls-kpi__icon--emerald"/>
                             <div class="act-ls-kpi__val">
                                 <field name="ls_ready_for_sale_count" readonly="1"/>
@@ -596,6 +668,8 @@
                         <div class="act-ls-cost-panel__title">Operating Cost Breakdown</div>
                         <div class="act-ls-cost-row">
                             <div class="act-ls-cost-item act-ls-cost-item--feed">
+                                <button name="action_view_ls_costs" type="object"
+                                        class="sf-card-btn--light" title="View JOs with Feed Costs"/>
                                 <i class="fa fa-cutlery"/>
                                 <div class="act-ls-cost-item__amt">
                                     <field name="ls_total_feed_cost" readonly="1"
@@ -604,6 +678,8 @@
                                 <div class="act-ls-cost-item__lbl">Feed Cost</div>
                             </div>
                             <div class="act-ls-cost-item act-ls-cost-item--medical">
+                                <button name="action_view_ls_costs" type="object"
+                                        class="sf-card-btn--light" title="View JOs with Medical Costs"/>
                                 <i class="fa fa-medkit"/>
                                 <div class="act-ls-cost-item__amt">
                                     <field name="ls_total_medical_cost" readonly="1"
@@ -612,6 +688,8 @@
                                 <div class="act-ls-cost-item__lbl">Medical / Vet</div>
                             </div>
                             <div class="act-ls-cost-item act-ls-cost-item--total">
+                                <button name="action_view_ls_costs" type="object"
+                                        class="sf-card-btn--light" title="View JOs with Operating Costs"/>
                                 <i class="fa fa-calculator"/>
                                 <div class="act-ls-cost-item__amt">
                                     <field name="ls_total_operating_cost" readonly="1"
@@ -624,6 +702,8 @@
 
                     <!-- Revenue banner -->
                     <div class="act-ls-revenue-banner">
+                        <button name="action_view_ls_approved_sale" type="object"
+                                class="sf-card-btn" title="View Approved-for-Sale JOs"/>
                         <i class="fa fa-trophy act-ls-revenue-banner__icon"/>
                         <div class="act-ls-revenue-banner__content">
                             <div class="act-ls-revenue-banner__label">Expected Revenue (Approved Sales)</div>

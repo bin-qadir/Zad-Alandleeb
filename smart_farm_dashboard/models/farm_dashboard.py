@@ -465,6 +465,87 @@ class FarmDashboard(models.Model):
             'domain': [('jo_stage', '!=', 'closed')],
         }
 
+    def _jo_list_action(self, name, domain):
+        """Helper: return a filtered list action for farm.job.order."""
+        return {
+            'type':      'ir.actions.act_window',
+            'name':      _(name),
+            'res_model': 'farm.job.order',
+            'view_mode': 'list,form',
+            'domain':    domain,
+        }
+
+    # ── Execution KPI card drill-downs ────────────────────────────────────────
+
+    def action_view_jo_approved_amount(self):
+        return self._jo_list_action(
+            'Approved Job Orders',
+            [('approved_qty', '>', 0), ('jo_stage', '!=', 'closed')],
+        )
+
+    def action_view_jo_claimable_now(self):
+        return self._jo_list_action(
+            'Claimable Job Orders',
+            [('claimable_amount', '>', 0)],
+        )
+
+    def action_view_jo_claimed_amount(self):
+        return self._jo_list_action(
+            'Claimed Job Orders',
+            [('jo_stage', '=', 'claimed')],
+        )
+
+    # ── Activity breakdown card drill-downs ───────────────────────────────────
+
+    def action_view_jo_construction(self):
+        return self._jo_list_action(
+            'Construction Job Orders',
+            [('business_activity', '=', 'construction'), ('jo_stage', '!=', 'closed')],
+        )
+
+    def action_view_jo_agriculture(self):
+        return self._jo_list_action(
+            'Agriculture Job Orders',
+            [('business_activity', '=', 'agriculture'), ('jo_stage', '!=', 'closed')],
+        )
+
+    def action_view_jo_manufacturing(self):
+        return self._jo_list_action(
+            'Manufacturing Job Orders',
+            [('business_activity', '=', 'manufacturing'), ('jo_stage', '!=', 'closed')],
+        )
+
+    def action_view_jo_livestock(self):
+        return self._jo_list_action(
+            'Livestock Job Orders',
+            [('business_activity', '=', 'livestock'), ('jo_stage', '!=', 'closed')],
+        )
+
+    # ── Stage distribution row drill-downs ────────────────────────────────────
+    # (in_progress, under_inspection, ready_for_claim, claimed already exist above)
+
+    def action_view_jo_stage_draft(self):
+        return self._jo_list_action('Draft Job Orders', [('jo_stage', '=', 'draft')])
+
+    def action_view_jo_stage_approved(self):
+        return self._jo_list_action('Approved Job Orders', [('jo_stage', '=', 'approved')])
+
+    def action_view_jo_stage_handover(self):
+        return self._jo_list_action('Handover Requested', [('jo_stage', '=', 'handover_requested')])
+
+    def action_view_jo_stage_inspection(self):
+        return self._jo_list_action('Under Inspection', [('jo_stage', '=', 'under_inspection')])
+
+    def action_view_jo_stage_accepted(self):
+        return self._jo_list_action('Accepted Job Orders',
+                                    [('jo_stage', 'in', ('accepted', 'partially_accepted'))])
+
+    def action_view_jo_stage_ready(self):
+        return self._jo_list_action('Ready for Claim', [('jo_stage', '=', 'ready_for_claim')])
+
+    def action_view_jo_stage_closed(self):
+        return self._jo_list_action('Closed Job Orders', [('jo_stage', '=', 'closed')])
+
     # ── Refresh ──────────────────────────────────────────────────────────────
 
     def action_refresh(self):

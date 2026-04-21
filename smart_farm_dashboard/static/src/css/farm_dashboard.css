@@ -904,6 +904,8 @@
     align-items: center;
     text-align: center;
     gap: 0.3rem;
+    position: relative;
+    overflow: hidden;
 }
 
 .sf-act-icon {
@@ -940,6 +942,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    position: relative;
 }
 
 .sf-stage-lbl {

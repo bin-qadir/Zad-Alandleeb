@@ -327,6 +327,9 @@
     display: flex;
     align-items: baseline;
     gap: 8px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
 }
 .act-con-summary__num .o_field_integer {
     font-size: 32px !important;
@@ -412,6 +415,8 @@
     border-radius: 10px;
     padding: 14px 12px;
     text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 .act-agri-kpi__icon {
     font-size: 18px;
@@ -473,6 +478,8 @@
     border-radius: 20px;
     font-size: 13px;
     font-weight: 600;
+    position: relative;
+    overflow: hidden;
 }
 .act-op-pill--planting  { background: #dcfce7; color: #15803d; }
 .act-op-pill--harvest   { background: #d1fae5; color: #065f46; }
@@ -530,6 +537,8 @@
     border-radius: 10px;
     padding: 16px 14px;
     text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 .act-mfg-kpi__icon {
     font-size: 20px;
@@ -592,6 +601,8 @@
     padding: 14px 10px;
     text-align: center;
     border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
 }
 .act-qc-card--pass        { background: #d1fae5; border-color: #6ee7b7; }
 .act-qc-card--fail        { background: #fee2e2; border-color: #fca5a5; }
@@ -690,6 +701,8 @@
     border-radius: 10px;
     padding: 14px 12px;
     text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
 .act-ls-kpi--deaths {
@@ -756,6 +769,8 @@
     padding: 14px 12px;
     text-align: center;
     border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
 }
 .act-ls-cost-item--feed    { background: #fef9c3; border-color: #fde68a; }
 .act-ls-cost-item--medical { background: #fee2e2; border-color: #fca5a5; }
@@ -794,6 +809,8 @@
     padding: 18px 20px;
     margin-top: 14px;
     color: #fff;
+    position: relative;
+    overflow: hidden;
 }
 .act-ls-revenue-banner__icon {
     font-size: 32px;
@@ -813,3 +830,68 @@
     font-weight: 800 !important;
     color: #fff !important;
 }
+
+/* ==========================================================================
+   DEPARTMENT PILLS  (construction dept breakdown — pill style)
+   ========================================================================== */
+
+.act-dept-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.act-dept-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow .15s ease;
+}
+.act-dept-pill:hover { box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+
+.act-dept-pill--civil       { background: #eff6ff; border-color: #93c5fd; color: #1e40af; }
+.act-dept-pill--structure   { background: #ecfeff; border-color: #a5f3fc; color: #0e7490; }
+.act-dept-pill--arch        { background: #faf5ff; border-color: #c4b5fd; color: #6d28d9; }
+.act-dept-pill--mechanical  { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+.act-dept-pill--electrical  { background: #fff1f2; border-color: #fecdd3; color: #9f1239; }
+
+.act-dept-pill__count .o_field_integer {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    line-height: 1;
+}
+.act-dept-pill__name {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+/* ==========================================================================
+   DRILL-DOWN BUTTON LIGHT VARIANT
+   Light cards need a dark-tinted hover instead of white overlay
+   ========================================================================== */
+
+.sf-card-btn--light {
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    border-radius: inherit;
+    transition: background 0.15s ease;
+    padding: 0;
+}
+.sf-card-btn--light:hover  { background: rgba(0, 0, 0, 0.06); }
+.sf-card-btn--light:focus  { outline: 2px solid rgba(0, 0, 0, 0.3); outline-offset: -3px; }
