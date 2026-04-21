@@ -115,7 +115,10 @@
                                        widget="many2many_tags"
                                        options="{'no_create': True, 'no_open': True}"
                                        placeholder="Tags…"/>
-                                <field name="project_type"/>
+                                <field name="project_type"
+                                       domain="[('activity', '=', business_activity)]"
+                                       options="{'no_create': True, 'no_open': True}"
+                                       placeholder="Select a type…"/>
                             </group>
                         </group>
 

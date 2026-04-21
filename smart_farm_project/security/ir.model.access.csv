@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_farm_project_user,farm.project user,model_farm_project,base.group_user,1,1,1,1
 access_farm_field_user,farm.field user,model_farm_field,base.group_user,1,1,1,1
+access_farm_project_type_user,farm.project.type user,model_farm_project_type,base.group_user,1,0,0,0
+access_farm_project_type_manager,farm.project.type manager,model_farm_project_type,base.group_system,1,1,1,1

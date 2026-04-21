@@ -1,6 +1,6 @@
 {
     'name': 'Smart Farm Project',
-    'version': '18.0.1.1.0',
+    'version': '18.0.1.2.0',
     'summary': 'Farm project management for the Smart Farm system',
     'description': 'Manage farm projects and fields, linked to Odoo project tasks.',
     'category': 'Agriculture',
@@ -15,6 +15,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/farm_project_type_data.xml',
         'views/farm_project_views.xml',
         'views/farm_field_views.xml',
         'views/menu.xml',

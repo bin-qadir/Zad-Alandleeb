@@ -1,4 +1,5 @@
 from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 # ── Default task templates per activity ──────────────────────────────────────
 _DEFAULT_TASKS = {
@@ -93,15 +94,17 @@ class FarmProject(models.Model):
     )
 
     # ── Project Classification ─────────────────────────────────────────────────
-    project_type = fields.Selection(
-        selection=[
-            ('irrigation',   'Irrigation'),
-            ('construction', 'Construction'),
-            ('agriculture',  'Agriculture'),
-            ('mixed',        'Mixed'),
-        ],
+    project_type = fields.Many2one(
+        comodel_name='farm.project.type',
         string='Project Type',
+        domain="[('activity', '=', business_activity)]",
+        ondelete='set null',
         tracking=True,
+        help=(
+            'Specific project type within the selected business activity.\n'
+            'The dropdown automatically filters to types valid for the current activity.\n'
+            'Changing the activity will clear this field if the current type is incompatible.'
+        ),
     )
     project_manager_id = fields.Many2one(
         comodel_name='res.users',
@@ -217,6 +220,35 @@ class FarmProject(models.Model):
                 )
             else:
                 rec.task_count = 0
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Dynamic project_type filtering
+    # ────────────────────────────────────────────────────────────────────────
+
+    @api.onchange('business_activity')
+    def _onchange_business_activity_clear_type(self):
+        """Clear project_type when business_activity changes to an incompatible value."""
+        if self.project_type and self.project_type.activity != self.business_activity:
+            self.project_type = False
+
+    @api.constrains('project_type', 'business_activity')
+    def _check_project_type_matches_activity(self):
+        for rec in self:
+            if not rec.project_type or not rec.business_activity:
+                continue
+            if rec.project_type.activity != rec.business_activity:
+                raise ValidationError(_(
+                    'Project type "%(type)s" (%(type_act)s) does not match the project\'s '
+                    'business activity "%(proj_act)s".\n'
+                    'Please select a project type that belongs to the %(proj_act)s activity.',
+                    type=rec.project_type.name,
+                    type_act=dict(
+                        rec._fields['business_activity'].selection
+                    ).get(rec.project_type.activity, rec.project_type.activity),
+                    proj_act=dict(
+                        rec._fields['business_activity'].selection
+                    ).get(rec.business_activity, rec.business_activity),
+                ))
 
     # ────────────────────────────────────────────────────────────────────────
     # ORM overrides

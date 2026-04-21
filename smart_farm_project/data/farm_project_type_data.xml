@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             FARM PROJECT TYPES — Seed Data
+             Grouped by business_activity; noupdate="1" preserves user edits.
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <!-- ── A. CONSTRUCTION ──────────────────────────────────────────── -->
+        <record id="ptype_con_civil" model="farm.project.type">
+            <field name="name">Civil</field>
+            <field name="activity">construction</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="ptype_con_structural" model="farm.project.type">
+            <field name="name">Structural</field>
+            <field name="activity">construction</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="ptype_con_mep" model="farm.project.type">
+            <field name="name">MEP</field>
+            <field name="activity">construction</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="ptype_con_infrastructure" model="farm.project.type">
+            <field name="name">Infrastructure</field>
+            <field name="activity">construction</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <!-- ── B. AGRICULTURE ───────────────────────────────────────────── -->
+        <record id="ptype_agri_open_field" model="farm.project.type">
+            <field name="name">Open Field</field>
+            <field name="activity">agriculture</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="ptype_agri_greenhouse" model="farm.project.type">
+            <field name="name">Greenhouse</field>
+            <field name="activity">agriculture</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="ptype_agri_irrigation" model="farm.project.type">
+            <field name="name">Irrigation</field>
+            <field name="activity">agriculture</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="ptype_agri_hydroponic" model="farm.project.type">
+            <field name="name">Hydroponic</field>
+            <field name="activity">agriculture</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <!-- ── C. MANUFACTURING / PACKING ───────────────────────────────── -->
+        <record id="ptype_mfg_packing" model="farm.project.type">
+            <field name="name">Packing</field>
+            <field name="activity">manufacturing</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="ptype_mfg_processing" model="farm.project.type">
+            <field name="name">Processing</field>
+            <field name="activity">manufacturing</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="ptype_mfg_production_line" model="farm.project.type">
+            <field name="name">Production Line</field>
+            <field name="activity">manufacturing</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="ptype_mfg_cold_storage" model="farm.project.type">
+            <field name="name">Cold Storage</field>
+            <field name="activity">manufacturing</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <!-- ── D. LIVESTOCK ─────────────────────────────────────────────── -->
+        <record id="ptype_ls_breeding" model="farm.project.type">
+            <field name="name">Breeding</field>
+            <field name="activity">livestock</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="ptype_ls_raising" model="farm.project.type">
+            <field name="name">Raising</field>
+            <field name="activity">livestock</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="ptype_ls_fattening" model="farm.project.type">
+            <field name="name">Fattening</field>
+            <field name="activity">livestock</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="ptype_ls_dairy" model="farm.project.type">
+            <field name="name">Dairy</field>
+            <field name="activity">livestock</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="ptype_ls_sales" model="farm.project.type">
+            <field name="name">Sales</field>
+            <field name="activity">livestock</field>
+            <field name="sequence">50</field>
+        </record>
+
+    </data>
+</odoo>
