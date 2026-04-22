@@ -4,7 +4,7 @@
 
         <!--
             Inject Material Request KPI section into the Executive Dashboard.
-            Placed just before the Risk Indicators section.
+            Replaces the placeholder div added by smart_farm_dashboard.
         -->
 
         <record id="view_farm_dashboard_mr_inherit" model="ir.ui.view">
@@ -13,142 +13,113 @@
             <field name="inherit_id" ref="smart_farm_dashboard.view_farm_dashboard_form"/>
             <field name="arch" type="xml">
 
-                <!-- Insert after the Financials section (before Risk Indicators) -->
-                <xpath expr="//div[@class='sf-section-label'][i[contains(@class,'fa-shield')]]/.."
-                       position="before">
+                <xpath expr="//div[@id='epd_procurement_section_placeholder']"
+                       position="replace">
 
-                    <hr class="sf-sep"/>
+                    <!-- ══════════════════════════════════════════
+                         § 4 — PROCUREMENT
+                    ══════════════════════════════════════════ -->
+                    <div class="epd-section">
+                        <div class="epd-section-hdr">
+                            <i class="fa fa-shopping-cart"/> Procurement
+                        </div>
+                        <div class="epd-section-body">
 
-                    <!-- ═══════════════════════════════════════════════════════
-                         MATERIAL REQUEST KPIs
-                    ════════════════════════════════════════════════════════ -->
-                    <div class="sf-section-label">
-                        <i class="fa fa-truck" title="Procurement"/> Procurement — Material Requests
-                    </div>
+                            <div class="epd-row-label">Material Request Status</div>
+                            <div class="row g-3 mb-4">
 
-                    <div class="row g-3 mb-3">
-
-                        <!-- Pending -->
-                        <div class="col-lg-3 col-md-6">
-                            <div class="sf-kpi-card sf-kpi-amber">
-                                <div class="sf-kpi-top">
-                                    <i class="fa fa-clock-o sf-kpi-icon" title="Pending"/>
-                                    <span class="sf-kpi-badge">Awaiting</span>
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="epd-proc-chip epd-proc-pending position-relative">
+                                        <button name="action_view_mr_pending" type="object" class="sf-card-btn"/>
+                                        <div class="epd-proc-icon"><i class="fa fa-clock-o"/></div>
+                                        <div class="epd-proc-val">
+                                            <field name="mr_count_pending" nolabel="1"/>
+                                        </div>
+                                        <div class="epd-proc-lbl">Pending Approval</div>
+                                    </div>
                                 </div>
-                                <div class="sf-kpi-number">
-                                    <field name="mr_count_pending" nolabel="1"/>
+
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="epd-proc-chip epd-proc-approved position-relative">
+                                        <button name="action_view_mr_approved" type="object" class="sf-card-btn"/>
+                                        <div class="epd-proc-icon"><i class="fa fa-check-circle"/></div>
+                                        <div class="epd-proc-val">
+                                            <field name="mr_count_approved" nolabel="1"/>
+                                        </div>
+                                        <div class="epd-proc-lbl">Approved / Ordered</div>
+                                    </div>
                                 </div>
-                                <div class="sf-kpi-label">Pending Approval</div>
+
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="epd-proc-chip epd-proc-received position-relative">
+                                        <button name="action_view_mr_received" type="object" class="sf-card-btn"/>
+                                        <div class="epd-proc-icon"><i class="fa fa-archive"/></div>
+                                        <div class="epd-proc-val">
+                                            <field name="mr_count_received" nolabel="1"/>
+                                        </div>
+                                        <div class="epd-proc-lbl">Fully Received</div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="epd-proc-chip epd-proc-rejected position-relative">
+                                        <button name="action_view_mr_rejected" type="object" class="sf-card-btn"/>
+                                        <div class="epd-proc-icon"><i class="fa fa-times-circle"/></div>
+                                        <div class="epd-proc-val">
+                                            <field name="mr_count_rejected" nolabel="1"/>
+                                        </div>
+                                        <div class="epd-proc-lbl">Rejected</div>
+                                    </div>
+                                </div>
+
+                            </div><!-- /status chips -->
+
+                            <div class="epd-row-label">Financial Summary</div>
+                            <div class="row g-3 mb-4">
+                                <div class="col-lg-6">
+                                    <div class="epd-proc-fin">
+                                        <div class="epd-proc-fin-icon text-primary">
+                                            <i class="fa fa-calculator"/>
+                                        </div>
+                                        <div class="epd-proc-fin-body">
+                                            <div class="epd-proc-fin-lbl">Total Estimated (MRs)</div>
+                                            <div class="epd-proc-fin-val">
+                                                <field name="mr_total_estimated_cost" widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}" nolabel="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="epd-proc-fin">
+                                        <div class="epd-proc-fin-icon text-success">
+                                            <i class="fa fa-truck"/>
+                                        </div>
+                                        <div class="epd-proc-fin-body">
+                                            <div class="epd-proc-fin-lbl">Total Actual (Received)</div>
+                                            <div class="epd-proc-fin-val">
+                                                <field name="mr_total_actual_cost" widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}" nolabel="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="epd-row-label">Quick Actions</div>
+                            <div class="epd-action-row">
+                                <button name="action_view_all_mr" type="object"
+                                        class="epd-act-btn epd-btn-navy">
+                                    <i class="fa fa-list-alt me-1"/> All Requests
+                                </button>
                                 <button name="action_view_mr_pending" type="object"
-                                        class="sf-card-btn" title="View pending MRs"/>
+                                        class="epd-act-btn epd-btn-amber">
+                                    <i class="fa fa-clock-o me-1"/> Pending Approvals
+                                </button>
                             </div>
-                        </div>
 
-                        <!-- Approved / In Progress -->
-                        <div class="col-lg-3 col-md-6">
-                            <div class="sf-kpi-card sf-kpi-blue">
-                                <div class="sf-kpi-top">
-                                    <i class="fa fa-check-circle sf-kpi-icon" title="Approved"/>
-                                    <span class="sf-kpi-badge">Active</span>
-                                </div>
-                                <div class="sf-kpi-number">
-                                    <field name="mr_count_approved" nolabel="1"/>
-                                </div>
-                                <div class="sf-kpi-label">Approved / Ordered</div>
-                                <button name="action_view_mr_approved" type="object"
-                                        class="sf-card-btn" title="View approved MRs"/>
-                            </div>
-                        </div>
-
-                        <!-- Received -->
-                        <div class="col-lg-3 col-md-6">
-                            <div class="sf-kpi-card sf-kpi-navy">
-                                <div class="sf-kpi-top">
-                                    <i class="fa fa-inbox sf-kpi-icon" title="Received"/>
-                                    <span class="sf-kpi-badge">Done</span>
-                                </div>
-                                <div class="sf-kpi-number">
-                                    <field name="mr_count_received" nolabel="1"/>
-                                </div>
-                                <div class="sf-kpi-label">Fully Received</div>
-                                <button name="action_view_mr_received" type="object"
-                                        class="sf-card-btn" title="View received MRs"/>
-                            </div>
-                        </div>
-
-                        <!-- Rejected -->
-                        <div class="col-lg-3 col-md-6">
-                            <div class="sf-kpi-card sf-kpi-crimson">
-                                <div class="sf-kpi-top">
-                                    <i class="fa fa-times-circle sf-kpi-icon" title="Rejected"/>
-                                    <span class="sf-kpi-badge">Rejected</span>
-                                </div>
-                                <div class="sf-kpi-number">
-                                    <field name="mr_count_rejected" nolabel="1"/>
-                                </div>
-                                <div class="sf-kpi-label">Rejected</div>
-                                <button name="action_view_mr_rejected" type="object"
-                                        class="sf-card-btn" title="View rejected MRs"/>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!-- Cost summary row -->
-                    <div class="row g-3 mb-3">
-                        <div class="col-lg-6">
-                            <div class="sf-fin-panel">
-                                <div class="sf-fin-panel-title">
-                                    <i class="fa fa-shopping-cart text-warning" title="Procurement costs"/>
-                                    Procurement Costs
-                                </div>
-
-                                <div class="sf-fin-item">
-                                    <span class="sf-fin-item-label">
-                                        <i class="fa fa-list-alt me-1 text-muted" title="Estimated"/>
-                                        Total Estimated (MRs)
-                                    </span>
-                                    <field name="mr_total_estimated_cost"
-                                           widget="monetary"
-                                           options="{'currency_field': 'currency_id'}"
-                                           nolabel="1"/>
-                                </div>
-
-                                <div class="sf-fin-item sf-fin-item-emphasis">
-                                    <span class="sf-fin-item-label">
-                                        <i class="fa fa-check-square-o me-1" title="Actual"/>
-                                        Total Actual (Received)
-                                    </span>
-                                    <field name="mr_total_actual_cost"
-                                           widget="monetary"
-                                           options="{'currency_field': 'currency_id'}"
-                                           nolabel="1"
-                                           decoration-success="mr_total_actual_cost &gt; 0"/>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="col-lg-6 d-flex align-items-stretch">
-                            <div class="sf-fin-panel w-100 d-flex flex-column justify-content-center">
-                                <div class="sf-fin-panel-title">
-                                    <i class="fa fa-bolt text-info" title="Quick actions"/>
-                                    Quick Actions
-                                </div>
-                                <div class="d-flex flex-wrap gap-2 mt-2">
-                                    <button name="action_view_all_mr"
-                                            type="object"
-                                            string="All Requests"
-                                            class="btn btn-outline-secondary btn-sm"/>
-                                    <button name="action_view_mr_pending"
-                                            type="object"
-                                            string="Pending Approvals"
-                                            class="btn btn-outline-warning btn-sm"/>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
+                        </div><!-- /section-body -->
+                    </div><!-- /§4 -->
 
                 </xpath>
 

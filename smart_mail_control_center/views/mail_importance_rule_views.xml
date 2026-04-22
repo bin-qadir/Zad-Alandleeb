@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             IMPORTANCE RULE — List view
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_mail_importance_rule_list" model="ir.ui.view">
+            <field name="name">mail.importance.rule.list</field>
+            <field name="model">mail.importance.rule</field>
+            <field name="arch" type="xml">
+                <list string="Classification Rules"
+                      decoration-muted="not active">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name" string="Rule Name"/>
+                    <field name="sender_email" string="Sender Contains"
+                           optional="show"/>
+                    <field name="sender_domain" string="Sender Domain"
+                           optional="show"/>
+                    <field name="subject_keywords" string="Subject Keywords"
+                           optional="show"/>
+                    <field name="require_attachment" string="Needs Attachment"
+                           optional="show"/>
+                    <field name="importance_level" string="→ Importance"
+                           widget="badge"
+                           decoration-danger="importance_level == 'very_high'"
+                           decoration-warning="importance_level == 'high'"
+                           decoration-info="importance_level == 'normal'"
+                           decoration-muted="importance_level == 'low'"/>
+                    <field name="mailbox_type" string="→ Mailbox"
+                           optional="show"/>
+                    <field name="assigned_user_id" string="→ Assign To"
+                           optional="show"/>
+                    <field name="active" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             IMPORTANCE RULE — Form view
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_mail_importance_rule_form" model="ir.ui.view">
+            <field name="name">mail.importance.rule.form</field>
+            <field name="model">mail.importance.rule</field>
+            <field name="arch" type="xml">
+                <form string="Classification Rule">
+                    <sheet>
+
+                        <div class="oe_title">
+                            <h1><field name="name" placeholder="Rule Name"/></h1>
+                        </div>
+
+                        <group>
+                            <group>
+                                <field name="sequence"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+
+                        <separator string="Matching Criteria (all active criteria must match — AND logic)"/>
+
+                        <group>
+                            <group string="Sender">
+                                <field name="sender_email"
+                                       placeholder="e.g. accounts@"
+                                       help="Rule matches if this text appears anywhere in the sender email address."/>
+                                <field name="sender_domain"
+                                       placeholder="e.g. client.com"
+                                       help="Exact domain match. E.g. 'client.com' matches emails from @client.com"/>
+                            </group>
+                            <group string="Email Content">
+                                <field name="subject_keywords"
+                                       placeholder="urgent, invoice, contract"
+                                       help="Comma-separated. Rule matches if ANY keyword appears in the subject."/>
+                                <field name="require_attachment"
+                                       help="If checked, rule only matches emails that have at least one attachment."/>
+                            </group>
+                        </group>
+
+                        <separator string="Actions Applied on Match"/>
+
+                        <group>
+                            <group string="Classification">
+                                <field name="importance_level" string="Set Importance"/>
+                                <field name="mailbox_type" string="Set Mailbox Type"/>
+                            </group>
+                            <group string="Assignment">
+                                <field name="assigned_user_id" string="Auto-Assign To"/>
+                                <field name="department_id" string="Tag Department"/>
+                            </group>
+                        </group>
+
+                        <group string="Description">
+                            <field name="notes" nolabel="1" widget="text"
+                                   placeholder="Describe what this rule is for…"/>
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             ACTION
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="action_mail_importance_rule" model="ir.actions.act_window">
+            <field name="name">Classification Rules</field>
+            <field name="res_model">mail.importance.rule</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No classification rules yet
+                </p>
+                <p>
+                    Create rules to automatically classify incoming emails by
+                    importance, mailbox type, and assignment — based on sender,
+                    domain, subject keywords, and attachment presence.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

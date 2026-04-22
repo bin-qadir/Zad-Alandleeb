@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!--
+            Seed role assignment rules.
+            assigned_user_id is left empty — admin configures the actual users.
+            sequence determines priority (lower = evaluated first).
+        -->
+
+        <record id="role_rule_claim" model="mail.tracker.role.rule">
+            <field name="name">Claim → QS / Quantity Surveyor</field>
+            <field name="sequence">10</field>
+            <field name="mail_type">claim</field>
+            <field name="active">True</field>
+            <field name="notes">Assign payment claims and progress certificates to the QS department.</field>
+        </record>
+
+        <record id="role_rule_invoice" model="mail.tracker.role.rule">
+            <field name="name">Invoice → Accounting</field>
+            <field name="sequence">20</field>
+            <field name="mail_type">invoice</field>
+            <field name="active">True</field>
+            <field name="notes">Assign tax invoices and billing statements to the Accounting department.</field>
+        </record>
+
+        <record id="role_rule_boq" model="mail.tracker.role.rule">
+            <field name="name">BOQ → Estimation / Pricing</field>
+            <field name="sequence">30</field>
+            <field name="mail_type">boq</field>
+            <field name="active">True</field>
+            <field name="notes">Assign BOQ and cost structure emails to the Estimation team.</field>
+        </record>
+
+        <record id="role_rule_contract" model="mail.tracker.role.rule">
+            <field name="name">Contract → Legal / Contracts Department</field>
+            <field name="sequence">40</field>
+            <field name="mail_type">contract</field>
+            <field name="active">True</field>
+            <field name="notes">Assign subcontracts and agreements to the Legal / Contracts team.</field>
+        </record>
+
+        <record id="role_rule_rfq" model="mail.tracker.role.rule">
+            <field name="name">RFQ → Procurement</field>
+            <field name="sequence">50</field>
+            <field name="mail_type">rfq</field>
+            <field name="active">True</field>
+            <field name="notes">Assign quotation requests to the Procurement department.</field>
+        </record>
+
+        <record id="role_rule_delay" model="mail.tracker.role.rule">
+            <field name="name">Delay / EOT → Project Manager</field>
+            <field name="sequence">60</field>
+            <field name="mail_type">delay</field>
+            <field name="active">True</field>
+            <field name="notes">Assign delay notices and extension-of-time requests to the Project Manager.</field>
+        </record>
+
+        <record id="role_rule_variation" model="mail.tracker.role.rule">
+            <field name="name">Variation Order → QS / Project Manager</field>
+            <field name="sequence">70</field>
+            <field name="mail_type">variation</field>
+            <field name="active">True</field>
+            <field name="notes">Assign variation and change orders to the QS / PM team.</field>
+        </record>
+
+        <record id="role_rule_approval" model="mail.tracker.role.rule">
+            <field name="name">Approval Request → Management</field>
+            <field name="sequence">80</field>
+            <field name="mail_type">approval</field>
+            <field name="active">True</field>
+            <field name="notes">Approval requests are escalated to management for sign-off.</field>
+        </record>
+
+    </data>
+</odoo>

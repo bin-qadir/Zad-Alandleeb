@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            SMART FARM PVA — Job Order Form: PVA Analysis tab
+            ===================================================
+
+            Adds a new "L. PVA Analysis" page after the existing
+            "F. Claims / Extracts" tab (claims_tab).
+
+            Sections:
+              A. Quantity Variance   — planned / approved qty + variance %
+              B. Revenue (BOQ basis) — planned vs claimed revenue + variance
+              C. Profitability       — planned / actual profit + margins
+              D. Risk Flag           — qty overrun indicator
+        -->
+
+        <record id="view_farm_job_order_pva_inherit" model="ir.ui.view">
+            <field name="name">farm.job.order.pva.inherit</field>
+            <field name="model">farm.job.order</field>
+            <field name="inherit_id" ref="smart_farm_execution.view_farm_job_order_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//page[@name='claims_tab']" position="after">
+
+                    <page string="L. PVA Analysis" name="pva_tab" icon="fa-balance-scale">
+
+                        <!-- ══ A. Quantity Variance ═══════════════════════════ -->
+
+                        <div class="alert alert-warning border-start border-warning border-3 mb-2"
+                             role="alert"
+                             invisible="not pva_qty_overrun">
+                            <strong><i class="fa fa-arrows-alt me-1"/>
+                            QUANTITY OVERRUN</strong>
+                            — Approved quantity exceeds the planned BOQ quantity for this
+                            Job Order. Scope over-run detected.
+                        </div>
+
+                        <group string="Quantity — Planned vs Approved"
+                               name="grp_jo_qty">
+                            <group>
+                                <field name="planned_qty"
+                                       string="Planned Qty (BOQ)"
+                                       readonly="1"/>
+                                <field name="approved_qty"
+                                       string="Approved Qty"
+                                       readonly="1"/>
+                                <field name="claimed_qty"
+                                       string="Claimed Qty"
+                                       readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="qty_variance"
+                                       string="Qty Variance"
+                                       decoration-success="qty_variance &gt;= 0"
+                                       decoration-danger="qty_variance &lt; 0"/>
+                                <field name="qty_variance_pct"
+                                       string="Qty Variance %"
+                                       decoration-success="qty_variance_pct &gt;= 0"
+                                       decoration-danger="qty_variance_pct &lt; 0"/>
+                            </group>
+                        </group>
+
+                        <separator/>
+
+                        <!-- ══ B. Revenue (BOQ price basis) ══════════════════ -->
+
+                        <group string="Revenue — Planned vs Claimed  (BOQ price × qty)"
+                               name="grp_jo_revenue">
+                            <group>
+                                <field name="unit_price"
+                                       string="BOQ Unit Price"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"/>
+                                <field name="planned_sales_amount"
+                                       string="Planned Revenue"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <group>
+                                <field name="claim_amount"
+                                       string="Actual Claimed Revenue"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"/>
+                                <field name="sales_variance"
+                                       string="Revenue Variance"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="sales_variance &gt;= 0"
+                                       decoration-danger="sales_variance &lt; 0"/>
+                            </group>
+                        </group>
+
+                        <separator/>
+
+                        <!-- ══ C. Profitability ═══════════════════════════════ -->
+
+                        <group string="Profitability — Planned vs Actual"
+                               name="grp_jo_profit">
+                            <group string="Planned">
+                                <field name="planned_cost"
+                                       string="Planned Cost"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"/>
+                                <field name="jo_planned_profit"
+                                       string="Planned Profit"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="jo_planned_profit &gt; 0"
+                                       decoration-danger="jo_planned_profit &lt;= 0"/>
+                                <field name="planned_margin_pct"
+                                       string="Planned Margin %"
+                                       decoration-success="planned_margin_pct &gt; 0"
+                                       decoration-danger="planned_margin_pct &lt;= 0"/>
+                            </group>
+                            <group string="Actual">
+                                <field name="actual_total_cost"
+                                       string="Actual Total Cost"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="1"/>
+                                <field name="jo_actual_profit"
+                                       string="Actual Profit"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="jo_actual_profit &gt; 0"
+                                       decoration-danger="jo_actual_profit &lt;= 0"/>
+                                <field name="actual_margin_pct"
+                                       string="Actual Margin %"
+                                       decoration-success="actual_margin_pct &gt; 10"
+                                       decoration-warning="actual_margin_pct &gt; 0 and actual_margin_pct &lt;= 10"
+                                       decoration-danger="actual_margin_pct &lt;= 0"/>
+                            </group>
+                        </group>
+
+                        <group name="grp_jo_profit_variance">
+                            <group>
+                                <field name="jo_profit_variance"
+                                       string="Profit Variance"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="jo_profit_variance &gt;= 0"
+                                       decoration-danger="jo_profit_variance &lt; 0"/>
+                            </group>
+                        </group>
+
+                        <!-- Hidden fields for decoration/invisible conditions -->
+                        <field name="currency_id" invisible="True"/>
+                        <field name="pva_qty_overrun" invisible="True"/>
+
+                    </page>
+
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

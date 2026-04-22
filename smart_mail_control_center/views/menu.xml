@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             TOP-LEVEL APP MENU
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <menuitem id="menu_mail_control_center_root"
+                  name="Mail Control Center"
+                  sequence="50"
+                  web_icon="smart_mail_control_center,static/description/icon.png"/>
+
+        <!-- ── My Dashboard ── -->
+        <menuitem id="menu_mail_tracker_dashboard"
+                  name="My Dashboard"
+                  parent="menu_mail_control_center_root"
+                  sequence="10"
+                  action="smart_mail_control_center.action_mail_tracker_dashboard"/>
+
+        <!-- ── Email Tracker ── -->
+        <menuitem id="menu_mail_tracker_record"
+                  name="Email Tracker"
+                  parent="menu_mail_control_center_root"
+                  sequence="20"
+                  action="action_mail_tracker_record"/>
+
+        <!-- ── Important Inbox ── -->
+        <menuitem id="menu_mail_tracker_important"
+                  name="Important Inbox"
+                  parent="menu_mail_control_center_root"
+                  sequence="25"
+                  action="action_mail_tracker_important"/>
+
+        <!-- ── Configuration (managers only) ── -->
+        <menuitem id="menu_mail_tracker_config"
+                  name="Configuration"
+                  parent="menu_mail_control_center_root"
+                  sequence="90"
+                  groups="smart_mail_control_center.group_mail_tracker_manager"/>
+
+        <menuitem id="menu_mail_importance_rule"
+                  name="Classification Rules"
+                  parent="menu_mail_tracker_config"
+                  sequence="10"
+                  action="action_mail_importance_rule"/>
+
+        <menuitem id="menu_mail_tracker_role_rule"
+                  name="Role Assignment Rules"
+                  parent="menu_mail_tracker_config"
+                  sequence="15"
+                  action="action_mail_tracker_role_rule"/>
+
+        <!-- Link to Odoo's built-in Incoming Mail Servers -->
+        <menuitem id="menu_mail_incoming_servers"
+                  name="Incoming Mail Servers"
+                  parent="menu_mail_tracker_config"
+                  sequence="20"
+                  action="mail.action_email_server_tree"
+                  groups="base.group_no_one"/>
+
+    </data>
+</odoo>

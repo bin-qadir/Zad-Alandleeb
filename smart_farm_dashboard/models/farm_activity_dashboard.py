@@ -504,6 +504,11 @@ class FarmActivityDashboard(models.Model):
         return self._jo_action('All Construction JOs')
 
     def action_view_dept_civil(self):
+        """Open Civil Division Dashboard (hierarchical subdivision view)."""
+        return self.env['farm.civil.dashboard'].action_open_civil_dashboard()
+
+    def action_view_dept_civil_jos(self):
+        """Open filtered JO list for civil department (legacy fallback)."""
         return self._jo_action('Civil Department', [('department', '=', 'civil')])
 
     def action_view_dept_structure(self):

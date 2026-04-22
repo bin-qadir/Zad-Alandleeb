@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Email sync cron — runs every 2 minutes for near-real-time capture -->
+        <record id="ir_cron_mail_tracker_sync" model="ir.cron">
+            <field name="name">Mail Tracker: Sync emails from Odoo messages</field>
+            <field name="model_id" ref="model_mail_tracker_sync"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_sync_emails()</field>
+            <field name="interval_number">2</field>
+            <field name="interval_type">minutes</field>
+            <field name="active">True</field>
+            <field name="user_id" ref="base.user_root"/>
+        </record>
+
+        <!-- Auto-escalation cron — runs every hour to escalate stale high-importance emails -->
+        <record id="ir_cron_mail_tracker_escalate" model="ir.cron">
+            <field name="name">Mail Tracker: Auto-escalate unhandled high-importance emails</field>
+            <field name="model_id" ref="model_mail_tracker_record"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_auto_escalate()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="active">True</field>
+            <field name="user_id" ref="base.user_root"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,406 @@
+/* ============================================================
+   SMART MAIL CONTROL CENTER — Dashboard & Tracker Styles
+   ============================================================ */
+
+/* ── Dashboard KPI Grid ─────────────────────────────────── */
+
+.smcc-dashboard-header {
+    background: linear-gradient(135deg, #1a3558 0%, #1e4a7a 100%);
+    color: #fff;
+    border-radius: 10px;
+    padding: 20px 28px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.smcc-dashboard-header .smcc-header-icon {
+    font-size: 2.8rem;
+    opacity: 0.9;
+}
+
+.smcc-dashboard-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.smcc-dashboard-header p {
+    margin: 4px 0 0;
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+.smcc-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+/* ── KPI Card (button) ──────────────────────────────────── */
+
+button.smcc-kpi-card {
+    /* Reset browser button defaults */
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+    text-align: left;
+    /* Card styling */
+    background: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 18px 16px 14px;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    border-left: 5px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    min-height: 100px;
+    position: relative;
+}
+
+button.smcc-kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.14);
+}
+
+button.smcc-kpi-card:focus-visible {
+    outline: 2px solid rgba(26, 53, 88, 0.5);
+    outline-offset: 2px;
+}
+
+.smcc-kpi-icon {
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+    opacity: 0.85;
+}
+
+.smcc-kpi-value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #1a3558;
+}
+
+.smcc-kpi-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+/* ── KPI Color Variants ─────────────────────────────────── */
+
+button.smcc-kpi--red    { border-left-color: #ef4444; }
+button.smcc-kpi--red    .smcc-kpi-icon { color: #ef4444; }
+
+button.smcc-kpi--orange { border-left-color: #f97316; }
+button.smcc-kpi--orange .smcc-kpi-icon { color: #f97316; }
+
+button.smcc-kpi--amber  { border-left-color: #f59e0b; }
+button.smcc-kpi--amber  .smcc-kpi-icon { color: #f59e0b; }
+
+button.smcc-kpi--teal   { border-left-color: #00bca0; }
+button.smcc-kpi--teal   .smcc-kpi-icon { color: #00bca0; }
+
+button.smcc-kpi--blue   { border-left-color: #3b82f6; }
+button.smcc-kpi--blue   .smcc-kpi-icon { color: #3b82f6; }
+
+button.smcc-kpi--navy   { border-left-color: #1a3558; }
+button.smcc-kpi--navy   .smcc-kpi-icon { color: #1a3558; }
+
+button.smcc-kpi--purple { border-left-color: #8b5cf6; }
+button.smcc-kpi--purple .smcc-kpi-icon { color: #8b5cf6; }
+
+button.smcc-kpi--green  { border-left-color: #10b981; }
+button.smcc-kpi--green  .smcc-kpi-icon { color: #10b981; }
+
+button.smcc-kpi--gray   { border-left-color: #9ca3af; }
+button.smcc-kpi--gray   .smcc-kpi-icon { color: #9ca3af; }
+
+/* ── Dashboard Section Title ────────────────────────────── */
+
+.smcc-section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9ca3af;
+    padding: 4px 0;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 12px;
+}
+
+/* ── Email List: Row Color Coding ───────────────────────── */
+
+.o_list_table tr.smcc-row--very-high td { border-left: 4px solid #ef4444; }
+.o_list_table tr.smcc-row--high      td { border-left: 4px solid #f97316; }
+.o_list_table tr.smcc-row--overdue   td { background: rgba(239, 68, 68, 0.04); }
+.o_list_table tr.smcc-row--escalated td { background: rgba(139, 92, 246, 0.06); }
+
+/* ── Importance Badge in list/kanban ────────────────────── */
+
+.smcc-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+}
+
+.smcc-badge--very-high  { background: #fef2f2; color: #dc2626; }
+.smcc-badge--high       { background: #fff7ed; color: #c2410c; }
+.smcc-badge--normal     { background: #f0f9ff; color: #0369a1; }
+.smcc-badge--low        { background: #f9fafb; color: #6b7280; }
+
+/* ── Attachment indicator ───────────────────────────────── */
+
+.smcc-attach-icon {
+    color: #00bca0;
+    font-weight: 600;
+}
+
+/* ══════════════════════════════════════════════════════════
+   OPERATIONAL LINKS TAB
+   ══════════════════════════════════════════════════════════ */
+
+.smcc-op-link-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    transition: box-shadow 0.1s ease;
+}
+
+.smcc-op-link-row:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.smcc-op-link-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    color: #fff;
+}
+
+.smcc-op-link-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.smcc-op-link-type {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #94a3b8;
+    margin-bottom: 2px;
+}
+
+.smcc-op-link-name {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.smcc-op-link-state {
+    margin-top: 3px;
+    font-size: 0.78rem;
+}
+
+/* Icon background colors */
+.smcc-op--amber  { background: #f59e0b; }
+.smcc-op--green  { background: #10b981; }
+.smcc-op--navy   { background: #1a3558; }
+.smcc-op--teal   { background: #00bca0; }
+.smcc-op--blue   { background: #3b82f6; }
+.smcc-op--purple { background: #8b5cf6; }
+
+/* ══════════════════════════════════════════════════════════
+   AI DECISION ENGINE PANEL
+   ══════════════════════════════════════════════════════════ */
+
+.smcc-ai-decision-panel {
+    border-radius: 10px;
+    border: 1.5px solid #6d28d9;
+    background: linear-gradient(135deg, #1e1b4b 0%, #2d1b69 100%);
+    color: #fff;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.smcc-ai-decision-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    background: rgba(0,0,0,0.25);
+    gap: 8px;
+}
+
+.smcc-ai-decision-action {
+    padding: 10px 20px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.88rem;
+}
+
+.smcc-ai-action-label {
+    opacity: 0.8;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Score blocks in the panel header */
+.smcc-ai-score-block {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 3px 9px;
+}
+
+.smcc-ai-score-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    opacity: 0.7;
+    letter-spacing: 0.05em;
+}
+
+.smcc-ai-score-value {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #fff !important;
+}
+
+/* Decision reason HTML block */
+.smcc-ai-reasoning {
+    border-left: 3px solid #8b5cf6;
+    padding-left: 12px;
+    margin: 4px 0;
+}
+
+.smcc-ai-reasoning p {
+    margin-bottom: 4px;
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+/* ── Urgency state badges ────────────────────────────────── */
+
+.smcc-state-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 9px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* 🔴 Urgent / Very High */
+.smcc-state--urgent {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+/* 🟠 Waiting / Needs Action */
+.smcc-state--waiting {
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
+}
+
+/* 🔵 In Progress / Action */
+.smcc-state--action {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+}
+
+/* 🟢 Done / Resolved */
+.smcc-state--done {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+/* 🟡 Escalated */
+.smcc-state--escalated {
+    background: #faf5ff;
+    color: #6d28d9;
+    border: 1px solid #ddd6fe;
+}
+
+/* 🔘 Not Assigned */
+.smcc-state--unassigned {
+    background: #f9fafb;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+}
+
+/* ── mail_type chip ──────────────────────────────────────── */
+
+.smcc-type-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 8px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.smcc-type-chip--boq      { background: #ecfdf5; color: #065f46; border-color: #6ee7b7; }
+.smcc-type-chip--claim    { background: #fff7ed; color: #9a3412; border-color: #fed7aa; }
+.smcc-type-chip--invoice  { background: #eff6ff; color: #1e40af; border-color: #93c5fd; }
+.smcc-type-chip--contract { background: #faf5ff; color: #5b21b6; border-color: #c4b5fd; }
+.smcc-type-chip--variation{ background: #fefce8; color: #854d0e; border-color: #fde68a; }
+.smcc-type-chip--rfq      { background: #f0f9ff; color: #0c4a6e; border-color: #7dd3fc; }
+.smcc-type-chip--approval { background: #fff1f2; color: #9f1239; border-color: #fda4af; }
+.smcc-type-chip--delay    { background: #fff8f1; color: #92400e; border-color: #fdba74; }
+
+/* ── Sync button bar ────────────────────────────────────── */
+
+.smcc-sync-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0 0;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 16px;
+}

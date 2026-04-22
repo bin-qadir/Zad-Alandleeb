@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<record id="view_farm_structure_dashboard_form" model="ir.ui.view">
+    <field name="name">farm.structure.dashboard.form</field>
+    <field name="model">farm.structure.dashboard</field>
+    <field name="arch" type="xml">
+        <form string="Structure Dashboard" create="0" delete="0" edit="0">
+            <sheet>
+
+                <!-- Project context banner -->
+                <div class="civil-project-ctx" invisible="not project_id">
+                    <button name="action_back_to_project" type="object"
+                            class="civil-project-ctx__back" title="Back to Project Dashboard">
+                        <i class="fa fa-arrow-left me-1"/>Back
+                    </button>
+                    <i class="fa fa-filter me-2"/>
+                    Filtered to project:
+                    <strong>
+                        <field name="project_id" readonly="1" nolabel="1"
+                               options="{'no_open': True}"/>
+                    </strong>
+                </div>
+
+                <!-- Header banner -->
+                <div class="civil-dash-header">
+                    <div class="civil-dash-header__left">
+                        <i class="fa fa-object-group civil-dash-header__icon"/>
+                        <div>
+                            <div class="civil-dash-header__title">Structure Division</div>
+                            <div class="civil-dash-header__sub">Construction — Structural Works</div>
+                        </div>
+                    </div>
+                    <div class="civil-dash-header__kpi">
+                        <button name="action_view_all_structure" type="object"
+                                class="sf-card-btn--light" title="View All Structure JOs"/>
+                        <div class="civil-dash-header__kpi-num">
+                            <field name="total_structure_jos" readonly="1"/>
+                        </div>
+                        <div class="civil-dash-header__kpi-lbl">Total Structure Job Orders</div>
+                    </div>
+                </div>
+
+                <div class="civil-section-label">
+                    <i class="fa fa-th me-2"/>Subdivision Executive Breakdown
+                </div>
+
+                <div class="civil-legend-row">
+                    <span class="civil-legend-item civil-legend-item--contract">Contract</span>
+                    <span class="civil-legend-item civil-legend-item--executed">Executed</span>
+                    <span class="civil-legend-item civil-legend-item--remaining">Remaining</span>
+                    <span class="civil-legend-item civil-legend-item--approved">Approved</span>
+                    <span class="civil-legend-item civil-legend-item--claimed">Claimed</span>
+                    <span class="civil-legend-item civil-legend-item--invoiced">Invoiced</span>
+                    <span class="civil-legend-item civil-legend-item--progress">Progress</span>
+                    <span class="civil-legend-item civil-legend-item--variation">Variation</span>
+                </div>
+
+                <div class="civil-subdiv-grid">
+
+                    <!-- 1. Foundations -->
+                    <div class="civil-subdiv-card">
+                        <button name="action_view_foundations" type="object"
+                                class="sf-card-btn--light" title="View Foundations JOs"/>
+                        <div class="civil-card-header">
+                            <div class="civil-card-header__icon"><i class="fa fa-anchor"/></div>
+                            <div class="civil-card-header__info">
+                                <div class="civil-card-header__name">Foundations</div>
+                                <div class="civil-card-header__hint">Deep foundations, piles, raft</div>
+                            </div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--primary">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--contract"><field name="fn_contract" readonly="1"/></div><div class="civil-metric-item__lbl">Contract</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--executed"><field name="fn_executed" readonly="1"/></div><div class="civil-metric-item__lbl">Executed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--remaining"><field name="fn_remaining" readonly="1"/></div><div class="civil-metric-item__lbl">Remaining</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--financial">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--approved"><field name="fn_approved" readonly="1"/></div><div class="civil-metric-item__lbl">Approved</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--claimed"><field name="fn_claimed" readonly="1"/></div><div class="civil-metric-item__lbl">Claimed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--invoiced"><field name="fn_invoiced" readonly="1"/></div><div class="civil-metric-item__lbl">Invoiced</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--process">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inprog"><field name="fn_inprog" readonly="1"/></div><div class="civil-metric-item__lbl">In Progress</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inspection"><field name="fn_inspection" readonly="1"/></div><div class="civil-metric-item__lbl">Inspection</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--handover"><field name="fn_handover" readonly="1"/></div><div class="civil-metric-item__lbl">Handover</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--notstart"><field name="fn_notstart" readonly="1"/></div><div class="civil-metric-item__lbl">Not Started</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--variation">
+                            <div class="civil-metric-item civil-metric-item--wide">
+                                <div class="civil-metric-item__lbl">Variation (Approved - Contract)</div>
+                                <div class="civil-metric-item__val civil-val--variation"><field name="fn_variation" readonly="1"/></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Footings -->
+                    <div class="civil-subdiv-card">
+                        <button name="action_view_footings" type="object"
+                                class="sf-card-btn--light" title="View Footings JOs"/>
+                        <div class="civil-card-header">
+                            <div class="civil-card-header__icon"><i class="fa fa-compress"/></div>
+                            <div class="civil-card-header__info">
+                                <div class="civil-card-header__name">Footings</div>
+                                <div class="civil-card-header__hint">Isolated, strip, pad footings</div>
+                            </div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--primary">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--contract"><field name="ft_contract" readonly="1"/></div><div class="civil-metric-item__lbl">Contract</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--executed"><field name="ft_executed" readonly="1"/></div><div class="civil-metric-item__lbl">Executed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--remaining"><field name="ft_remaining" readonly="1"/></div><div class="civil-metric-item__lbl">Remaining</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--financial">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--approved"><field name="ft_approved" readonly="1"/></div><div class="civil-metric-item__lbl">Approved</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--claimed"><field name="ft_claimed" readonly="1"/></div><div class="civil-metric-item__lbl">Claimed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--invoiced"><field name="ft_invoiced" readonly="1"/></div><div class="civil-metric-item__lbl">Invoiced</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--process">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inprog"><field name="ft_inprog" readonly="1"/></div><div class="civil-metric-item__lbl">In Progress</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inspection"><field name="ft_inspection" readonly="1"/></div><div class="civil-metric-item__lbl">Inspection</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--handover"><field name="ft_handover" readonly="1"/></div><div class="civil-metric-item__lbl">Handover</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--notstart"><field name="ft_notstart" readonly="1"/></div><div class="civil-metric-item__lbl">Not Started</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--variation">
+                            <div class="civil-metric-item civil-metric-item--wide">
+                                <div class="civil-metric-item__lbl">Variation (Approved - Contract)</div>
+                                <div class="civil-metric-item__val civil-val--variation"><field name="ft_variation" readonly="1"/></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Columns -->
+                    <div class="civil-subdiv-card">
+                        <button name="action_view_columns" type="object"
+                                class="sf-card-btn--light" title="View Columns JOs"/>
+                        <div class="civil-card-header">
+                            <div class="civil-card-header__icon"><i class="fa fa-bars"/></div>
+                            <div class="civil-card-header__info">
+                                <div class="civil-card-header__name">Columns</div>
+                                <div class="civil-card-header__hint">RC columns, precast, shear walls</div>
+                            </div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--primary">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--contract"><field name="co_contract" readonly="1"/></div><div class="civil-metric-item__lbl">Contract</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--executed"><field name="co_executed" readonly="1"/></div><div class="civil-metric-item__lbl">Executed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--remaining"><field name="co_remaining" readonly="1"/></div><div class="civil-metric-item__lbl">Remaining</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--financial">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--approved"><field name="co_approved" readonly="1"/></div><div class="civil-metric-item__lbl">Approved</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--claimed"><field name="co_claimed" readonly="1"/></div><div class="civil-metric-item__lbl">Claimed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--invoiced"><field name="co_invoiced" readonly="1"/></div><div class="civil-metric-item__lbl">Invoiced</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--process">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inprog"><field name="co_inprog" readonly="1"/></div><div class="civil-metric-item__lbl">In Progress</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inspection"><field name="co_inspection" readonly="1"/></div><div class="civil-metric-item__lbl">Inspection</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--handover"><field name="co_handover" readonly="1"/></div><div class="civil-metric-item__lbl">Handover</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--notstart"><field name="co_notstart" readonly="1"/></div><div class="civil-metric-item__lbl">Not Started</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--variation">
+                            <div class="civil-metric-item civil-metric-item--wide">
+                                <div class="civil-metric-item__lbl">Variation (Approved - Contract)</div>
+                                <div class="civil-metric-item__val civil-val--variation"><field name="co_variation" readonly="1"/></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Beams -->
+                    <div class="civil-subdiv-card">
+                        <button name="action_view_beams" type="object"
+                                class="sf-card-btn--light" title="View Beams JOs"/>
+                        <div class="civil-card-header">
+                            <div class="civil-card-header__icon"><i class="fa fa-minus"/></div>
+                            <div class="civil-card-header__info">
+                                <div class="civil-card-header__name">Beams</div>
+                                <div class="civil-card-header__hint">Primary, secondary, transfer beams</div>
+                            </div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--primary">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--contract"><field name="bm_contract" readonly="1"/></div><div class="civil-metric-item__lbl">Contract</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--executed"><field name="bm_executed" readonly="1"/></div><div class="civil-metric-item__lbl">Executed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--remaining"><field name="bm_remaining" readonly="1"/></div><div class="civil-metric-item__lbl">Remaining</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--financial">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--approved"><field name="bm_approved" readonly="1"/></div><div class="civil-metric-item__lbl">Approved</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--claimed"><field name="bm_claimed" readonly="1"/></div><div class="civil-metric-item__lbl">Claimed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--invoiced"><field name="bm_invoiced" readonly="1"/></div><div class="civil-metric-item__lbl">Invoiced</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--process">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inprog"><field name="bm_inprog" readonly="1"/></div><div class="civil-metric-item__lbl">In Progress</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inspection"><field name="bm_inspection" readonly="1"/></div><div class="civil-metric-item__lbl">Inspection</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--handover"><field name="bm_handover" readonly="1"/></div><div class="civil-metric-item__lbl">Handover</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--notstart"><field name="bm_notstart" readonly="1"/></div><div class="civil-metric-item__lbl">Not Started</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--variation">
+                            <div class="civil-metric-item civil-metric-item--wide">
+                                <div class="civil-metric-item__lbl">Variation (Approved - Contract)</div>
+                                <div class="civil-metric-item__val civil-val--variation"><field name="bm_variation" readonly="1"/></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Slabs -->
+                    <div class="civil-subdiv-card">
+                        <button name="action_view_slabs" type="object"
+                                class="sf-card-btn--light" title="View Slabs JOs"/>
+                        <div class="civil-card-header">
+                            <div class="civil-card-header__icon"><i class="fa fa-th"/></div>
+                            <div class="civil-card-header__info">
+                                <div class="civil-card-header__name">Slabs</div>
+                                <div class="civil-card-header__hint">Flat slabs, hollow core, waffle</div>
+                            </div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--primary">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--contract"><field name="sl_contract" readonly="1"/></div><div class="civil-metric-item__lbl">Contract</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--executed"><field name="sl_executed" readonly="1"/></div><div class="civil-metric-item__lbl">Executed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--remaining"><field name="sl_remaining" readonly="1"/></div><div class="civil-metric-item__lbl">Remaining</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--financial">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--approved"><field name="sl_approved" readonly="1"/></div><div class="civil-metric-item__lbl">Approved</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--claimed"><field name="sl_claimed" readonly="1"/></div><div class="civil-metric-item__lbl">Claimed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--invoiced"><field name="sl_invoiced" readonly="1"/></div><div class="civil-metric-item__lbl">Invoiced</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--process">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inprog"><field name="sl_inprog" readonly="1"/></div><div class="civil-metric-item__lbl">In Progress</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inspection"><field name="sl_inspection" readonly="1"/></div><div class="civil-metric-item__lbl">Inspection</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--handover"><field name="sl_handover" readonly="1"/></div><div class="civil-metric-item__lbl">Handover</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--notstart"><field name="sl_notstart" readonly="1"/></div><div class="civil-metric-item__lbl">Not Started</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--variation">
+                            <div class="civil-metric-item civil-metric-item--wide">
+                                <div class="civil-metric-item__lbl">Variation (Approved - Contract)</div>
+                                <div class="civil-metric-item__val civil-val--variation"><field name="sl_variation" readonly="1"/></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Staircases -->
+                    <div class="civil-subdiv-card">
+                        <button name="action_view_staircases" type="object"
+                                class="sf-card-btn--light" title="View Staircases JOs"/>
+                        <div class="civil-card-header">
+                            <div class="civil-card-header__icon"><i class="fa fa-level-up"/></div>
+                            <div class="civil-card-header__info">
+                                <div class="civil-card-header__name">Staircases</div>
+                                <div class="civil-card-header__hint">RC stairs, landings, ramps</div>
+                            </div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--primary">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--contract"><field name="st_contract" readonly="1"/></div><div class="civil-metric-item__lbl">Contract</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--executed"><field name="st_executed" readonly="1"/></div><div class="civil-metric-item__lbl">Executed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--remaining"><field name="st_remaining" readonly="1"/></div><div class="civil-metric-item__lbl">Remaining</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--financial">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--approved"><field name="st_approved" readonly="1"/></div><div class="civil-metric-item__lbl">Approved</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--claimed"><field name="st_claimed" readonly="1"/></div><div class="civil-metric-item__lbl">Claimed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--invoiced"><field name="st_invoiced" readonly="1"/></div><div class="civil-metric-item__lbl">Invoiced</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--process">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inprog"><field name="st_inprog" readonly="1"/></div><div class="civil-metric-item__lbl">In Progress</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inspection"><field name="st_inspection" readonly="1"/></div><div class="civil-metric-item__lbl">Inspection</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--handover"><field name="st_handover" readonly="1"/></div><div class="civil-metric-item__lbl">Handover</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--notstart"><field name="st_notstart" readonly="1"/></div><div class="civil-metric-item__lbl">Not Started</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--variation">
+                            <div class="civil-metric-item civil-metric-item--wide">
+                                <div class="civil-metric-item__lbl">Variation (Approved - Contract)</div>
+                                <div class="civil-metric-item__val civil-val--variation"><field name="st_variation" readonly="1"/></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 7. Retaining Walls -->
+                    <div class="civil-subdiv-card">
+                        <button name="action_view_retaining_walls" type="object"
+                                class="sf-card-btn--light" title="View Retaining Walls JOs"/>
+                        <div class="civil-card-header">
+                            <div class="civil-card-header__icon"><i class="fa fa-shield"/></div>
+                            <div class="civil-card-header__info">
+                                <div class="civil-card-header__name">Retaining Walls</div>
+                                <div class="civil-card-header__hint">RC retaining, boundary walls</div>
+                            </div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--primary">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--contract"><field name="rw_contract" readonly="1"/></div><div class="civil-metric-item__lbl">Contract</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--executed"><field name="rw_executed" readonly="1"/></div><div class="civil-metric-item__lbl">Executed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--remaining"><field name="rw_remaining" readonly="1"/></div><div class="civil-metric-item__lbl">Remaining</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--financial">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--approved"><field name="rw_approved" readonly="1"/></div><div class="civil-metric-item__lbl">Approved</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--claimed"><field name="rw_claimed" readonly="1"/></div><div class="civil-metric-item__lbl">Claimed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--invoiced"><field name="rw_invoiced" readonly="1"/></div><div class="civil-metric-item__lbl">Invoiced</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--process">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inprog"><field name="rw_inprog" readonly="1"/></div><div class="civil-metric-item__lbl">In Progress</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inspection"><field name="rw_inspection" readonly="1"/></div><div class="civil-metric-item__lbl">Inspection</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--handover"><field name="rw_handover" readonly="1"/></div><div class="civil-metric-item__lbl">Handover</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--notstart"><field name="rw_notstart" readonly="1"/></div><div class="civil-metric-item__lbl">Not Started</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--variation">
+                            <div class="civil-metric-item civil-metric-item--wide">
+                                <div class="civil-metric-item__lbl">Variation (Approved - Contract)</div>
+                                <div class="civil-metric-item__val civil-val--variation"><field name="rw_variation" readonly="1"/></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 8. Structural Frames -->
+                    <div class="civil-subdiv-card">
+                        <button name="action_view_structural_frames" type="object"
+                                class="sf-card-btn--light" title="View Structural Frames JOs"/>
+                        <div class="civil-card-header">
+                            <div class="civil-card-header__icon"><i class="fa fa-object-group"/></div>
+                            <div class="civil-card-header__info">
+                                <div class="civil-card-header__name">Structural Frames</div>
+                                <div class="civil-card-header__hint">Steel frames, trusses, portals</div>
+                            </div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--primary">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--contract"><field name="sf_contract" readonly="1"/></div><div class="civil-metric-item__lbl">Contract</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--executed"><field name="sf_executed" readonly="1"/></div><div class="civil-metric-item__lbl">Executed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--remaining"><field name="sf_remaining" readonly="1"/></div><div class="civil-metric-item__lbl">Remaining</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--financial">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--approved"><field name="sf_approved" readonly="1"/></div><div class="civil-metric-item__lbl">Approved</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--claimed"><field name="sf_claimed" readonly="1"/></div><div class="civil-metric-item__lbl">Claimed</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--invoiced"><field name="sf_invoiced" readonly="1"/></div><div class="civil-metric-item__lbl">Invoiced</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--process">
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inprog"><field name="sf_inprog" readonly="1"/></div><div class="civil-metric-item__lbl">In Progress</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--inspection"><field name="sf_inspection" readonly="1"/></div><div class="civil-metric-item__lbl">Inspection</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--handover"><field name="sf_handover" readonly="1"/></div><div class="civil-metric-item__lbl">Handover</div></div>
+                            <div class="civil-metric-item"><div class="civil-metric-item__val civil-val--notstart"><field name="sf_notstart" readonly="1"/></div><div class="civil-metric-item__lbl">Not Started</div></div>
+                        </div>
+                        <div class="civil-metric-row civil-metric-row--variation">
+                            <div class="civil-metric-item civil-metric-item--wide">
+                                <div class="civil-metric-item__lbl">Variation (Approved - Contract)</div>
+                                <div class="civil-metric-item__val civil-val--variation"><field name="sf_variation" readonly="1"/></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="civil-dash-footer">
+                    <a href="#" onclick="window.history.back(); return false;" class="civil-dash-back">
+                        <i class="fa fa-arrow-left me-1"/>Back to Construction Dashboard
+                    </a>
+                </div>
+
+            </sheet>
+        </form>
+    </field>
+</record>
+
+</data>
+</odoo>

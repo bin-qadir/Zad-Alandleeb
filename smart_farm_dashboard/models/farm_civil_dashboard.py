@@ -173,7 +173,11 @@ class FarmCivilDashboard(models.Model):
 
     def _compute_subdiv_kpis(self):
         """
-        2-query SQL approach, now project-aware.
+        2-query SQL approach, project-aware, division_id-scoped.
+
+        Resolves 'Civil Works' division at runtime — NO department='civil' filter.
+        All subdivision lookups are scoped by division_id so same-named
+        subdivisions from other divisions are never mixed in.
 
         When rec.project_id is set:
           • JO query adds  AND project_id = <id>
@@ -182,10 +186,15 @@ class FarmCivilDashboard(models.Model):
         When rec.project_id is False (global view):
           • No project filter — shows all civil data.
         """
-        cr = self.env.cr
-        SubDiv = self.env['farm.subdivision.work']
+        cr      = self.env.cr
+        SubDiv  = self.env['farm.subdivision.work']
+        DivWork = self.env['farm.division.work']
 
-        # ── Build prefix → [subdivision_ids] map once (shared across records) ─
+        # -- Resolve Civil Works division once per compute call --------------
+        civil_div    = DivWork.search([('name', '=ilike', 'Civil Works')], limit=1)
+        civil_div_id = civil_div.id if civil_div else False
+
+        # ── Build prefix → [subdivision_ids] map (shared across records) ───
         name_by_prefix = {
             'sp': 'Site Preparation',
             'ex': 'Excavation',
@@ -196,15 +205,24 @@ class FarmCivilDashboard(models.Model):
             'rw': 'Road Works',
             'en': 'External Networks',
         }
-        prefix_to_ids = {}
-        id_to_prefix  = {}
-        all_ids       = []
-        for prefix, name in name_by_prefix.items():
-            ids = SubDiv.search([('name', 'ilike', name)]).ids
-            prefix_to_ids[prefix] = ids
-            for sid in ids:
-                id_to_prefix[sid] = prefix
-            all_ids.extend(ids)
+        prefix_to_ids      = {}
+        id_to_prefix       = {}
+        all_ids            = []     # IDs for the spec'd subdivisions
+        all_civil_subdiv_ids = []   # ALL IDs under Civil Works (for total count)
+
+        if civil_div_id:
+            all_civil_subdiv_ids = SubDiv.search(
+                [('division_id', '=', civil_div_id)]).ids
+
+            for prefix, name in name_by_prefix.items():
+                ids = SubDiv.search([
+                    ('name',       'ilike', name),
+                    ('division_id', '=',   civil_div_id),
+                ]).ids
+                prefix_to_ids[prefix] = ids
+                for sid in ids:
+                    id_to_prefix[sid] = prefix
+                all_ids.extend(ids)
 
         for rec in self:
             # ── Zero-initialise per-record accumulators ────────────────────
@@ -221,7 +239,7 @@ class FarmCivilDashboard(models.Model):
             pid = rec.project_id.id  # None when global view
 
             if all_ids:
-                # ── Query 1: JO metrics (project-filtered when pid set) ────
+                # ── Query 1: JO metrics (subdivision_id scope, no dept filter) ─
                 if pid:
                     cr.execute("""
                         SELECT
@@ -238,9 +256,8 @@ class FarmCivilDashboard(models.Model):
                             COALESCE(SUM(claimed_qty),  0)
                         FROM farm_job_order
                         WHERE business_activity = 'construction'
-                          AND department = 'civil'
-                          AND subdivision_id = ANY(%s)
-                          AND project_id = %s
+                          AND subdivision_id    = ANY(%s)
+                          AND project_id        = %s
                         GROUP BY subdivision_id
                     """, (all_ids, pid))
                 else:
@@ -259,8 +276,7 @@ class FarmCivilDashboard(models.Model):
                             COALESCE(SUM(claimed_qty),  0)
                         FROM farm_job_order
                         WHERE business_activity = 'construction'
-                          AND department = 'civil'
-                          AND subdivision_id = ANY(%s)
+                          AND subdivision_id    = ANY(%s)
                         GROUP BY subdivision_id
                     """, (all_ids,))
 
@@ -306,20 +322,24 @@ class FarmCivilDashboard(models.Model):
                     if pfx:
                         acc[pfx]['invoiced'] += invoiced
 
-            # ── Total civil JOs for the header count ──────────────────────
-            if pid:
-                cr.execute("""
-                    SELECT COUNT(*) FROM farm_job_order
-                    WHERE business_activity = 'construction'
-                      AND department = 'civil'
-                      AND project_id = %s
-                """, (pid,))
+            # ── Total civil JOs — ALL subdivisions under Civil Works ───────
+            if all_civil_subdiv_ids:
+                if pid:
+                    cr.execute("""
+                        SELECT COUNT(*) FROM farm_job_order
+                        WHERE business_activity = 'construction'
+                          AND subdivision_id    = ANY(%s)
+                          AND project_id        = %s
+                    """, (all_civil_subdiv_ids, pid))
+                else:
+                    cr.execute("""
+                        SELECT COUNT(*) FROM farm_job_order
+                        WHERE business_activity = 'construction'
+                          AND subdivision_id    = ANY(%s)
+                    """, (all_civil_subdiv_ids,))
+                total_jos = cr.fetchone()[0] or 0
             else:
-                cr.execute("""
-                    SELECT COUNT(*) FROM farm_job_order
-                    WHERE business_activity = 'construction' AND department = 'civil'
-                """)
-            total_jos = cr.fetchone()[0] or 0
+                total_jos = 0
 
             # ── Assign to this record ──────────────────────────────────────
             rec.total_civil_jos = total_jos
@@ -343,21 +363,43 @@ class FarmCivilDashboard(models.Model):
     # ── Drill-down actions ─────────────────────────────────────────────────
 
     def _civil_jo_action(self, name, subdiv_name=None):
+        """Open civil job orders filtered by BOQ hierarchy (division_id), not department."""
         self.ensure_one()
-        domain = [('business_activity', '=', 'construction'), ('department', '=', 'civil')]
+        DivWork   = self.env['farm.division.work']
+        SubDiv    = self.env['farm.subdivision.work']
+        civil_div = DivWork.search([('name', '=ilike', 'Civil Works')], limit=1)
+        div_id    = civil_div.id if civil_div else False
+
         if subdiv_name:
-            subdiv_ids = self.env['farm.subdivision.work'].search(
-                [('name', 'ilike', subdiv_name)]
-            ).ids
-            if subdiv_ids:
-                domain += [('subdivision_id', 'in', subdiv_ids)]
+            subdiv_ids = SubDiv.search([
+                ('name',       'ilike', subdiv_name),
+                ('division_id', '=',   div_id),
+            ]).ids if div_id else []
+            domain = [('business_activity', '=', 'construction')]
+            domain += ([('subdivision_id', 'in', subdiv_ids)]
+                       if subdiv_ids else [('id', '=', False)])
+        else:
+            # All civil JOs: scope to all subdivision IDs under Civil Works
+            all_ids = SubDiv.search(
+                [('division_id', '=', div_id)]).ids if div_id else []
+            domain = [('business_activity', '=', 'construction')]
+            domain += ([('subdivision_id', 'in', all_ids)]
+                       if all_ids else [('id', '=', False)])
+
+        if self.project_id:
+            domain += [('project_id', '=', self.project_id.id)]
+
+        ctx = {'default_business_activity': 'construction'}
+        if self.project_id:
+            ctx['default_project_id'] = self.project_id.id
+
         return {
             'type':      'ir.actions.act_window',
             'name':      _(name),
             'res_model': 'farm.job.order',
             'view_mode': 'list,form',
             'domain':    domain,
-            'context':   {'default_business_activity': 'construction', 'default_department': 'civil'},
+            'context':   ctx,
         }
 
     def action_view_all_civil(self):

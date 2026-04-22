@@ -20,6 +20,11 @@
         'views/farm_field_views.xml',
         'views/menu.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'smart_farm_project/static/src/css/farm_project_smart_buttons.css',
+        ],
+    },
     'installable': True,
     'application': False,
     'auto_install': False,

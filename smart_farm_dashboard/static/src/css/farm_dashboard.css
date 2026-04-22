@@ -1,175 +1,14 @@
 /* ══════════════════════════════════════════════════════════════════════
-   SMART FARM — Executive Portfolio Dashboard
-   Modern SAP-level executive cockpit — Odoo 18 / Bootstrap 5
+   SMART FARM — Executive Portfolio Dashboard  (EPD)
+   SAP-style enterprise control tower — Odoo 18 / Bootstrap 5
+   All classes prefixed .epd-*   (replaces legacy .sf-* classes)
+   Shared utility kept: .sf-card-btn  (full-card invisible overlay)
 ══════════════════════════════════════════════════════════════════════ */
 
-/* ── Root wrapper ─────────────────────────────────────────────────── */
-.sf-dashboard-root {
-    font-family: inherit;
-    background: #f1f5f9;
-    padding: 0;
-}
-
-/* Override Odoo sheet padding for full-bleed layout */
-.o_form_view:has(.sf-dashboard-root) .o_form_sheet {
-    padding: 0 !important;
-    background: #f1f5f9 !important;
-    max-width: 100% !important;
-}
-
-/* ── Section labels ───────────────────────────────────────────────── */
-.sf-section-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #64748b;
-    margin-bottom: 0.6rem;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-}
-
-.sf-section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #e2e8f0;
-    margin-left: 0.4rem;
-}
-
-/* ── Dashboard header ─────────────────────────────────────────────── */
-.sf-dash-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid #e2e8f0;
-    margin-bottom: 0;
-}
-
-.sf-dash-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1e293b;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.sf-dash-title .fa {
-    color: #3b82f6;
-}
-
-.sf-dash-subtitle {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    font-weight: 400;
-    margin-top: 0.15rem;
-}
-
-/* ── Dashboard body ───────────────────────────────────────────────── */
-.sf-dash-body {
-    padding: 1.25rem 1.5rem;
-}
-
-/* ══════════════════════════════════════════════════════════════════
-   KPI STRIP — 4 large cards
-══════════════════════════════════════════════════════════════════ */
-.sf-kpi-strip {
-    margin-bottom: 1.5rem;
-}
-
-.sf-kpi-card {
-    position: relative;
-    border-radius: 14px;
-    padding: 1.4rem 1.5rem;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 140px;
-    color: #fff;
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.2s ease;
-}
-
-.sf-kpi-card:hover {
-    transform: translateY(-4px) scale(1.01);
-}
-
-/* Decorative circle shape in background */
-.sf-kpi-card::before {
-    content: '';
-    position: absolute;
-    right: -1.5rem;
-    top: -1.5rem;
-    width: 7rem;
-    height: 7rem;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
-    pointer-events: none;
-}
-
-.sf-kpi-card::after {
-    content: '';
-    position: absolute;
-    right: 1rem;
-    bottom: -2rem;
-    width: 5rem;
-    height: 5rem;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    pointer-events: none;
-}
-
-.sf-kpi-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-}
-
-.sf-kpi-icon {
-    font-size: 1.8rem;
-    opacity: 0.8;
-}
-
-.sf-kpi-badge {
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    padding: 0.2rem 0.5rem;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.2);
-    text-transform: uppercase;
-}
-
-/* Number inside KPI card */
-.sf-kpi-number {
-    margin: 0.5rem 0 0.25rem;
-}
-
-.sf-kpi-card .o_field_widget,
-.sf-kpi-card .o_field_integer,
-.sf-kpi-card [class*="o_field_"] {
-    font-size: 3.2rem !important;
-    font-weight: 900 !important;
-    line-height: 1 !important;
-    color: #fff !important;
-    letter-spacing: -0.02em;
-}
-
-.sf-kpi-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    opacity: 0.85;
-    margin-top: 0.2rem;
-}
-
-/* Invisible overlay button — makes entire card clickable */
+/* ── Shared invisible card-button overlay ───────────────────────────
+   Used by ALL dashboards (civil, mechanical, executive, etc.).
+   Keep this even though the rest is EPD-only.
+──────────────────────────────────────────────────────────────────── */
 .sf-card-btn {
     position: absolute;
     inset: 0;
@@ -178,106 +17,485 @@
     cursor: pointer;
     z-index: 10;
     border-radius: inherit;
-    transition: background 0.15s ease;
     padding: 0;
+    transition: background 0.12s ease;
 }
-
-.sf-card-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+/* Dark cards (epd-kpi-a, exec-card) — white shimmer */
+.sf-card-btn:hover  { background: rgba(255,255,255,0.10); }
+/* Universal click feedback — works on both dark and light backgrounds */
+.sf-card-btn:active { background: rgba(0,0,0,0.08); }
+.sf-card-btn:focus  {
+    outline: 2px solid rgba(99,102,241,0.50);
+    outline-offset: -2px;
 }
-
-.sf-card-btn:focus {
-    outline: 2px solid rgba(255, 255, 255, 0.5);
-    outline-offset: -3px;
-}
-
-/* KPI card color variants */
-.sf-kpi-navy {
-    background: linear-gradient(135deg, #1e3a5f 0%, #2d5282 100%);
-    box-shadow: 0 8px 24px rgba(30, 58, 95, 0.35);
-}
-.sf-kpi-navy:hover { box-shadow: 0 16px 40px rgba(30, 58, 95, 0.45); }
-
-.sf-kpi-blue {
-    background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
-    box-shadow: 0 8px 24px rgba(29, 78, 216, 0.35);
-}
-.sf-kpi-blue:hover { box-shadow: 0 16px 40px rgba(29, 78, 216, 0.45); }
-
-.sf-kpi-amber {
-    background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%);
-    box-shadow: 0 8px 24px rgba(180, 83, 9, 0.35);
-}
-.sf-kpi-amber:hover { box-shadow: 0 16px 40px rgba(180, 83, 9, 0.45); }
-
-.sf-kpi-crimson {
-    background: linear-gradient(135deg, #991b1b 0%, #ef4444 100%);
-    box-shadow: 0 8px 24px rgba(153, 27, 27, 0.35);
-}
-.sf-kpi-crimson:hover { box-shadow: 0 16px 40px rgba(153, 27, 27, 0.45); }
 
 /* ══════════════════════════════════════════════════════════════════
-   PHASE PILLS
+   ODOO FORM RESET — full-bleed layout
 ══════════════════════════════════════════════════════════════════ */
-.sf-phase-strip {
+.o_form_view:has(.epd-root) .o_form_sheet {
+    padding: 0 !important;
+    background: #f0f4f8 !important;
+    max-width: 100% !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ROOT & HEADER
+══════════════════════════════════════════════════════════════════ */
+.epd-root {
+    font-family: inherit;
+    background: #f0f4f8;
+}
+
+.epd-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.75rem;
+    background: #fff;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.epd-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.epd-header-icon-wrap {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1e3a5f, #2d5282);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(30,58,95,0.30);
+}
+
+.epd-header-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #1e293b;
+    letter-spacing: -0.2px;
+}
+
+.epd-header-sub {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+.epd-refresh-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.1rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    border: 1.5px solid #e2e8f0;
+    background: #fff;
+    color: #475569;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.epd-refresh-btn:hover {
+    border-color: #94a3b8;
+    color: #1e293b;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   BODY
+══════════════════════════════════════════════════════════════════ */
+.epd-body {
+    padding: 1.5rem 1.75rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;       /* sections use margin-bottom individually */
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SECTION WRAPPER
+══════════════════════════════════════════════════════════════════ */
+.epd-section {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.epd-section:last-child { margin-bottom: 0; }
+
+.epd-section-hdr {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #475569;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.epd-section-hdr .fa {
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.epd-section-body {
+    padding: 1.25rem 1.25rem 1.5rem;
+}
+
+/* Row sub-labels */
+.epd-row-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 0.65rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.epd-row-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #f1f5f9;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   § 1 — ROW A  KPI CARDS  (Portfolio Status)
+   Large colored gradient cards — most prominent element
+══════════════════════════════════════════════════════════════════ */
+.epd-kpi-a {
+    position: relative;
+    border-radius: 14px;
+    padding: 1.4rem 1.5rem 1.25rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-height: 145px;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1),
+                box-shadow 0.2s ease;
+    user-select: none;
+}
+.epd-kpi-a:hover  { transform: translateY(-4px) scale(1.01); }
+.epd-kpi-a:active { transform: translateY(-1px) scale(0.99); }
+/* Decorative circle */
+.epd-kpi-a::before {
+    content: '';
+    position: absolute;
+    right: -1.5rem;
+    top: -1.5rem;
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    pointer-events: none;
+}
+.epd-kpi-a::after {
+    content: '';
+    position: absolute;
+    right: 1rem;
+    bottom: -2rem;
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    pointer-events: none;
+}
+
+.epd-kpi-a-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.epd-kpi-a-icon {
+    font-size: 1.7rem;
+    opacity: 0.80;
+}
+
+.epd-kpi-a-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.18rem 0.55rem;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.22);
+    text-transform: uppercase;
+}
+
+/* The number — force Odoo field widget to look big */
+.epd-kpi-a-val {
+    margin: 0.4rem 0 0.15rem;
+    line-height: 1;
+}
+.epd-kpi-a-val .o_field_widget,
+.epd-kpi-a-val [class*="o_field_"] {
+    font-size: 3.4rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    color: #fff !important;
+    letter-spacing: -0.03em;
+}
+
+.epd-kpi-a-lbl {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.82;
+}
+
+/* Row A color variants */
+.epd-kpi-navy {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2d5282 100%);
+    box-shadow: 0 8px 24px rgba(30,58,95,0.32);
+}
+.epd-kpi-navy:hover { box-shadow: 0 16px 40px rgba(30,58,95,0.44); }
+
+.epd-kpi-blue {
+    background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+    box-shadow: 0 8px 24px rgba(29,78,216,0.32);
+}
+.epd-kpi-blue:hover { box-shadow: 0 16px 40px rgba(29,78,216,0.44); }
+
+.epd-kpi-amber {
+    background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%);
+    box-shadow: 0 8px 24px rgba(180,83,9,0.32);
+}
+.epd-kpi-amber:hover { box-shadow: 0 16px 40px rgba(180,83,9,0.44); }
+
+.epd-kpi-crimson {
+    background: linear-gradient(135deg, #991b1b 0%, #ef4444 100%);
+    box-shadow: 0 8px 24px rgba(153,27,27,0.32);
+}
+.epd-kpi-crimson:hover { box-shadow: 0 16px 40px rgba(153,27,27,0.44); }
+
+/* ══════════════════════════════════════════════════════════════════
+   § 1 — ROW B  KPI CARDS  (Financial Summary)
+   Smaller accent-border cards, white bg
+══════════════════════════════════════════════════════════════════ */
+.epd-kpi-b {
+    border-radius: 12px;
+    padding: 1.15rem 1.25rem;
+    background: #fff;
+    border: 1.5px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    user-select: none;
+}
+.epd-kpi-b:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.10);
+    border-color: #cbd5e1;
+}
+.epd-kpi-b:active { transform: translateY(0) scale(0.99); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+.epd-kpi-b-icon {
+    font-size: 1.3rem;
+    margin-bottom: 0.15rem;
+}
+.epd-kpi-b-val {
+    font-size: 1.55rem;
+    font-weight: 800;
+    line-height: 1.1;
+}
+.epd-kpi-b-val .o_field_widget,
+.epd-kpi-b-val [class*="o_field_"] {
+    font-size: 1.55rem !important;
+    font-weight: 800 !important;
+    line-height: 1.1 !important;
+}
+.epd-kpi-b-lbl {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    margin-top: 0.1rem;
+}
+
+/* Row B color variants — left accent border + icon/val tint */
+.epd-kpi-b-navy {
+    border-left: 4px solid #1e3a5f;
+}
+.epd-kpi-b-navy .epd-kpi-b-icon,
+.epd-kpi-b-navy .epd-kpi-b-val { color: #1e3a5f; }
+
+.epd-kpi-b-green {
+    border-left: 4px solid #059669;
+}
+.epd-kpi-b-green .epd-kpi-b-icon,
+.epd-kpi-b-green .epd-kpi-b-val { color: #065f46; }
+
+.epd-kpi-b-purple {
+    border-left: 4px solid #7c3aed;
+}
+.epd-kpi-b-purple .epd-kpi-b-icon,
+.epd-kpi-b-purple .epd-kpi-b-val { color: #5b21b6; }
+
+.epd-kpi-b-teal {
+    border-left: 4px solid #0891b2;
+}
+.epd-kpi-b-teal .epd-kpi-b-icon,
+.epd-kpi-b-teal .epd-kpi-b-val { color: #0e7490; }
+
+/* ══════════════════════════════════════════════════════════════════
+   § 1 — ROW C  KPI CARDS  (Performance Metrics)
+   Compact flat cards with soft background tint
+══════════════════════════════════════════════════════════════════ */
+.epd-kpi-c {
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border: 1.5px solid transparent;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    user-select: none;
+}
+.epd-kpi-c:hover  { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.10); }
+.epd-kpi-c:active { transform: translateY(0) scale(0.98); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+
+.epd-kpi-c-icon {
+    font-size: 1.2rem;
+    margin-bottom: 0.1rem;
+    opacity: 0.75;
+}
+.epd-kpi-c-val {
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1.05;
+    display: flex;
+    align-items: baseline;
+    gap: 0.1rem;
+}
+.epd-kpi-c-val .o_field_widget,
+.epd-kpi-c-val [class*="o_field_"] {
+    font-size: 1.8rem !important;
+    font-weight: 800 !important;
+    line-height: 1.05 !important;
+    color: inherit !important;
+}
+/* monetary variant (smaller) */
+.epd-kpi-c-monetary .o_field_widget,
+.epd-kpi-c-monetary .o_field_monetary {
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+}
+.epd-kpi-c-monetary .o_currency_symbol {
+    font-size: 0.85rem !important;
+}
+.epd-kpi-c-unit {
+    font-size: 1rem;
+    font-weight: 600;
+    opacity: 0.7;
+}
+.epd-kpi-c-lbl {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    opacity: 0.7;
+}
+
+/* Row C variants */
+.epd-kpi-c-green {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border-color: #bbf7d0;
+    color: #166534;
+}
+.epd-kpi-c-blue {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-color: #bfdbfe;
+    color: #1e40af;
+}
+.epd-kpi-c-emerald {
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border-color: #a7f3d0;
+    color: #065f46;
+}
+.epd-kpi-c-red {
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   § 2 — PHASE PILLS
+══════════════════════════════════════════════════════════════════ */
+.epd-phase-strip {
     display: flex;
     flex-wrap: wrap;
     gap: 0.65rem;
-    margin-bottom: 1.5rem;
     align-items: center;
 }
 
-.sf-phase-pill {
-    position: relative;
+.epd-phase-pill {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
-    padding: 0.55rem 1.1rem 0.55rem 0.9rem;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem 0.5rem 0.85rem;
     border-radius: 999px;
     font-size: 0.82rem;
     font-weight: 700;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.02em;
+    color: #fff;
+    border: none;
     cursor: pointer;
-    transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+    transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1),
                 filter 0.15s ease,
                 box-shadow 0.15s ease;
-    border: none;
-    color: #fff;
     overflow: hidden;
 }
-
-.sf-phase-pill:hover {
+.epd-phase-pill:hover {
     transform: translateY(-2px) scale(1.06);
     filter: brightness(1.12);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.22);
 }
+.epd-phase-pill:active { transform: translateY(0) scale(0.96); filter: brightness(0.95); }
 
-.sf-phase-pill:active {
-    transform: scale(0.97);
-}
-
-/* Count bubble inside pill */
-.sf-pill-ct {
+/* Count bubble */
+.epd-pill-ct {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.28);
+    background: rgba(255,255,255,0.28);
     border-radius: 999px;
-    min-width: 1.7rem;
-    height: 1.7rem;
-    padding: 0 0.35rem;
-    font-size: 0.8rem;
+    min-width: 1.6rem;
+    height: 1.6rem;
+    padding: 0 0.3rem;
+    font-size: 0.78rem;
     font-weight: 900;
 }
-
-/* Make the field widget inside pill look like the count bubble */
-.sf-phase-pill .o_field_widget,
-.sf-phase-pill [class*="o_field_"] {
-    background: rgba(255, 255, 255, 0.28) !important;
+.epd-phase-pill .o_field_widget,
+.epd-phase-pill [class*="o_field_"] {
+    background: rgba(255,255,255,0.28) !important;
     border-radius: 999px !important;
-    min-width: 1.7rem !important;
-    height: 1.7rem !important;
-    padding: 0 0.35rem !important;
-    font-size: 0.8rem !important;
+    min-width: 1.6rem !important;
+    height: 1.6rem !important;
+    padding: 0 0.3rem !important;
+    font-size: 0.78rem !important;
     font-weight: 900 !important;
     color: #fff !important;
     display: inline-flex !important;
@@ -286,718 +504,657 @@
     line-height: 1 !important;
 }
 
-/* Phase pill overlay button */
-.sf-pill-btn {
-    position: absolute;
-    inset: 0;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    z-index: 5;
-    border-radius: inherit;
-}
-
-/* Phase colors */
-.sf-pill-pre-tender { background: #15803d; box-shadow: 0 4px 14px rgba(21,128,61,0.4); }
-.sf-pill-tender     { background: #b45309; box-shadow: 0 4px 14px rgba(180,83,9,0.4); }
-.sf-pill-contract   { background: #1d4ed8; box-shadow: 0 4px 14px rgba(29,78,216,0.4); }
-.sf-pill-execution  { background: #dc2626; box-shadow: 0 4px 14px rgba(220,38,38,0.4); }
-.sf-pill-closing    { background: #475569; box-shadow: 0 4px 14px rgba(71,85,105,0.4); }
+/* Phase pill color variants */
+.epd-pill-green  { background: #16a34a; box-shadow: 0 4px 14px rgba(22,163,74,0.38); }
+.epd-pill-amber  { background: #d97706; box-shadow: 0 4px 14px rgba(217,119,6,0.38); }
+.epd-pill-blue   { background: #1d4ed8; box-shadow: 0 4px 14px rgba(29,78,216,0.38); }
+.epd-pill-red    { background: #dc2626; box-shadow: 0 4px 14px rgba(220,38,38,0.38); }
+.epd-pill-slate  { background: #475569; box-shadow: 0 4px 14px rgba(71,85,105,0.38); }
 
 /* ══════════════════════════════════════════════════════════════════
-   EXECUTION READINESS INDICATORS
-   Visually distinct from phase pills: rectangular cards with
-   accent border, NOT round pills — signals "cross-cutting flag"
-   rather than a lifecycle stage.
+   § 2 — EXECUTION READINESS CARDS
 ══════════════════════════════════════════════════════════════════ */
-.sf-readiness-strip {
-    display        : flex;
-    flex-wrap      : wrap;
-    gap            : 0.85rem;
-    margin-bottom  : 1.5rem;
-    align-items    : stretch;
+.epd-readiness-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    align-items: stretch;
 }
 
-.sf-readiness-indicator {
-    position        : relative;
-    display         : flex;
-    align-items     : center;
-    gap             : 0.9rem;
-    padding         : 0.85rem 1.25rem;
-    border-radius   : 12px;
-    background      : #fff;
-    border          : 1.5px solid #e2e8f0;
-    cursor          : pointer;
-    transition      : transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-    min-width       : 210px;
-    overflow        : hidden;
+.epd-readiness-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.9rem 1.3rem 0.9rem 1.5rem;
+    border-radius: 12px;
+    background: #fff;
+    border: 1.5px solid #e2e8f0;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    min-width: 210px;
+    overflow: hidden;
+    user-select: none;
+}
+.epd-readiness-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 12px 0 0 12px;
+}
+.epd-readiness-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.09);
+    border-color: #cbd5e1;
+}
+.epd-readiness-card:active { transform: translateY(0) scale(0.98); }
+
+.epd-ri-icon-wrap {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
 }
 
-.sf-readiness-indicator::before {
-    content         : '';
-    position        : absolute;
-    left            : 0;
-    top             : 0;
-    bottom          : 0;
-    width           : 4px;
-    border-radius   : 12px 0 0 12px;
+.epd-ri-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
 }
 
-.sf-readiness-indicator:hover {
-    transform        : translateY(-2px);
-    box-shadow       : 0 6px 20px rgba(0,0,0,0.10);
-    border-color     : #cbd5e1;
+.epd-ri-num {
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.5px;
+}
+.epd-readiness-card .o_field_widget,
+.epd-readiness-card [class*="o_field_"] {
+    font-size: 1.6rem !important;
+    font-weight: 800 !important;
+    line-height: 1.05 !important;
+    color: inherit !important;
+    background: transparent !important;
+    padding: 0 !important;
+    min-width: unset !important;
 }
 
-/* Icon wrap */
-.sf-ri-icon-wrap {
-    width           : 42px;
-    height          : 42px;
-    border-radius   : 10px;
-    display         : flex;
-    align-items     : center;
-    justify-content : center;
-    font-size       : 18px;
-    flex-shrink     : 0;
+.epd-ri-lbl {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+.epd-ri-sub {
+    font-size: 0.70rem;
+    opacity: 0.58;
+    margin-top: 1px;
 }
 
-/* Text body */
-.sf-ri-body {
-    display         : flex;
-    flex-direction  : column;
-    gap             : 1px;
-}
-
-.sf-ri-count {
-    font-size       : 1.55rem;
-    font-weight     : 800;
-    line-height     : 1.1;
-    letter-spacing  : -0.5px;
-}
-
-/* Make Odoo field widget inside count look like plain text */
-.sf-readiness-indicator .o_field_widget,
-.sf-readiness-indicator [class*="o_field_"] {
-    font-size   : 1.55rem !important;
-    font-weight : 800 !important;
-    line-height : 1.1 !important;
-    color       : inherit !important;
-    background  : transparent !important;
-    padding     : 0 !important;
-    min-width   : unset !important;
-}
-
-.sf-ri-label {
-    font-size       : 0.82rem;
-    font-weight     : 700;
-    letter-spacing  : 0.02em;
-}
-
-.sf-ri-sub {
-    font-size       : 0.72rem;
-    opacity         : 0.6;
-    margin-top      : 1px;
-}
-
-/* Overlay click button */
-.sf-ri-btn {
-    position    : absolute;
-    inset       : 0;
-    background  : transparent;
-    border      : none;
-    cursor      : pointer;
-    z-index     : 5;
-    border-radius: inherit;
-}
-
-/* Pre-Execution variant — dark slate */
-.sf-ri-locked {
-    color       : #1e293b;
+/* Readiness variants */
+.epd-ri-locked {
+    color: #1e293b;
     border-color: #94a3b8;
 }
-.sf-ri-locked::before   { background: #1e293b; }
-.sf-ri-locked .sf-ri-icon-wrap {
-    background  : rgba(30,41,59,0.09);
-    color       : #1e293b;
+.epd-ri-locked::before { background: #334155; }
+.epd-ri-locked .epd-ri-icon-wrap {
+    background: rgba(30,41,59,0.09);
+    color: #334155;
 }
 
-/* Approved Contract variant — teal/green */
-.sf-ri-contract-ok {
-    color       : #065f46;
+.epd-ri-contract {
+    color: #065f46;
     border-color: #6ee7b7;
 }
-.sf-ri-contract-ok::before   { background: #059669; }
-.sf-ri-contract-ok .sf-ri-icon-wrap {
-    background  : rgba(5,150,105,0.09);
-    color       : #059669;
+.epd-ri-contract::before { background: #059669; }
+.epd-ri-contract .epd-ri-icon-wrap {
+    background: rgba(5,150,105,0.09);
+    color: #059669;
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   HEALTH BIG CARDS — most prominent section
+   § 3 — FINANCIAL PANELS
 ══════════════════════════════════════════════════════════════════ */
-.sf-health-row {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.sf-health-card {
-    position: relative;
-    flex: 1;
-    border-radius: 16px;
-    padding: 2rem 1.5rem 1.75rem;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.2s ease;
-    overflow: hidden;
-}
-
-.sf-health-card:hover {
-    transform: translateY(-5px) scale(1.02);
-}
-
-/* Glowing border on hover */
-.sf-health-healthy:hover  { box-shadow: 0 16px 40px rgba(22,163,74,0.25) !important; }
-.sf-health-warning:hover  { box-shadow: 0 16px 40px rgba(245,158,11,0.25) !important; }
-.sf-health-critical:hover { box-shadow: 0 16px 40px rgba(220,38,38,0.30) !important; }
-
-.sf-health-card .sf-health-icon {
-    font-size: 2.4rem;
-    margin-bottom: 0.6rem;
-    display: block;
-}
-
-/* Health card big number */
-.sf-health-card .o_field_widget,
-.sf-health-card [class*="o_field_"] {
-    font-size: 4.5rem !important;
-    font-weight: 900 !important;
-    line-height: 1 !important;
-    letter-spacing: -0.03em;
-    display: block !important;
-    color: inherit !important;
-}
-
-.sf-health-card .sf-health-label {
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-top: 0.6rem;
-    opacity: 0.75;
-}
-
-.sf-health-healthy {
-    background: linear-gradient(160deg, rgba(22,163,74,0.09) 0%, rgba(22,163,74,0.04) 100%);
-    border: 2px solid rgba(22,163,74,0.2);
-    color: #15803d;
-    box-shadow: 0 4px 18px rgba(22,163,74,0.1);
-}
-
-.sf-health-warning {
-    background: linear-gradient(160deg, rgba(245,158,11,0.09) 0%, rgba(245,158,11,0.04) 100%);
-    border: 2px solid rgba(245,158,11,0.25);
-    color: #92400e;
-    box-shadow: 0 4px 18px rgba(245,158,11,0.12);
-}
-
-.sf-health-critical {
-    background: linear-gradient(160deg, rgba(220,38,38,0.10) 0%, rgba(220,38,38,0.04) 100%);
-    border: 2px solid rgba(220,38,38,0.25);
-    color: #991b1b;
-    box-shadow: 0 4px 18px rgba(220,38,38,0.14);
-}
-
-/* ══════════════════════════════════════════════════════════════════
-   FINANCIAL PANELS
-══════════════════════════════════════════════════════════════════ */
-.sf-fin-panel {
+.epd-fpanel {
     background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    padding: 1.25rem;
+    border: 1px solid #e8ecf0;
+    border-radius: 12px;
+    padding: 1.1rem 1.15rem 1.25rem;
     height: 100%;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.sf-fin-panel-title {
-    font-size: 0.7rem;
+.epd-fpanel-title {
+    font-size: 0.68rem;
     font-weight: 800;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.11em;
     text-transform: uppercase;
-    color: #475569;
-    margin-bottom: 0.75rem;
-    padding-bottom: 0.6rem;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.55rem;
     border-bottom: 2px solid #f1f5f9;
     display: flex;
     align-items: center;
     gap: 0.4rem;
 }
+/* Panel title color variants */
+.epd-fpanel-blue  { color: #1d4ed8; border-bottom-color: #dbeafe; }
+.epd-fpanel-green { color: #059669; border-bottom-color: #d1fae5; }
+.epd-fpanel-red   { color: #dc2626; border-bottom-color: #fee2e2; }
 
-.sf-fin-item {
+.epd-fitem {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.55rem 0.7rem;
-    border-radius: 8px;
-    margin-bottom: 0.35rem;
+    padding: 0.5rem 0.65rem;
+    border-radius: 7px;
+    margin-bottom: 0.3rem;
     background: #f8fafc;
-    transition: background 0.12s ease;
+    transition: background 0.12s;
     gap: 0.5rem;
 }
+.epd-fitem:hover { background: #f1f5f9; }
+.epd-fitem:last-child { margin-bottom: 0; }
 
-.sf-fin-item:hover {
-    background: #f1f5f9;
+/* Emphasis row (totals, projected) */
+.epd-fitem-emph {
+    background: #eff6ff !important;
+    border: 1px solid #bfdbfe;
 }
+.epd-fitem-emph .epd-fitem-lbl { color: #1d4ed8 !important; font-weight: 700 !important; }
 
-.sf-fin-item:last-child {
-    margin-bottom: 0;
-}
-
-.sf-fin-item-label {
-    font-size: 0.8rem;
+.epd-fitem-lbl {
+    font-size: 0.78rem;
     font-weight: 600;
     color: #475569;
     white-space: nowrap;
-    min-width: 0;
     flex-shrink: 0;
 }
-
-.sf-fin-item .o_field_widget,
-.sf-fin-item .o_field_monetary {
-    font-size: 0.92rem !important;
+.epd-fitem .o_field_widget,
+.epd-fitem .o_field_monetary {
+    font-size: 0.88rem !important;
     font-weight: 700 !important;
     text-align: right;
 }
-
-/* Emphasis row (totals) */
-.sf-fin-item-emphasis {
-    background: #e0f2fe !important;
-    border: 1px solid #bae6fd;
-}
-
-.sf-fin-item-emphasis .sf-fin-item-label {
-    color: #0369a1;
+.epd-fitem-metric {
+    display: flex;
+    align-items: baseline;
+    gap: 0.15rem;
+    font-size: 0.88rem;
     font-weight: 700;
+    color: #1e293b;
+}
+.epd-fitem-unit {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #64748b;
 }
 
-.sf-fin-item-positive .o_field_widget { color: #15803d !important; }
-.sf-fin-item-negative .o_field_widget { color: #dc2626 !important; }
-.sf-fin-item-warning  .o_field_widget { color: #b45309 !important; }
-
-/* ══════════════════════════════════════════════════════════════════
-   RISK ALERT BLOCKS
-══════════════════════════════════════════════════════════════════ */
-.sf-risk-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-}
-
-.sf-risk-block {
-    position: relative;
-    border-radius: 12px;
-    padding: 1.1rem 1.25rem;
+/* ── Risk items inside right panel ─── */
+.epd-risk-item {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: 9px;
+    margin-bottom: 0.45rem;
     cursor: pointer;
-    transition: transform 0.15s ease, filter 0.15s ease;
-    overflow: hidden;
+    transition: transform 0.12s ease, filter 0.12s ease, box-shadow 0.12s ease;
     border-width: 1.5px;
     border-style: solid;
+    user-select: none;
 }
+.epd-risk-item:last-child { margin-bottom: 0; }
+.epd-risk-item:hover  { transform: translateX(4px); filter: brightness(1.04); box-shadow: 0 4px 12px rgba(0,0,0,0.10); }
+.epd-risk-item:active { transform: translateX(2px) scale(0.99); filter: brightness(0.97); }
 
-.sf-risk-block:hover {
-    transform: translateX(4px);
-    filter: brightness(1.04);
-}
-
-.sf-risk-icon {
-    font-size: 1.75rem;
+.epd-risk-icon {
+    font-size: 1.4rem;
     flex-shrink: 0;
-    opacity: 0.8;
+    opacity: 0.80;
 }
-
-.sf-risk-content {
+.epd-risk-body {
     display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
-    min-width: 0;
+    align-items: baseline;
+    gap: 0.5rem;
+    flex: 1;
 }
-
-.sf-risk-block .o_field_widget,
-.sf-risk-block [class*="o_field_"] {
-    font-size: 2.2rem !important;
+.epd-risk-body .o_field_widget,
+.epd-risk-body [class*="o_field_"] {
+    font-size: 1.75rem !important;
     font-weight: 900 !important;
     line-height: 1 !important;
-    letter-spacing: -0.02em;
     color: inherit !important;
-    display: block !important;
+    letter-spacing: -0.02em;
 }
-
-.sf-risk-label {
-    font-size: 0.72rem;
+.epd-risk-lbl {
+    font-size: 0.73rem;
     font-weight: 700;
-    letter-spacing: 0.07em;
+    letter-spacing: 0.04em;
+    opacity: 0.72;
     text-transform: uppercase;
-    opacity: 0.7;
 }
 
-.sf-risk-btn {
-    position: absolute;
-    inset: 0;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    z-index: 5;
-    border-radius: inherit;
-}
-
-/* Risk block variants */
-.sf-risk-critical {
-    background: #fef2f2;
-    border-color: #fecaca;
-    color: #991b1b;
-}
-
-.sf-risk-warning {
-    background: #fffbeb;
-    border-color: #fde68a;
-    color: #92400e;
-}
-
-.sf-risk-budget {
-    background: #fff7ed;
-    border-color: #fed7aa;
-    color: #9a3412;
-}
-
-.sf-risk-profit {
-    background: #fdf4ff;
-    border-color: #e9d5ff;
-    color: #7c3aed;
-}
+/* Risk variants */
+.epd-risk-critical { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+.epd-risk-warning  { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+.epd-risk-budget   { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }
+.epd-risk-profit   { background: #fdf4ff; border-color: #e9d5ff; color: #7c3aed; }
 
 /* ══════════════════════════════════════════════════════════════════
-   PMO ACTION GRID
-══════════════════════════════════════════════════════════════════ */
-.sf-action-section {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-}
-
-.sf-action-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-bottom: 0.6rem;
-}
-
-.sf-action-row:last-child {
-    margin-bottom: 0;
-}
-
-.sf-action-row-label {
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #94a3b8;
-    margin-bottom: 0.4rem;
-}
-
-.sf-action-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.6rem 1.1rem;
-    border-radius: 8px;
-    font-size: 0.82rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.15s ease,
-                filter 0.12s ease;
-    line-height: 1.2;
-}
-
-.sf-action-btn:hover {
-    transform: translateY(-2px) scale(1.03);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-    filter: brightness(1.08);
-}
-
-.sf-action-btn:active {
-    transform: translateY(0) scale(0.98);
-}
-
-/* Action button color variants */
-.sf-btn-exec    { background: #dc2626; color: #fff; box-shadow: 0 2px 8px rgba(220,38,38,0.3); }
-.sf-btn-contract{ background: #1d4ed8; color: #fff; box-shadow: 0 2px 8px rgba(29,78,216,0.3); }
-.sf-btn-tender  { background: #d97706; color: #fff; box-shadow: 0 2px 8px rgba(217,119,6,0.3); }
-.sf-btn-pretend { background: #16a34a; color: #fff; box-shadow: 0 2px 8px rgba(22,163,74,0.3); }
-.sf-btn-closing { background: #475569; color: #fff; box-shadow: 0 2px 8px rgba(71,85,105,0.3); }
-.sf-btn-crit    { background: #dc2626; color: #fff; box-shadow: 0 2px 8px rgba(220,38,38,0.3); }
-.sf-btn-warn    { background: #d97706; color: #fff; box-shadow: 0 2px 8px rgba(217,119,6,0.3); }
-.sf-btn-budget  { background: #9a3412; color: #fff; box-shadow: 0 2px 8px rgba(154,52,18,0.3); }
-.sf-btn-profit  { background: #7c3aed; color: #fff; box-shadow: 0 2px 8px rgba(124,58,237,0.3); }
-.sf-btn-green   { background: #059669; color: #fff; box-shadow: 0 2px 8px rgba(5,150,105,0.3); }
-
-/* ══════════════════════════════════════════════════════════════════
-   UTILITY
-══════════════════════════════════════════════════════════════════ */
-.sf-sep {
-    border: none;
-    border-top: 1px solid #e2e8f0;
-    margin: 1.25rem 0;
-}
-
-/* Responsive adjustments */
-@media (max-width: 992px) {
-    .sf-health-row { flex-direction: column; }
-    .sf-risk-grid  { grid-template-columns: 1fr; }
-    .sf-kpi-card .o_field_widget { font-size: 2.5rem !important; }
-    .sf-health-card .o_field_widget { font-size: 3.5rem !important; }
-}
-
-@media (max-width: 576px) {
-    .sf-dash-header { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
-    .sf-kpi-card    { min-height: 110px; }
-    .sf-kpi-card .o_field_widget { font-size: 2rem !important; }
-    .sf-phase-strip { gap: 0.4rem; }
-    .sf-phase-pill  { font-size: 0.76rem; padding: 0.45rem 0.85rem 0.45rem 0.7rem; }
-}
-
-/* ══════════════════════════════════════════════════════════════════
-   EXECUTION KPI SECTION
+   § 4 — PROCUREMENT
 ══════════════════════════════════════════════════════════════════ */
 
-/* 5-card execution KPI strip */
-.sf-exec-kpi-strip {
-    margin-bottom: 0;
-}
-
-.sf-exec-kpi-card {
-    position: relative;
+/* Status chips */
+.epd-proc-chip {
     border-radius: 12px;
-    padding: 1rem 0.875rem;
+    padding: 1.1rem 1.15rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     gap: 0.25rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    overflow: hidden;
-    min-height: 120px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.12s ease;
+    border: 1.5px solid transparent;
+    user-select: none;
 }
+.epd-proc-chip:hover  { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0,0,0,0.10); filter: brightness(1.03); }
+.epd-proc-chip:active { transform: translateY(0) scale(0.98); box-shadow: none; filter: brightness(0.96); }
 
-.sf-exec-kpi-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-}
+.epd-proc-icon { font-size: 1.5rem; opacity: 0.80; }
 
-.sf-exec-kpi-icon {
-    font-size: 1.5rem;
-    opacity: 0.75;
+.epd-proc-val {
+    font-size: 2.2rem;
+    font-weight: 900;
     line-height: 1;
-    margin-bottom: 0.15rem;
+    letter-spacing: -0.02em;
 }
-
-.sf-exec-kpi-number {
-    font-size: 1.75rem;
-    font-weight: 800;
-    line-height: 1;
-    display: flex;
-    align-items: baseline;
-    gap: 0.15rem;
+.epd-proc-chip .o_field_widget,
+.epd-proc-chip [class*="o_field_"] {
+    font-size: 2.2rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    letter-spacing: -0.02em;
+    color: inherit !important;
 }
-
-.sf-exec-kpi-unit {
-    font-size: 0.9rem;
-    font-weight: 600;
-    opacity: 0.7;
-}
-
-.sf-exec-kpi-label {
+.epd-proc-lbl {
     font-size: 0.68rem;
     font-weight: 600;
-    letter-spacing: 0.08em;
     text-transform: uppercase;
-    opacity: 0.75;
-    margin-top: 0.15rem;
+    letter-spacing: 0.07em;
+    opacity: 0.72;
 }
 
-/* Monetary KPI — smaller font */
-.sf-exec-monetary .o_field_monetary,
-.sf-exec-monetary .o_field_monetary .o_monetary_value {
-    font-size: 1.1rem !important;
-    font-weight: 800 !important;
+/* Chip color variants */
+.epd-proc-pending  {
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    border-color: #fde68a;
+    color: #92400e;
 }
-.sf-exec-monetary .o_currency_symbol {
-    font-size: 0.75rem !important;
+.epd-proc-approved {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border-color: #bbf7d0;
+    color: #166534;
 }
-
-/* Mini progress bar inside exec card */
-.sf-exec-mini-bar {
-    width: 70%;
-    height: 5px;
-    background: rgba(255,255,255,0.25);
-    border-radius: 3px;
-    margin-top: 0.25rem;
-    overflow: hidden;
+.epd-proc-received {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-color: #bfdbfe;
+    color: #1e40af;
 }
-.sf-exec-mini-bar-fill {
-    height: 100%;
-    border-radius: 3px;
-    background: rgba(255,255,255,0.65);
-    transition: width 0.6s ease;
+.epd-proc-rejected {
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+    border-color: #fecaca;
+    color: #991b1b;
 }
 
-/* Color variants */
-.sf-exec-navy    { background: linear-gradient(135deg, #1e3a5f, #2d4a7a); color: #fff; }
-.sf-exec-blue    { background: linear-gradient(135deg, #1d4ed8, #2563eb); color: #fff; }
-.sf-exec-emerald { background: linear-gradient(135deg, #047857, #059669); color: #fff; }
-.sf-exec-purple  { background: linear-gradient(135deg, #5b21b6, #7c3aed); color: #fff; }
-.sf-exec-rose    { background: linear-gradient(135deg, #9f1239, #dc2626); color: #fff; }
-
-/* ── Exec panels (activity + stage) ─────────────────────────────── */
-.sf-exec-panel {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 1rem;
-    height: 100%;
-}
-
-.sf-exec-panel-title {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #475569;
-    margin-bottom: 0.75rem;
+/* Procurement financial summary row */
+.epd-proc-fin {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-}
-
-/* ── Activity breakdown cards ────────────────────────────────────── */
-.sf-activity-row {
-    display: flex;
-    gap: 0.6rem;
-}
-
-.sf-activity-card {
-    flex: 1;
+    gap: 0.9rem;
+    padding: 0.9rem 1.1rem;
+    background: #f8fafc;
+    border: 1px solid #e8ecf0;
     border-radius: 10px;
-    padding: 0.75rem 0.5rem;
+    height: 100%;
+}
+
+.epd-proc-fin-icon {
+    font-size: 1.6rem;
+    flex-shrink: 0;
+}
+.epd-proc-fin-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.epd-proc-fin-lbl {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.epd-proc-fin-val {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+.epd-proc-fin-val .o_field_widget,
+.epd-proc-fin-val .o_field_monetary {
+    font-size: 1.2rem !important;
+    font-weight: 800 !important;
+    color: #1e293b !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   § 5 — EXECUTION KPI CARDS
+══════════════════════════════════════════════════════════════════ */
+.epd-exec-card {
+    position: relative;
+    border-radius: 12px;
+    padding: 1rem 0.9rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 0.3rem;
-    position: relative;
+    gap: 0.2rem;
     overflow: hidden;
+    min-height: 120px;
+    cursor: pointer;
+    transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s ease;
+    color: #fff;
+    user-select: none;
 }
+.epd-exec-card:hover  { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.16); }
+.epd-exec-card:active { transform: translateY(-1px) scale(0.98); box-shadow: 0 4px 12px rgba(0,0,0,0.14); }
 
-.sf-act-icon {
-    font-size: 1.4rem;
-    opacity: 0.8;
-}
+.epd-exec-icon { font-size: 1.4rem; opacity: 0.72; line-height: 1; }
 
-.sf-act-count {
-    font-size: 1.5rem;
+.epd-exec-val {
+    font-size: 1.8rem;
     font-weight: 800;
     line-height: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 0.1rem;
 }
+.epd-exec-card .o_field_widget,
+.epd-exec-card [class*="o_field_"] {
+    font-size: 1.8rem !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    color: #fff !important;
+}
+/* monetary variant — smaller */
+.epd-exec-monetary .o_field_monetary,
+.epd-exec-monetary .o_field_monetary .o_monetary_value {
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
+}
+.epd-exec-monetary .o_currency_symbol { font-size: 0.72rem !important; }
 
-.sf-act-label {
+.epd-exec-unit {
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0.75;
+}
+.epd-exec-lbl {
     font-size: 0.65rem;
     font-weight: 600;
-    text-transform: uppercase;
     letter-spacing: 0.08em;
-    opacity: 0.8;
-}
-
-.sf-act-proj-count {
-    font-size: 0.6rem;
-    opacity: 0.7;
+    text-transform: uppercase;
+    opacity: 0.75;
     margin-top: 0.1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.15rem;
 }
 
-.sf-act-construction  { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #1e40af; }
-.sf-act-agriculture   { background: linear-gradient(135deg, #f0fdf4, #dcfce7); color: #166534; }
-.sf-act-manufacturing { background: linear-gradient(135deg, #fdf4ff, #f3e8ff); color: #6b21a8; }
-.sf-act-livestock     { background: linear-gradient(135deg, #fff7ed, #fed7aa); color: #92400e; }
+/* Exec card color variants */
+.epd-exec-navy    { background: linear-gradient(135deg, #1e3a5f, #2d4a7a); }
+.epd-exec-blue    { background: linear-gradient(135deg, #1d4ed8, #2563eb); }
+.epd-exec-emerald { background: linear-gradient(135deg, #047857, #059669); }
+.epd-exec-purple  { background: linear-gradient(135deg, #5b21b6, #7c3aed); }
+.epd-exec-rose    { background: linear-gradient(135deg, #9f1239, #dc2626); }
 
-/* ── Stage chart (horizontal bars) ───────────────────────────────── */
-.sf-stage-chart {
+/* ── Stage distribution ──────────────────────────────────────────── */
+.epd-stage-list {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.55rem;
 }
 
-.sf-stage-row {
+.epd-stage-row {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    position: relative;
+    gap: 0.55rem;
+    padding: 0.35rem 0.4rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.12s ease, transform 0.12s ease;
+    user-select: none;
 }
+.epd-stage-row:hover  { background: #f1f5f9; transform: translateX(3px); }
+.epd-stage-row:active { background: #e8ecf0; transform: translateX(1px); }
 
-.sf-stage-lbl {
-    font-size: 0.72rem;
+.epd-stage-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.epd-dot-blue   { background: #2563eb; }
+.epd-dot-amber  { background: #d97706; }
+.epd-dot-green  { background: #059669; }
+.epd-dot-purple { background: #7c3aed; }
+
+.epd-stage-lbl {
+    font-size: 0.75rem;
     color: #475569;
     white-space: nowrap;
     width: 130px;
     flex-shrink: 0;
+    font-weight: 600;
 }
 
-.sf-stage-bar-wrap {
+.epd-stage-bar-wrap {
     flex: 1;
-    height: 10px;
+    height: 9px;
     background: #f1f5f9;
     border-radius: 5px;
     overflow: hidden;
 }
-
-.sf-stage-bar {
+.epd-stage-bar {
     height: 100%;
     border-radius: 5px;
-    width: 30%; /* placeholder — will look good statically */
+    width: 30%;   /* static width — decorative */
 }
+.epd-bar-blue   { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+.epd-bar-amber  { background: linear-gradient(90deg, #d97706, #fbbf24); }
+.epd-bar-green  { background: linear-gradient(90deg, #059669, #34d399); }
+.epd-bar-purple { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
 
-.sf-stage-blue    { background: linear-gradient(90deg, #2563eb, #60a5fa); }
-.sf-stage-amber   { background: linear-gradient(90deg, #d97706, #fbbf24); }
-.sf-stage-emerald { background: linear-gradient(90deg, #059669, #34d399); }
-.sf-stage-purple  { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
-
-.sf-stage-ct {
+.epd-stage-ct {
     font-size: 0.72rem;
     font-weight: 700;
     color: #374151;
-    width: 20px;
+    width: 22px;
     text-align: right;
     flex-shrink: 0;
 }
-
-/* Purple action button for job order section */
-.sf-btn-purple {
-    background: #7c3aed;
-    color: #fff;
-    border: none;
+.epd-stage-ct .o_field_widget,
+.epd-stage-ct [class*="o_field_"] {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #374151 !important;
 }
-.sf-btn-purple:hover { background: #6d28d9; }
 
-/* Livestock activity card */
-.sf-act-livestock { background: linear-gradient(135deg, #fff7ed, #ffedd5); color: #9a3412; }
+/* Exec quick actions */
+.epd-exec-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    align-content: flex-start;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   § 6 — ACTIVITY BREAKDOWN CARDS
+══════════════════════════════════════════════════════════════════ */
+.epd-act-card {
+    border-radius: 12px;
+    padding: 1.1rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.28rem;
+    cursor: pointer;
+    transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s ease, filter 0.12s ease;
+    border: 1.5px solid transparent;
+    user-select: none;
+}
+.epd-act-card:hover  { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0,0,0,0.10); filter: brightness(1.02); }
+.epd-act-card:active { transform: translateY(0) scale(0.97); box-shadow: none; filter: brightness(0.96); }
+
+.epd-act-icon { font-size: 1.5rem; opacity: 0.80; }
+
+.epd-act-count {
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+.epd-act-card .o_field_widget,
+.epd-act-card [class*="o_field_"] {
+    font-size: 1.8rem !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    color: inherit !important;
+}
+.epd-act-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.75;
+}
+.epd-act-proj {
+    font-size: 0.65rem;
+    opacity: 0.58;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    margin-top: 0.05rem;
+}
+.epd-act-proj .o_field_widget,
+.epd-act-proj [class*="o_field_"] {
+    font-size: 0.65rem !important;
+    font-weight: 600 !important;
+    color: inherit !important;
+}
+
+/* Activity card variants */
+.epd-act-construction {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-color: #bfdbfe;
+    color: #1e40af;
+}
+.epd-act-agriculture {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border-color: #bbf7d0;
+    color: #166534;
+}
+.epd-act-manufacturing {
+    background: linear-gradient(135deg, #fdf4ff, #f3e8ff);
+    border-color: #e9d5ff;
+    color: #6b21a8;
+}
+.epd-act-livestock {
+    background: linear-gradient(135deg, #fff7ed, #fed7aa);
+    border-color: #fdba74;
+    color: #92400e;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SHARED ACTION BUTTONS  (.epd-act-btn + color variants)
+══════════════════════════════════════════════════════════════════ */
+.epd-action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.epd-act-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.05rem;
+    border-radius: 8px;
+    font-size: 0.80rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: none;
+    cursor: pointer;
+    line-height: 1.2;
+    transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1),
+                box-shadow 0.15s ease,
+                filter 0.12s ease;
+}
+.epd-act-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.20);
+    filter: brightness(1.10);
+}
+.epd-act-btn:active {
+    transform: translateY(0) scale(0.96);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    filter: brightness(0.92);
+}
+
+.epd-btn-navy   { background: #1e3a5f; color: #fff; box-shadow: 0 2px 8px rgba(30,58,95,0.28); }
+.epd-btn-blue   { background: #1d4ed8; color: #fff; box-shadow: 0 2px 8px rgba(29,78,216,0.28); }
+.epd-btn-amber  { background: #d97706; color: #fff; box-shadow: 0 2px 8px rgba(217,119,6,0.28); }
+.epd-btn-green  { background: #059669; color: #fff; box-shadow: 0 2px 8px rgba(5,150,105,0.28); }
+.epd-btn-purple { background: #7c3aed; color: #fff; box-shadow: 0 2px 8px rgba(124,58,237,0.28); }
+.epd-btn-red    { background: #dc2626; color: #fff; box-shadow: 0 2px 8px rgba(220,38,38,0.28); }
+
+/* ══════════════════════════════════════════════════════════════════
+   LIGHT-CARD sf-card-btn OVERRIDE
+   Light-background cards (b/c rows, proc chips, act cards, readiness)
+   need a dark overlay instead of the default white shimmer.
+══════════════════════════════════════════════════════════════════ */
+.epd-kpi-b .sf-card-btn:hover,
+.epd-kpi-c .sf-card-btn:hover,
+.epd-proc-chip .sf-card-btn:hover,
+.epd-act-card .sf-card-btn:hover,
+.epd-readiness-card .sf-card-btn:hover,
+.epd-risk-item .sf-card-btn:hover {
+    background: rgba(0,0,0,0.04);
+}
+.epd-kpi-b .sf-card-btn:active,
+.epd-kpi-c .sf-card-btn:active,
+.epd-proc-chip .sf-card-btn:active,
+.epd-act-card .sf-card-btn:active,
+.epd-readiness-card .sf-card-btn:active,
+.epd-risk-item .sf-card-btn:active {
+    background: rgba(0,0,0,0.09);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════════════════ */
+@media (max-width: 992px) {
+    .epd-readiness-strip { flex-direction: column; }
+    .epd-kpi-a-val .o_field_widget { font-size: 2.6rem !important; }
+}
+
+@media (max-width: 768px) {
+    .epd-body { padding: 1rem; }
+    .epd-header { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
+    .epd-kpi-a  { min-height: 110px; }
+    .epd-kpi-a-val .o_field_widget { font-size: 2.2rem !important; }
+    .epd-phase-strip { gap: 0.4rem; }
+    .epd-phase-pill  { font-size: 0.76rem; padding: 0.42rem 0.8rem 0.42rem 0.65rem; }
+}

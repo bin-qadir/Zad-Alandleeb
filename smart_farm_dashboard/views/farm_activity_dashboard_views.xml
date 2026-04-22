@@ -243,59 +243,89 @@
                         </div>
                     </div>
 
-                    <!-- Department breakdown — count pills -->
+                    <!-- Department breakdown — large clickable cards -->
                     <div class="act-dept-chart">
                         <div class="act-dept-chart__title">Job Orders by Department</div>
-                        <div class="act-dept-pills">
+                        <div class="act-dept-cards">
 
-                            <div class="act-dept-pill act-dept-pill--civil">
+                            <!-- ★ Civil — opens Civil Division Dashboard -->
+                            <div class="act-dept-card act-dept-card--civil">
                                 <button name="action_view_dept_civil" type="object"
-                                        class="sf-card-btn--light" title="View Civil Dept JOs"/>
-                                <i class="fa fa-building-o"/>
-                                <span class="act-dept-pill__count">
+                                        class="sf-card-btn--light" title="Open Civil Division Dashboard"/>
+                                <div class="act-dept-card__icon">
+                                    <i class="fa fa-building-o"/>
+                                </div>
+                                <div class="act-dept-card__count">
                                     <field name="con_dept_civil" readonly="1"/>
-                                </span>
-                                <span class="act-dept-pill__name">Civil</span>
+                                </div>
+                                <div class="act-dept-card__name">Civil</div>
+                                <div class="act-dept-card__badge">
+                                    <i class="fa fa-th-list me-1"/>Subdivisions →
+                                </div>
                             </div>
 
-                            <div class="act-dept-pill act-dept-pill--structure">
+                            <!-- Structure -->
+                            <div class="act-dept-card act-dept-card--structure">
                                 <button name="action_view_dept_structure" type="object"
                                         class="sf-card-btn--light" title="View Structure Dept JOs"/>
-                                <i class="fa fa-th-large"/>
-                                <span class="act-dept-pill__count">
+                                <div class="act-dept-card__icon">
+                                    <i class="fa fa-th-large"/>
+                                </div>
+                                <div class="act-dept-card__count">
                                     <field name="con_dept_structure" readonly="1"/>
-                                </span>
-                                <span class="act-dept-pill__name">Structure</span>
+                                </div>
+                                <div class="act-dept-card__name">Structure</div>
+                                <div class="act-dept-card__badge">
+                                    <i class="fa fa-list me-1"/>Job Orders →
+                                </div>
                             </div>
 
-                            <div class="act-dept-pill act-dept-pill--arch">
+                            <!-- Architectural -->
+                            <div class="act-dept-card act-dept-card--arch">
                                 <button name="action_view_dept_arch" type="object"
                                         class="sf-card-btn--light" title="View Architectural Dept JOs"/>
-                                <i class="fa fa-home"/>
-                                <span class="act-dept-pill__count">
+                                <div class="act-dept-card__icon">
+                                    <i class="fa fa-home"/>
+                                </div>
+                                <div class="act-dept-card__count">
                                     <field name="con_dept_arch" readonly="1"/>
-                                </span>
-                                <span class="act-dept-pill__name">Architectural</span>
+                                </div>
+                                <div class="act-dept-card__name">Architectural</div>
+                                <div class="act-dept-card__badge">
+                                    <i class="fa fa-list me-1"/>Job Orders →
+                                </div>
                             </div>
 
-                            <div class="act-dept-pill act-dept-pill--mechanical">
+                            <!-- Mechanical -->
+                            <div class="act-dept-card act-dept-card--mechanical">
                                 <button name="action_view_dept_mechanical" type="object"
                                         class="sf-card-btn--light" title="View Mechanical Dept JOs"/>
-                                <i class="fa fa-cog"/>
-                                <span class="act-dept-pill__count">
+                                <div class="act-dept-card__icon">
+                                    <i class="fa fa-cog"/>
+                                </div>
+                                <div class="act-dept-card__count">
                                     <field name="con_dept_mechanical" readonly="1"/>
-                                </span>
-                                <span class="act-dept-pill__name">Mechanical</span>
+                                </div>
+                                <div class="act-dept-card__name">Mechanical</div>
+                                <div class="act-dept-card__badge">
+                                    <i class="fa fa-list me-1"/>Job Orders →
+                                </div>
                             </div>
 
-                            <div class="act-dept-pill act-dept-pill--electrical">
+                            <!-- Electrical -->
+                            <div class="act-dept-card act-dept-card--electrical">
                                 <button name="action_view_dept_electrical" type="object"
                                         class="sf-card-btn--light" title="View Electrical Dept JOs"/>
-                                <i class="fa fa-bolt"/>
-                                <span class="act-dept-pill__count">
+                                <div class="act-dept-card__icon">
+                                    <i class="fa fa-bolt"/>
+                                </div>
+                                <div class="act-dept-card__count">
                                     <field name="con_dept_electrical" readonly="1"/>
-                                </span>
-                                <span class="act-dept-pill__name">Electrical</span>
+                                </div>
+                                <div class="act-dept-card__name">Electrical</div>
+                                <div class="act-dept-card__badge">
+                                    <i class="fa fa-list me-1"/>Job Orders →
+                                </div>
                             </div>
 
                         </div>

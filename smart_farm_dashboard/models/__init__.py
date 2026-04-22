@@ -5,3 +5,4 @@ from . import farm_civil_dashboard
 from . import farm_construction_projects_dashboard
 from . import farm_construction_project_dashboard
 from . import farm_project_dashboard
+from . import farm_division_dashboards

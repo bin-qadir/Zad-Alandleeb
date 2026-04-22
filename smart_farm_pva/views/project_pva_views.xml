@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            SMART FARM PVA — Project Form: Planned vs Actual Control tab
+            ==============================================================
+
+            Adds a new "Planned vs Actual" page to the project form directly
+            after the existing "Cost Control" tab (tab_cost_control).
+
+            Sections:
+              A. Alert Banners       — over_budget, negative_profit, low_margin, qty_overrun
+              B. Revenue Comparison  — planned vs actual revenue + variance
+              C. Cost Summary        — estimated vs actual total cost + variance
+              D. Profitability Grid  — planned / actual profit, margins, variance
+        -->
+
+        <record id="view_farm_project_pva_inherit" model="ir.ui.view">
+            <field name="name">farm.project.pva.inherit</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//page[@name='tab_cost_control']" position="after">
+
+                    <page string="Planned vs Actual" name="tab_pva" icon="fa-balance-scale">
+
+                        <!-- ══ A. Risk Flags ═══════════════════════════════════ -->
+
+                        <div class="alert alert-danger border-start border-danger border-3 mb-2"
+                             role="alert"
+                             invisible="not is_negative_profit">
+                            <strong><i class="fa fa-exclamation-triangle me-1"/>
+                            NEGATIVE PROFIT</strong>
+                            — Actual costs exceed claimed revenue. Immediate review required.
+                        </div>
+
+                        <div class="alert alert-danger border-start border-danger border-3 mb-2"
+                             role="alert"
+                             invisible="not is_over_budget">
+                            <strong><i class="fa fa-exclamation-circle me-1"/>
+                            OVER BUDGET</strong>
+                            — Actual total cost exceeds the estimated budget.
+                        </div>
+
+                        <div class="alert alert-warning border-start border-warning border-3 mb-2"
+                             role="alert"
+                             invisible="not is_low_margin">
+                            <strong><i class="fa fa-warning me-1"/>
+                            LOW MARGIN</strong>
+                            — Actual margin is positive but below 10 %. Monitor closely.
+                        </div>
+
+                        <div class="alert alert-warning border-start border-warning border-3 mb-2"
+                             role="alert"
+                             invisible="not has_qty_overrun">
+                            <strong><i class="fa fa-arrows-alt me-1"/>
+                            QUANTITY OVERRUN</strong>
+                            — At least one Job Order has been approved beyond its planned
+                            quantity. Possible scope creep vs BOQ.
+                        </div>
+
+                        <!-- ══ B. Revenue Comparison ══════════════════════════ -->
+
+                        <group string="Revenue — Planned vs Actual  (BOQ / Claims)"
+                               name="grp_pva_revenue">
+                            <group>
+                                <field name="jo_planned_revenue"
+                                       string="Planned Revenue (BOQ)"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="jo_actual_revenue"
+                                       string="Actual Revenue (Claims)"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <group>
+                                <field name="jo_revenue_variance"
+                                       string="Revenue Variance"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="jo_revenue_variance &gt;= 0"
+                                       decoration-danger="jo_revenue_variance &lt; 0"/>
+                                <field name="contract_value"
+                                       string="Contract Value (SO)"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                        </group>
+
+                        <separator/>
+
+                        <!-- ══ C. Cost Summary ════════════════════════════════ -->
+
+                        <group string="Cost — Budget vs Actual"
+                               name="grp_pva_cost">
+                            <group>
+                                <field name="estimated_cost"
+                                       string="Budgeted Cost"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="actual_total_cost"
+                                       string="Actual Total Cost"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <group>
+                                <field name="estimate_vs_actual_variance"
+                                       string="Cost Variance (Under / Over)"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="estimate_vs_actual_variance &gt; 0"
+                                       decoration-danger="estimate_vs_actual_variance &lt; 0"
+                                       decoration-muted="estimate_vs_actual_variance == 0"/>
+                                <field name="forecast_final_cost"
+                                       string="Forecast Final Cost"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                        </group>
+
+                        <separator/>
+
+                        <!-- ══ D. Profitability Grid ══════════════════════════ -->
+
+                        <group string="Profitability — Planned vs Actual"
+                               name="grp_pva_profit">
+                            <group string="Planned">
+                                <field name="jo_planned_profit"
+                                       string="Planned Profit"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="jo_planned_profit &gt; 0"
+                                       decoration-danger="jo_planned_profit &lt;= 0"/>
+                                <field name="jo_planned_margin"
+                                       string="Planned Margin %"
+                                       decoration-success="jo_planned_margin &gt; 0"
+                                       decoration-danger="jo_planned_margin &lt;= 0"/>
+                            </group>
+                            <group string="Actual">
+                                <field name="jo_actual_profit"
+                                       string="Actual Profit"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="jo_actual_profit &gt; 0"
+                                       decoration-danger="jo_actual_profit &lt;= 0"/>
+                                <field name="jo_actual_margin"
+                                       string="Actual Margin %"
+                                       decoration-success="jo_actual_margin &gt; 10"
+                                       decoration-warning="jo_actual_margin &gt; 0 and jo_actual_margin &lt;= 10"
+                                       decoration-danger="jo_actual_margin &lt;= 0"/>
+                            </group>
+                        </group>
+
+                        <group name="grp_pva_variance">
+                            <group>
+                                <field name="jo_profit_variance"
+                                       string="Profit Variance"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="jo_profit_variance &gt;= 0"
+                                       decoration-danger="jo_profit_variance &lt; 0"/>
+                                <field name="gross_margin_pct"
+                                       string="Gross Margin % (Forecast)"
+                                       decoration-success="gross_margin_pct &gt; 0"
+                                       decoration-danger="gross_margin_pct &lt;= 0"/>
+                            </group>
+                            <group>
+                                <field name="projected_profit"
+                                       string="Projected Profit"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="projected_profit &gt; 0"
+                                       decoration-danger="projected_profit &lt;= 0"/>
+                                <field name="realized_profit"
+                                       string="Realized Profit (Invoiced)"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-success="realized_profit &gt; 0"
+                                       decoration-danger="realized_profit &lt;= 0"/>
+                            </group>
+                        </group>
+
+                        <!-- Hidden fields needed for decoration conditions -->
+                        <field name="currency_id" invisible="True"/>
+                        <field name="is_over_budget" invisible="True"/>
+                        <field name="is_negative_profit" invisible="True"/>
+                        <field name="is_low_margin" invisible="True"/>
+                        <field name="has_qty_overrun" invisible="True"/>
+
+                    </page>
+
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,182 @@
+/* ══════════════════════════════════════════════════════════════════════
+   SMART FARM — Project Form KPI Smart Buttons
+   Replaces Odoo's oe_stat_button strip with a modern KPI card row.
+   Self-contained: no dependency on smart_farm_dashboard CSS.
+══════════════════════════════════════════════════════════════════════ */
+
+/* ── Strip container (replaces oe_button_box) ───────────────────────
+   Keeps name="button_box" on the div for xpath compatibility in
+   all inherited modules (boq, execution, contract, etc.)
+──────────────────────────────────────────────────────────────────── */
+.epd-mini-kpi-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    padding: 0.85rem 1.25rem 0.75rem;
+    background: #fff;
+    border-bottom: 1px solid #e8ecf0;
+}
+
+/* ── Transparent anchor wrapper for xpath compatibility ─────────────
+   display:contents removes the box from the flex layout, making the
+   child <button> a direct flex item. Used where the BOQ Analysis card
+   needs a named div anchor for the sale_contract xpath injection while
+   the <button> itself cannot carry a duplicate name attribute.
+──────────────────────────────────────────────────────────────────── */
+.epd-kpi-anchor {
+    display: contents;
+}
+
+/* ── KPI card ────────────────────────────────────────────────────────
+   The card is now a <button type="object"> — no overlay needed.
+   Browser button defaults are reset below so it looks identical.
+──────────────────────────────────────────────────────────────────── */
+.epd-mini-kpi {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 12px 18px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    min-width: 88px;
+    flex: 1 1 88px;
+    max-width: 140px;
+    cursor: pointer;
+    transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1),
+                box-shadow 0.15s ease,
+                border-color 0.15s ease;
+    user-select: none;
+    overflow: hidden;
+    gap: 0.15rem;
+}
+
+.epd-mini-kpi:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.10);
+    border-color: #cbd5e1;
+}
+
+.epd-mini-kpi:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: none;
+    border-color: #94a3b8;
+}
+
+/* ── Button element resets ───────────────────────────────────────────
+   When the card IS a <button type="object">, strip the browser's
+   default button styling so it renders identically to the div version.
+──────────────────────────────────────────────────────────────────── */
+button.epd-mini-kpi {
+    font-family: inherit;
+    font-size:   inherit;
+    color:       inherit;
+    -webkit-appearance: none;
+    appearance:  none;
+    outline:     none;
+    box-shadow:  none;
+    /* Odoo/Bootstrap may add .btn defaults — undo them */
+    letter-spacing: normal;
+    line-height: normal;
+}
+button.epd-mini-kpi:focus-visible {
+    outline: 2px solid rgba(99,102,241,0.45);
+    outline-offset: 2px;
+}
+
+/* ── Icon ────────────────────────────────────────────────────────── */
+.epd-mini-icon {
+    font-size: 1.3rem;
+    opacity: 0.72;
+    line-height: 1;
+    margin-bottom: 0.1rem;
+}
+
+/* ── Big number (count) ──────────────────────────────────────────── */
+.epd-mini-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: #1e293b;
+}
+/* Force Odoo field widget inside mini-value to look like plain text */
+.epd-mini-value .o_field_widget,
+.epd-mini-value [class*="o_field_"] {
+    font-size: 1.6rem !important;
+    font-weight: 800 !important;
+    line-height: 1.05 !important;
+    color: inherit !important;
+    background: transparent !important;
+    padding: 0 !important;
+    min-width: unset !important;
+    border: none !important;
+}
+
+/* ── Label ───────────────────────────────────────────────────────── */
+.epd-mini-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    margin-top: 0.15rem;
+    white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   COLOR VARIANTS — left accent border + colored icon/value
+══════════════════════════════════════════════════════════════════ */
+.epd-mini-kpi--green {
+    border-left: 3px solid #059669;
+}
+.epd-mini-kpi--green .epd-mini-icon,
+.epd-mini-kpi--green .epd-mini-value { color: #065f46; }
+
+.epd-mini-kpi--blue {
+    border-left: 3px solid #3b82f6;
+}
+.epd-mini-kpi--blue .epd-mini-icon,
+.epd-mini-kpi--blue .epd-mini-value { color: #1d4ed8; }
+
+.epd-mini-kpi--navy {
+    border-left: 3px solid #1e3a5f;
+}
+.epd-mini-kpi--navy .epd-mini-icon,
+.epd-mini-kpi--navy .epd-mini-value { color: #1e3a5f; }
+
+.epd-mini-kpi--purple {
+    border-left: 3px solid #7c3aed;
+}
+.epd-mini-kpi--purple .epd-mini-icon,
+.epd-mini-kpi--purple .epd-mini-value { color: #5b21b6; }
+
+.epd-mini-kpi--amber {
+    border-left: 3px solid #d97706;
+}
+.epd-mini-kpi--amber .epd-mini-icon,
+.epd-mini-kpi--amber .epd-mini-value { color: #92400e; }
+
+.epd-mini-kpi--teal {
+    border-left: 3px solid #0891b2;
+}
+.epd-mini-kpi--teal .epd-mini-icon,
+.epd-mini-kpi--teal .epd-mini-value { color: #0e7490; }
+
+.epd-mini-kpi--indigo {
+    border-left: 3px solid #4f46e5;
+}
+.epd-mini-kpi--indigo .epd-mini-icon,
+.epd-mini-kpi--indigo .epd-mini-value { color: #3730a3; }
+
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE — collapse to 2-up on small screens
+══════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .epd-mini-kpi-strip { gap: 0.4rem; padding: 0.65rem 0.75rem; }
+    .epd-mini-kpi { min-width: 72px; padding: 10px 12px; }
+    .epd-mini-value { font-size: 1.3rem; }
+    .epd-mini-icon  { font-size: 1.1rem; }
+}

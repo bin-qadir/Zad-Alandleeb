@@ -20,17 +20,24 @@ class FarmProjectBoqInherit(models.Model):
         ondelete='set null',
     )
 
+    # ── BOQ back-relation (used for reactivity + count) ──────────────────────
+    boq_ids = fields.One2many(
+        comodel_name='farm.boq',
+        inverse_name='project_id',
+        string='BOQ List',
+    )
+
     # ── BOQ count (stat button) ───────────────────────────────────────────────
     boq_count = fields.Integer(
         string='Cost Structures',
         compute='_compute_boq_count',
+        help='Number of Cost Structures (BOQs) linked to this project.',
     )
 
-    @api.depends('name')
+    @api.depends('boq_ids')
     def _compute_boq_count(self):
-        FarmBoq = self.env['farm.boq']
         for rec in self:
-            rec.boq_count = FarmBoq.search_count([('project_id', '=', rec.id)])
+            rec.boq_count = len(rec.boq_ids)
 
     def action_open_boqs(self):
         """Open Cost Structures (BOQs) filtered to this project."""

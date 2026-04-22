@@ -31,6 +31,10 @@
         'views/farm_civil_dashboard_views.xml',
         'views/farm_construction_projects_dashboard_views.xml',
         'views/farm_construction_project_dashboard_views.xml',
+        'views/farm_structure_dashboard_views.xml',
+        'views/farm_arch_dashboard_views.xml',
+        'views/farm_mech_dashboard_views.xml',
+        'views/farm_elec_dashboard_views.xml',
         'views/analytics_actions.xml',   # client action must precede menu
         'views/menu.xml',
     ],

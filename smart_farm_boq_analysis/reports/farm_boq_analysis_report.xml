@@ -251,7 +251,7 @@
                                 </td>
                                 <td class="num">
                                     <t t-esc="
-                                        '%.1f%%' % (div['subtotal_profit'] / div['subtotal_cost'] * 100.0)
+                                        ('%.1f' % (div['subtotal_profit'] / div['subtotal_cost'] * 100.0)) + '%'
                                         if div['subtotal_cost'] else '—'
                                     "/>
                                 </td>
@@ -281,7 +281,7 @@
                             <t t-esc="'%.2f' % rd['total_profit']"/>
                         </td>
                         <td class="num">
-                            <t t-esc="'%.1f%%' % rd['total_margin']"/>
+                            <t t-esc="('%.1f' % rd['total_margin']) + '%'"/>
                         </td>
                         <td/>
                     </tr>

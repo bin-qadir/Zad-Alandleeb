@@ -46,6 +46,7 @@ class FarmProjectContractPhase(models.Model):
     # Computed
     # ────────────────────────────────────────────────────────────────────────
 
+    @api.depends('contract_ids')
     def _compute_contract_count(self):
         for rec in self:
             rec.contract_count = len(rec.contract_ids)

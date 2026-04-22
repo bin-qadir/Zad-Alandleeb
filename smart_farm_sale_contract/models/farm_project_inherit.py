@@ -40,9 +40,16 @@ class FarmProjectSaleContract(models.Model):
 
     # ── Sales Orders link ─────────────────────────────────────────────────────
 
+    sale_order_ids = fields.One2many(
+        comodel_name='sale.order',
+        inverse_name='farm_project_id',
+        string='Sale Order List',
+    )
+
     sale_order_count = fields.Integer(
         string='Sales Orders',
         compute='_compute_sale_order_count',
+        help='Number of Sales Orders (Contracts) linked to this project.',
     )
 
     # ── Cost control ──────────────────────────────────────────────────────────
@@ -103,12 +110,10 @@ class FarmProjectSaleContract(models.Model):
     # Computed
     # ────────────────────────────────────────────────────────────────────────
 
+    @api.depends('sale_order_ids')
     def _compute_sale_order_count(self):
-        SaleOrder = self.env['sale.order']
         for rec in self:
-            rec.sale_order_count = SaleOrder.search_count(
-                [('farm_project_id', '=', rec.id)]
-            )
+            rec.sale_order_count = len(rec.sale_order_ids)
 
     @api.depends(
         'job_order_ids.actual_material_cost',

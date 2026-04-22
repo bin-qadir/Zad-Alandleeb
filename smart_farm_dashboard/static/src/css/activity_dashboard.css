@@ -1732,9 +1732,11 @@
     min-height: 110px;
 }
 .cpjd-kpi:hover {
-    box-shadow: 0 6px 20px rgba(0,0,0,.14);
-    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    transform: translateY(-4px);
+    border-color: #2563eb;
 }
+.cpjd-kpi:active { transform: scale(0.97); }
 .cpjd-kpi__icon {
     font-size: 20px;
     margin-bottom: 8px;
@@ -1743,24 +1745,24 @@
 .cpjd-kpi__val .o_field_float,
 .cpjd-kpi__val .o_field_monetary,
 .cpjd-kpi__val .o_field_widget {
-    font-size: 28px !important;
+    font-size: 30px !important;
     font-weight: 900 !important;
     line-height: 1.1;
     display: block !important;
-    color: inherit !important;
+    color: #111827 !important;
 }
 .cpjd-kpi__val .o_field_monetary span {
-    font-size: 20px !important;
+    font-size: 22px !important;
     font-weight: 800 !important;
-    color: inherit !important;
+    color: #111827 !important;
 }
 .cpjd-kpi__lbl {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .05em;
     margin-top: 6px;
-    color: inherit;
+    color: #374151;
     white-space: nowrap;
 }
 
@@ -1814,17 +1816,19 @@
     transition: box-shadow .18s ease, transform .15s ease;
 }
 .cpjd-stage:hover {
-    box-shadow: 0 4px 14px rgba(0,0,0,.12);
-    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.14);
+    transform: translateY(-3px);
+    border-color: #2563eb !important;
 }
+.cpjd-stage:active { transform: scale(0.97); }
 .cpjd-stage__num .o_field_integer {
     font-size: 26px !important;
-    font-weight: 900 !important;
+    font-weight: 800 !important;
     line-height: 1 !important;
     display: block !important;
 }
 .cpjd-stage__lbl {
-    font-size: 11px;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: .05em;
     font-weight: 700;
@@ -1877,26 +1881,29 @@
     min-height: 140px;
 }
 .cpjd-dept-card:hover {
-    box-shadow: 0 6px 24px rgba(0,0,0,.16);
-    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+    transform: translateY(-4px);
+    border-color: #2563eb;
 }
+.cpjd-dept-card:active { transform: scale(0.97); }
 .cpjd-dept-card__icon {
     font-size: 28px;
     margin-bottom: 8px;
 }
 .cpjd-dept-card__count .o_field_integer {
-    font-size: 36px !important;
+    font-size: 38px !important;
     font-weight: 900 !important;
     line-height: 1;
     display: block !important;
+    color: #111827 !important;
 }
 .cpjd-dept-card__name {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: .05em;
     margin-top: 5px;
-    color: inherit;
+    color: #111827;
 }
 .cpjd-dept-card__badge {
     font-size: 10px;
@@ -1907,6 +1914,28 @@
     background: rgba(0,0,0,.08);
     letter-spacing: .03em;
     color: inherit;
+}
+
+/* ── Arrow feedback icon (top-right corner of every interactive card) ── */
+.cpjd-kpi::after,
+.cpjd-stage::after,
+.cpjd-dept-card::after {
+    content: '→';
+    position: absolute;
+    top: 7px;
+    right: 9px;
+    font-size: 11px;
+    font-weight: 700;
+    opacity: 0.3;
+    pointer-events: none;
+    transition: opacity .15s ease, transform .15s ease;
+    z-index: 11;
+}
+.cpjd-kpi:hover::after,
+.cpjd-stage:hover::after,
+.cpjd-dept-card:hover::after {
+    opacity: 0.75;
+    transform: translateX(3px);
 }
 
 /* Per-department colours — stronger borders */

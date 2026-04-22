@@ -14,17 +14,24 @@ class FarmProjectAnalysisInherit(models.Model):
 
     _inherit = 'farm.project'
 
+    # ── Analysis back-relation (store=True related field on analysis side) ────
+    analysis_ids = fields.One2many(
+        comodel_name='farm.boq.analysis',
+        inverse_name='project_id',
+        string='Analysis List',
+    )
+
     # ── Analysis count (stat button) ──────────────────────────────────────────
     analysis_count = fields.Integer(
         string='BOQ Analysis',
         compute='_compute_analysis_count',
+        help='Number of BOQ Analysis documents linked to this project.',
     )
 
-    @api.depends('name')
+    @api.depends('analysis_ids')
     def _compute_analysis_count(self):
-        Analysis = self.env['farm.boq.analysis']
         for rec in self:
-            rec.analysis_count = Analysis.search_count([('project_id', '=', rec.id)])
+            rec.analysis_count = len(rec.analysis_ids)
 
     def action_open_project_analysis(self):
         """Open BOQ Analysis documents filtered to this project."""

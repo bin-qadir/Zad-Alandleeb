@@ -11,16 +11,23 @@
             <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
             <field name="arch" type="xml">
 
-                <!-- Open BOQ Analysis stat button -->
+                <!-- BOQ Analysis — card IS the button.
+                     The outer div carries name="btn_boq_analysis" as an xpath anchor
+                     for smart_farm_sale_contract (which inserts Sales Orders after it).
+                     class="epd-kpi-anchor" → display:contents, so the div is invisible
+                     to the flex layout and the inner button is a direct flex item. -->
                 <xpath expr="//div[@name='button_box']" position="inside">
-                    <button class="oe_stat_button"
-                            type="object"
-                            name="action_open_project_analysis"
-                            icon="fa-bar-chart">
-                        <field name="analysis_count"
-                               widget="statinfo"
-                               string="BOQ Analysis"/>
-                    </button>
+                    <div name="btn_boq_analysis" class="epd-kpi-anchor">
+                        <button name="action_open_project_analysis" type="object"
+                                class="epd-mini-kpi epd-mini-kpi--purple"
+                                title="Open BOQ Analysis">
+                            <i class="fa fa-bar-chart epd-mini-icon" title="BOQ Analysis"/>
+                            <div class="epd-mini-value">
+                                <field name="analysis_count" nolabel="1"/>
+                            </div>
+                            <div class="epd-mini-label">BOQ Analysis</div>
+                        </button>
+                    </div>
                 </xpath>
 
             </field>

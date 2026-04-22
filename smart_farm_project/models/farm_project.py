@@ -1,42 +1,6 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
-# ── Default task templates per activity ──────────────────────────────────────
-_DEFAULT_TASKS = {
-    'construction': [
-        'BOQ / Scope',
-        'Execution',
-        'Handover',
-        'Inspection',
-        'Approved Quantities',
-        'Claims / Extracts',
-    ],
-    'agriculture': [
-        'Crop Plan',
-        'Daily Operations',
-        'Irrigation / Fertigation',
-        'Monitoring & Quality',
-        'Harvest',
-        'Yield / Sales',
-    ],
-    'manufacturing': [
-        'Packing Orders',
-        'Material Issue',
-        'Packing Progress',
-        'Quality Control',
-        'Packed Output',
-        'Finished Goods / Costing',
-    ],
-    'livestock': [
-        'Herd Planning',
-        'Breeding',
-        'Feeding & Care',
-        'Health Monitoring',
-        'Fattening',
-        'Sales',
-    ],
-}
-
 
 class FarmProject(models.Model):
     _name = 'farm.project'
@@ -205,6 +169,7 @@ class FarmProject(models.Model):
     task_count = fields.Integer(
         string='Tasks',
         compute='_compute_task_count',
+        help='Count of operational tasks in the linked Odoo project.',
     )
 
     @api.depends('field_ids')
@@ -212,12 +177,14 @@ class FarmProject(models.Model):
         for rec in self:
             rec.field_count = len(rec.field_ids)
 
+    @api.depends('odoo_project_id')
     def _compute_task_count(self):
         for rec in self:
             if rec.odoo_project_id:
-                rec.task_count = self.env['project.task'].search_count(
-                    [('project_id', '=', rec.odoo_project_id.id)]
-                )
+                # Exclude milestones; count only real user-created tasks
+                rec.task_count = self.env['project.task'].search_count([
+                    ('project_id', '=', rec.odoo_project_id.id),
+                ])
             else:
                 rec.task_count = 0
 
@@ -262,9 +229,6 @@ class FarmProject(models.Model):
             proj._ensure_odoo_project()
             # 2. Auto-create analytic account if not set
             proj._ensure_analytic_account()
-            # 3. Auto-create default tasks based on business_activity
-            if proj.business_activity:
-                proj._create_default_tasks()
         return records
 
     # ────────────────────────────────────────────────────────────────────────
@@ -306,21 +270,6 @@ class FarmProject(models.Model):
         except Exception:
             # Analytic account creation is non-critical — silently skip
             pass
-
-    def _create_default_tasks(self):
-        """Create default project.task records based on business_activity."""
-        self.ensure_one()
-        task_names = _DEFAULT_TASKS.get(self.business_activity, [])
-        if not task_names or not self.odoo_project_id:
-            return
-        Task = self.env['project.task']
-        for seq, task_name in enumerate(task_names, start=1):
-            Task.create({
-                'name': task_name,
-                'project_id': self.odoo_project_id.id,
-                'sequence': seq * 10,
-                'description': '',
-            })
 
     # ────────────────────────────────────────────────────────────────────────
     # Actions

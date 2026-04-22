@@ -9,14 +9,16 @@
             <field name="model">farm.project</field>
             <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
             <field name="arch" type="xml">
+                <!-- Job Orders — card IS the button -->
                 <xpath expr="//div[@name='button_box']" position="inside">
-                    <button class="oe_stat_button"
-                            type="object"
-                            name="action_open_job_orders"
-                            icon="fa-tasks">
-                        <field name="job_order_count"
-                               widget="statinfo"
-                               string="Job Orders"/>
+                    <button name="action_open_job_orders" type="object"
+                            class="epd-mini-kpi epd-mini-kpi--amber"
+                            title="Open Job Orders">
+                        <i class="fa fa-tasks epd-mini-icon" title="Job Orders"/>
+                        <div class="epd-mini-value">
+                            <field name="job_order_count" nolabel="1"/>
+                        </div>
+                        <div class="epd-mini-label">Job Orders</div>
                     </button>
                 </xpath>
             </field>

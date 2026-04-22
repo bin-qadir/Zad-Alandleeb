@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             PER-USER DASHBOARD — Form view
+             Transient model; a fresh record is created on every open.
+             All KPI cards are full-clickable buttons opening filtered lists.
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_mail_tracker_dashboard_form" model="ir.ui.view">
+            <field name="name">mail.tracker.dashboard.form</field>
+            <field name="model">mail.tracker.dashboard</field>
+            <field name="arch" type="xml">
+                <form string="My Email Dashboard" create="false" edit="false" delete="false">
+                    <sheet>
+
+                        <!-- ── Dashboard header ── -->
+                        <div class="smcc-dashboard-header">
+                            <div class="smcc-header-icon">
+                                <i class="fa fa-envelope-o" title="Email Control Center"/>
+                            </div>
+                            <div>
+                                <h2>Email Control Center</h2>
+                                <p>Your personal email workload — click any card to drill in.</p>
+                            </div>
+                            <div class="ms-auto d-flex gap-2">
+                                <button name="action_manual_sync"
+                                        type="object"
+                                        class="btn btn-light btn-sm"
+                                        title="Fetch latest emails now">
+                                    <i class="fa fa-refresh me-1"/> Scan Now
+                                </button>
+                                <button name="action_open_all"
+                                        type="object"
+                                        class="btn btn-outline-light btn-sm">
+                                    <i class="fa fa-list me-1"/> All Emails
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- ── Section: Mailbox Overview ── -->
+                        <div class="smcc-section-title">Mailbox Overview</div>
+                        <div class="smcc-kpi-grid">
+
+                            <button name="action_open_important_inbox"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--red"
+                                    title="Open Important Inbox">
+                                <div class="smcc-kpi-icon"><i class="fa fa-exclamation-circle"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="important_inbox_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Important Inbox</div>
+                            </button>
+
+                            <button name="action_open_other_inbox"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--blue"
+                                    title="Open Other Inbox">
+                                <div class="smcc-kpi-icon"><i class="fa fa-inbox"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="other_inbox_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Other Inbox</div>
+                            </button>
+
+                            <button name="action_open_sent"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--teal"
+                                    title="Open Sent Emails">
+                                <div class="smcc-kpi-icon"><i class="fa fa-paper-plane"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="sent_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Sent</div>
+                            </button>
+
+                            <button name="action_open_drafts"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--gray"
+                                    title="Open Drafts">
+                                <div class="smcc-kpi-icon"><i class="fa fa-file-text-o"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="drafts_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Drafts</div>
+                            </button>
+
+                        </div>
+
+                        <!-- ── Section: My Workload ── -->
+                        <div class="smcc-section-title">My Workload</div>
+                        <div class="smcc-kpi-grid">
+
+                            <button name="action_open_assigned_to_me"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--navy"
+                                    title="Open emails assigned to me">
+                                <div class="smcc-kpi-icon"><i class="fa fa-user"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="assigned_to_me_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Assigned To Me</div>
+                            </button>
+
+                            <button name="action_open_waiting_reply"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--amber"
+                                    title="Open emails waiting for reply">
+                                <div class="smcc-kpi-icon"><i class="fa fa-hourglass-half"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="waiting_reply_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Waiting Reply</div>
+                            </button>
+
+                            <button name="action_open_escalated"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--purple"
+                                    title="Open escalated emails">
+                                <div class="smcc-kpi-icon"><i class="fa fa-bolt"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="escalated_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Escalated</div>
+                            </button>
+
+                            <button name="action_open_overdue"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--orange"
+                                    title="Open overdue emails (unresolved &gt; 3 days)">
+                                <div class="smcc-kpi-icon"><i class="fa fa-clock-o"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="overdue_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Overdue Follow-up</div>
+                            </button>
+
+                            <button name="action_open_converted_tasks"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--green"
+                                    title="Open emails converted to tasks">
+                                <div class="smcc-kpi-icon"><i class="fa fa-check-circle"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="converted_to_task_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Converted to Tasks</div>
+                            </button>
+
+                            <button name="action_open_all"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--gray"
+                                    title="Open all open emails">
+                                <div class="smcc-kpi-icon"><i class="fa fa-envelope"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="total_open_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Total Open</div>
+                            </button>
+
+                        </div>
+
+                        <!-- ── Section: Intelligence ── -->
+                        <div class="smcc-section-title">Intelligence — Auto-Link Engine</div>
+                        <div class="smcc-kpi-grid">
+
+                            <button name="action_open_linked_to_project"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--teal"
+                                    title="Open emails linked to a project">
+                                <div class="smcc-kpi-icon"><i class="fa fa-sitemap" title="Linked to Project"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="linked_to_project_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Linked to Project</div>
+                            </button>
+
+                            <button name="action_open_unlinked"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--orange"
+                                    title="Open unlinked emails (no project detected)">
+                                <div class="smcc-kpi-icon"><i class="fa fa-unlink" title="Unlinked"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="unlinked_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Unlinked Emails</div>
+                            </button>
+
+                            <button name="action_open_requires_action"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--red"
+                                    title="Open emails that require action">
+                                <div class="smcc-kpi-icon"><i class="fa fa-hand-o-right" title="Requires Action"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="requires_action_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Requires Action</div>
+                            </button>
+
+                            <button name="action_open_auto_tasks"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--purple"
+                                    title="Open emails that generated auto-tasks">
+                                <div class="smcc-kpi-icon"><i class="fa fa-magic" title="Auto-Tasks"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="auto_tasks_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Auto-Tasks Created</div>
+                            </button>
+
+                        </div>
+
+                        <!-- ── Section: Operational Links ── -->
+                        <div class="smcc-section-title">
+                            <i class="fa fa-link me-1"/>
+                            Operational Links
+                        </div>
+                        <div class="smcc-kpi-grid">
+
+                            <button name="action_open_linked_claims"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--amber"
+                                    title="Emails linked to a Claim / Job Order">
+                                <div class="smcc-kpi-icon"><i class="fa fa-file-text"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="linked_claims_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Linked Claims</div>
+                            </button>
+
+                            <button name="action_open_linked_contracts"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--navy"
+                                    title="Emails linked to a Contract">
+                                <div class="smcc-kpi-icon"><i class="fa fa-handshake-o"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="linked_contracts_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Linked Contracts</div>
+                            </button>
+
+                            <button name="action_open_linked_invoices"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--teal"
+                                    title="Emails linked to an Invoice">
+                                <div class="smcc-kpi-icon"><i class="fa fa-money"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="linked_invoices_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Linked Invoices</div>
+                            </button>
+
+                            <button name="action_open_linked_boq"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--green"
+                                    title="Emails linked to a BOQ">
+                                <div class="smcc-kpi-icon"><i class="fa fa-table"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="linked_boq_emails_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Linked BOQ Emails</div>
+                            </button>
+
+                            <button name="action_open_linked_rfq"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--blue"
+                                    title="Emails linked to RFQ / Procurement">
+                                <div class="smcc-kpi-icon"><i class="fa fa-shopping-cart"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="linked_rfq_emails_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Linked RFQ Emails</div>
+                            </button>
+
+                        </div>
+
+                        <!-- ── Section: Decision Engine ── -->
+                        <div class="smcc-section-title">
+                            <i class="fa fa-cogs me-1"/>
+                            Decision Engine
+                        </div>
+                        <div class="smcc-kpi-grid">
+
+                            <button name="action_open_high_priority"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--red"
+                                    title="Emails with priority score ≥ 70">
+                                <div class="smcc-kpi-icon"><i class="fa fa-fire"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="high_priority_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">High Priority</div>
+                            </button>
+
+                            <button name="action_open_decision_required"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--purple"
+                                    title="New/assigned emails with a pending AI decision">
+                                <div class="smcc-kpi-icon"><i class="fa fa-sitemap"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="decision_required_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Decision Required</div>
+                            </button>
+
+                            <button name="action_open_escalated_now"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--orange"
+                                    title="All currently escalated emails">
+                                <div class="smcc-kpi-icon"><i class="fa fa-bolt"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="escalated_now_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Escalated Now</div>
+                            </button>
+
+                            <button name="action_open_deadline_critical"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--amber"
+                                    title="Emails with deadline within 3 days">
+                                <div class="smcc-kpi-icon"><i class="fa fa-calendar-times-o"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="deadline_critical_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Deadline Critical</div>
+                            </button>
+
+                            <button name="action_open_low_confidence"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--gray"
+                                    title="Emails where classification confidence is below 50%">
+                                <div class="smcc-kpi-icon"><i class="fa fa-question-circle"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="low_confidence_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Low Confidence</div>
+                            </button>
+
+                        </div>
+
+                        <!-- ── Section: Alerts ── -->
+                        <div class="smcc-section-title">Alerts — Assignment &amp; Action</div>
+                        <div class="smcc-kpi-grid">
+
+                            <button name="action_open_not_assigned"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--orange"
+                                    title="Open emails with no assigned user">
+                                <div class="smcc-kpi-icon"><i class="fa fa-user-times" title="Not Assigned"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="not_assigned_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Not Assigned</div>
+                            </button>
+
+                            <button name="action_open_needs_action"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--red"
+                                    title="Open emails that need action (new/assigned + requires action)">
+                                <div class="smcc-kpi-icon"><i class="fa fa-exclamation-triangle" title="Needs Action"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="needs_action_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Needs Action</div>
+                            </button>
+
+                            <button name="action_open_delay"
+                                    type="object"
+                                    class="smcc-kpi-card smcc-kpi--amber"
+                                    title="Open Delay Notice / EOT emails">
+                                <div class="smcc-kpi-icon"><i class="fa fa-clock-o" title="Delay / EOT"/></div>
+                                <div class="smcc-kpi-value">
+                                    <field name="delay_count" nolabel="1"/>
+                                </div>
+                                <div class="smcc-kpi-label">Delay / EOT</div>
+                            </button>
+
+                        </div>
+
+                        <!-- ── Re-process button ── -->
+                        <div class="smcc-sync-bar">
+                            <button name="action_run_auto_processing"
+                                    type="object"
+                                    class="btn btn-outline-secondary btn-sm"
+                                    title="Re-classify unprocessed emails and link them to projects/documents">
+                                <i class="fa fa-cogs me-1" title="Re-process"/> Re-run Auto-Link Engine
+                            </button>
+                            <small class="text-muted">
+                                Re-classifies unprocessed emails, detects projects, routes documents,
+                                and creates auto-tasks for high-importance items.
+                            </small>
+                        </div>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Server action: creates a fresh transient record and redirects to its form -->
+        <record id="action_mail_tracker_dashboard" model="ir.actions.server">
+            <field name="name">My Email Dashboard</field>
+            <field name="model_id" ref="model_mail_tracker_dashboard"/>
+            <field name="state">code</field>
+            <field name="code">
+action = model.action_open_my_dashboard()
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             Default importance classification rules
+             (noupdate=1 — users may edit these freely after install)
+        ═══════════════════════════════════════════════════════════════════ -->
+
+        <!-- Rule 1: Urgent / Critical keywords — Very High -->
+        <record id="rule_urgent_keywords" model="mail.importance.rule">
+            <field name="name">Urgent / Critical Keywords</field>
+            <field name="sequence">10</field>
+            <field name="subject_keywords">urgent,critical,emergency,immediate,asap,action required</field>
+            <field name="importance_level">very_high</field>
+            <field name="mailbox_type">inbox_important</field>
+            <field name="notes">Emails with urgency keywords are flagged Very High and moved to Important Inbox.</field>
+        </record>
+
+        <!-- Rule 2: Legal / Dispute keywords — Very High -->
+        <record id="rule_legal_keywords" model="mail.importance.rule">
+            <field name="name">Legal / Dispute / Penalty</field>
+            <field name="sequence">15</field>
+            <field name="subject_keywords">legal,dispute,penalty,claim,arbitration,litigation,breach</field>
+            <field name="importance_level">very_high</field>
+            <field name="mailbox_type">inbox_important</field>
+            <field name="notes">Legal matters are always Very High importance.</field>
+        </record>
+
+        <!-- Rule 3: Contract / Variation / Approval — High -->
+        <record id="rule_contract_keywords" model="mail.importance.rule">
+            <field name="name">Contract / BOQ / Variation</field>
+            <field name="sequence">20</field>
+            <field name="subject_keywords">contract,variation order,boq,approval,approved,sign-off,signoff</field>
+            <field name="importance_level">high</field>
+            <field name="mailbox_type">inbox_important</field>
+            <field name="notes">Contract and BOQ related emails are High importance.</field>
+        </record>
+
+        <!-- Rule 4: Invoice / Payment — High -->
+        <record id="rule_payment_keywords" model="mail.importance.rule">
+            <field name="name">Invoice / Payment</field>
+            <field name="sequence">25</field>
+            <field name="subject_keywords">invoice,payment,overdue,statement,balance,remittance</field>
+            <field name="importance_level">high</field>
+            <field name="mailbox_type">inbox_important</field>
+            <field name="notes">Financial emails (invoices, payments) are High importance.</field>
+        </record>
+
+        <!-- Rule 5: Emails with attachments — High (lower priority than above) -->
+        <record id="rule_has_attachment" model="mail.importance.rule">
+            <field name="name">Email with Attachments</field>
+            <field name="sequence">50</field>
+            <field name="require_attachment">True</field>
+            <field name="importance_level">high</field>
+            <field name="notes">Any email carrying attachments is flagged High by default.</field>
+        </record>
+
+        <!-- Rule 6: Newsletter / automated sender domains — Low -->
+        <record id="rule_newsletter_domains" model="mail.importance.rule">
+            <field name="name">Automated / Newsletter</field>
+            <field name="sequence">90</field>
+            <field name="subject_keywords">unsubscribe,newsletter,no-reply,noreply,automated,notification,digest</field>
+            <field name="importance_level">low</field>
+            <field name="mailbox_type">inbox_other</field>
+            <field name="notes">Automated and newsletter emails are Low importance.</field>
+        </record>
+
+    </data>
+</odoo>

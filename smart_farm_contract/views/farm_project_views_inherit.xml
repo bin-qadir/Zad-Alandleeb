@@ -46,15 +46,16 @@
                            statusbar_visible="pre_tender,tender,contract,execution"/>
                 </xpath>
 
-                <!-- ── 2. Contracts stat button ── -->
+                <!-- ── 2. Contracts — card IS the button ── -->
                 <xpath expr="//div[@name='button_box']" position="inside">
-                    <button class="oe_stat_button"
-                            type="object"
-                            name="action_open_contracts"
-                            icon="fa-file-text-o">
-                        <field name="contract_count"
-                               widget="statinfo"
-                               string="Contracts"/>
+                    <button name="action_open_contracts" type="object"
+                            class="epd-mini-kpi epd-mini-kpi--teal"
+                            title="Open Contracts">
+                        <i class="fa fa-file-text-o epd-mini-icon" title="Contracts"/>
+                        <div class="epd-mini-value">
+                            <field name="contract_count" nolabel="1"/>
+                        </div>
+                        <div class="epd-mini-label">Contracts</div>
                     </button>
                 </xpath>
 

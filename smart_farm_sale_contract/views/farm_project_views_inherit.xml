@@ -14,15 +14,16 @@
             <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
             <field name="arch" type="xml">
 
-                <!-- ── 1. Sales Orders stat button (after BOQ Analysis button) ── -->
-                <xpath expr="//button[@name='action_open_project_analysis']" position="after">
-                    <button class="oe_stat_button"
-                            type="object"
-                            name="action_open_sale_orders"
-                            icon="fa-file-text">
-                        <field name="sale_order_count"
-                               widget="statinfo"
-                               string="Sales Orders"/>
+                <!-- ── 1. Sales Orders — card IS the button (after BOQ Analysis) ── -->
+                <xpath expr="//div[@name='btn_boq_analysis']" position="after">
+                    <button name="action_open_sale_orders" type="object"
+                            class="epd-mini-kpi epd-mini-kpi--indigo"
+                            title="Open Sales Orders">
+                        <i class="fa fa-file-text epd-mini-icon" title="Sales Orders"/>
+                        <div class="epd-mini-value">
+                            <field name="sale_order_count" nolabel="1"/>
+                        </div>
+                        <div class="epd-mini-label">Sales Orders</div>
                     </button>
                 </xpath>
 

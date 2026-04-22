@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Inject a "Lifecycle" tab into the BOQ Analysis form view.
+            Shows subitem lines with all 4 lifecycle column groups.
+        -->
+
+        <record id="view_farm_boq_analysis_lifecycle_inherit" model="ir.ui.view">
+            <field name="name">farm.boq.analysis.form.lifecycle.inherit</field>
+            <field name="model">farm.boq.analysis</field>
+            <field name="inherit_id" ref="smart_farm_boq_analysis.view_farm_boq_analysis_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//notebook" position="inside">
+
+                    <page string="Lifecycle" name="tab_lifecycle"
+                          icon="fa-exchange">
+
+                        <p class="text-muted small mb-2">
+                            Quantity flow from contract through procurement, inspection, and invoicing.
+                            Only subitem rows (with pricing) are shown.
+                        </p>
+
+                        <field name="line_ids"
+                               nolabel="1"
+                               domain="[('display_type', '=', False)]">
+                            <list string="BOQ Item Lifecycle"
+                                  create="0" delete="0"
+                                  decoration-danger="lc_has_variation"
+                                  editable="bottom">
+
+                                <!-- Identity -->
+                                <field name="display_code"  optional="show" string="Code" readonly="1"/>
+                                <field name="name"          string="Item Name" readonly="1"/>
+                                <field name="unit_id"       string="Unit" readonly="1" optional="show"/>
+
+                                <!-- ── Group 1: Contract ────────────────────── -->
+                                <field name="boq_qty"           string="Contract Qty"   readonly="1"/>
+                                <field name="unit_sales_price"  string="Unit Price"     readonly="1" optional="show"/>
+                                <field name="total_sales_price" string="Contract Total" readonly="1" optional="show"/>
+
+                                <!-- ── Group 2: Procurement ─────────────────── -->
+                                <field name="lc_requested_qty"   string="Requested"   readonly="1" optional="show"
+                                       decoration-warning="lc_requested_qty &gt; boq_qty"/>
+                                <field name="lc_vendor_qty"      string="RFQ Qty"     readonly="1" optional="show"/>
+                                <field name="lc_po_qty"          string="PO Qty"      readonly="1" optional="show"/>
+                                <field name="lc_vendor_bill_qty" string="Billed"      readonly="1" optional="show"/>
+
+                                <!-- ── Group 3: Inspection ──────────────────── -->
+                                <field name="lc_inspected_qty"   string="Inspected"   readonly="1" optional="show"/>
+                                <field name="lc_approved_qty"    string="Approved"    readonly="1"/>
+
+                                <!-- ── Group 4: Claims & Invoicing ─────────── -->
+                                <field name="lc_claimed_qty"     string="Claimed"     readonly="1" optional="show"/>
+                                <field name="lc_invoiced_qty"    string="Invoiced"
+                                       decoration-warning="lc_invoiced_qty == 0 and lc_approved_qty &gt; 0"/>
+                                <field name="lc_remaining_qty"   string="Remaining"   readonly="1"
+                                       decoration-warning="lc_remaining_qty &gt; 0"/>
+                                <field name="lc_extra_qty"       string="Extra / Var." readonly="1"
+                                       decoration-danger="lc_extra_qty &gt; 0"
+                                       optional="show"/>
+
+                                <!-- Hidden flags for row decorations -->
+                                <field name="lc_has_variation" column_invisible="1"/>
+                                <field name="display_type"     column_invisible="1"/>
+                            </list>
+                        </field>
+
+                    </page>
+
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ===== Standalone Lifecycle List View ============================= -->
+
+        <record id="view_farm_boq_lifecycle_list" model="ir.ui.view">
+            <field name="name">farm.boq.analysis.line.lifecycle.list</field>
+            <field name="model">farm.boq.analysis.line</field>
+            <field name="arch" type="xml">
+                <list string="BOQ Item Lifecycle"
+                      default_order="analysis_id, div_rank, sub_rank, sub_sub_rank, sequence_sub"
+                      decoration-danger="lc_has_variation">
+
+                    <!-- Identity -->
+                    <field name="display_code" optional="show" string="Code"/>
+                    <field name="name" string="Item Name"/>
+                    <field name="analysis_id" optional="show"/>
+                    <field name="unit_id" optional="show"/>
+
+                    <!-- Group 1 — Contract -->
+                    <field name="boq_qty"          string="Contract Qty"      optional="show"/>
+                    <field name="unit_sales_price"  string="Unit Price"        optional="show"/>
+                    <field name="total_sales_price" string="Contract Total"    optional="show"/>
+
+                    <!-- Group 2 — Procurement -->
+                    <field name="lc_requested_qty"   string="Requested"    optional="show"/>
+                    <field name="lc_vendor_qty"      string="RFQ Qty"      optional="show"/>
+                    <field name="lc_po_qty"          string="PO Qty"       optional="show"/>
+                    <field name="lc_vendor_bill_qty" string="Billed Qty"   optional="show"/>
+
+                    <!-- Group 3 — Inspection -->
+                    <field name="lc_inspected_qty"   string="Inspected"    optional="show"/>
+                    <field name="lc_approved_qty"    string="Approved"     optional="show"/>
+
+                    <!-- Group 4 — Claims & Invoicing -->
+                    <field name="lc_claimed_qty"     string="Claimed"      optional="show"/>
+                    <field name="lc_invoiced_qty"    string="Invoiced"     optional="show"/>
+                    <field name="lc_remaining_qty"   string="Remaining"
+                           decoration-warning="lc_remaining_qty &gt; 0"
+                           optional="show"/>
+                    <field name="lc_extra_qty"       string="Extra / Var."
+                           decoration-danger="lc_extra_qty &gt; 0"
+                           optional="show"/>
+
+                    <!-- Hidden flags -->
+                    <field name="lc_has_variation"  column_invisible="1"/>
+                    <field name="display_type"      column_invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- ===== Lifecycle Search View ====================================== -->
+
+        <record id="view_farm_boq_lifecycle_search" model="ir.ui.view">
+            <field name="name">farm.boq.analysis.line.lifecycle.search</field>
+            <field name="model">farm.boq.analysis.line</field>
+            <field name="arch" type="xml">
+                <search string="BOQ Lifecycle">
+                    <field name="name"/>
+                    <field name="analysis_id"/>
+                    <field name="display_code"/>
+                    <!-- Subitems only by default -->
+                    <filter string="Subitems Only" name="filter_subitems"
+                            domain="[('display_type', '=', False)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Analysis" name="group_analysis"
+                                context="{'group_by': 'analysis_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- ===== Standalone Action ========================================== -->
+
+        <record id="action_farm_boq_lifecycle" model="ir.actions.act_window">
+            <field name="name">BOQ Lifecycle</field>
+            <field name="res_model">farm.boq.analysis.line</field>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="view_farm_boq_lifecycle_list"/>
+            <field name="search_view_id" ref="view_farm_boq_lifecycle_search"/>
+            <field name="domain">[('display_type', '=', False)]</field>
+            <field name="context">{'search_default_filter_subitems': 1}</field>
+        </record>
+
+        <!-- ===== Menu ======================================================= -->
+
+        <menuitem
+            id="menu_farm_boq_lifecycle"
+            name="BOQ Lifecycle"
+            parent="smart_farm_boq.menu_smart_farm_boq"
+            action="action_farm_boq_lifecycle"
+            sequence="25"/>
+
+    </data>
+</odoo>

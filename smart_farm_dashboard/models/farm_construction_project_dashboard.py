@@ -272,20 +272,28 @@ class FarmConstructionProjectDashboard(models.Model):
             self.project_id.id)
 
     def action_open_structure(self):
+        """Level 3 — Structure Division Dashboard filtered to this project."""
         self.ensure_one()
-        return self._dept_jo_action('Structure', 'structure')
+        return self.env['farm.structure.dashboard'].action_open_for_project(
+            self.project_id.id)
 
     def action_open_arch(self):
+        """Level 3 — Architectural Division Dashboard filtered to this project."""
         self.ensure_one()
-        return self._dept_jo_action('Architectural', 'arch')
+        return self.env['farm.arch.dashboard'].action_open_for_project(
+            self.project_id.id)
 
     def action_open_mechanical(self):
+        """Level 3 — Mechanical Division Dashboard filtered to this project."""
         self.ensure_one()
-        return self._dept_jo_action('Mechanical', 'mechanical')
+        return self.env['farm.mech.dashboard'].action_open_for_project(
+            self.project_id.id)
 
     def action_open_electrical(self):
+        """Level 3 — Electrical Division Dashboard filtered to this project."""
         self.ensure_one()
-        return self._dept_jo_action('Electrical', 'electrical')
+        return self.env['farm.elec.dashboard'].action_open_for_project(
+            self.project_id.id)
 
     def _dept_jo_action(self, label, dept_code):
         return {

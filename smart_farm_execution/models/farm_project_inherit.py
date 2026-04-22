@@ -89,12 +89,10 @@ class FarmProjectExecution(models.Model):
     # Compute methods
     # ────────────────────────────────────────────────────────────────────────
 
+    @api.depends('job_order_ids')
     def _compute_job_order_count(self):
-        JobOrder = self.env['farm.job.order']
         for rec in self:
-            rec.job_order_count = JobOrder.search_count(
-                [('project_id', '=', rec.id)]
-            )
+            rec.job_order_count = len(rec.job_order_ids)
 
     def _compute_execution_kpis(self):
         """Aggregate execution KPIs across all Job Orders for this project.

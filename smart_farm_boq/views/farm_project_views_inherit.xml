@@ -24,15 +24,16 @@
                             class="btn btn-primary btn-lg px-4"/>
                 </xpath>
 
-                <!-- Open BOQs stat button -->
+                <!-- Cost Structures — card IS the button -->
                 <xpath expr="//div[@name='button_box']" position="inside">
-                    <button class="oe_stat_button"
-                            type="object"
-                            name="action_open_boqs"
-                            icon="fa-sitemap">
-                        <field name="boq_count"
-                               widget="statinfo"
-                               string="Cost Structures"/>
+                    <button name="action_open_boqs" type="object"
+                            class="epd-mini-kpi epd-mini-kpi--navy"
+                            title="Open Cost Structures">
+                        <i class="fa fa-sitemap epd-mini-icon" title="Cost Structures"/>
+                        <div class="epd-mini-value">
+                            <field name="boq_count" nolabel="1"/>
+                        </div>
+                        <div class="epd-mini-label">Cost Structures</div>
                     </button>
                 </xpath>
 
