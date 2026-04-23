@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── List View ──────────────────────────────────────────────────────── -->
+
+    <record id="view_construction_project_list" model="ir.ui.view">
+        <field name="name">construction.project.list</field>
+        <field name="model">construction.project</field>
+        <field name="arch" type="xml">
+            <list string="Construction Projects"
+                  decoration-muted="state == 'cancelled'"
+                  decoration-info="state == 'draft'"
+                  decoration-success="state == 'active'"
+                  decoration-warning="state == 'on_hold'">
+                <field name="project_code" string="Code"/>
+                <field name="name"/>
+                <field name="project_type"/>
+                <field name="client_id"/>
+                <field name="phase"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-warning="state == 'on_hold'"
+                       decoration-danger="state == 'cancelled'"
+                       decoration-muted="state in ('closed',)"
+                       decoration-info="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ─── Form View ──────────────────────────────────────────────────────── -->
+
+    <record id="view_construction_project_form" model="ir.ui.view">
+        <field name="name">construction.project.form</field>
+        <field name="model">construction.project</field>
+        <field name="arch" type="xml">
+            <form string="Construction Project">
+
+                <!-- Status bar -->
+                <header>
+                    <button name="action_activate"
+                            string="Activate"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_hold"
+                            string="Put On Hold"
+                            type="object"
+                            invisible="state != 'active'"/>
+                    <button name="action_activate"
+                            string="Resume"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'on_hold'"/>
+                    <button name="action_close"
+                            string="Close"
+                            type="object"
+                            invisible="state not in ('active', 'on_hold')"/>
+                    <button name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            invisible="state in ('closed', 'cancelled')"/>
+                    <button name="action_reset_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="state not in ('cancelled',)"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active,closed"/>
+                </header>
+
+                <sheet>
+                    <!-- Smart buttons -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_divisions"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-sitemap">
+                            <field name="division_count" widget="statinfo"
+                                   string="Divisions"/>
+                        </button>
+                        <button name="action_open_subdivisions"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-list-ul">
+                            <field name="subdivision_count" widget="statinfo"
+                                   string="Subdivisions"/>
+                        </button>
+                        <button name="action_open_odoo_project"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-tasks"
+                                invisible="not odoo_project_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Odoo Project</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Title -->
+                    <div class="oe_title">
+                        <label for="project_code" string="Project Code"/>
+                        <h1>
+                            <field name="project_code" placeholder="e.g. PROJ-001"/>
+                        </h1>
+                        <label for="name"/>
+                        <h2>
+                            <field name="name" placeholder="Project Name"/>
+                        </h2>
+                    </div>
+
+                    <!-- Tabs -->
+                    <notebook>
+
+                        <!-- ── General ──────────────────────────────────────── -->
+                        <page string="General" name="general">
+                            <group>
+                                <group string="Identification">
+                                    <field name="project_type"/>
+                                    <field name="phase"/>
+                                    <field name="company_id"
+                                           groups="base.group_multi_company"/>
+                                    <field name="currency_id" readonly="1"/>
+                                </group>
+                                <group string="Parties">
+                                    <field name="client_id"/>
+                                    <field name="consultant_id"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Schedule">
+                                    <field name="start_date"/>
+                                    <field name="end_date"/>
+                                </group>
+                                <group string="Links">
+                                    <field name="analytic_account_id"/>
+                                    <field name="odoo_project_id"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- ── Structure ────────────────────────────────────── -->
+                        <page string="Structure" name="structure">
+                            <group string="Divisions">
+                                <field name="division_ids"
+                                       nolabel="1">
+                                    <list editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="code"/>
+                                        <field name="name"/>
+                                        <field name="subdivision_count"
+                                               string="Subdivisions"/>
+                                        <field name="active"/>
+                                    </list>
+                                </field>
+                            </group>
+                        </page>
+
+                        <!-- ── Notes ────────────────────────────────────────── -->
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Add project notes here…"/>
+                        </page>
+
+                    </notebook>
+                </sheet>
+
+                <!-- Chatter -->
+                <chatter/>
+
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── Search View ────────────────────────────────────────────────────── -->
+
+    <record id="view_construction_project_search" model="ir.ui.view">
+        <field name="name">construction.project.search</field>
+        <field name="model">construction.project</field>
+        <field name="arch" type="xml">
+            <search string="Search Projects">
+                <field name="name" string="Project"
+                       filter_domain="['|', ('name','ilike',self), ('project_code','ilike',self)]"/>
+                <field name="client_id"/>
+                <field name="consultant_id"/>
+                <separator/>
+                <filter name="state_draft"     string="Draft"
+                        domain="[('state','=','draft')]"/>
+                <filter name="state_active"    string="Active"
+                        domain="[('state','=','active')]"/>
+                <filter name="state_on_hold"   string="On Hold"
+                        domain="[('state','=','on_hold')]"/>
+                <filter name="state_closed"    string="Closed"
+                        domain="[('state','=','closed')]"/>
+                <filter name="state_cancelled" string="Cancelled"
+                        domain="[('state','=','cancelled')]"/>
+                <separator/>
+                <filter name="phase_execution" string="Execution"
+                        domain="[('phase','=','execution')]"/>
+                <filter name="phase_tender"    string="Tender"
+                        domain="[('phase','=','tender')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state"   string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_phase"   string="Phase"
+                            context="{'group_by': 'phase'}"/>
+                    <filter name="group_type"    string="Project Type"
+                            context="{'group_by': 'project_type'}"/>
+                    <filter name="group_client"  string="Client"
+                            context="{'group_by': 'client_id'}"/>
+                    <filter name="group_company" string="Company"
+                            context="{'group_by': 'company_id'}"
+                            groups="base.group_multi_company"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ─── Action ─────────────────────────────────────────────────────────── -->
+
+    <record id="action_construction_project" model="ir.actions.act_window">
+        <field name="name">Construction Projects</field>
+        <field name="res_model">construction.project</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_construction_project_search"/>
+        <field name="context">{'search_default_state_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first construction project
+            </p>
+            <p>
+                Each project auto-generates a linked Odoo project and analytic account,
+                and creates the five standard construction divisions.
+            </p>
+        </field>
+    </record>
+
+</odoo>

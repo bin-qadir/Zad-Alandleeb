@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── List View ──────────────────────────────────────────────────────── -->
+
+    <record id="view_construction_division_list" model="ir.ui.view">
+        <field name="name">construction.division.list</field>
+        <field name="model">construction.division</field>
+        <field name="arch" type="xml">
+            <list string="Divisions">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="subdivision_count" string="Subdivisions"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ─── Form View ──────────────────────────────────────────────────────── -->
+
+    <record id="view_construction_division_form" model="ir.ui.view">
+        <field name="name">construction.division.form</field>
+        <field name="model">construction.division</field>
+        <field name="arch" type="xml">
+            <form string="Division">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_subdivisions"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-list-ul">
+                            <field name="subdivision_count" widget="statinfo"
+                                   string="Subdivisions"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="code" string="Code"/>
+                        <h1>
+                            <field name="code" placeholder="e.g. CIV"/>
+                        </h1>
+                        <label for="name"/>
+                        <h2>
+                            <field name="name" placeholder="Division Name"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="project_id"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <separator string="Subdivisions"/>
+                    <field name="subdivision_ids">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="active"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── Search View ────────────────────────────────────────────────────── -->
+
+    <record id="view_construction_division_search" model="ir.ui.view">
+        <field name="name">construction.division.search</field>
+        <field name="model">construction.division</field>
+        <field name="arch" type="xml">
+            <search string="Search Divisions">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="project_id"/>
+                <filter name="active" string="Active" domain="[('active','=',True)]"/>
+                <filter name="inactive" string="Archived"
+                        domain="[('active','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_project" string="Project"
+                            context="{'group_by': 'project_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ─── Action ─────────────────────────────────────────────────────────── -->
+
+    <record id="action_construction_division" model="ir.actions.act_window">
+        <field name="name">Divisions</field>
+        <field name="res_model">construction.division</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_construction_division_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No divisions found.
+            </p>
+            <p>
+                Divisions are created automatically when a new project is saved.
+            </p>
+        </field>
+    </record>
+
+</odoo>

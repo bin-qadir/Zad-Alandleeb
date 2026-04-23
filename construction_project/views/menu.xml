@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── Root Menu ──────────────────────────────────────────────────────── -->
+
+    <menuitem
+        id="menu_construction_root"
+        name="Construction"
+        sequence="50"
+        web_icon="construction_project,static/description/icon.png"
+        groups="construction_project.group_construction_user,construction_project.group_construction_manager"/>
+
+    <!-- ─── Projects ───────────────────────────────────────────────────────── -->
+
+    <menuitem
+        id="menu_construction_projects"
+        name="Projects"
+        parent="menu_construction_root"
+        action="action_construction_project"
+        sequence="10"/>
+
+    <!-- ─── Divisions ──────────────────────────────────────────────────────── -->
+
+    <menuitem
+        id="menu_construction_divisions"
+        name="Divisions"
+        parent="menu_construction_root"
+        action="action_construction_division"
+        sequence="20"/>
+
+    <!-- ─── Subdivisions ───────────────────────────────────────────────────── -->
+
+    <menuitem
+        id="menu_construction_subdivisions"
+        name="Subdivisions"
+        parent="menu_construction_root"
+        action="action_construction_subdivision"
+        sequence="30"/>
+
+</odoo>

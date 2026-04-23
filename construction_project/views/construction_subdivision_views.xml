@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── List View ──────────────────────────────────────────────────────── -->
+
+    <record id="view_construction_subdivision_list" model="ir.ui.view">
+        <field name="name">construction.subdivision.list</field>
+        <field name="model">construction.subdivision</field>
+        <field name="arch" type="xml">
+            <list string="Subdivisions">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="division_id"/>
+                <field name="project_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ─── Form View ──────────────────────────────────────────────────────── -->
+
+    <record id="view_construction_subdivision_form" model="ir.ui.view">
+        <field name="name">construction.subdivision.form</field>
+        <field name="model">construction.subdivision</field>
+        <field name="arch" type="xml">
+            <form string="Subdivision">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="code" string="Code"/>
+                        <h1>
+                            <field name="code" placeholder="e.g. CIV-FND"/>
+                        </h1>
+                        <label for="name"/>
+                        <h2>
+                            <field name="name" placeholder="Subdivision Name"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="division_id"/>
+                            <field name="project_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── Search View ────────────────────────────────────────────────────── -->
+
+    <record id="view_construction_subdivision_search" model="ir.ui.view">
+        <field name="name">construction.subdivision.search</field>
+        <field name="model">construction.subdivision</field>
+        <field name="arch" type="xml">
+            <search string="Search Subdivisions">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="division_id"/>
+                <field name="project_id"/>
+                <filter name="active" string="Active" domain="[('active','=',True)]"/>
+                <filter name="inactive" string="Archived"
+                        domain="[('active','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_division" string="Division"
+                            context="{'group_by': 'division_id'}"/>
+                    <filter name="group_project" string="Project"
+                            context="{'group_by': 'project_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ─── Action ─────────────────────────────────────────────────────────── -->
+
+    <record id="action_construction_subdivision" model="ir.actions.act_window">
+        <field name="name">Subdivisions</field>
+        <field name="res_model">construction.subdivision</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_construction_subdivision_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No subdivisions yet.
+            </p>
+            <p>
+                Add subdivisions under each division to further organise your project structure.
+            </p>
+        </field>
+    </record>
+
+</odoo>
