@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── BOQ Line Form (standalone / popup) ────────────────────────────── -->
+
+    <record id="view_construction_boq_line_form" model="ir.ui.view">
+        <field name="name">construction.boq.line.form</field>
+        <field name="model">construction.boq.line</field>
+        <field name="arch" type="xml">
+            <form string="BOQ Line">
+                <sheet>
+
+                    <!-- Header summary bar -->
+                    <div class="oe_title">
+                        <label for="item_code" string="Item Code"/>
+                        <h1>
+                            <field name="item_code" placeholder="e.g. CIV-001"/>
+                        </h1>
+                        <label for="description"/>
+                        <h2>
+                            <field name="description" placeholder="Work description"/>
+                        </h2>
+                    </div>
+
+                    <!-- Identification group -->
+                    <group>
+                        <group string="Classification">
+                            <field name="boq_id"/>
+                            <field name="project_id" readonly="1"/>
+                            <field name="division_id"/>
+                            <field name="subdivision_id"/>
+                        </group>
+                        <group string="Quantity &amp; Unit">
+                            <field name="unit"/>
+                            <field name="quantity"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+
+                    <!-- Pricing summary -->
+                    <group string="Pricing Summary">
+                        <group>
+                            <field name="cost_unit" string="Cost / Unit" readonly="1"/>
+                            <field name="total_cost" string="Total Cost" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="sale_unit_price"/>
+                            <field name="total_sale" readonly="1"/>
+                            <field name="profit_amount" readonly="1"/>
+                            <field name="profit_margin_percent" readonly="1" string="Margin %"/>
+                        </group>
+                    </group>
+
+                    <!-- Cost breakdown by type -->
+                    <group string="Cost Breakdown">
+                        <group>
+                            <field name="planned_material_cost" readonly="1"/>
+                            <field name="planned_labor_cost" readonly="1"/>
+                            <field name="planned_subcontract_cost" readonly="1"/>
+                            <field name="planned_equipment_cost" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="planned_tools_cost" readonly="1"/>
+                            <field name="planned_overhead_cost" readonly="1"/>
+                            <field name="planned_other_cost" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Cost structure lines -->
+                    <separator string="Cost Structure"/>
+                    <field name="cost_line_ids">
+                        <list editable="bottom" optional="show">
+                            <field name="sequence" widget="handle"/>
+                            <field name="cost_type"/>
+                            <field name="product_id" optional="show"/>
+                            <field name="description"/>
+                            <field name="unit" optional="show"/>
+                            <field name="qty"/>
+                            <field name="unit_cost"/>
+                            <field name="total_cost" readonly="1"/>
+                            <field name="notes" optional="hide"/>
+                        </list>
+                    </field>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── BOQ Line List ─────────────────────────────────────────────────── -->
+
+    <record id="view_construction_boq_line_list" model="ir.ui.view">
+        <field name="name">construction.boq.line.list</field>
+        <field name="model">construction.boq.line</field>
+        <field name="arch" type="xml">
+            <list string="BOQ Lines"
+                  decoration-muted="total_cost == 0">
+                <field name="sequence" widget="handle"/>
+                <field name="item_code" optional="show"/>
+                <field name="description"/>
+                <field name="division_id"/>
+                <field name="subdivision_id" optional="show"/>
+                <field name="unit" optional="show"/>
+                <field name="quantity"/>
+                <field name="cost_unit" optional="show"/>
+                <field name="total_cost"/>
+                <field name="sale_unit_price"/>
+                <field name="total_sale"/>
+                <field name="profit_amount" optional="show"/>
+                <field name="profit_margin_percent" optional="show" string="Margin %"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ─── BOQ Line Search ───────────────────────────────────────────────── -->
+
+    <record id="view_construction_boq_line_search" model="ir.ui.view">
+        <field name="name">construction.boq.line.search</field>
+        <field name="model">construction.boq.line</field>
+        <field name="arch" type="xml">
+            <search string="Search BOQ Lines">
+                <field name="description"/>
+                <field name="item_code"/>
+                <field name="division_id"/>
+                <field name="subdivision_id"/>
+                <field name="boq_id"/>
+                <field name="project_id"/>
+                <separator/>
+                <filter name="no_cost"
+                        string="Missing Cost"
+                        domain="[('total_cost','=',0)]"/>
+                <filter name="no_sale_price"
+                        string="Missing Sale Price"
+                        domain="[('sale_unit_price','=',0)]"/>
+                <group expand="1" string="Group By">
+                    <filter name="group_division"
+                            string="Division"
+                            context="{'group_by': 'division_id'}"/>
+                    <filter name="group_subdivision"
+                            string="Subdivision"
+                            context="{'group_by': 'subdivision_id'}"/>
+                    <filter name="group_boq"
+                            string="BOQ"
+                            context="{'group_by': 'boq_id'}"/>
+                    <filter name="group_project"
+                            string="Project"
+                            context="{'group_by': 'project_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ─── Action ───────────────────────────────────────────────────────── -->
+
+    <record id="action_construction_boq_line" model="ir.actions.act_window">
+        <field name="name">BOQ Lines</field>
+        <field name="res_model">construction.boq.line</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_construction_boq_line_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No BOQ lines yet.</p>
+            <p>Add BOQ lines from a BOQ document.</p>
+        </field>
+    </record>
+
+</odoo>

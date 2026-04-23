@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── BOQ List ──────────────────────────────────────────────────────── -->
+
+    <record id="view_construction_boq_list" model="ir.ui.view">
+        <field name="name">construction.boq.list</field>
+        <field name="model">construction.boq</field>
+        <field name="arch" type="xml">
+            <list string="Bills of Quantities"
+                  decoration-muted="state == 'cancelled'"
+                  decoration-info="state == 'draft'"
+                  decoration-success="state == 'approved'"
+                  decoration-warning="state == 'reviewed'">
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="revision_no" string="Rev"/>
+                <field name="date"/>
+                <field name="line_count" string="Lines"/>
+                <field name="total_cost"/>
+                <field name="total_sale"/>
+                <field name="profit_margin_percent" string="Margin %"
+                       widget="percentage" optional="show"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'approved'"
+                       decoration-warning="state == 'reviewed'"
+                       decoration-muted="state == 'cancelled'"
+                       decoration-info="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ─── BOQ Form ──────────────────────────────────────────────────────── -->
+
+    <record id="view_construction_boq_form" model="ir.ui.view">
+        <field name="name">construction.boq.form</field>
+        <field name="model">construction.boq</field>
+        <field name="arch" type="xml">
+            <form string="Bill of Quantities">
+
+                <header>
+                    <button name="action_submit_review"
+                            string="Submit for Review"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_approve"
+                            string="Approve"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'reviewed'"/>
+                    <button name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            invisible="state in ('approved', 'cancelled')"/>
+                    <button name="action_reset_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="state not in ('cancelled', 'reviewed')"/>
+                    <button name="action_revise"
+                            string="New Revision"
+                            type="object"
+                            invisible="state != 'approved'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,reviewed,approved"/>
+                </header>
+
+                <sheet>
+
+                    <!-- Smart buttons -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_lines"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-list">
+                            <field name="line_count" widget="statinfo"
+                                   string="Lines"/>
+                        </button>
+                        <button class="oe_stat_button"
+                                icon="fa-usd"
+                                type="object"
+                                name="action_open_lines">
+                            <div class="o_stat_info">
+                                <field name="total_cost" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <span class="o_stat_text">Cost</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button"
+                                icon="fa-money"
+                                type="object"
+                                name="action_open_lines">
+                            <div class="o_stat_info">
+                                <field name="total_sale" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <span class="o_stat_text">Sale</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button"
+                                icon="fa-percent"
+                                type="object"
+                                name="action_open_lines">
+                            <div class="o_stat_info">
+                                <field name="profit_margin_percent"
+                                       string="Margin"/>
+                                <span class="o_stat_text">Margin %</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Title -->
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="BOQ Name"/>
+                        </h1>
+                    </div>
+
+                    <!-- Header fields -->
+                    <group>
+                        <group string="Document Info">
+                            <field name="project_id"/>
+                            <field name="revision_no"/>
+                            <field name="date"/>
+                            <field name="currency_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Tabs -->
+                    <notebook>
+
+                        <!-- ── Tab 1: BOQ Lines ──────────────────────────── -->
+                        <page string="BOQ Lines" name="boq_lines">
+                            <field name="line_ids">
+                                <list editable="bottom"
+                                      optional="show"
+                                      open_form_view="True">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="item_code" optional="show"/>
+                                    <field name="division_id"/>
+                                    <field name="subdivision_id" optional="show"/>
+                                    <field name="description"/>
+                                    <field name="unit" optional="show"/>
+                                    <field name="quantity"/>
+                                    <field name="cost_unit" readonly="1" optional="show"/>
+                                    <field name="total_cost" readonly="1"/>
+                                    <field name="sale_unit_price"/>
+                                    <field name="total_sale" readonly="1"/>
+                                    <field name="profit_amount" readonly="1" optional="show"/>
+                                    <field name="profit_margin_percent"
+                                           readonly="1"
+                                           string="Margin %"
+                                           optional="show"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="project_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- ── Tab 2: Cost Analysis ──────────────────────── -->
+                        <page string="Cost Analysis" name="cost_analysis">
+                            <group string="Cost Breakdown">
+                                <group>
+                                    <field name="total_material_cost"
+                                           string="Material Cost"/>
+                                    <field name="total_labor_cost"
+                                           string="Labor Cost"/>
+                                    <field name="total_subcontract_cost"
+                                           string="Subcontract Cost"/>
+                                    <field name="total_equipment_cost"
+                                           string="Equipment Cost"/>
+                                </group>
+                                <group>
+                                    <field name="total_tools_cost"
+                                           string="Tools Cost"/>
+                                    <field name="total_overhead_cost"
+                                           string="Overhead Cost"/>
+                                    <field name="total_other_cost"
+                                           string="Other Cost"/>
+                                </group>
+                            </group>
+                            <group string="Totals &amp; Margin">
+                                <group>
+                                    <field name="total_cost" string="Total Cost"/>
+                                    <field name="total_sale" string="Total Sale"/>
+                                </group>
+                                <group>
+                                    <field name="profit_amount" string="Profit"/>
+                                    <field name="profit_margin_percent"
+                                           string="Margin %"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- ── Tab 3: Notes ──────────────────────────────── -->
+                        <page string="Notes" name="notes">
+                            <field name="notes"
+                                   placeholder="Add BOQ notes, scope clarifications…"/>
+                        </page>
+
+                    </notebook>
+
+                </sheet>
+
+                <chatter/>
+
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── BOQ Search ────────────────────────────────────────────────────── -->
+
+    <record id="view_construction_boq_search" model="ir.ui.view">
+        <field name="name">construction.boq.search</field>
+        <field name="model">construction.boq</field>
+        <field name="arch" type="xml">
+            <search string="Search BOQs">
+                <field name="name"/>
+                <field name="project_id"/>
+                <separator/>
+                <filter name="state_draft"    string="Draft"
+                        domain="[('state','=','draft')]"/>
+                <filter name="state_reviewed" string="Reviewed"
+                        domain="[('state','=','reviewed')]"/>
+                <filter name="state_approved" string="Approved"
+                        domain="[('state','=','approved')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_project"  string="Project"
+                            context="{'group_by': 'project_id'}"/>
+                    <filter name="group_state"    string="Status"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ─── Action ───────────────────────────────────────────────────────── -->
+
+    <record id="action_construction_boq" model="ir.actions.act_window">
+        <field name="name">Bills of Quantities</field>
+        <field name="res_model">construction.boq</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_construction_boq_search"/>
+        <field name="context">{'search_default_state_draft': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first BOQ
+            </p>
+            <p>
+                A BOQ defines the full scope of work with cost structure and pricing.
+            </p>
+        </field>
+    </record>
+
+</odoo>

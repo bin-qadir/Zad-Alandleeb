@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Extend the Phase 1 project form to add a BOQ smart button.
+        Inherits from construction_project.view_construction_project_form.
+    -->
+
+    <record id="view_construction_project_boq_ext" model="ir.ui.view">
+        <field name="name">construction.project.boq.ext</field>
+        <field name="model">construction.project</field>
+        <field name="inherit_id"
+               ref="construction_project.view_construction_project_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Inject BOQ smart button into the existing button_box -->
+            <div name="button_box" position="inside">
+                <button name="action_open_boqs"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-file-text-o">
+                    <field name="boq_count" widget="statinfo" string="BOQs"/>
+                </button>
+            </div>
+
+        </field>
+    </record>
+
+</odoo>

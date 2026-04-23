@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_construction_boq_user,construction.boq user,model_construction_boq,construction_project.group_construction_user,1,1,1,0
+access_construction_boq_manager,construction.boq manager,model_construction_boq,construction_project.group_construction_manager,1,1,1,1
+access_construction_boq_line_user,construction.boq.line user,model_construction_boq_line,construction_project.group_construction_user,1,1,1,0
+access_construction_boq_line_manager,construction.boq.line manager,model_construction_boq_line,construction_project.group_construction_manager,1,1,1,1
+access_construction_cost_line_user,construction.cost.line user,model_construction_cost_line,construction_project.group_construction_user,1,1,1,0
+access_construction_cost_line_manager,construction.cost.line manager,model_construction_cost_line,construction_project.group_construction_manager,1,1,1,1
