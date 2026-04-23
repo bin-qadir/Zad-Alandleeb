@@ -1,51 +1,59 @@
 """
-Division Workflow Pipeline
-==========================
-One record per (project, division) pair.
+Division Workflow Pipeline  —  Interactive Execution Dashboard
+==============================================================
+One record per (project, division).
 
-Aggregates all Job Orders under a division and computes phase KPIs across
-four workflow stages:
+Computes KPIs across four pipeline groups from the underlying Job Orders,
+Material Requests and Purchase Orders:
 
-  Pre-Execution  — planning / material_request / procurement / resources / ready
-  Execution      — in_progress / completed
-  Control        — inspection / approval
-  Financial      — claim
+  Pre-Execution  — planning / material readiness / procurement / resources
+  Execution      — in_progress / waiting inspection / under inspection / completed
+  Control        — pending approval / approved / rejected / rework
+  Financial      — eligible for claim / claimed / under review / approved / rejected
+
+Also computes alert counts (delayed JOs, overdue inspections, over-budget, unpaid).
 """
 
+from datetime import date
 from odoo import api, fields, models, _
 
 
-# ── Phase constants ────────────────────────────────────────────────────────────
+# ── Pipeline phase list ────────────────────────────────────────────────────────
 
 PIPELINE_PHASES = [
-    # Pre-Execution
     ('planning',            'Planning'),
     ('material_request',    'Material Request'),
     ('procurement',         'Procurement'),
     ('resources',           'Resources'),
     ('ready_for_execution', 'Ready for Execution'),
-    # Execution
     ('in_progress',         'In Progress'),
     ('completed',           'Completed'),
-    # Control
     ('inspection',          'Inspection'),
     ('approval',            'Approval'),
-    # Financial
     ('claim',               'Claim'),
 ]
 
+# Stages that are "done" (no longer active work)
+_DONE_STAGES = frozenset(['closed', 'claimed'])
+
+
+def _pct(num, denom):
+    """Return rounded percentage, safe against zero division."""
+    return round((num / denom) * 100, 1) if denom else 0.0
+
+
+def _bar_html(pct, color_class='dp-bar-teal'):
+    """Return a Bootstrap-style progress bar HTML snippet."""
+    w = min(max(int(pct), 0), 100)
+    return (
+        f'<div class="dp-progressbar">'
+        f'<div class="dp-progressbar-fill {color_class}" style="width:{w}%"></div>'
+        f'</div>'
+        f'<span class="dp-bar-pct">{pct:.1f}%</span>'
+    )
+
 
 class FarmDivisionPipeline(models.Model):
-    """Division Workflow Pipeline.
-
-    One record per (project_id, division_id).  All KPI fields are computed
-    from the underlying farm.job.order records and their linked
-    farm.material.request / purchase.order records.
-
-    Use action_refresh_kpis() to force a recompute, or let the ORM recompute
-    on demand via @api.depends.
-    """
-
     _name        = 'farm.division.pipeline'
     _description = 'Division Workflow Pipeline'
     _rec_name    = 'display_name_full'
@@ -61,7 +69,7 @@ class FarmDivisionPipeline(models.Model):
     sequence = fields.Integer(string='Sequence', default=10)
     active   = fields.Boolean(string='Active', default=True)
 
-    # ── Core Links ─────────────────────────────────────────────────────────────
+    # ── Core links ─────────────────────────────────────────────────────────────
     project_id = fields.Many2one(
         'farm.project',
         string='Project',
@@ -79,25 +87,17 @@ class FarmDivisionPipeline(models.Model):
         tracking=True,
     )
 
-    # ── Overall Pipeline Phase ─────────────────────────────────────────────────
+    # ── Pipeline phase ─────────────────────────────────────────────────────────
     pipeline_phase = fields.Selection(
         selection=PIPELINE_PHASES,
         string='Pipeline Phase',
         default='planning',
         required=True,
         tracking=True,
-        help=(
-            'Current overall workflow phase for this division.\n'
-            'Pre-Execution: Planning → Material Request → Procurement → Resources → Ready\n'
-            'Execution: In Progress → Completed\n'
-            'Control: Inspection → Approval\n'
-            'Financial: Claim'
-        ),
     )
-
     notes = fields.Text(string='Notes / Remarks')
 
-    # ── Currency (from current company) ───────────────────────────────────────
+    # ── Currency ───────────────────────────────────────────────────────────────
     currency_id = fields.Many2one(
         'res.currency',
         string='Currency',
@@ -105,116 +105,61 @@ class FarmDivisionPipeline(models.Model):
         readonly=True,
     )
 
-    # ── TOTAL ──────────────────────────────────────────────────────────────────
-    total_jo_count = fields.Integer(
-        string='Total JOs',
-        compute='_compute_all_kpis',
-        store=True,
-    )
+    # ══ KPI fields — all computed & stored ════════════════════════════════════
 
-    # ── Pre-Execution KPIs ─────────────────────────────────────────────────────
-    planning_count = fields.Integer(
-        string='In Planning',
-        compute='_compute_all_kpis',
-        store=True,
-        help='Job Orders still in draft stage (not yet approved).',
-    )
-    planning_pct = fields.Float(
-        string='Planning (%)',
-        compute='_compute_all_kpis',
-        store=True,
-        digits=(16, 1),
-        help='% of JOs that have both planned start and end dates set.',
-    )
-    material_readiness_pct = fields.Float(
-        string='Material Readiness (%)',
-        compute='_compute_all_kpis',
-        store=True,
-        digits=(16, 1),
-        help='% of JOs with at least one Material Request in approved/RFQ/ordered/received state.',
-    )
-    procurement_pct = fields.Float(
-        string='Procurement (%)',
-        compute='_compute_all_kpis',
-        store=True,
-        digits=(16, 1),
-        help='% of JOs whose Material Requests have been converted to Purchase Orders (ordered or received).',
-    )
-    resources_pct = fields.Float(
-        string='Resources (%)',
-        compute='_compute_all_kpis',
-        store=True,
-        digits=(16, 1),
-        help='% of JOs that have at least one labour entry or material consumption record.',
-    )
+    # ── Totals ────────────────────────────────────────────────────────────────
+    total_jo_count       = fields.Integer(string='Total JOs',         compute='_compute_all_kpis', store=True)
+    contract_amount_total= fields.Float(  string='Contract Amount',   compute='_compute_all_kpis', store=True, digits=(16, 2))
+    approved_amount_total= fields.Float(  string='Approved Amount',   compute='_compute_all_kpis', store=True, digits=(16, 2))
+    remaining_claim_total= fields.Float(  string='Remaining Claimable',compute='_compute_all_kpis',store=True, digits=(16, 2))
 
-    # ── Execution KPIs ─────────────────────────────────────────────────────────
-    in_progress_count = fields.Integer(
-        string='In Progress',
-        compute='_compute_all_kpis',
-        store=True,
-    )
-    waiting_inspection_count = fields.Integer(
-        string='Waiting Inspection',
-        compute='_compute_all_kpis',
-        store=True,
-        help='JOs that have submitted a handover request and are waiting for the inspector.',
-    )
-    under_inspection_count = fields.Integer(
-        string='Under Inspection',
-        compute='_compute_all_kpis',
-        store=True,
-    )
+    # ── Pre-Execution ─────────────────────────────────────────────────────────
+    planning_count          = fields.Integer(string='In Planning',         compute='_compute_all_kpis', store=True)
+    planning_pct            = fields.Float(  string='Planning (%)',         compute='_compute_all_kpis', store=True, digits=(16, 1))
+    material_readiness_pct  = fields.Float(  string='Material Readiness (%)',compute='_compute_all_kpis',store=True, digits=(16, 1))
+    procurement_pct         = fields.Float(  string='Procurement (%)',      compute='_compute_all_kpis', store=True, digits=(16, 1))
+    resources_pct           = fields.Float(  string='Resources (%)',        compute='_compute_all_kpis', store=True, digits=(16, 1))
 
-    # ── Approval KPIs ──────────────────────────────────────────────────────────
-    approved_count = fields.Integer(
-        string='Approved',
-        compute='_compute_all_kpis',
-        store=True,
-        help='JOs that have passed inspection (accepted or partially accepted).',
-    )
-    rejected_count = fields.Integer(
-        string='Rejected',
-        compute='_compute_all_kpis',
-        store=True,
-        help='JOs where inspection failed or approval was rejected.',
-    )
+    # Progress bar HTML (rendered from pct values)
+    planning_bar_html         = fields.Html(string='Planning Bar',    compute='_compute_html_bars', sanitize=False)
+    material_bar_html         = fields.Html(string='Material Bar',    compute='_compute_html_bars', sanitize=False)
+    procurement_bar_html      = fields.Html(string='Procurement Bar', compute='_compute_html_bars', sanitize=False)
+    resources_bar_html        = fields.Html(string='Resources Bar',   compute='_compute_html_bars', sanitize=False)
 
-    # ── Financial KPIs ─────────────────────────────────────────────────────────
-    claimed_count = fields.Integer(
-        string='Claimed JOs',
-        compute='_compute_all_kpis',
-        store=True,
-    )
-    claimed_amount_total = fields.Float(
-        string='Claimed Amount',
-        compute='_compute_all_kpis',
-        store=True,
-        digits=(16, 2),
-        help='Total amount already submitted in claims for this division.',
-    )
-    approved_amount_total = fields.Float(
-        string='Approved Amount',
-        compute='_compute_all_kpis',
-        store=True,
-        digits=(16, 2),
-        help='Total approved (invoice-eligible) amount: approved_qty × unit_price.',
-    )
-    contract_amount_total = fields.Float(
-        string='Contract Amount',
-        compute='_compute_all_kpis',
-        store=True,
-        digits=(16, 2),
-        help='Total contract value: planned_qty × unit_price for all JOs in this division.',
-    )
-    remaining_claim_total = fields.Float(
-        string='Remaining Claimable',
-        compute='_compute_all_kpis',
-        store=True,
-        digits=(16, 2),
-    )
+    # ── Execution ─────────────────────────────────────────────────────────────
+    in_progress_count        = fields.Integer(string='In Progress',       compute='_compute_all_kpis', store=True)
+    waiting_inspection_count = fields.Integer(string='Waiting Inspection',compute='_compute_all_kpis', store=True)
+    under_inspection_count   = fields.Integer(string='Under Inspection',  compute='_compute_all_kpis', store=True)
+    completed_count          = fields.Integer(string='Completed',         compute='_compute_all_kpis', store=True)
 
-    # ── SQL Constraints ────────────────────────────────────────────────────────
+    # ── Control ───────────────────────────────────────────────────────────────
+    pending_approval_count = fields.Integer(string='Pending Approval', compute='_compute_all_kpis', store=True,
+        help='JOs submitted for inspection and awaiting inspector decision.')
+    approved_count         = fields.Integer(string='Approved',         compute='_compute_all_kpis', store=True)
+    rejected_count         = fields.Integer(string='Rejected',         compute='_compute_all_kpis', store=True)
+    rework_count           = fields.Integer(string='Rework',           compute='_compute_all_kpis', store=True,
+        help='JOs where inspection failed and have been returned to In Progress for rework.')
+
+    # ── Financial ─────────────────────────────────────────────────────────────
+    eligible_for_claim_count  = fields.Integer(string='Eligible for Claim', compute='_compute_all_kpis', store=True)
+    eligible_for_claim_amount = fields.Float(  string='Eligible Amount',    compute='_compute_all_kpis', store=True, digits=(16, 2))
+    claimed_count             = fields.Integer(string='Claimed',            compute='_compute_all_kpis', store=True)
+    claimed_amount_total      = fields.Float(  string='Claimed Amount',     compute='_compute_all_kpis', store=True, digits=(16, 2))
+    under_review_count        = fields.Integer(string='Under Review',       compute='_compute_all_kpis', store=True,
+        help='Claims submitted and currently under client review.')
+    under_review_amount       = fields.Float(  string='Under Review Amount',compute='_compute_all_kpis', store=True, digits=(16, 2))
+    approved_claim_count      = fields.Integer(string='Approved Claims',    compute='_compute_all_kpis', store=True)
+    approved_claim_amount     = fields.Float(  string='Approved Claim Amt', compute='_compute_all_kpis', store=True, digits=(16, 2))
+    rejected_claim_count      = fields.Integer(string='Rejected Claims',    compute='_compute_all_kpis', store=True)
+
+    # ── Alerts ────────────────────────────────────────────────────────────────
+    delayed_count             = fields.Integer(string='Delayed JOs',           compute='_compute_all_kpis', store=True)
+    overdue_inspection_count  = fields.Integer(string='Overdue Inspections',   compute='_compute_all_kpis', store=True)
+    over_budget_count         = fields.Integer(string='Over Budget JOs',       compute='_compute_all_kpis', store=True)
+    unpaid_count              = fields.Integer(string='Unpaid (Pending)',       compute='_compute_all_kpis', store=True)
+    has_alerts                = fields.Boolean(string='Has Alerts',             compute='_compute_all_kpis', store=True)
+
+    # ── SQL constraint ─────────────────────────────────────────────────────────
     _sql_constraints = [
         (
             'unique_project_division',
@@ -223,7 +168,8 @@ class FarmDivisionPipeline(models.Model):
         ),
     ]
 
-    # ── Compute: display name ──────────────────────────────────────────────────
+    # ══ Compute methods ═══════════════════════════════════════════════════════
+
     @api.depends('project_id', 'division_id')
     def _compute_display_name_full(self):
         for rec in self:
@@ -234,29 +180,32 @@ class FarmDivisionPipeline(models.Model):
                 parts.append(rec.division_id.name)
             rec.display_name_full = '  /  '.join(parts) if parts else _('New Pipeline')
 
-    # ── Compute: all KPIs ─────────────────────────────────────────────────────
     @api.depends('project_id', 'division_id')
     def _compute_all_kpis(self):
         JobOrder = self.env['farm.job.order']
         MR       = self.env['farm.material.request']
+        today    = date.today()
 
         _zero = dict(
             total_jo_count=0,
-            planning_count=0,
-            planning_pct=0.0,
-            material_readiness_pct=0.0,
-            procurement_pct=0.0,
-            resources_pct=0.0,
-            in_progress_count=0,
-            waiting_inspection_count=0,
-            under_inspection_count=0,
-            approved_count=0,
-            rejected_count=0,
-            claimed_count=0,
-            claimed_amount_total=0.0,
-            approved_amount_total=0.0,
-            contract_amount_total=0.0,
-            remaining_claim_total=0.0,
+            contract_amount_total=0.0, approved_amount_total=0.0, remaining_claim_total=0.0,
+            # Pre-execution
+            planning_count=0, planning_pct=0.0,
+            material_readiness_pct=0.0, procurement_pct=0.0, resources_pct=0.0,
+            # Execution
+            in_progress_count=0, waiting_inspection_count=0,
+            under_inspection_count=0, completed_count=0,
+            # Control
+            pending_approval_count=0, approved_count=0, rejected_count=0, rework_count=0,
+            # Financial
+            eligible_for_claim_count=0, eligible_for_claim_amount=0.0,
+            claimed_count=0, claimed_amount_total=0.0,
+            under_review_count=0, under_review_amount=0.0,
+            approved_claim_count=0, approved_claim_amount=0.0,
+            rejected_claim_count=0,
+            # Alerts
+            delayed_count=0, overdue_inspection_count=0,
+            over_budget_count=0, unpaid_count=0, has_alerts=False,
         )
 
         for rec in self:
@@ -278,72 +227,124 @@ class FarmDivisionPipeline(models.Model):
             jo_ids = jos.ids
 
             # ── Pre-Execution ──────────────────────────────────────────────────
-
-            # Planning count: JOs still in draft (not yet approved)
             rec.planning_count = sum(1 for j in jos if j.jo_stage == 'draft')
-
-            # Planning %: JOs that have both planned dates set
             planned = sum(1 for j in jos if j.planned_start_date and j.planned_end_date)
-            rec.planning_pct = round((planned / total) * 100, 1)
+            rec.planning_pct = _pct(planned, total)
 
-            # Material Readiness: JOs with at least one MR in approved+ state
             mrs_ready = MR.search([
                 ('job_order_id', 'in', jo_ids),
                 ('state', 'in', ['approved', 'rfq', 'ordered', 'received']),
             ])
             jo_with_mr = len(set(mrs_ready.mapped('job_order_id').ids))
-            rec.material_readiness_pct = round((jo_with_mr / total) * 100, 1)
+            rec.material_readiness_pct = _pct(jo_with_mr, total)
 
-            # Procurement %: MRs that reached ordered/received (PO confirmed)
             mrs_ordered = MR.search([
                 ('job_order_id', 'in', jo_ids),
                 ('state', 'in', ['ordered', 'received']),
             ])
             jo_with_po = len(set(mrs_ordered.mapped('job_order_id').ids))
-            rec.procurement_pct = round((jo_with_po / total) * 100, 1)
+            rec.procurement_pct = _pct(jo_with_po, total)
 
-            # Resources %: JOs with at least one labour or material record
-            with_resources = sum(
-                1 for j in jos if j.labour_ids or j.material_ids
-            )
-            rec.resources_pct = round((with_resources / total) * 100, 1)
+            with_resources = sum(1 for j in jos if j.labour_ids or j.material_ids)
+            rec.resources_pct = _pct(with_resources, total)
 
             # ── Execution ─────────────────────────────────────────────────────
             rec.in_progress_count        = sum(1 for j in jos if j.jo_stage == 'in_progress')
             rec.waiting_inspection_count = sum(1 for j in jos if j.jo_stage == 'handover_requested')
             rec.under_inspection_count   = sum(1 for j in jos if j.jo_stage == 'under_inspection')
+            rec.completed_count          = sum(1 for j in jos if j.jo_stage == 'closed')
 
-            # ── Approval ──────────────────────────────────────────────────────
+            # ── Control ───────────────────────────────────────────────────────
+            # pending_approval: under inspection (inspector has not yet decided)
+            rec.pending_approval_count = rec.under_inspection_count
+
+            # approved: passed inspection (accepted, partially accepted, or beyond)
             approved_stages = {'accepted', 'partially_accepted', 'ready_for_claim', 'claimed', 'closed'}
             rec.approved_count = sum(1 for j in jos if j.jo_stage in approved_stages)
+
+            # rejected: inspection failed or approval formally rejected
             rec.rejected_count = sum(
                 1 for j in jos
                 if j.inspection_result == 'failed' or j.approval_status == 'rejected'
             )
 
+            # rework: inspection failed AND back in in_progress
+            rec.rework_count = sum(
+                1 for j in jos
+                if j.inspection_result == 'failed' and j.jo_stage == 'in_progress'
+            )
+
             # ── Financial ─────────────────────────────────────────────────────
-            rec.claimed_count         = sum(1 for j in jos if j.jo_stage in ('claimed', 'closed'))
-            rec.claimed_amount_total  = sum(j.claim_amount for j in jos)
+            eligible = [j for j in jos if j.jo_stage == 'ready_for_claim']
+            rec.eligible_for_claim_count  = len(eligible)
+            rec.eligible_for_claim_amount = sum(j.remaining_claim_amount for j in eligible)
+
+            rec.claimed_count        = sum(1 for j in jos if j.jo_stage in ('claimed', 'closed'))
+            rec.claimed_amount_total = sum(j.claim_amount for j in jos)
+
+            under_review = [j for j in jos if j.jo_stage == 'claimed']
+            rec.under_review_count  = len(under_review)
+            rec.under_review_amount = sum(j.claim_amount for j in under_review)
+
+            closed_jos = [j for j in jos if j.jo_stage == 'closed']
+            rec.approved_claim_count  = len(closed_jos)
+            rec.approved_claim_amount = sum(j.claim_amount for j in closed_jos)
+
+            rec.rejected_claim_count = sum(1 for j in jos if j.approval_status == 'rejected')
+
             rec.approved_amount_total = sum(j.approved_amount for j in jos)
             rec.contract_amount_total = sum(j.planned_qty * j.unit_price for j in jos)
             rec.remaining_claim_total = sum(j.remaining_claim_amount for j in jos)
 
-    # ── Action: Force KPI refresh ──────────────────────────────────────────────
+            # ── Alerts ────────────────────────────────────────────────────────
+            active_stages = frozenset(['draft', 'approved', 'in_progress',
+                                       'handover_requested', 'under_inspection',
+                                       'partially_accepted', 'accepted', 'ready_for_claim'])
+
+            rec.delayed_count = sum(
+                1 for j in jos
+                if j.planned_end_date
+                and j.planned_end_date < today
+                and j.jo_stage in active_stages
+            )
+            rec.overdue_inspection_count = rec.waiting_inspection_count
+            rec.over_budget_count = sum(
+                1 for j in jos
+                if j.planned_cost and j.actual_total_cost > j.planned_cost
+            )
+            rec.unpaid_count = rec.under_review_count
+
+            rec.has_alerts = bool(
+                rec.delayed_count
+                or rec.overdue_inspection_count
+                or rec.over_budget_count
+                or rec.unpaid_count
+            )
+
+    @api.depends('planning_pct', 'material_readiness_pct', 'procurement_pct', 'resources_pct')
+    def _compute_html_bars(self):
+        for rec in self:
+            rec.planning_bar_html    = _bar_html(rec.planning_pct,           'dp-bar-teal')
+            rec.material_bar_html    = _bar_html(rec.material_readiness_pct, 'dp-bar-blue')
+            rec.procurement_bar_html = _bar_html(rec.procurement_pct,        'dp-bar-purple')
+            rec.resources_bar_html   = _bar_html(rec.resources_pct,          'dp-bar-amber')
+
+    # ══ Actions ══════════════════════════════════════════════════════════════
+
     def action_refresh_kpis(self):
-        """Manually trigger a KPI recompute for all records in self."""
         self._compute_all_kpis()
+        self._compute_html_bars()
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': _('KPIs Refreshed'),
+                'title':   _('KPIs Refreshed'),
                 'message': _('Division pipeline KPIs have been recalculated.'),
-                'type': 'success',
-                'sticky': False,
+                'type':    'success',
+                'sticky':  False,
             },
         }
 
-    # ── Drill-down helpers ─────────────────────────────────────────────────────
     def _jo_action(self, extra_domain=None, title=None):
         self.ensure_one()
         domain = [
@@ -358,39 +359,35 @@ class FarmDivisionPipeline(models.Model):
             'res_model': 'farm.job.order',
             'view_mode': 'list,form',
             'domain':    domain,
-            'context': {
-                'default_project_id':  self.project_id.id,
-            },
+            'context':   {'default_project_id': self.project_id.id},
         }
 
     def action_open_all_jo(self):
-        return self._jo_action(
-            title=_('All Job Orders — %s') % self.division_id.name,
-        )
+        return self._jo_action(title=_('All Job Orders — %s') % self.division_id.name)
 
     def action_open_in_planning(self):
-        return self._jo_action(
-            [('jo_stage', '=', 'draft')],
-            title=_('In Planning — %s') % self.division_id.name,
-        )
+        return self._jo_action([('jo_stage', '=', 'draft')],
+                               title=_('In Planning — %s') % self.division_id.name)
 
     def action_open_in_progress(self):
-        return self._jo_action(
-            [('jo_stage', '=', 'in_progress')],
-            title=_('In Progress — %s') % self.division_id.name,
-        )
+        return self._jo_action([('jo_stage', '=', 'in_progress')],
+                               title=_('In Progress — %s') % self.division_id.name)
 
     def action_open_waiting_inspection(self):
-        return self._jo_action(
-            [('jo_stage', '=', 'handover_requested')],
-            title=_('Waiting Inspection — %s') % self.division_id.name,
-        )
+        return self._jo_action([('jo_stage', '=', 'handover_requested')],
+                               title=_('Waiting Inspection — %s') % self.division_id.name)
 
     def action_open_under_inspection(self):
-        return self._jo_action(
-            [('jo_stage', '=', 'under_inspection')],
-            title=_('Under Inspection — %s') % self.division_id.name,
-        )
+        return self._jo_action([('jo_stage', '=', 'under_inspection')],
+                               title=_('Under Inspection — %s') % self.division_id.name)
+
+    def action_open_completed(self):
+        return self._jo_action([('jo_stage', '=', 'closed')],
+                               title=_('Completed — %s') % self.division_id.name)
+
+    def action_open_pending_approval(self):
+        return self._jo_action([('jo_stage', '=', 'under_inspection')],
+                               title=_('Pending Approval — %s') % self.division_id.name)
 
     def action_open_approved(self):
         return self._jo_action(
@@ -401,29 +398,58 @@ class FarmDivisionPipeline(models.Model):
 
     def action_open_rejected(self):
         return self._jo_action(
-            ['|',
-             ('inspection_result', '=', 'failed'),
-             ('approval_status', '=', 'rejected')],
+            ['|', ('inspection_result', '=', 'failed'), ('approval_status', '=', 'rejected')],
             title=_('Rejected — %s') % self.division_id.name,
         )
 
-    def action_open_claimed(self):
+    def action_open_rework(self):
         return self._jo_action(
-            [('jo_stage', 'in', ['claimed', 'closed'])],
-            title=_('Claimed — %s') % self.division_id.name,
+            ['&', ('inspection_result', '=', 'failed'), ('jo_stage', '=', 'in_progress')],
+            title=_('Rework — %s') % self.division_id.name,
         )
 
-    # ── Find or create ─────────────────────────────────────────────────────────
+    def action_open_eligible_for_claim(self):
+        return self._jo_action([('jo_stage', '=', 'ready_for_claim')],
+                               title=_('Eligible for Claim — %s') % self.division_id.name)
+
+    def action_open_under_review(self):
+        return self._jo_action([('jo_stage', '=', 'claimed')],
+                               title=_('Under Review — %s') % self.division_id.name)
+
+    def action_open_approved_claims(self):
+        return self._jo_action([('jo_stage', '=', 'closed')],
+                               title=_('Approved Claims — %s') % self.division_id.name)
+
+    def action_open_rejected_claims(self):
+        return self._jo_action([('approval_status', '=', 'rejected')],
+                               title=_('Rejected Claims — %s') % self.division_id.name)
+
+    def action_open_delayed(self):
+        return self._jo_action(
+            ['&',
+             ('planned_end_date', '<', str(date.today())),
+             ('jo_stage', 'in', ['draft', 'approved', 'in_progress',
+                                  'handover_requested', 'under_inspection',
+                                  'partially_accepted', 'accepted', 'ready_for_claim'])],
+            title=_('Delayed — %s') % self.division_id.name,
+        )
+
+    def action_open_over_budget(self):
+        return self._jo_action(
+            [('actual_total_cost', '>', 0)],
+            title=_('Over Budget — %s') % self.division_id.name,
+        )
+
+    def action_open_claimed(self):
+        return self._jo_action([('jo_stage', 'in', ['claimed', 'closed'])],
+                               title=_('Claimed — %s') % self.division_id.name)
+
     @api.model
     def find_or_create(self, project_id, division_id):
-        """Return the pipeline record for (project_id, division_id), creating it if needed."""
         rec = self.search([
             ('project_id',  '=', project_id),
             ('division_id', '=', division_id),
         ], limit=1)
         if not rec:
-            rec = self.create({
-                'project_id':  project_id,
-                'division_id': division_id,
-            })
+            rec = self.create({'project_id': project_id, 'division_id': division_id})
         return rec

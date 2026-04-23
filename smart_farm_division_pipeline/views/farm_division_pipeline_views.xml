@@ -3,298 +3,347 @@
 <data>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
-     FARM DIVISION PIPELINE — Views
+     FARM DIVISION PIPELINE  ·  Interactive Dashboard Views
      ═══════════════════════════════════════════════════════════════════════════ -->
 
 
-<!-- ── FORM VIEW ─────────────────────────────────────────────────────────── -->
+<!-- ── FORM / DASHBOARD VIEW ─────────────────────────────────────────────── -->
 <record id="view_farm_division_pipeline_form" model="ir.ui.view">
     <field name="name">farm.division.pipeline.form</field>
     <field name="model">farm.division.pipeline</field>
     <field name="arch" type="xml">
-        <form string="Division Pipeline">
+        <form string="Division Pipeline Dashboard">
 
-            <!-- Status bar -->
+            <!-- ── Status bar ─────────────────────────────────────────────── -->
             <header>
                 <field name="pipeline_phase" widget="statusbar"
                        statusbar_visible="planning,material_request,procurement,resources,ready_for_execution,in_progress,inspection,approval,claim"/>
                 <button name="action_refresh_kpis"
-                        string="↻ Refresh KPIs"
+                        string="↻  Refresh KPIs"
                         type="object"
                         class="btn-secondary"/>
             </header>
 
-            <!-- Smart buttons -->
+            <!-- ── Smart buttons ──────────────────────────────────────────── -->
             <div class="oe_button_box" name="button_box">
-                <button name="action_open_all_jo"
-                        type="object"
-                        class="oe_stat_button"
-                        icon="fa-tasks">
+                <button name="action_open_all_jo" type="object"
+                        class="oe_stat_button" icon="fa-tasks">
                     <field name="total_jo_count" widget="statinfo" string="Job Orders"/>
                 </button>
-                <button name="action_open_in_progress"
-                        type="object"
-                        class="oe_stat_button"
-                        icon="fa-play-circle">
+                <button name="action_open_in_progress" type="object"
+                        class="oe_stat_button" icon="fa-play-circle">
                     <field name="in_progress_count" widget="statinfo" string="In Progress"/>
                 </button>
-                <button name="action_open_claimed"
-                        type="object"
-                        class="oe_stat_button"
-                        icon="fa-money">
+                <button name="action_open_eligible_for_claim" type="object"
+                        class="oe_stat_button" icon="fa-flag-checkered">
+                    <field name="eligible_for_claim_count" widget="statinfo" string="Ready to Claim"/>
+                </button>
+                <button name="action_open_claimed" type="object"
+                        class="oe_stat_button" icon="fa-money">
                     <field name="claimed_count" widget="statinfo" string="Claimed"/>
                 </button>
             </div>
 
-            <!-- Main fields -->
+            <!-- ── Identity block ─────────────────────────────────────────── -->
             <group>
-                <group string="Division Identity">
+                <group>
                     <field name="project_id"/>
                     <field name="division_id"/>
-                    <field name="sequence"/>
-                    <field name="active" invisible="1"/>
-                    <field name="display_name_full" invisible="1"/>
                 </group>
-                <group string="Contract Summary">
+                <group>
                     <field name="contract_amount_total" widget="monetary"
                            options="{'currency_field': 'currency_id'}"
-                           string="Total Contract Value"/>
+                           string="Contract Value"/>
                     <field name="approved_amount_total" widget="monetary"
                            options="{'currency_field': 'currency_id'}"
-                           string="Approved (Claimable Base)"/>
-                    <field name="claimed_amount_total" widget="monetary"
-                           options="{'currency_field': 'currency_id'}"
-                           string="Claimed Amount"/>
-                    <field name="remaining_claim_total" widget="monetary"
-                           options="{'currency_field': 'currency_id'}"
-                           string="Remaining Claimable"/>
+                           string="Approved (Claimable)"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="display_name_full" invisible="1"/>
+                    <field name="has_alerts" invisible="1"/>
                 </group>
             </group>
 
-            <!-- ── 4 Pipeline Panels ─────────────────────────────────────── -->
-            <div class="row g-3 mt-1 mb-3 mx-1">
+            <!-- ══════════════════════════════════════════════════════════════
+                 ALERT BOX  (hidden when no alerts)
+                 ══════════════════════════════════════════════════════════════ -->
+            <div class="dp-alert-box mx-3 mt-1" invisible="not has_alerts">
+                <div class="dp-alert-title">
+                    <i class="fa fa-exclamation-triangle" title="Alerts"/>
+                    Attention Required
+                </div>
+                <div class="dp-alert-items">
 
-                <!-- PRE-EXECUTION PANEL -->
-                <div class="col-12 col-lg-6 col-xl-3">
+                    <!-- Delayed -->
+                    <button name="action_open_delayed" type="object"
+                            class="dp-alert-chip dp-alert-chip--red"
+                            invisible="delayed_count == 0">
+                        <i class="fa fa-clock-o" title="Delayed"/>
+                        <field name="delayed_count" nolabel="1" readonly="1"/> Delayed
+                    </button>
+
+                    <!-- Waiting Inspection (overdue) -->
+                    <button name="action_open_waiting_inspection" type="object"
+                            class="dp-alert-chip"
+                            invisible="overdue_inspection_count == 0">
+                        <i class="fa fa-eye" title="Waiting Inspection"/>
+                        <field name="overdue_inspection_count" nolabel="1" readonly="1"/> Waiting Inspection
+                    </button>
+
+                    <!-- Over Budget -->
+                    <button name="action_open_over_budget" type="object"
+                            class="dp-alert-chip dp-alert-chip--red"
+                            invisible="over_budget_count == 0">
+                        <i class="fa fa-warning" title="Over Budget"/>
+                        <field name="over_budget_count" nolabel="1" readonly="1"/> Over Budget
+                    </button>
+
+                    <!-- Unpaid -->
+                    <button name="action_open_under_review" type="object"
+                            class="dp-alert-chip"
+                            invisible="unpaid_count == 0">
+                        <i class="fa fa-hourglass-half" title="Unpaid"/>
+                        <field name="unpaid_count" nolabel="1" readonly="1"/> Unpaid / Under Review
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 FOUR DASHBOARD PANELS  (2 × 2 grid)
+                 ══════════════════════════════════════════════════════════════ -->
+            <div class="row g-3 mx-1 mt-1 mb-2">
+
+                <!-- ╔═══════════════════════════════╗
+                     ║  1 · PRE-EXECUTION PANEL      ║
+                     ╚═══════════════════════════════╝ -->
+                <div class="col-12 col-xl-6">
                     <div class="dp-panel dp-panel--preexec">
                         <div class="dp-panel-header">
-                            <i class="fa fa-cogs"/>
-                            Pre-Execution
+                            <i class="fa fa-cogs" title="Pre-Execution"/>
+                            Pre-Execution  ·  Readiness
                         </div>
                         <div class="dp-panel-body">
 
-                            <!-- In Planning -->
-                            <div class="dp-kpi-row">
-                                <span class="dp-kpi-label">In Planning</span>
-                                <button name="action_open_in_planning"
-                                        type="object"
-                                        class="btn btn-link p-0 me-2 dp-drill-btn text-secondary"
-                                        style="font-size:0.72rem;">
-                                    <i class="fa fa-external-link" title="Open"/>
-                                </button>
-                                <span class="dp-kpi-value">
-                                    <field name="planning_count" readonly="1" nolabel="1"/>
+                            <!-- Planning -->
+                            <div class="dp-bar-row">
+                                <span class="dp-bar-label">
+                                    <button name="action_open_in_planning" type="object"
+                                            class="btn btn-link p-0 text-secondary"
+                                            style="font-size:0.78rem;text-decoration:none;">
+                                        <i class="fa fa-map-o me-1" title="Planning"/>Planning
+                                    </button>
                                 </span>
-                            </div>
-
-                            <!-- Planning % -->
-                            <div class="dp-kpi-row">
-                                <span class="dp-kpi-label">Planning %</span>
-                                <span class="dp-kpi-value dp-accent-teal">
-                                    <field name="planning_pct" readonly="1" nolabel="1"/>%
-                                </span>
+                                <field name="planning_bar_html" nolabel="1" readonly="1"/>
                             </div>
 
                             <!-- Material Readiness -->
-                            <div class="dp-kpi-row">
-                                <span class="dp-kpi-label">Material Readiness</span>
-                                <span class="dp-kpi-value dp-accent-teal">
-                                    <field name="material_readiness_pct" readonly="1" nolabel="1"/>%
+                            <div class="dp-bar-row">
+                                <span class="dp-bar-label">
+                                    <i class="fa fa-cubes me-1 text-primary" title="Materials"/>Material
                                 </span>
+                                <field name="material_bar_html" nolabel="1" readonly="1"/>
                             </div>
 
                             <!-- Procurement -->
-                            <div class="dp-kpi-row">
-                                <span class="dp-kpi-label">Procurement</span>
-                                <span class="dp-kpi-value dp-accent-teal">
-                                    <field name="procurement_pct" readonly="1" nolabel="1"/>%
+                            <div class="dp-bar-row">
+                                <span class="dp-bar-label">
+                                    <i class="fa fa-shopping-cart me-1 text-warning" title="Procurement"/>Procurement
                                 </span>
+                                <field name="procurement_bar_html" nolabel="1" readonly="1"/>
                             </div>
 
                             <!-- Resources -->
-                            <div class="dp-kpi-row">
-                                <span class="dp-kpi-label">Resources Allocated</span>
-                                <span class="dp-kpi-value dp-accent-teal">
-                                    <field name="resources_pct" readonly="1" nolabel="1"/>%
+                            <div class="dp-bar-row">
+                                <span class="dp-bar-label">
+                                    <i class="fa fa-users me-1 text-success" title="Resources"/>Resources
                                 </span>
+                                <field name="resources_bar_html" nolabel="1" readonly="1"/>
                             </div>
 
                         </div>
                     </div>
                 </div>
 
-                <!-- EXECUTION PANEL -->
-                <div class="col-12 col-lg-6 col-xl-3">
+                <!-- ╔═══════════════════════════════╗
+                     ║  2 · EXECUTION PANEL          ║
+                     ╚═══════════════════════════════╝ -->
+                <div class="col-12 col-xl-6">
                     <div class="dp-panel dp-panel--exec">
                         <div class="dp-panel-header">
-                            <i class="fa fa-play"/>
-                            Execution
+                            <i class="fa fa-play" title="Execution"/>
+                            Execution  ·  Site Progress
                         </div>
                         <div class="dp-panel-body">
+                            <div class="dp-cards-grid">
 
-                            <!-- In Progress -->
-                            <div class="dp-kpi-row">
-                                <span class="dp-kpi-label">In Progress</span>
-                                <button name="action_open_in_progress"
-                                        type="object"
-                                        class="btn btn-link p-0 me-2 dp-drill-btn text-primary"
-                                        style="font-size:0.72rem;">
-                                    <i class="fa fa-external-link" title="Open"/>
+                                <!-- In Progress -->
+                                <button name="action_open_in_progress" type="object"
+                                        class="dp-card dp-card--blue">
+                                    <span class="dp-card-num">
+                                        <field name="in_progress_count" nolabel="1" readonly="1"/>
+                                    </span>
+                                    <span class="dp-card-lbl">In Progress</span>
                                 </button>
-                                <span class="dp-kpi-value dp-accent-blue">
-                                    <field name="in_progress_count" readonly="1" nolabel="1"/>
-                                </span>
-                            </div>
 
-                            <!-- Waiting Inspection -->
-                            <div class="dp-kpi-row">
-                                <span class="dp-kpi-label">Waiting Inspection</span>
-                                <button name="action_open_waiting_inspection"
-                                        type="object"
-                                        class="btn btn-link p-0 me-2 dp-drill-btn text-primary"
-                                        style="font-size:0.72rem;">
-                                    <i class="fa fa-external-link" title="Open"/>
+                                <!-- Waiting Inspection -->
+                                <button name="action_open_waiting_inspection" type="object"
+                                        class="dp-card dp-card--amber">
+                                    <span class="dp-card-num">
+                                        <field name="waiting_inspection_count" nolabel="1" readonly="1"/>
+                                    </span>
+                                    <span class="dp-card-lbl">Waiting Inspection</span>
                                 </button>
-                                <span class="dp-kpi-value dp-accent-blue">
-                                    <field name="waiting_inspection_count" readonly="1" nolabel="1"/>
-                                </span>
-                            </div>
 
-                            <!-- Under Inspection -->
-                            <div class="dp-kpi-row">
-                                <span class="dp-kpi-label">Under Inspection</span>
-                                <button name="action_open_under_inspection"
-                                        type="object"
-                                        class="btn btn-link p-0 me-2 dp-drill-btn text-primary"
-                                        style="font-size:0.72rem;">
-                                    <i class="fa fa-external-link" title="Open"/>
+                                <!-- Under Inspection -->
+                                <button name="action_open_under_inspection" type="object"
+                                        class="dp-card dp-card--purple">
+                                    <span class="dp-card-num">
+                                        <field name="under_inspection_count" nolabel="1" readonly="1"/>
+                                    </span>
+                                    <span class="dp-card-lbl">Under Inspection</span>
                                 </button>
-                                <span class="dp-kpi-value dp-accent-blue">
-                                    <field name="under_inspection_count" readonly="1" nolabel="1"/>
-                                </span>
-                            </div>
 
+                                <!-- Completed -->
+                                <button name="action_open_completed" type="object"
+                                        class="dp-card dp-card--teal">
+                                    <span class="dp-card-num">
+                                        <field name="completed_count" nolabel="1" readonly="1"/>
+                                    </span>
+                                    <span class="dp-card-lbl">Completed</span>
+                                </button>
+
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- CONTROL PANEL -->
-                <div class="col-12 col-lg-6 col-xl-3">
+                <!-- ╔═══════════════════════════════╗
+                     ║  3 · CONTROL PANEL            ║
+                     ╚═══════════════════════════════╝ -->
+                <div class="col-12 col-xl-6">
                     <div class="dp-panel dp-panel--control">
                         <div class="dp-panel-header">
-                            <i class="fa fa-check-circle"/>
-                            Control &amp; Approval
+                            <i class="fa fa-check-circle" title="Control"/>
+                            Control  ·  Inspection &amp; Approval
                         </div>
                         <div class="dp-panel-body">
+                            <div class="dp-cards-grid">
 
-                            <!-- Approved -->
-                            <div class="dp-kpi-row">
-                                <span class="dp-kpi-label">Approved</span>
-                                <button name="action_open_approved"
-                                        type="object"
-                                        class="btn btn-link p-0 me-2 dp-drill-btn"
-                                        style="font-size:0.72rem;color:#b45309;">
-                                    <i class="fa fa-external-link" title="Open"/>
+                                <!-- Pending Approval -->
+                                <button name="action_open_pending_approval" type="object"
+                                        class="dp-card dp-card--amber">
+                                    <span class="dp-card-num">
+                                        <field name="pending_approval_count" nolabel="1" readonly="1"/>
+                                    </span>
+                                    <span class="dp-card-lbl">Pending Approval</span>
                                 </button>
-                                <span class="dp-kpi-value dp-accent-green">
-                                    <field name="approved_count" readonly="1" nolabel="1"/>
-                                </span>
-                            </div>
 
-                            <!-- Rejected -->
-                            <div class="dp-kpi-row">
-                                <span class="dp-kpi-label">Rejected</span>
-                                <button name="action_open_rejected"
-                                        type="object"
-                                        class="btn btn-link p-0 me-2 dp-drill-btn"
-                                        style="font-size:0.72rem;color:#be123c;">
-                                    <i class="fa fa-external-link" title="Open"/>
+                                <!-- Approved -->
+                                <button name="action_open_approved" type="object"
+                                        class="dp-card dp-card--green">
+                                    <span class="dp-card-num">
+                                        <field name="approved_count" nolabel="1" readonly="1"/>
+                                    </span>
+                                    <span class="dp-card-lbl">Approved</span>
                                 </button>
-                                <span class="dp-kpi-value dp-accent-red">
-                                    <field name="rejected_count" readonly="1" nolabel="1"/>
-                                </span>
-                            </div>
 
+                                <!-- Rejected -->
+                                <button name="action_open_rejected" type="object"
+                                        class="dp-card dp-card--red">
+                                    <span class="dp-card-num">
+                                        <field name="rejected_count" nolabel="1" readonly="1"/>
+                                    </span>
+                                    <span class="dp-card-lbl">Rejected</span>
+                                </button>
+
+                                <!-- Rework -->
+                                <button name="action_open_rework" type="object"
+                                        class="dp-card dp-card--gray">
+                                    <span class="dp-card-num">
+                                        <field name="rework_count" nolabel="1" readonly="1"/>
+                                    </span>
+                                    <span class="dp-card-lbl">Rework</span>
+                                </button>
+
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- FINANCIAL PANEL -->
-                <div class="col-12 col-lg-6 col-xl-3">
+                <!-- ╔═══════════════════════════════╗
+                     ║  4 · FINANCIAL PANEL          ║
+                     ╚═══════════════════════════════╝ -->
+                <div class="col-12 col-xl-6">
                     <div class="dp-panel dp-panel--financial">
                         <div class="dp-panel-header">
-                            <i class="fa fa-usd"/>
-                            Financial
+                            <i class="fa fa-usd" title="Financial"/>
+                            Financial  ·  Claims &amp; Revenue
                         </div>
                         <div class="dp-panel-body">
+                            <div class="dp-cards-grid">
 
-                            <!-- Claimed JOs count -->
-                            <div class="dp-kpi-row">
-                                <span class="dp-kpi-label">Claimed (JOs)</span>
-                                <button name="action_open_claimed"
-                                        type="object"
-                                        class="btn btn-link p-0 me-2 dp-drill-btn text-success"
-                                        style="font-size:0.72rem;">
-                                    <i class="fa fa-external-link" title="Open"/>
+                                <!-- Eligible for Claim -->
+                                <button name="action_open_eligible_for_claim" type="object"
+                                        class="dp-card dp-card--teal">
+                                    <span class="dp-card-num">
+                                        <field name="eligible_for_claim_count" nolabel="1" readonly="1"/>
+                                    </span>
+                                    <span class="dp-card-lbl">Eligible for Claim</span>
+                                    <span class="dp-card-amt">
+                                        <field name="eligible_for_claim_amount" nolabel="1" readonly="1"
+                                               widget="monetary" options="{'currency_field':'currency_id'}"/>
+                                    </span>
                                 </button>
-                                <span class="dp-kpi-value dp-accent-green">
-                                    <field name="claimed_count" readonly="1" nolabel="1"/>
-                                </span>
-                            </div>
 
-                            <!-- Claimed Amount -->
-                            <div class="dp-kpi-row">
-                                <span class="dp-kpi-label">Claimed Amount</span>
-                                <span class="dp-kpi-value dp-accent-green" style="font-size:0.88rem;">
-                                    <field name="claimed_amount_total" readonly="1" nolabel="1"
-                                           widget="monetary"
-                                           options="{'currency_field': 'currency_id'}"/>
-                                </span>
-                            </div>
+                                <!-- Claimed / Under Review -->
+                                <button name="action_open_under_review" type="object"
+                                        class="dp-card dp-card--blue">
+                                    <span class="dp-card-num">
+                                        <field name="under_review_count" nolabel="1" readonly="1"/>
+                                    </span>
+                                    <span class="dp-card-lbl">Under Review</span>
+                                    <span class="dp-card-amt">
+                                        <field name="under_review_amount" nolabel="1" readonly="1"
+                                               widget="monetary" options="{'currency_field':'currency_id'}"/>
+                                    </span>
+                                </button>
 
-                            <!-- Approved Amount -->
-                            <div class="dp-kpi-row">
-                                <span class="dp-kpi-label">Approved Amount</span>
-                                <span class="dp-kpi-value" style="font-size:0.88rem;">
-                                    <field name="approved_amount_total" readonly="1" nolabel="1"
-                                           widget="monetary"
-                                           options="{'currency_field': 'currency_id'}"/>
-                                </span>
-                            </div>
+                                <!-- Approved Claims -->
+                                <button name="action_open_approved_claims" type="object"
+                                        class="dp-card dp-card--green">
+                                    <span class="dp-card-num">
+                                        <field name="approved_claim_count" nolabel="1" readonly="1"/>
+                                    </span>
+                                    <span class="dp-card-lbl">Approved Claims</span>
+                                    <span class="dp-card-amt">
+                                        <field name="approved_claim_amount" nolabel="1" readonly="1"
+                                               widget="monetary" options="{'currency_field':'currency_id'}"/>
+                                    </span>
+                                </button>
 
-                            <!-- Remaining Claimable -->
-                            <div class="dp-kpi-row">
-                                <span class="dp-kpi-label">Remaining Claimable</span>
-                                <span class="dp-kpi-value dp-accent-amber" style="font-size:0.88rem;">
-                                    <field name="remaining_claim_total" readonly="1" nolabel="1"
-                                           widget="monetary"
-                                           options="{'currency_field': 'currency_id'}"/>
-                                </span>
-                            </div>
+                                <!-- Rejected Claims -->
+                                <button name="action_open_rejected_claims" type="object"
+                                        class="dp-card dp-card--red">
+                                    <span class="dp-card-num">
+                                        <field name="rejected_claim_count" nolabel="1" readonly="1"/>
+                                    </span>
+                                    <span class="dp-card-lbl">Rejected Claims</span>
+                                </button>
 
+                            </div>
                         </div>
                     </div>
                 </div>
 
             </div>
-            <!-- end 4 panels row -->
+            <!-- end 4-panel row -->
 
-            <!-- Notes -->
+            <!-- ── Notes ──────────────────────────────────────────────────── -->
             <group>
-                <field name="notes" placeholder="Internal notes about this division's workflow…"/>
+                <field name="notes" placeholder="Division workflow notes, blockers, decisions…"/>
             </group>
 
-            <!-- Chatter -->
+            <!-- ── Chatter ────────────────────────────────────────────────── -->
             <div class="oe_chatter">
                 <field name="message_follower_ids"/>
                 <field name="activity_ids"/>
@@ -322,29 +371,36 @@
             <field name="project_id" optional="show"/>
             <field name="division_id"/>
             <field name="pipeline_phase" widget="badge"/>
-            <field name="total_jo_count" string="Total JOs" optional="show"/>
+            <field name="total_jo_count" string="Total JOs"/>
 
-            <!-- Pre-Execution -->
-            <field name="planning_pct"           string="Planning %"     optional="show"/>
-            <field name="material_readiness_pct" string="Material %"     optional="show"/>
-            <field name="procurement_pct"        string="Procurement %"  optional="show"/>
-            <field name="resources_pct"          string="Resources %"    optional="show"/>
+            <!-- Pre-Execution readiness -->
+            <field name="planning_pct"           string="Planning %"    optional="show"/>
+            <field name="material_readiness_pct" string="Material %"    optional="show"/>
+            <field name="procurement_pct"        string="Procurement %" optional="show"/>
+            <field name="resources_pct"          string="Resources %"   optional="show"/>
 
             <!-- Execution -->
-            <field name="in_progress_count"        string="In Progress"  optional="show"/>
-            <field name="waiting_inspection_count" string="Waiting Insp" optional="show"/>
-            <field name="under_inspection_count"   string="Under Insp"   optional="show"/>
+            <field name="in_progress_count"        string="In Progress"     optional="show"/>
+            <field name="waiting_inspection_count" string="Waiting Insp."   optional="show"/>
+            <field name="completed_count"          string="Completed"       optional="show"/>
 
-            <!-- Approval -->
-            <field name="approved_count" string="Approved" optional="show"/>
-            <field name="rejected_count" string="Rejected" optional="show"/>
+            <!-- Control -->
+            <field name="approved_count"  string="Approved"  optional="show"/>
+            <field name="rejected_count"  string="Rejected"  optional="show"/>
+            <field name="rework_count"    string="Rework"    optional="show"/>
 
             <!-- Financial -->
-            <field name="claimed_count"         string="Claimed"     optional="show"/>
-            <field name="claimed_amount_total"  string="Claimed Amt" optional="show" widget="monetary"
-                   options="{'currency_field': 'currency_id'}"/>
-            <field name="contract_amount_total" string="Contract Amt" optional="show" widget="monetary"
-                   options="{'currency_field': 'currency_id'}"/>
+            <field name="eligible_for_claim_count"  string="Eligible"       optional="show"/>
+            <field name="under_review_count"        string="Under Review"   optional="show"/>
+            <field name="approved_claim_count"      string="Appr. Claims"   optional="show"/>
+            <field name="claimed_amount_total"      string="Claimed Amt"    optional="show"
+                   widget="monetary" options="{'currency_field': 'currency_id'}"/>
+            <field name="contract_amount_total"     string="Contract Amt"   optional="show"
+                   widget="monetary" options="{'currency_field': 'currency_id'}"/>
+
+            <!-- Alerts indicator -->
+            <field name="has_alerts" string="Alerts" optional="show" widget="boolean"
+                   decoration-danger="has_alerts"/>
             <field name="currency_id" column_invisible="1"/>
         </list>
     </field>
@@ -364,9 +420,8 @@
             <field name="in_progress_count"/>
             <field name="approved_count"/>
             <field name="claimed_amount_total"/>
-            <field name="contract_amount_total"/>
-            <field name="planning_pct"/>
             <field name="material_readiness_pct"/>
+            <field name="has_alerts"/>
 
             <templates>
                 <t t-name="card">
@@ -375,7 +430,6 @@
                         <div class="fw-bold text-truncate" style="font-size:0.9rem;">
                             <field name="division_id"/>
                         </div>
-                        <!-- Project -->
                         <div class="text-muted small text-truncate">
                             <i class="fa fa-building-o me-1" title="Project"/>
                             <field name="project_id"/>
@@ -383,25 +437,30 @@
 
                         <hr class="my-1"/>
 
-                        <!-- KPI row -->
-                        <div class="d-flex justify-content-between align-items-center small">
+                        <div class="d-flex justify-content-between small">
                             <span class="text-muted">JOs</span>
                             <strong><field name="total_jo_count"/></strong>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center small">
+                        <div class="d-flex justify-content-between small">
                             <span class="text-muted">In Progress</span>
                             <strong class="text-primary"><field name="in_progress_count"/></strong>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center small">
+                        <div class="d-flex justify-content-between small">
                             <span class="text-muted">Approved</span>
                             <strong class="text-success"><field name="approved_count"/></strong>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center small mt-1">
+                        <div class="d-flex justify-content-between small">
                             <span class="text-muted">Material</span>
-                            <strong class="text-info">
-                                <field name="material_readiness_pct"/>%
-                            </strong>
+                            <strong class="text-info"><field name="material_readiness_pct"/>%</strong>
                         </div>
+
+                        <t t-if="record.has_alerts.raw_value">
+                            <div class="mt-1">
+                                <span class="badge bg-warning text-dark" style="font-size:0.65rem;">
+                                    <i class="fa fa-exclamation-triangle" title="Alert"/> Alerts
+                                </span>
+                            </div>
+                        </t>
                     </div>
                 </t>
             </templates>
@@ -420,30 +479,25 @@
             <field name="division_id"/>
             <field name="pipeline_phase"/>
 
-            <!-- Filters by phase group -->
+            <filter name="filter_has_alerts"    string="⚠ Has Alerts"        domain="[('has_alerts','=',True)]"/>
+            <filter name="filter_delayed"       string="Delayed JOs"          domain="[('delayed_count','>',0)]"/>
+            <filter name="filter_over_budget"   string="Over Budget"          domain="[('over_budget_count','>',0)]"/>
+
             <separator/>
-            <filter name="filter_preexec" string="Pre-Execution"
+            <filter name="filter_preexec"    string="Pre-Execution"
                     domain="[('pipeline_phase','in',['planning','material_request','procurement','resources','ready_for_execution'])]"/>
-            <filter name="filter_execution" string="Execution"
+            <filter name="filter_execution"  string="Execution"
                     domain="[('pipeline_phase','in',['in_progress','completed'])]"/>
-            <filter name="filter_control" string="Control"
+            <filter name="filter_control"    string="Control"
                     domain="[('pipeline_phase','in',['inspection','approval'])]"/>
-            <filter name="filter_financial" string="Financial"
+            <filter name="filter_financial"  string="Financial"
                     domain="[('pipeline_phase','=','claim')]"/>
 
-            <!-- Filters by phase -->
             <separator/>
-            <filter name="filter_planning"    string="Planning"     domain="[('pipeline_phase','=','planning')]"/>
-            <filter name="filter_in_progress" string="In Progress"  domain="[('pipeline_phase','=','in_progress')]"/>
-            <filter name="filter_inspection"  string="Inspection"   domain="[('pipeline_phase','=','inspection')]"/>
-            <filter name="filter_claim"       string="Claim"        domain="[('pipeline_phase','=','claim')]"/>
-
-            <!-- Filters: quality -->
-            <separator/>
-            <filter name="filter_has_rejection" string="Has Rejections"
-                    domain="[('rejected_count','>',0)]"/>
-            <filter name="filter_no_materials"  string="Low Material Readiness (&lt;50%)"
-                    domain="[('material_readiness_pct','&lt;',50)]"/>
+            <filter name="filter_in_progress"    string="In Progress"     domain="[('pipeline_phase','=','in_progress')]"/>
+            <filter name="filter_has_rework"     string="Has Rework"      domain="[('rework_count','>',0)]"/>
+            <filter name="filter_has_rejection"  string="Has Rejections"  domain="[('rejected_count','>',0)]"/>
+            <filter name="filter_eligible_claim" string="Eligible to Claim" domain="[('eligible_for_claim_count','>',0)]"/>
 
             <group expand="0" string="Group By">
                 <filter name="group_project"  string="Project"  context="{'group_by':'project_id'}"/>
@@ -467,7 +521,8 @@
         </p>
         <p>
             Create a pipeline record for each division within a project to track
-            Pre-Execution, Execution, Control, and Financial workflow phases.
+            Pre-Execution, Execution, Control, and Financial workflow phases
+            with live KPI cards and alerts.
         </p>
     </field>
 </record>
