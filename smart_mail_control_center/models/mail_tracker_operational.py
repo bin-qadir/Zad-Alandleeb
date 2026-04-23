@@ -2,12 +2,12 @@
 SMART MAIL CONTROL CENTER — Operational Linking Engine
 =======================================================
 
-Extends mail.tracker.record with direct operational links into the
+Extends mail.tracker.record with direct Many2one operational links into
 project, commercial, financial, and procurement workflows.
 
 Per mail_type the engine locates the most relevant farm document
-(scoped to the detected project where possible) and stores a direct
-reference in typed fields — not just a generic linked_model/linked_res_id.
+(scoped to the detected project where possible) and stores typed
+Many2one references that are both auto-detected AND user-editable.
 
 Linking map:
   claim     → farm.job.order        (scoped by farm.project)
@@ -18,7 +18,7 @@ Linking map:
   rfq       → farm.material.request (primary) | purchase.order (fallback)
 
 Smart buttons appear in the form view button box when a link exists.
-An "Operational Links" tab provides full detail for every linked record.
+An "Operational Links" tab provides full detail and manual editing.
 
 Entry-point: _route_operational_links()
 Called from run_full_auto_processing() after _route_to_document().
@@ -59,88 +59,117 @@ class MailTrackerOperational(models.Model):
 
     # ── PART 1 — Claim / Job Order ─────────────────────────────────────────────
 
-    op_claim_id = fields.Integer(
-        string='Linked Job Order ID',
-        readonly=True,
-        index=True,
-    )
-    op_claim_name = fields.Char(
+    op_claim_id = fields.Many2one(
+        'farm.job.order',
         string='Linked Claim / Job Order',
-        readonly=True,
+        tracking=True,
+        index=True,
+        ondelete='set null',
+        help='Job Order linked to this email (auto-detected or manually set).',
     )
     op_claim_state = fields.Char(
         string='Claim Status',
         readonly=True,
+        help='Current state of the linked job order.',
     )
 
     # ── PART 2 — BOQ ──────────────────────────────────────────────────────────
 
-    op_boq_id = fields.Integer(
-        string='Linked BOQ ID',
-        readonly=True,
-        index=True,
-    )
-    op_boq_name = fields.Char(
+    op_boq_id = fields.Many2one(
+        'farm.boq',
         string='Linked BOQ',
-        readonly=True,
+        tracking=True,
+        index=True,
+        ondelete='set null',
+        help='Bill of Quantities linked to this email (auto-detected or manually set).',
     )
     op_boq_state = fields.Char(
         string='BOQ Status',
         readonly=True,
+        help='Current state of the linked BOQ.',
     )
 
     # ── PART 3 — Contract ─────────────────────────────────────────────────────
 
-    op_contract_id = fields.Integer(
-        string='Linked Contract ID',
-        readonly=True,
-        index=True,
-    )
-    op_contract_name = fields.Char(
+    op_contract_id = fields.Many2one(
+        'farm.contract',
         string='Linked Contract',
-        readonly=True,
+        tracking=True,
+        index=True,
+        ondelete='set null',
+        help='Contract linked to this email (auto-detected or manually set).',
     )
     op_contract_state = fields.Char(
         string='Contract Status',
         readonly=True,
+        help='Current state of the linked contract.',
     )
 
     # ── PART 4 — Invoice / Account Move ───────────────────────────────────────
 
-    op_invoice_id = fields.Integer(
-        string='Linked Invoice ID',
-        readonly=True,
-        index=True,
-    )
-    op_invoice_name = fields.Char(
+    op_invoice_id = fields.Many2one(
+        'account.move',
         string='Linked Invoice',
-        readonly=True,
+        tracking=True,
+        index=True,
+        ondelete='set null',
+        domain=[('move_type', 'in', ['in_invoice', 'out_invoice', 'in_refund', 'out_refund'])],
+        help='Invoice linked to this email (auto-detected or manually set).',
     )
     op_invoice_state = fields.Char(
         string='Invoice Status',
         readonly=True,
+        help='Payment state of the linked invoice.',
     )
 
     # ── PART 5 — RFQ / Procurement ───────────────────────────────────────────
 
-    op_rfq_id = fields.Integer(
-        string='Linked RFQ ID',
-        readonly=True,
+    op_rfq_mr_id = fields.Many2one(
+        'farm.material.request',
+        string='Linked Material Request',
+        tracking=True,
         index=True,
+        ondelete='set null',
+        help='Material Request linked to this email (primary RFQ link).',
     )
-    op_rfq_name = fields.Char(
-        string='Linked RFQ / Procurement',
-        readonly=True,
+    op_rfq_po_id = fields.Many2one(
+        'purchase.order',
+        string='Linked Purchase Order',
+        tracking=True,
+        index=True,
+        ondelete='set null',
+        help='Purchase Order linked to this email (fallback RFQ link).',
     )
     op_rfq_state = fields.Char(
-        string='RFQ Status',
+        string='RFQ / Procurement Status',
         readonly=True,
+        help='Current state of the linked procurement document.',
     )
     op_rfq_model = fields.Char(
-        string='RFQ Model',
+        string='RFQ Linked Model',
         readonly=True,
-        help='farm.material.request or purchase.order',
+        help='Model of the linked procurement document (farm.material.request or purchase.order).',
     )
+
+    # ── Computed: any operational link exists ─────────────────────────────────
+
+    op_has_any_link = fields.Boolean(
+        string='Has Operational Links',
+        compute='_compute_op_has_any_link',
+        store=True,
+        help='True when at least one operational document is linked.',
+    )
+
+    @api.depends(
+        'op_claim_id', 'op_boq_id', 'op_contract_id',
+        'op_invoice_id', 'op_rfq_mr_id', 'op_rfq_po_id',
+    )
+    def _compute_op_has_any_link(self):
+        for rec in self:
+            rec.op_has_any_link = bool(
+                rec.op_claim_id or rec.op_boq_id or rec.op_contract_id
+                or rec.op_invoice_id or rec.op_rfq_mr_id or rec.op_rfq_po_id
+            )
 
     # ── Master routing entry-point ─────────────────────────────────────────────
 
@@ -149,7 +178,7 @@ class MailTrackerOperational(models.Model):
         Detect and store operational document links for self.
 
         Routing is mail_type-aware and project-scoped where possible.
-        Fields are only populated when empty (idempotent).
+        Only populates empty fields (idempotent — preserves user overrides).
         """
         mt = self.mail_type or 'general'
         if mt == 'general':
@@ -176,7 +205,7 @@ class MailTrackerOperational(models.Model):
             if not self.op_invoice_id:
                 self._op_link_invoice(farm_proj_id, odoo_project_id)
         elif mt == 'rfq':
-            if not self.op_rfq_id:
+            if not self.op_rfq_mr_id and not self.op_rfq_po_id:
                 self._op_link_rfq(farm_proj_id, odoo_project_id)
 
     # ── Part 1: Claim / Job Order linking ─────────────────────────────────────
@@ -189,14 +218,17 @@ class MailTrackerOperational(models.Model):
         rec = JobOrder.sudo().search(domain, limit=1, order='id desc')
         if not rec:
             return
-        state_raw = rec.jo_stage if hasattr(rec, 'jo_stage') and rec.jo_stage else (rec.state if hasattr(rec, 'state') else '')
-        state_label = _JO_STATE_LABELS.get(state_raw, state_raw)
+        state_raw = (
+            rec.jo_stage if hasattr(rec, 'jo_stage') and rec.jo_stage
+            else (rec.state if hasattr(rec, 'state') else '')
+        )
         self.write({
             'op_claim_id': rec.id,
-            'op_claim_name': rec.display_name or rec.name or '',
-            'op_claim_state': state_label,
+            'op_claim_state': _JO_STATE_LABELS.get(state_raw, state_raw),
         })
-        _logger.debug('Mail Tracker Ops: linked record %d → farm.job.order[%d]', self.id, rec.id)
+        _logger.debug(
+            'Mail Tracker Ops: linked record %d → farm.job.order[%d]', self.id, rec.id
+        )
 
     # ── Part 2: BOQ linking ───────────────────────────────────────────────────
 
@@ -211,10 +243,11 @@ class MailTrackerOperational(models.Model):
         state_raw = rec.state if hasattr(rec, 'state') else ''
         self.write({
             'op_boq_id': rec.id,
-            'op_boq_name': rec.display_name or rec.name or '',
             'op_boq_state': _BOQ_STATE_LABELS.get(state_raw, state_raw),
         })
-        _logger.debug('Mail Tracker Ops: linked record %d → farm.boq[%d]', self.id, rec.id)
+        _logger.debug(
+            'Mail Tracker Ops: linked record %d → farm.boq[%d]', self.id, rec.id
+        )
 
     # ── Part 3: Contract linking ──────────────────────────────────────────────
 
@@ -229,10 +262,11 @@ class MailTrackerOperational(models.Model):
         state_raw = rec.state if hasattr(rec, 'state') else ''
         self.write({
             'op_contract_id': rec.id,
-            'op_contract_name': rec.display_name or rec.name or '',
             'op_contract_state': _CONTRACT_STATE_LABELS.get(state_raw, state_raw),
         })
-        _logger.debug('Mail Tracker Ops: linked record %d → farm.contract[%d]', self.id, rec.id)
+        _logger.debug(
+            'Mail Tracker Ops: linked record %d → farm.contract[%d]', self.id, rec.id
+        )
 
     # ── Part 4: Invoice linking ───────────────────────────────────────────────
 
@@ -284,21 +318,22 @@ class MailTrackerOperational(models.Model):
 
     def _op_write_invoice(self, rec):
         payment_state = ''
-        if hasattr(rec, 'payment_state'):
-            payment_state = rec.payment_state.replace('_', ' ').title() if rec.payment_state else ''
+        if hasattr(rec, 'payment_state') and rec.payment_state:
+            payment_state = rec.payment_state.replace('_', ' ').title()
         elif hasattr(rec, 'state'):
-            payment_state = rec.state
+            payment_state = rec.state or ''
         self.write({
             'op_invoice_id': rec.id,
-            'op_invoice_name': rec.display_name or rec.name or '',
             'op_invoice_state': payment_state,
         })
-        _logger.debug('Mail Tracker Ops: linked record %d → account.move[%d]', self.id, rec.id)
+        _logger.debug(
+            'Mail Tracker Ops: linked record %d → account.move[%d]', self.id, rec.id
+        )
 
     # ── Part 5: RFQ / Procurement linking ─────────────────────────────────────
 
     def _op_link_rfq(self, farm_proj_id, odoo_project_id):
-        # Primary: farm.material.request (has project_id on farm.project)
+        # Primary: farm.material.request
         MatReq = self.env.get('farm.material.request')
         if MatReq is not None:
             domain = self._op_project_domain(farm_proj_id, odoo_project_id, MatReq)
@@ -306,31 +341,33 @@ class MailTrackerOperational(models.Model):
             if rec:
                 state_raw = rec.state if hasattr(rec, 'state') else ''
                 self.write({
-                    'op_rfq_id': rec.id,
-                    'op_rfq_name': rec.display_name or rec.name or '',
+                    'op_rfq_mr_id': rec.id,
                     'op_rfq_state': _MR_STATE_LABELS.get(state_raw, state_raw),
                     'op_rfq_model': 'farm.material.request',
                 })
-                _logger.debug('Mail Tracker Ops: linked record %d → farm.material.request[%d]', self.id, rec.id)
+                _logger.debug(
+                    'Mail Tracker Ops: linked record %d → farm.material.request[%d]',
+                    self.id, rec.id,
+                )
                 return
 
         # Fallback: purchase.order
         PO = self.env.get('purchase.order')
         if PO is not None:
             po_domain = [('state', 'in', ['draft', 'sent', 'to approve'])]
-            # purchase.order may have project_id via analytic
-            po_fields = PO._fields
-            if 'project_id' in po_fields and odoo_project_id:
+            if 'project_id' in PO._fields and odoo_project_id:
                 po_domain.append(('project_id', '=', odoo_project_id))
             rec = PO.sudo().search(po_domain, limit=1, order='id desc')
             if rec:
                 self.write({
-                    'op_rfq_id': rec.id,
-                    'op_rfq_name': rec.display_name or rec.name or '',
+                    'op_rfq_po_id': rec.id,
                     'op_rfq_state': rec.state if hasattr(rec, 'state') else '',
                     'op_rfq_model': 'purchase.order',
                 })
-                _logger.debug('Mail Tracker Ops: linked record %d → purchase.order[%d]', self.id, rec.id)
+                _logger.debug(
+                    'Mail Tracker Ops: linked record %d → purchase.order[%d]',
+                    self.id, rec.id,
+                )
 
     # ── Helper: build project-scoped domain ───────────────────────────────────
 
@@ -343,8 +380,6 @@ class MailTrackerOperational(models.Model):
         if farm_proj_id and 'project_id' in Model._fields:
             return [('project_id', '=', farm_proj_id)]
         if odoo_project_id and 'project_id' in Model._fields:
-            # odoo_project_id references project.project; farm models use farm.project
-            # Only use if model's project_id comodel is project.project
             comodel = Model._fields.get('project_id')
             if comodel and getattr(comodel, 'comodel_name', '') == 'project.project':
                 return [('project_id', '=', odoo_project_id)]
@@ -356,11 +391,18 @@ class MailTrackerOperational(models.Model):
         """Force re-run operational linking (clears existing op_* links first)."""
         for rec in self:
             rec.write({
-                'op_claim_id': 0, 'op_claim_name': '', 'op_claim_state': '',
-                'op_boq_id': 0, 'op_boq_name': '', 'op_boq_state': '',
-                'op_contract_id': 0, 'op_contract_name': '', 'op_contract_state': '',
-                'op_invoice_id': 0, 'op_invoice_name': '', 'op_invoice_state': '',
-                'op_rfq_id': 0, 'op_rfq_name': '', 'op_rfq_state': '', 'op_rfq_model': '',
+                'op_claim_id': False,
+                'op_claim_state': '',
+                'op_boq_id': False,
+                'op_boq_state': '',
+                'op_contract_id': False,
+                'op_contract_state': '',
+                'op_invoice_id': False,
+                'op_invoice_state': '',
+                'op_rfq_mr_id': False,
+                'op_rfq_po_id': False,
+                'op_rfq_state': '',
+                'op_rfq_model': '',
             })
             rec._route_operational_links()
         return {
@@ -368,75 +410,88 @@ class MailTrackerOperational(models.Model):
             'tag': 'display_notification',
             'params': {
                 'title': _('Operational Links Refreshed'),
-                'message': _('Operational document links have been re-scanned.'),
+                'message': _('Operational document links have been re-scanned and updated.'),
                 'type': 'success',
                 'sticky': False,
             },
         }
 
-    # ── PART 6: Smart button actions ──────────────────────────────────────────
+    # ── PART 6: Smart button open actions ─────────────────────────────────────
 
     def action_open_linked_claim(self):
         """Open the linked farm.job.order in a form view."""
+        self.ensure_one()
         if not self.op_claim_id:
             return
         return {
             'type': 'ir.actions.act_window',
-            'name': self.op_claim_name or _('Claim / Job Order'),
+            'name': self.op_claim_id.display_name or _('Claim / Job Order'),
             'res_model': 'farm.job.order',
             'view_mode': 'form',
-            'res_id': self.op_claim_id,
+            'res_id': self.op_claim_id.id,
             'target': 'current',
         }
 
     def action_open_linked_boq(self):
         """Open the linked farm.boq in a form view."""
+        self.ensure_one()
         if not self.op_boq_id:
             return
         return {
             'type': 'ir.actions.act_window',
-            'name': self.op_boq_name or _('BOQ'),
+            'name': self.op_boq_id.display_name or _('BOQ'),
             'res_model': 'farm.boq',
             'view_mode': 'form',
-            'res_id': self.op_boq_id,
+            'res_id': self.op_boq_id.id,
             'target': 'current',
         }
 
     def action_open_linked_contract(self):
         """Open the linked farm.contract in a form view."""
+        self.ensure_one()
         if not self.op_contract_id:
             return
         return {
             'type': 'ir.actions.act_window',
-            'name': self.op_contract_name or _('Contract'),
+            'name': self.op_contract_id.display_name or _('Contract'),
             'res_model': 'farm.contract',
             'view_mode': 'form',
-            'res_id': self.op_contract_id,
+            'res_id': self.op_contract_id.id,
             'target': 'current',
         }
 
     def action_open_linked_invoice(self):
         """Open the linked account.move invoice in a form view."""
+        self.ensure_one()
         if not self.op_invoice_id:
             return
         return {
             'type': 'ir.actions.act_window',
-            'name': self.op_invoice_name or _('Invoice'),
+            'name': self.op_invoice_id.display_name or _('Invoice'),
             'res_model': 'account.move',
             'view_mode': 'form',
-            'res_id': self.op_invoice_id,
+            'res_id': self.op_invoice_id.id,
             'target': 'current',
         }
 
     def action_open_linked_rfq(self):
-        """Open the linked procurement document in a form view."""
-        if not self.op_rfq_id or not self.op_rfq_model:
-            return
-        return {
-            'type': 'ir.actions.act_window',
-            'name': self.op_rfq_name or _('RFQ / Procurement'),
-            'res_model': self.op_rfq_model,
-            'view_mode': 'form',
-            'res_id': self.op_rfq_id,
-            'target': 'current',
-        }
+        """Open the linked procurement document (Material Request or PO)."""
+        self.ensure_one()
+        if self.op_rfq_mr_id:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': self.op_rfq_mr_id.display_name or _('Material Request'),
+                'res_model': 'farm.material.request',
+                'view_mode': 'form',
+                'res_id': self.op_rfq_mr_id.id,
+                'target': 'current',
+            }
+        if self.op_rfq_po_id:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': self.op_rfq_po_id.display_name or _('Purchase Order'),
+                'res_model': 'purchase.order',
+                'view_mode': 'form',
+                'res_id': self.op_rfq_po_id.id,
+                'target': 'current',
+            }

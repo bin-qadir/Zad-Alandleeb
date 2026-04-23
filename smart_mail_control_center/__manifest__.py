@@ -1,6 +1,6 @@
 {
     'name': 'Smart Mail Control Center',
-    'version': '18.0.1.0.0',
+    'version': '18.0.2.0.0',
     'summary': 'Company email control center — classify, track, convert & follow up',
     'description': (
         'Full email management control center for Odoo:\n\n'
@@ -26,6 +26,12 @@
         'project',
         'hr',
         'base',
+        'account',
+        'purchase',
+        'smart_farm_execution',
+        'smart_farm_boq',
+        'smart_farm_contract',
+        'smart_farm_material_request',
     ],
     'data': [
         'security/mail_tracker_security.xml',

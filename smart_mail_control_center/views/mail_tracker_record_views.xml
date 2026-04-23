@@ -81,6 +81,25 @@
                             domain="[('route_confidence', '&gt;', 0),
                                      ('route_confidence', '&lt;', 50),
                                      ('mail_type', '!=', 'general')]"/>
+                    <!-- Operational link filters -->
+                    <filter string="Has Operational Links"
+                            name="has_op_links"
+                            domain="[('op_has_any_link', '=', True)]"/>
+                    <filter string="Linked to Claim"
+                            name="linked_claim"
+                            domain="[('op_claim_id', '!=', False)]"/>
+                    <filter string="Linked to BOQ"
+                            name="linked_boq"
+                            domain="[('op_boq_id', '!=', False)]"/>
+                    <filter string="Linked to Contract"
+                            name="linked_contract"
+                            domain="[('op_contract_id', '!=', False)]"/>
+                    <filter string="Linked to Invoice"
+                            name="linked_invoice"
+                            domain="[('op_invoice_id', '!=', False)]"/>
+                    <filter string="Linked to RFQ"
+                            name="linked_rfq"
+                            domain="['|', ('op_rfq_mr_id', '!=', False), ('op_rfq_po_id', '!=', False)]"/>
                     <separator/>
                     <!-- Mail type filters -->
                     <filter string="BOQ" name="type_boq"
@@ -212,6 +231,8 @@
                            optional="show"/>
                     <field name="route_confidence" string="Confidence %"
                            optional="hide"/>
+                    <field name="op_has_any_link" string="Op. Links"
+                           widget="boolean" optional="show"/>
                     <field name="not_assigned" string="Unassigned"
                            widget="boolean" optional="hide"/>
                     <field name="needs_action" string="Needs Action"
@@ -246,6 +267,8 @@
                     <field name="attachment_count"/>
                     <field name="converted_to_task"/>
                     <field name="is_overdue"/>
+                    <field name="op_has_any_link"/>
+                    <field name="mail_type"/>
 
                     <templates>
                         <t t-name="card">
@@ -282,6 +305,10 @@
                                           class="badge bg-warning text-dark">High</span>
                                     <span t-if="record.is_overdue.raw_value"
                                           class="badge bg-danger">Overdue</span>
+                                    <span t-if="record.op_has_any_link.raw_value"
+                                          class="badge bg-success">
+                                        <i class="fa fa-link me-1"/>Linked
+                                    </span>
                                     <span t-if="record.has_attachment.raw_value"
                                           class="badge bg-secondary">
                                         <i class="fa fa-paperclip me-1"/>
@@ -444,7 +471,7 @@
                                     type="object"
                                     class="oe_stat_button"
                                     icon="fa-file-text"
-                                    invisible="op_claim_id == 0">
+                                    invisible="not op_claim_id">
                                 <div class="o_stat_info">
                                     <span class="o_stat_value">JO</span>
                                     <span class="o_stat_text">Claim</span>
@@ -456,7 +483,7 @@
                                     type="object"
                                     class="oe_stat_button"
                                     icon="fa-table"
-                                    invisible="op_boq_id == 0">
+                                    invisible="not op_boq_id">
                                 <div class="o_stat_info">
                                     <span class="o_stat_value">BOQ</span>
                                     <span class="o_stat_text">Cost Struct.</span>
@@ -468,7 +495,7 @@
                                     type="object"
                                     class="oe_stat_button"
                                     icon="fa-handshake-o"
-                                    invisible="op_contract_id == 0">
+                                    invisible="not op_contract_id">
                                 <div class="o_stat_info">
                                     <span class="o_stat_value">CNT</span>
                                     <span class="o_stat_text">Contract</span>
@@ -480,21 +507,24 @@
                                     type="object"
                                     class="oe_stat_button"
                                     icon="fa-money"
-                                    invisible="op_invoice_id == 0">
+                                    invisible="not op_invoice_id">
                                 <div class="o_stat_info">
                                     <span class="o_stat_value">INV</span>
                                     <span class="o_stat_text">Invoice</span>
                                 </div>
                             </button>
 
-                            <!-- RFQ / Procurement -->
+                            <!-- Material Request (RFQ primary) -->
                             <button name="action_open_linked_rfq"
                                     type="object"
                                     class="oe_stat_button"
                                     icon="fa-shopping-cart"
-                                    invisible="op_rfq_id == 0">
+                                    invisible="not op_rfq_mr_id and not op_rfq_po_id">
                                 <div class="o_stat_info">
-                                    <span class="o_stat_value">RFQ</span>
+                                    <span class="o_stat_value"
+                                          invisible="not op_rfq_mr_id">MR</span>
+                                    <span class="o_stat_value"
+                                          invisible="op_rfq_mr_id or not op_rfq_po_id">PO</span>
                                     <span class="o_stat_text">Procurement</span>
                                 </div>
                             </button>
@@ -647,40 +677,64 @@
                                 </group>
                             </page>
 
-                            <!-- Tab 4: Operational Links -->
+                            <!-- Tab 4: Operational Links ── PART 6 ── -->
                             <page string="Operational Links" name="tab_operational" icon="fa-link">
 
                                 <!-- No links banner -->
                                 <div class="alert alert-info border-start border-info border-3 mb-3"
                                      role="alert"
-                                     invisible="op_claim_id != 0 or op_boq_id != 0 or op_contract_id != 0 or op_invoice_id != 0 or op_rfq_id != 0">
+                                     invisible="op_has_any_link">
                                     <i class="fa fa-info-circle me-2" title="Information"/>
-                                    <strong>No operational links detected.</strong>
+                                    <strong>No operational links detected yet.</strong>
                                     The engine scans automatically after classification.
-                                    Use <em>Refresh Links</em> to re-scan manually.
+                                    Use <em>Refresh Links</em> to re-scan manually, or
+                                    select a document directly in any field below.
                                 </div>
 
-                                <!-- Refresh button -->
-                                <div class="mb-3">
+                                <!-- Action toolbar -->
+                                <div class="d-flex gap-2 mb-3 align-items-center">
                                     <button name="action_refresh_operational_links"
                                             type="object"
                                             class="btn btn-outline-secondary btn-sm">
                                         <i class="fa fa-refresh me-1"/>
                                         Refresh Links
                                     </button>
+                                    <small class="text-muted ms-2">
+                                        <i class="fa fa-info-circle me-1"/>
+                                        You can also manually select any document
+                                        below to override the auto-detected link.
+                                    </small>
+                                </div>
+
+                                <!-- ── Project (read-only reference) ── -->
+                                <div class="smcc-op-link-row">
+                                    <div class="smcc-op-link-icon smcc-op--navy">
+                                        <i class="fa fa-sitemap" title="Project"/>
+                                    </div>
+                                    <div class="smcc-op-link-body">
+                                        <div class="smcc-op-link-type">Project</div>
+                                        <div class="smcc-op-link-name">
+                                            <field name="project_id"
+                                                   nolabel="1"
+                                                   placeholder="(no project linked)"/>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- ── Claim / Job Order ── -->
-                                <div class="smcc-op-link-row" invisible="op_claim_id == 0">
+                                <div class="smcc-op-link-row">
                                     <div class="smcc-op-link-icon smcc-op--amber">
                                         <i class="fa fa-file-text" title="Claim / Job Order"/>
                                     </div>
                                     <div class="smcc-op-link-body">
                                         <div class="smcc-op-link-type">Claim / Job Order</div>
                                         <div class="smcc-op-link-name">
-                                            <field name="op_claim_name" readonly="1" nolabel="1"/>
+                                            <field name="op_claim_id"
+                                                   nolabel="1"
+                                                   placeholder="(auto-detect or select)"
+                                                   options="{'no_create': True, 'no_quick_create': True}"/>
                                         </div>
-                                        <div class="smcc-op-link-state">
+                                        <div class="smcc-op-link-state" invisible="not op_claim_id">
                                             <field name="op_claim_state" readonly="1" nolabel="1"
                                                    widget="badge"
                                                    decoration-success="op_claim_state in ('Claimed', 'Closed', 'Accepted')"
@@ -688,7 +742,7 @@
                                                    decoration-info="op_claim_state in ('Draft', 'Approved')"/>
                                         </div>
                                     </div>
-                                    <div class="ms-auto">
+                                    <div class="ms-auto" invisible="not op_claim_id">
                                         <button name="action_open_linked_claim"
                                                 type="object"
                                                 class="btn btn-sm btn-outline-primary">
@@ -698,16 +752,19 @@
                                 </div>
 
                                 <!-- ── BOQ ── -->
-                                <div class="smcc-op-link-row" invisible="op_boq_id == 0">
+                                <div class="smcc-op-link-row">
                                     <div class="smcc-op-link-icon smcc-op--green">
                                         <i class="fa fa-table" title="BOQ / Cost Structure"/>
                                     </div>
                                     <div class="smcc-op-link-body">
                                         <div class="smcc-op-link-type">BOQ / Cost Structure</div>
                                         <div class="smcc-op-link-name">
-                                            <field name="op_boq_name" readonly="1" nolabel="1"/>
+                                            <field name="op_boq_id"
+                                                   nolabel="1"
+                                                   placeholder="(auto-detect or select)"
+                                                   options="{'no_create': True, 'no_quick_create': True}"/>
                                         </div>
-                                        <div class="smcc-op-link-state">
+                                        <div class="smcc-op-link-state" invisible="not op_boq_id">
                                             <field name="op_boq_state" readonly="1" nolabel="1"
                                                    widget="badge"
                                                    decoration-success="op_boq_state in ('Approved',)"
@@ -715,7 +772,7 @@
                                                    decoration-info="op_boq_state in ('Draft', 'Started')"/>
                                         </div>
                                     </div>
-                                    <div class="ms-auto">
+                                    <div class="ms-auto" invisible="not op_boq_id">
                                         <button name="action_open_linked_boq"
                                                 type="object"
                                                 class="btn btn-sm btn-outline-success">
@@ -725,16 +782,19 @@
                                 </div>
 
                                 <!-- ── Contract ── -->
-                                <div class="smcc-op-link-row" invisible="op_contract_id == 0">
+                                <div class="smcc-op-link-row">
                                     <div class="smcc-op-link-icon smcc-op--navy">
                                         <i class="fa fa-handshake-o" title="Contract"/>
                                     </div>
                                     <div class="smcc-op-link-body">
                                         <div class="smcc-op-link-type">Contract</div>
                                         <div class="smcc-op-link-name">
-                                            <field name="op_contract_name" readonly="1" nolabel="1"/>
+                                            <field name="op_contract_id"
+                                                   nolabel="1"
+                                                   placeholder="(auto-detect or select)"
+                                                   options="{'no_create': True, 'no_quick_create': True}"/>
                                         </div>
-                                        <div class="smcc-op-link-state">
+                                        <div class="smcc-op-link-state" invisible="not op_contract_id">
                                             <field name="op_contract_state" readonly="1" nolabel="1"
                                                    widget="badge"
                                                    decoration-success="op_contract_state in ('Active', 'Approved')"
@@ -742,7 +802,7 @@
                                                    decoration-muted="op_contract_state in ('Draft', 'Closed')"/>
                                         </div>
                                     </div>
-                                    <div class="ms-auto">
+                                    <div class="ms-auto" invisible="not op_contract_id">
                                         <button name="action_open_linked_contract"
                                                 type="object"
                                                 class="btn btn-sm btn-outline-dark">
@@ -752,16 +812,19 @@
                                 </div>
 
                                 <!-- ── Invoice ── -->
-                                <div class="smcc-op-link-row" invisible="op_invoice_id == 0">
+                                <div class="smcc-op-link-row">
                                     <div class="smcc-op-link-icon smcc-op--teal">
                                         <i class="fa fa-money" title="Invoice / Payment"/>
                                     </div>
                                     <div class="smcc-op-link-body">
                                         <div class="smcc-op-link-type">Invoice / Payment</div>
                                         <div class="smcc-op-link-name">
-                                            <field name="op_invoice_name" readonly="1" nolabel="1"/>
+                                            <field name="op_invoice_id"
+                                                   nolabel="1"
+                                                   placeholder="(auto-detect or select)"
+                                                   options="{'no_create': True, 'no_quick_create': True}"/>
                                         </div>
-                                        <div class="smcc-op-link-state">
+                                        <div class="smcc-op-link-state" invisible="not op_invoice_id">
                                             <field name="op_invoice_state" readonly="1" nolabel="1"
                                                    widget="badge"
                                                    decoration-success="op_invoice_state in ('Paid', 'In Payment')"
@@ -769,7 +832,7 @@
                                                    decoration-info="op_invoice_state in ('Draft',)"/>
                                         </div>
                                     </div>
-                                    <div class="ms-auto">
+                                    <div class="ms-auto" invisible="not op_invoice_id">
                                         <button name="action_open_linked_invoice"
                                                 type="object"
                                                 class="btn btn-sm btn-outline-info">
@@ -778,17 +841,23 @@
                                     </div>
                                 </div>
 
-                                <!-- ── RFQ / Procurement ── -->
-                                <div class="smcc-op-link-row" invisible="op_rfq_id == 0">
+                                <!-- ── Material Request (RFQ Primary) ── -->
+                                <div class="smcc-op-link-row">
                                     <div class="smcc-op-link-icon smcc-op--blue">
-                                        <i class="fa fa-shopping-cart" title="RFQ / Procurement"/>
+                                        <i class="fa fa-shopping-cart" title="Material Request / RFQ"/>
                                     </div>
                                     <div class="smcc-op-link-body">
-                                        <div class="smcc-op-link-type">RFQ / Procurement</div>
-                                        <div class="smcc-op-link-name">
-                                            <field name="op_rfq_name" readonly="1" nolabel="1"/>
+                                        <div class="smcc-op-link-type">
+                                            Material Request
+                                            <small class="text-muted ms-1">(RFQ Primary)</small>
                                         </div>
-                                        <div class="smcc-op-link-state">
+                                        <div class="smcc-op-link-name">
+                                            <field name="op_rfq_mr_id"
+                                                   nolabel="1"
+                                                   placeholder="(auto-detect or select)"
+                                                   options="{'no_create': True, 'no_quick_create': True}"/>
+                                        </div>
+                                        <div class="smcc-op-link-state" invisible="not op_rfq_mr_id">
                                             <field name="op_rfq_state" readonly="1" nolabel="1"
                                                    widget="badge"
                                                    decoration-success="op_rfq_state in ('Ordered', 'Received', 'Approved')"
@@ -796,7 +865,7 @@
                                                    decoration-info="op_rfq_state in ('Draft',)"/>
                                         </div>
                                     </div>
-                                    <div class="ms-auto">
+                                    <div class="ms-auto" invisible="not op_rfq_mr_id">
                                         <button name="action_open_linked_rfq"
                                                 type="object"
                                                 class="btn btn-sm btn-outline-primary">
@@ -805,17 +874,66 @@
                                     </div>
                                 </div>
 
-                                <!-- Hidden fields needed for invisible conditions -->
-                                <field name="op_claim_id" invisible="1"/>
-                                <field name="op_boq_id" invisible="1"/>
-                                <field name="op_contract_id" invisible="1"/>
-                                <field name="op_invoice_id" invisible="1"/>
-                                <field name="op_rfq_id" invisible="1"/>
-                                <field name="op_rfq_model" invisible="1"/>
+                                <!-- ── Purchase Order (RFQ Fallback) ── -->
+                                <div class="smcc-op-link-row">
+                                    <div class="smcc-op-link-icon smcc-op--blue">
+                                        <i class="fa fa-file-text-o" title="Purchase Order"/>
+                                    </div>
+                                    <div class="smcc-op-link-body">
+                                        <div class="smcc-op-link-type">
+                                            Purchase Order
+                                            <small class="text-muted ms-1">(RFQ Fallback)</small>
+                                        </div>
+                                        <div class="smcc-op-link-name">
+                                            <field name="op_rfq_po_id"
+                                                   nolabel="1"
+                                                   placeholder="(auto-detect or select)"
+                                                   options="{'no_create': True, 'no_quick_create': True}"/>
+                                        </div>
+                                        <div class="smcc-op-link-state" invisible="not op_rfq_po_id">
+                                            <span class="badge bg-info text-dark">
+                                                <field name="op_rfq_state" readonly="1" nolabel="1"
+                                                       invisible="op_rfq_mr_id"/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="ms-auto" invisible="not op_rfq_po_id">
+                                        <button name="action_open_linked_rfq"
+                                                type="object"
+                                                class="btn btn-sm btn-outline-primary">
+                                            <i class="fa fa-external-link me-1"/>Open
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- ── Task ── -->
+                                <div class="smcc-op-link-row" invisible="not task_id">
+                                    <div class="smcc-op-link-icon smcc-op--green">
+                                        <i class="fa fa-tasks" title="Task"/>
+                                    </div>
+                                    <div class="smcc-op-link-body">
+                                        <div class="smcc-op-link-type">Linked Task</div>
+                                        <div class="smcc-op-link-name">
+                                            <field name="task_id"
+                                                   readonly="1"
+                                                   nolabel="1"/>
+                                        </div>
+                                    </div>
+                                    <div class="ms-auto" invisible="not task_id">
+                                        <button name="action_open_task"
+                                                type="object"
+                                                class="btn btn-sm btn-outline-success">
+                                            <i class="fa fa-external-link me-1"/>Open
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Hidden utility fields -->
+                                <field name="op_has_any_link" invisible="1"/>
 
                             </page>
 
-                            <!-- Tab 5 (was 4): Intelligence (auto-parsed) -->
+                            <!-- Tab 5: Intelligence (auto-parsed) -->
                             <page string="Intelligence" name="tab_intelligence" icon="fa-magic">
 
                                 <!-- Alert banners -->

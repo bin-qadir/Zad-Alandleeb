@@ -367,57 +367,68 @@ class MailTrackerDashboard(models.TransientModel):
             open_filter = [('state', 'not in', ['done', 'archived'])]
 
             rec.linked_claims_count = Tracker.search_count(
-                [('op_claim_id', '>', 0)] + open_filter
+                [('op_claim_id', '!=', False)] + open_filter
             )
             rec.linked_contracts_count = Tracker.search_count(
-                [('op_contract_id', '>', 0)] + open_filter
+                [('op_contract_id', '!=', False)] + open_filter
             )
             rec.linked_invoices_count = Tracker.search_count(
-                [('op_invoice_id', '>', 0)] + open_filter
+                [('op_invoice_id', '!=', False)] + open_filter
             )
             rec.linked_boq_emails_count = Tracker.search_count(
-                [('op_boq_id', '>', 0)] + open_filter
+                [('op_boq_id', '!=', False)] + open_filter
             )
+            # RFQ covers both Material Request (primary) and Purchase Order (fallback)
             rec.linked_rfq_emails_count = Tracker.search_count(
-                [('op_rfq_id', '>', 0)] + open_filter
+                ['&', '|',
+                 ('op_rfq_mr_id', '!=', False),
+                 ('op_rfq_po_id', '!=', False),
+                 ('state', 'not in', ['done', 'archived'])]
             )
 
     # ── Operational KPI drill-downs ────────────────────────────────────────────
 
     def action_open_linked_claims(self):
         return self._open_tracker_list(
-            [('op_claim_id', '>', 0),
+            [('op_claim_id', '!=', False),
              ('state', 'not in', ['done', 'archived'])],
             _('Emails Linked to Claims'),
         )
 
     def action_open_linked_contracts(self):
         return self._open_tracker_list(
-            [('op_contract_id', '>', 0),
+            [('op_contract_id', '!=', False),
              ('state', 'not in', ['done', 'archived'])],
             _('Emails Linked to Contracts'),
         )
 
     def action_open_linked_invoices(self):
         return self._open_tracker_list(
-            [('op_invoice_id', '>', 0),
+            [('op_invoice_id', '!=', False),
              ('state', 'not in', ['done', 'archived'])],
             _('Emails Linked to Invoices'),
         )
 
     def action_open_linked_boq(self):
         return self._open_tracker_list(
-            [('op_boq_id', '>', 0),
+            [('op_boq_id', '!=', False),
              ('state', 'not in', ['done', 'archived'])],
             _('Emails Linked to BOQ'),
         )
 
     def action_open_linked_rfq(self):
-        return self._open_tracker_list(
-            [('op_rfq_id', '>', 0),
-             ('state', 'not in', ['done', 'archived'])],
-            _('Emails Linked to RFQ / Procurement'),
-        )
+        """Open emails linked to RFQ (Material Request or Purchase Order)."""
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Emails Linked to RFQ / Procurement'),
+            'res_model': 'mail.tracker.record',
+            'view_mode': 'list,form,kanban',
+            'domain': ['&', '|',
+                       ('op_rfq_mr_id', '!=', False),
+                       ('op_rfq_po_id', '!=', False),
+                       ('state', 'not in', ['done', 'archived'])],
+            'context': {'search_default_my_emails': 0},
+        }
 
     @api.depends()
     def _compute_decision_kpis(self):
