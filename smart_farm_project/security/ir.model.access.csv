@@ -3,3 +3,5 @@ access_farm_project_user,farm.project user,model_farm_project,base.group_user,1,
 access_farm_field_user,farm.field user,model_farm_field,base.group_user,1,1,1,1
 access_farm_project_type_user,farm.project.type user,model_farm_project_type,base.group_user,1,0,0,0
 access_farm_project_type_manager,farm.project.type manager,model_farm_project_type,base.group_system,1,1,1,1
+access_activity_lifecycle_stage_user,activity.lifecycle.stage user,model_activity_lifecycle_stage,base.group_user,1,0,0,0
+access_activity_lifecycle_stage_manager,activity.lifecycle.stage manager,model_activity_lifecycle_stage,base.group_system,1,1,1,1

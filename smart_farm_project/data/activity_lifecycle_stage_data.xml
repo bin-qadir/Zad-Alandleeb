@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         CONSTRUCTION  — 11 stages
+         ══════════════════════════════════════════════════════════════════ -->
+    <record id="stage_con_planning"      model="activity.lifecycle.stage">
+        <field name="name">Planning</field>
+        <field name="code">con_planning</field>
+        <field name="business_activity">construction</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_con_material_req"  model="activity.lifecycle.stage">
+        <field name="name">Material Request</field>
+        <field name="code">con_material_req</field>
+        <field name="business_activity">construction</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_con_procurement"   model="activity.lifecycle.stage">
+        <field name="name">Procurement</field>
+        <field name="code">con_procurement</field>
+        <field name="business_activity">construction</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_con_resources"     model="activity.lifecycle.stage">
+        <field name="name">Resources</field>
+        <field name="code">con_resources</field>
+        <field name="business_activity">construction</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_con_ready"         model="activity.lifecycle.stage">
+        <field name="name">Ready for Execution</field>
+        <field name="code">con_ready</field>
+        <field name="business_activity">construction</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="stage_con_execution"     model="activity.lifecycle.stage">
+        <field name="name">Execution</field>
+        <field name="code">con_execution</field>
+        <field name="business_activity">construction</field>
+        <field name="sequence">60</field>
+    </record>
+    <record id="stage_con_inspection"    model="activity.lifecycle.stage">
+        <field name="name">Inspection</field>
+        <field name="code">con_inspection</field>
+        <field name="business_activity">construction</field>
+        <field name="sequence">70</field>
+    </record>
+    <record id="stage_con_approval"      model="activity.lifecycle.stage">
+        <field name="name">Approval</field>
+        <field name="code">con_approval</field>
+        <field name="business_activity">construction</field>
+        <field name="sequence">80</field>
+    </record>
+    <record id="stage_con_claim"         model="activity.lifecycle.stage">
+        <field name="name">Claim</field>
+        <field name="code">con_claim</field>
+        <field name="business_activity">construction</field>
+        <field name="sequence">90</field>
+    </record>
+    <record id="stage_con_handover"      model="activity.lifecycle.stage">
+        <field name="name">Handover</field>
+        <field name="code">con_handover</field>
+        <field name="business_activity">construction</field>
+        <field name="sequence">100</field>
+    </record>
+    <record id="stage_con_closure"       model="activity.lifecycle.stage">
+        <field name="name">Closure</field>
+        <field name="code">con_closure</field>
+        <field name="business_activity">construction</field>
+        <field name="sequence">110</field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         AGRICULTURE  — 8 stages
+         ══════════════════════════════════════════════════════════════════ -->
+    <record id="stage_agr_establishment" model="activity.lifecycle.stage">
+        <field name="name">Establishment</field>
+        <field name="code">agr_establishment</field>
+        <field name="business_activity">agriculture</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_agr_land_prep"     model="activity.lifecycle.stage">
+        <field name="name">Land Preparation</field>
+        <field name="code">agr_land_prep</field>
+        <field name="business_activity">agriculture</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_agr_planting"      model="activity.lifecycle.stage">
+        <field name="name">Planting</field>
+        <field name="code">agr_planting</field>
+        <field name="business_activity">agriculture</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_agr_growing"       model="activity.lifecycle.stage">
+        <field name="name">Growing / Crop Care</field>
+        <field name="code">agr_growing</field>
+        <field name="business_activity">agriculture</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_agr_harvest"       model="activity.lifecycle.stage">
+        <field name="name">Harvest</field>
+        <field name="code">agr_harvest</field>
+        <field name="business_activity">agriculture</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="stage_agr_post_harvest"  model="activity.lifecycle.stage">
+        <field name="name">Post-Harvest</field>
+        <field name="code">agr_post_harvest</field>
+        <field name="business_activity">agriculture</field>
+        <field name="sequence">60</field>
+    </record>
+    <record id="stage_agr_packing"       model="activity.lifecycle.stage">
+        <field name="name">Packing</field>
+        <field name="code">agr_packing</field>
+        <field name="business_activity">agriculture</field>
+        <field name="sequence">70</field>
+    </record>
+    <record id="stage_agr_dispatch"      model="activity.lifecycle.stage">
+        <field name="name">Dispatch</field>
+        <field name="code">agr_dispatch</field>
+        <field name="business_activity">agriculture</field>
+        <field name="sequence">80</field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         MANUFACTURING / PACKING  — 6 stages
+         ══════════════════════════════════════════════════════════════════ -->
+    <record id="stage_mfg_planning"      model="activity.lifecycle.stage">
+        <field name="name">Planning</field>
+        <field name="code">mfg_planning</field>
+        <field name="business_activity">manufacturing</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_mfg_material_prep" model="activity.lifecycle.stage">
+        <field name="name">Material Preparation</field>
+        <field name="code">mfg_material_prep</field>
+        <field name="business_activity">manufacturing</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_mfg_production"    model="activity.lifecycle.stage">
+        <field name="name">Production</field>
+        <field name="code">mfg_production</field>
+        <field name="business_activity">manufacturing</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_mfg_quality_check" model="activity.lifecycle.stage">
+        <field name="name">Quality Check</field>
+        <field name="code">mfg_quality_check</field>
+        <field name="business_activity">manufacturing</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_mfg_packing"       model="activity.lifecycle.stage">
+        <field name="name">Packing</field>
+        <field name="code">mfg_packing</field>
+        <field name="business_activity">manufacturing</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="stage_mfg_dispatch"      model="activity.lifecycle.stage">
+        <field name="name">Dispatch</field>
+        <field name="code">mfg_dispatch</field>
+        <field name="business_activity">manufacturing</field>
+        <field name="sequence">60</field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         LIVESTOCK  — 7 stages
+         ══════════════════════════════════════════════════════════════════ -->
+    <record id="stage_ls_establishment"  model="activity.lifecycle.stage">
+        <field name="name">Establishment</field>
+        <field name="code">ls_establishment</field>
+        <field name="business_activity">livestock</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_ls_breeding"       model="activity.lifecycle.stage">
+        <field name="name">Breeding</field>
+        <field name="code">ls_breeding</field>
+        <field name="business_activity">livestock</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_ls_raising"        model="activity.lifecycle.stage">
+        <field name="name">Raising</field>
+        <field name="code">ls_raising</field>
+        <field name="business_activity">livestock</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_ls_feeding"        model="activity.lifecycle.stage">
+        <field name="name">Feeding</field>
+        <field name="code">ls_feeding</field>
+        <field name="business_activity">livestock</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_ls_health_check"   model="activity.lifecycle.stage">
+        <field name="name">Health Check</field>
+        <field name="code">ls_health_check</field>
+        <field name="business_activity">livestock</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="stage_ls_fattening"      model="activity.lifecycle.stage">
+        <field name="name">Fattening</field>
+        <field name="code">ls_fattening</field>
+        <field name="business_activity">livestock</field>
+        <field name="sequence">60</field>
+    </record>
+    <record id="stage_ls_sales"          model="activity.lifecycle.stage">
+        <field name="name">Sales</field>
+        <field name="code">ls_sales</field>
+        <field name="business_activity">livestock</field>
+        <field name="sequence">70</field>
+    </record>
+
+</odoo>

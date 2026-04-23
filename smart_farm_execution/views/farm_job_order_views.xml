@@ -88,7 +88,7 @@
                         <filter name="by_activity"     string="Business Activity"
                                 context="{'group_by':'business_activity'}"/>
                         <filter name="by_lifecycle"    string="Lifecycle Stage"
-                                context="{'group_by':'lifecycle_stage'}"/>
+                                context="{'group_by':'lifecycle_stage_id'}"/>
                         <filter name="by_department"   string="Department"
                                 context="{'group_by':'department'}"/>
                         <filter name="by_jo_stage"     string="JO Stage"
@@ -125,7 +125,7 @@
                     <field name="boq_line_id"       string="Subitem"/>
                     <field name="project_id"        string="Project"/>
                     <field name="business_activity" string="Activity"     optional="show" widget="badge"/>
-                    <field name="lifecycle_stage"   string="Lifecycle"    optional="hide"/>
+                    <field name="lifecycle_stage_id"   string="Lifecycle"    optional="hide"/>
                     <field name="department"        string="Department"   optional="show"/>
                     <field name="division_id"       string="Division"     optional="show"/>
                     <field name="planned_qty"       string="Contract Qty"/>
@@ -860,7 +860,7 @@
                                         <field name="unit_id"            options="{'no_create': True}"/>
                                         <field name="unit_price"         readonly="1"/>
                                         <field name="business_activity"/>
-                                        <field name="lifecycle_stage"/>
+                                        <field name="lifecycle_stage_id"/>
                                         <field name="department"/>
                                         <field name="work_type_id"       options="{'no_create': True}"/>
                                         <field name="discipline"/>
@@ -1352,7 +1352,7 @@
                                         <field name="crop_type_id" options="{'no_create': True}"/>
                                         <field name="field_id"     options="{'no_create': True}"/>
                                         <field name="operation_type"/>
-                                        <field name="lifecycle_stage"/>
+                                        <field name="lifecycle_stage_id"/>
                                     </group>
                                     <group string="Execution Quantities">
                                         <field name="executed_qty"  string="Field Ops Progress (executed)"/>
@@ -1399,7 +1399,7 @@
                                 <group>
                                     <group string="Packing Order">
                                         <field name="packing_order_ref"/>
-                                        <field name="lifecycle_stage"/>
+                                        <field name="lifecycle_stage_id"/>
                                         <field name="qc_result"
                                                widget="badge"
                                                decoration-info="qc_result == 'pending'"
@@ -1458,7 +1458,7 @@
                                                options="{'no_create': True}"/>
                                         <field name="herd_group_id" string="Herd Group / Pen"
                                                options="{'no_create': True}"/>
-                                        <field name="lifecycle_stage"/>
+                                        <field name="lifecycle_stage_id"/>
                                     </group>
                                     <group string="Head Counts">
                                         <field name="animal_count"   string="Total Head"/>

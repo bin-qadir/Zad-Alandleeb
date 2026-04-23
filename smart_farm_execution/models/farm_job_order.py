@@ -147,31 +147,14 @@ class FarmJobOrder(models.Model):
         ),
     )
 
-    lifecycle_stage = fields.Selection(
-        selection=[
-            # Construction
-            ('establishment', 'Establishment'),
-            ('operation',     'Operation'),
-            # Agriculture
-            ('land_prep',     'Land Preparation'),
-            ('planting',      'Planting'),
-            ('growing',       'Growing / Crop Care'),
-            ('harvest',       'Harvest'),
-            ('post_harvest',  'Post-Harvest'),
-            # Manufacturing / Packing
-            ('packing',       'Packing'),
-            ('quality_check', 'Quality Check'),
-            ('dispatch',      'Dispatch'),
-            # Livestock
-            ('breeding',      'Breeding'),
-            ('raising',       'Raising'),
-            ('fattening',     'Fattening'),
-            ('ls_sales',      'Sales'),
-        ],
+    lifecycle_stage_id = fields.Many2one(
+        comodel_name='activity.lifecycle.stage',
         string='Lifecycle Stage',
+        domain="[('business_activity', '=', business_activity)]",
+        ondelete='set null',
         index=True,
         tracking=True,
-        help='Sub-stage within the selected business activity.',
+        help='Sub-stage within the selected business activity. Filtered by the activity set on this job order.',
     )
 
     # ── Department ───────────────────────────────────────────────────────────
@@ -851,6 +834,13 @@ class FarmJobOrder(models.Model):
             rec.approved_sale_amount = (rec.approved_sale_qty or 0.0) * (rec.unit_price or 0.0)
 
     # ── Onchange helpers ──────────────────────────────────────────────────────
+
+    @api.onchange('business_activity')
+    def _onchange_business_activity_clear_lifecycle(self):
+        """Clear lifecycle_stage_id when business_activity changes to an incompatible value."""
+        if (self.lifecycle_stage_id
+                and self.lifecycle_stage_id.business_activity != self.business_activity):
+            self.lifecycle_stage_id = False
 
     @api.onchange('division_id')
     def _onchange_division_id_department(self):

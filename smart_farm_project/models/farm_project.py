@@ -42,19 +42,13 @@ class FarmProject(models.Model):
             '• Livestock — herd: breeding, raising, fattening, sales'
         ),
     )
-    lifecycle_stage = fields.Selection(
-        selection=[
-            ('establishment', 'Establishment'),
-            ('operation',     'Operation'),
-            ('packing',       'Packing'),
-            ('breeding',      'Breeding'),
-            ('raising',       'Raising'),
-            ('fattening',     'Fattening'),
-            ('sales',         'Sales'),
-        ],
+    lifecycle_stage_id = fields.Many2one(
+        comodel_name='activity.lifecycle.stage',
         string='Lifecycle Stage',
+        domain="[('business_activity', '=', business_activity)]",
+        ondelete='set null',
         tracking=True,
-        help='Current lifecycle stage of this project.',
+        help='Current lifecycle stage of this project. Filtered by the selected business activity.',
     )
 
     # ── Project Classification ─────────────────────────────────────────────────
@@ -194,9 +188,12 @@ class FarmProject(models.Model):
 
     @api.onchange('business_activity')
     def _onchange_business_activity_clear_type(self):
-        """Clear project_type when business_activity changes to an incompatible value."""
+        """Clear project_type and lifecycle_stage_id when business_activity changes."""
         if self.project_type and self.project_type.activity != self.business_activity:
             self.project_type = False
+        if (self.lifecycle_stage_id
+                and self.lifecycle_stage_id.business_activity != self.business_activity):
+            self.lifecycle_stage_id = False
 
     @api.constrains('project_type', 'business_activity')
     def _check_project_type_matches_activity(self):

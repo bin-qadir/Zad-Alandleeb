@@ -15,6 +15,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/activity_lifecycle_stage_data.xml',
         'data/farm_project_type_data.xml',
         'views/farm_project_views.xml',
         'views/farm_field_views.xml',
