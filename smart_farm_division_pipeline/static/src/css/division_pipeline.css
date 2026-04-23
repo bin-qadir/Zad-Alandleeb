@@ -1,0 +1,160 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Smart Farm — Division Workflow Pipeline  |  CSS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Panel cards ──────────────────────────────────────────────────────────── */
+.dp-panel {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+    height: 100%;
+}
+
+.dp-panel-header {
+    padding: 10px 16px 8px;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid rgba(0,0,0,.06);
+}
+
+.dp-panel-header i {
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+/* Pre-Execution — teal */
+.dp-panel--preexec .dp-panel-header { background: #f0fdfa; color: #0f766e; }
+/* Execution — blue */
+.dp-panel--exec .dp-panel-header    { background: #eff6ff; color: #1d4ed8; }
+/* Control — amber */
+.dp-panel--control .dp-panel-header { background: #fffbeb; color: #b45309; }
+/* Financial — green */
+.dp-panel--financial .dp-panel-header { background: #f0fdf4; color: #15803d; }
+
+.dp-panel-body {
+    padding: 14px 16px;
+}
+
+/* ── KPI rows ─────────────────────────────────────────────────────────────── */
+.dp-kpi-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dashed #f1f5f9;
+}
+
+.dp-kpi-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.dp-kpi-label {
+    font-size: 0.82rem;
+    color: #64748b;
+    flex: 1;
+}
+
+.dp-kpi-value {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1e293b;
+    min-width: 48px;
+    text-align: right;
+}
+
+.dp-kpi-value.dp-accent-teal    { color: #0f766e; }
+.dp-kpi-value.dp-accent-blue    { color: #1d4ed8; }
+.dp-kpi-value.dp-accent-amber   { color: #b45309; }
+.dp-kpi-value.dp-accent-green   { color: #15803d; }
+.dp-kpi-value.dp-accent-red     { color: #be123c; }
+
+/* ── Progress bar inside KPI row ─────────────────────────────────────────── */
+.dp-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.dp-progress-bar-bg {
+    flex: 1;
+    height: 6px;
+    border-radius: 4px;
+    background: #e2e8f0;
+    overflow: hidden;
+}
+
+.dp-progress-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    background: #0f766e;
+}
+
+.dp-progress-bar-fill.dp-bar--blue   { background: #3b82f6; }
+.dp-progress-bar-fill.dp-bar--amber  { background: #f59e0b; }
+.dp-progress-bar-fill.dp-bar--green  { background: #22c55e; }
+
+/* ── Drill-down link button ───────────────────────────────────────────────── */
+.dp-drill-btn {
+    font-size: 0.72rem;
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid currentColor;
+    opacity: 0.7;
+    cursor: pointer;
+    background: transparent;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+}
+
+.dp-drill-btn:hover {
+    opacity: 1;
+}
+
+/* ── Summary stat boxes (header area) ────────────────────────────────────── */
+.dp-stat-box {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 18px;
+    min-width: 110px;
+    margin: 4px;
+}
+
+.dp-stat-box-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1.1;
+}
+
+.dp-stat-box-label {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+}
+
+/* ── Pipeline phase tag ───────────────────────────────────────────────────── */
+.dp-phase-planning          { color: #64748b; }
+.dp-phase-material_request  { color: #0891b2; }
+.dp-phase-procurement       { color: #7c3aed; }
+.dp-phase-resources         { color: #d97706; }
+.dp-phase-ready_for_execution { color: #0f766e; }
+.dp-phase-in_progress       { color: #1d4ed8; }
+.dp-phase-completed         { color: #15803d; }
+.dp-phase-inspection        { color: #b45309; }
+.dp-phase-approval          { color: #b45309; }
+.dp-phase-claim             { color: #15803d; }

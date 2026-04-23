@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_farm_division_pipeline_manager,farm.division.pipeline manager,model_farm_division_pipeline,smart_farm_execution.group_smart_farm_execution_manager,1,1,1,1
+access_farm_division_pipeline_user,farm.division.pipeline user,model_farm_division_pipeline,smart_farm_execution.group_smart_farm_execution_user,1,1,1,0
+access_farm_division_pipeline_viewer,farm.division.pipeline viewer,model_farm_division_pipeline,smart_farm_execution.group_smart_farm_execution_viewer,1,0,0,0

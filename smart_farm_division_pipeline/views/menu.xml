@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!-- Under Execution parent — Division Pipeline menu -->
+    <menuitem
+        id="menu_farm_division_pipeline"
+        name="Division Pipeline"
+        parent="smart_farm_execution.menu_smart_farm_execution"
+        action="smart_farm_division_pipeline.action_farm_division_pipeline"
+        sequence="5"
+    />
+
+</data>
+</odoo>
