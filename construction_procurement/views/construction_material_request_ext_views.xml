@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Extend Phase 3 Material Request form:
+        - Add Procurement smart button
+        - Add "Create Procurement" button in header
+    -->
+
+    <record id="view_construction_material_request_proc_ext" model="ir.ui.view">
+        <field name="name">construction.material.request.proc.ext</field>
+        <field name="model">construction.material.request</field>
+        <field name="inherit_id"
+               ref="construction_material.view_construction_material_request_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Header buttons: Create Procurement after Convert to Procurement -->
+            <button name="action_convert_to_procurement" position="after">
+                <button name="action_create_procurement"
+                        string="Create Procurement"
+                        type="object"
+                        class="btn-primary"
+                        invisible="state != 'approved'"/>
+            </button>
+
+            <!-- Smart button: Procurements count -->
+            <div name="button_box" position="inside">
+                <button name="action_open_procurements"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-shopping-cart"
+                        invisible="procurement_count == 0">
+                    <field name="procurement_count"
+                           widget="statinfo"
+                           string="Procurements"/>
+                </button>
+            </div>
+
+        </field>
+    </record>
+
+</odoo>

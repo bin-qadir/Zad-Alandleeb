@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Extend Phase 2 BOQ Line form to show procurement readiness metrics.
+        - Add Procurement count smart button (into the button_box Phase 3 created)
+        - Add readiness group after the material_plan_ids field (Phase 3 added)
+    -->
+
+    <record id="view_construction_boq_line_proc_ext" model="ir.ui.view">
+        <field name="name">construction.boq.line.proc.ext</field>
+        <field name="model">construction.boq.line</field>
+        <field name="inherit_id"
+               ref="construction_boq.view_construction_boq_line_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Add Procurement smart button into the Phase-3-created button_box -->
+            <div name="button_box" position="inside">
+                <button name="action_open_procurements"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-shopping-cart"
+                        invisible="procurement_count == 0">
+                    <field name="procurement_count"
+                           widget="statinfo"
+                           string="Procurements"/>
+                </button>
+            </div>
+
+            <!-- Add procurement readiness metrics after material_plan_ids -->
+            <field name="material_plan_ids" position="after">
+                <group invisible="material_ordered_qty == 0">
+                    <group string="Procurement Readiness">
+                        <field name="material_requested_qty" readonly="1"/>
+                        <field name="material_ordered_qty" readonly="1"/>
+                        <field name="material_received_qty" readonly="1"/>
+                        <field name="procurement_readiness_percent"
+                               readonly="1"
+                               string="Readiness %"/>
+                    </group>
+                </group>
+            </field>
+
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── Procurement List ─────────────────────────────────────────────── -->
+
+    <record id="view_construction_procurement_list" model="ir.ui.view">
+        <field name="name">construction.procurement.list</field>
+        <field name="model">construction.procurement</field>
+        <field name="arch" type="xml">
+            <list string="Procurements"
+                  decoration-muted="state == 'cancelled'"
+                  decoration-info="state == 'draft'"
+                  decoration-warning="state == 'rfq'"
+                  decoration-primary="state == 'ordered'"
+                  decoration-success="state == 'fully_received'">
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="division_id" optional="show"/>
+                <field name="vendor_id"/>
+                <field name="procurement_date"/>
+                <field name="line_count" string="Lines"/>
+                <field name="total_price" string="Value"/>
+                <field name="total_ordered_qty" optional="show"/>
+                <field name="total_received_qty" optional="show"/>
+                <field name="purchase_order_state" optional="show" string="PO Status"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state in ('rfq', 'partially_received')"
+                       decoration-primary="state == 'ordered'"
+                       decoration-success="state == 'fully_received'"
+                       decoration-muted="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ─── Procurement Form ─────────────────────────────────────────────── -->
+
+    <record id="view_construction_procurement_form" model="ir.ui.view">
+        <field name="name">construction.procurement.form</field>
+        <field name="model">construction.procurement</field>
+        <field name="arch" type="xml">
+            <form string="Procurement">
+
+                <header>
+                    <button name="action_create_rfq"
+                            string="Create RFQ / PO"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft' or not vendor_id"/>
+                    <button name="action_create_rfq"
+                            string="Set Vendor to Create RFQ"
+                            type="object"
+                            invisible="state != 'draft' or vendor_id"/>
+                    <button name="action_sync_from_po"
+                            string="Sync from PO"
+                            type="object"
+                            invisible="not purchase_order_id"/>
+                    <button name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            invisible="state in ('fully_received', 'cancelled')"/>
+                    <button name="action_reset_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,rfq,ordered,fully_received"/>
+                </header>
+
+                <sheet>
+
+                    <!-- Smart buttons -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_purchase_order"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-shopping-cart"
+                                invisible="not purchase_order_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">PO</span>
+                                <span class="o_stat_value">
+                                    <field name="purchase_order_state"/>
+                                </span>
+                            </div>
+                        </button>
+                        <button name="action_open_receipts"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-truck"
+                                invisible="picking_count == 0">
+                            <field name="picking_count" widget="statinfo"
+                                   string="Receipts"/>
+                        </button>
+                        <button name="action_open_material_requests"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-list-ul">
+                            <field name="material_request_count"
+                                   widget="statinfo"
+                                   string="Requests"/>
+                        </button>
+                        <button class="oe_stat_button"
+                                icon="fa-list"
+                                type="object"
+                                name="action_open_material_requests">
+                            <field name="line_count" widget="statinfo"
+                                   string="Lines"/>
+                        </button>
+                    </div>
+
+                    <!-- Title -->
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <!-- Header info -->
+                    <group>
+                        <group string="Project &amp; Scope">
+                            <field name="project_id"
+                                   readonly="state != 'draft'"/>
+                            <field name="division_id"
+                                   readonly="state != 'draft'"/>
+                            <field name="subdivision_id"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Vendor &amp; Date">
+                            <field name="vendor_id"/>
+                            <field name="procurement_date"/>
+                            <field name="purchase_order_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+
+                        <!-- ── Tab 1: Procurement Lines ──────────────────── -->
+                        <page string="Procurement Lines" name="lines">
+                            <field name="line_ids"
+                                   readonly="state not in ('draft',)">
+                                <list editable="bottom"
+                                      decoration-success="receipt_status == 'fully_received'"
+                                      decoration-warning="receipt_status == 'partially_received'"
+                                      decoration-muted="state == 'cancelled'"
+                                      open_form_view="True">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="material_request_line_id"
+                                           optional="show"/>
+                                    <field name="boq_line_id" optional="show"/>
+                                    <field name="product_id"/>
+                                    <field name="description" optional="show"/>
+                                    <field name="unit" optional="show"/>
+                                    <field name="requested_qty" optional="show"/>
+                                    <field name="ordered_qty"/>
+                                    <field name="unit_price"/>
+                                    <field name="total_price" readonly="1"/>
+                                    <field name="received_qty" readonly="1"/>
+                                    <field name="remaining_qty" readonly="1"/>
+                                    <field name="receipt_status" widget="badge"
+                                           decoration-success="receipt_status == 'fully_received'"
+                                           decoration-warning="receipt_status == 'partially_received'"
+                                           decoration-muted="receipt_status == 'not_received'"
+                                           optional="show"/>
+                                    <field name="state" widget="badge"
+                                           decoration-info="state == 'draft'"
+                                           decoration-warning="state == 'rfq'"
+                                           decoration-primary="state == 'ordered'"
+                                           decoration-success="state == 'fully_received'"
+                                           decoration-muted="state == 'cancelled'"
+                                           optional="show"/>
+                                </list>
+                            </field>
+
+                            <!-- Totals summary -->
+                            <group class="mt-2">
+                                <group>
+                                    <field name="total_ordered_qty"
+                                           string="Total Ordered" readonly="1"/>
+                                    <field name="total_received_qty"
+                                           string="Total Received" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="total_price"
+                                           string="Total Value" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- ── Tab 2: Source Requests ────────────────────── -->
+                        <page string="Source Requests" name="requests">
+                            <field name="material_request_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="project_id"/>
+                                    <field name="request_date"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'approved'"
+                                           decoration-primary="state == 'converted_to_procurement'"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- ── Tab 3: Notes ──────────────────────────────── -->
+                        <page string="Notes" name="notes">
+                            <field name="notes"
+                                   placeholder="Add procurement notes…"/>
+                        </page>
+
+                    </notebook>
+
+                </sheet>
+
+                <chatter/>
+
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── Procurement Search ───────────────────────────────────────────── -->
+
+    <record id="view_construction_procurement_search" model="ir.ui.view">
+        <field name="name">construction.procurement.search</field>
+        <field name="model">construction.procurement</field>
+        <field name="arch" type="xml">
+            <search string="Search Procurements">
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="vendor_id"/>
+                <field name="division_id"/>
+                <separator/>
+                <filter name="state_draft"    string="Draft"
+                        domain="[('state','=','draft')]"/>
+                <filter name="state_rfq"      string="RFQ"
+                        domain="[('state','=','rfq')]"/>
+                <filter name="state_ordered"  string="Ordered"
+                        domain="[('state','=','ordered')]"/>
+                <filter name="state_partial"  string="Partial Receipt"
+                        domain="[('state','=','partially_received')]"/>
+                <filter name="state_received" string="Fully Received"
+                        domain="[('state','=','fully_received')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_project"  string="Project"
+                            context="{'group_by': 'project_id'}"/>
+                    <filter name="group_division" string="Division"
+                            context="{'group_by': 'division_id'}"/>
+                    <filter name="group_vendor"   string="Vendor"
+                            context="{'group_by': 'vendor_id'}"/>
+                    <filter name="group_state"    string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_date"     string="Date"
+                            context="{'group_by': 'procurement_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ─── Action ───────────────────────────────────────────────────────── -->
+
+    <record id="action_construction_procurement" model="ir.actions.act_window">
+        <field name="name">Procurements</field>
+        <field name="res_model">construction.procurement</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_construction_procurement_search"/>
+        <field name="context">{'search_default_state_draft': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No procurement records yet.
+            </p>
+            <p>
+                Generate procurement records from approved material requests,
+                then create RFQs / Purchase Orders directly from here.
+            </p>
+        </field>
+    </record>
+
+</odoo>
