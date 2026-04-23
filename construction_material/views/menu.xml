@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Phase 3 menu entries under the existing Construction root menu.
+    -->
+
+    <menuitem
+        id="menu_construction_material_plan"
+        name="Material Plans"
+        parent="construction_project.menu_construction_root"
+        action="action_construction_material_plan"
+        sequence="60"/>
+
+    <menuitem
+        id="menu_construction_material_request"
+        name="Material Requests"
+        parent="construction_project.menu_construction_root"
+        action="action_construction_material_request"
+        sequence="70"/>
+
+</odoo>

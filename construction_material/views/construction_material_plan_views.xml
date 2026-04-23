@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── Material Plan List ────────────────────────────────────────────── -->
+
+    <record id="view_construction_material_plan_list" model="ir.ui.view">
+        <field name="name">construction.material.plan.list</field>
+        <field name="model">construction.material.plan</field>
+        <field name="arch" type="xml">
+            <list string="Material Plans"
+                  decoration-danger="status == 'shortage'"
+                  decoration-success="status == 'available'"
+                  decoration-info="status == 'requested'"
+                  decoration-muted="status == 'procured'">
+                <field name="sequence" widget="handle"/>
+                <field name="project_id"/>
+                <field name="division_id"/>
+                <field name="subdivision_id" optional="show"/>
+                <field name="boq_line_id"/>
+                <field name="product_id"/>
+                <field name="description" optional="show"/>
+                <field name="unit" optional="show"/>
+                <field name="planned_qty"/>
+                <field name="available_qty"/>
+                <field name="shortage_qty"
+                       decoration-danger="shortage_qty > 0"/>
+                <field name="status" widget="badge"
+                       decoration-success="status == 'available'"
+                       decoration-danger="status == 'shortage'"
+                       decoration-info="status == 'requested'"
+                       decoration-muted="status in ('procured', 'draft')"/>
+                <field name="request_line_count" string="Requests"
+                       optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ─── Material Plan Form ────────────────────────────────────────────── -->
+
+    <record id="view_construction_material_plan_form" model="ir.ui.view">
+        <field name="name">construction.material.plan.form</field>
+        <field name="model">construction.material.plan</field>
+        <field name="arch" type="xml">
+            <form string="Material Plan Line">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_requests"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-truck"
+                                invisible="request_line_count == 0">
+                            <field name="request_line_count"
+                                   widget="statinfo"
+                                   string="Requests"/>
+                        </button>
+                    </div>
+
+                    <widget name="web_ribbon"
+                            title="Shortage"
+                            bg_color="text-bg-danger"
+                            invisible="status != 'shortage'"/>
+                    <widget name="web_ribbon"
+                            title="Available"
+                            bg_color="text-bg-success"
+                            invisible="status != 'available'"/>
+                    <widget name="web_ribbon"
+                            title="Requested"
+                            bg_color="text-bg-info"
+                            invisible="status != 'requested'"/>
+                    <widget name="web_ribbon"
+                            title="Procured"
+                            bg_color="text-bg-secondary"
+                            invisible="status != 'procured'"/>
+
+                    <group>
+                        <group string="Source">
+                            <field name="boq_line_id"/>
+                            <field name="project_id" readonly="1"/>
+                            <field name="division_id" readonly="1"/>
+                            <field name="subdivision_id" readonly="1"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group string="Material">
+                            <field name="product_id"/>
+                            <field name="description"/>
+                            <field name="unit"/>
+                        </group>
+                    </group>
+
+                    <group string="Quantities">
+                        <group>
+                            <field name="planned_qty"/>
+                            <field name="available_qty" readonly="1"/>
+                            <field name="shortage_qty" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="status" readonly="1"/>
+                            <field name="notes"/>
+                        </group>
+                    </group>
+
+                    <separator string="Linked Request Lines"
+                               invisible="request_line_count == 0"/>
+                    <field name="request_line_ids"
+                           invisible="request_line_count == 0"
+                           readonly="1">
+                        <list>
+                            <field name="request_id"/>
+                            <field name="requested_qty"/>
+                            <field name="available_qty"/>
+                            <field name="shortage_qty"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── Material Plan Search ──────────────────────────────────────────── -->
+
+    <record id="view_construction_material_plan_search" model="ir.ui.view">
+        <field name="name">construction.material.plan.search</field>
+        <field name="model">construction.material.plan</field>
+        <field name="arch" type="xml">
+            <search string="Search Material Plans">
+                <field name="product_id"/>
+                <field name="description"/>
+                <field name="project_id"/>
+                <field name="division_id"/>
+                <separator/>
+                <filter name="status_draft"
+                        string="Draft"
+                        domain="[('status','=','draft')]"/>
+                <filter name="status_shortage"
+                        string="Shortage"
+                        domain="[('status','=','shortage')]"/>
+                <filter name="status_available"
+                        string="Available"
+                        domain="[('status','=','available')]"/>
+                <filter name="status_requested"
+                        string="Requested"
+                        domain="[('status','=','requested')]"/>
+                <filter name="status_procured"
+                        string="Procured"
+                        domain="[('status','=','procured')]"/>
+                <group expand="1" string="Group By">
+                    <filter name="group_project"
+                            string="Project"
+                            context="{'group_by': 'project_id'}"/>
+                    <filter name="group_division"
+                            string="Division"
+                            context="{'group_by': 'division_id'}"/>
+                    <filter name="group_subdivision"
+                            string="Subdivision"
+                            context="{'group_by': 'subdivision_id'}"/>
+                    <filter name="group_status"
+                            string="Status"
+                            context="{'group_by': 'status'}"/>
+                    <filter name="group_product"
+                            string="Product"
+                            context="{'group_by': 'product_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ─── Action ────────────────────────────────────────────────────────── -->
+
+    <record id="action_construction_material_plan" model="ir.actions.act_window">
+        <field name="name">Material Plans</field>
+        <field name="res_model">construction.material.plan</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_construction_material_plan_search"/>
+        <field name="context">{'search_default_status_shortage': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No material plans yet.
+            </p>
+            <p>
+                Add material plan lines to BOQ lines to track planned vs available quantities.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Extend the Phase 2 BOQ Line form to add:
+        - Material Plans smart button
+        - Material Requests smart button
+        - Embedded material plan lines (after cost_line_ids)
+    -->
+
+    <record id="view_construction_boq_line_material_ext" model="ir.ui.view">
+        <field name="name">construction.boq.line.material.ext</field>
+        <field name="model">construction.boq.line</field>
+        <field name="inherit_id"
+               ref="construction_boq.view_construction_boq_line_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Inject button_box before the title (BOQ line form has none originally) -->
+            <div class="oe_title" position="before">
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_open_material_plans"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-cubes">
+                        <field name="material_plan_count"
+                               widget="statinfo"
+                               string="Materials"/>
+                    </button>
+                    <button name="action_open_material_requests"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-truck"
+                            invisible="material_request_count == 0">
+                        <field name="material_request_count"
+                               widget="statinfo"
+                               string="Requests"/>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Insert Material Plans section after the cost_line_ids field -->
+            <field name="cost_line_ids" position="after">
+
+                <separator string="Material Plans"/>
+
+                <field name="material_plan_ids">
+                    <list editable="bottom"
+                          decoration-danger="status == 'shortage'"
+                          decoration-success="status == 'available'"
+                          decoration-info="status == 'requested'">
+                        <field name="sequence" widget="handle"/>
+                        <field name="product_id"/>
+                        <field name="description" optional="show"/>
+                        <field name="unit" optional="show"/>
+                        <field name="planned_qty"/>
+                        <field name="available_qty" readonly="1"/>
+                        <field name="shortage_qty" readonly="1"/>
+                        <field name="status" widget="badge"
+                               decoration-success="status == 'available'"
+                               decoration-danger="status == 'shortage'"
+                               decoration-info="status == 'requested'"
+                               decoration-muted="status in ('procured', 'draft')"/>
+                        <field name="notes" optional="hide"/>
+                    </list>
+                </field>
+
+                <button name="action_create_material_request"
+                        string="Generate Material Request"
+                        type="object"
+                        class="btn-secondary"
+                        invisible="material_plan_count == 0"/>
+
+            </field>
+
+        </field>
+    </record>
+
+</odoo>

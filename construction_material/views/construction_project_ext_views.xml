@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Extend the Phase 1 project form to add a Material Requests smart button.
+    -->
+
+    <record id="view_construction_project_material_ext" model="ir.ui.view">
+        <field name="name">construction.project.material.ext</field>
+        <field name="model">construction.project</field>
+        <field name="inherit_id"
+               ref="construction_project.view_construction_project_form"/>
+        <field name="arch" type="xml">
+
+            <div name="button_box" position="inside">
+                <button name="action_open_material_requests"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-truck">
+                    <field name="material_request_count"
+                           widget="statinfo"
+                           string="Mat. Requests"/>
+                </button>
+            </div>
+
+        </field>
+    </record>
+
+</odoo>
