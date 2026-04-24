@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             HOLDING DASHBOARD — under Smart Farm root menu
+             (sequence 1 = first item, before Projects)
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <menuitem
+            id="menu_holding_dashboard"
+            name="Holding Dashboard"
+            parent="smart_farm_base.menu_smart_farm_root"
+            action="action_holding_dashboard"
+            sequence="1"
+            groups="smart_farm_holding.group_holding_manager,smart_farm_holding.group_activity_company_manager"/>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             CROSS-COMPANY VIEWS — under Smart Farm root menu
+             Visible to Holding Manager only
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <menuitem
+            id="menu_holding_cross_company"
+            name="All Companies"
+            parent="smart_farm_base.menu_smart_farm_root"
+            sequence="2"
+            groups="smart_farm_holding.group_holding_manager"/>
+
+        <!-- All Farm Projects (cross-company) -->
+        <menuitem
+            id="menu_holding_all_farm_projects"
+            name="All Farm Projects"
+            parent="menu_holding_cross_company"
+            action="smart_farm_project.action_farm_project"
+            sequence="10"/>
+
+        <!-- All Construction Projects (cross-company) -->
+        <menuitem
+            id="menu_holding_all_construction"
+            name="All Construction Projects"
+            parent="menu_holding_cross_company"
+            action="construction_project.action_construction_project"
+            sequence="20"/>
+
+        <!-- All Agriculture Seasons -->
+        <menuitem
+            id="menu_holding_all_seasons"
+            name="All Agriculture Seasons"
+            parent="menu_holding_cross_company"
+            action="smart_farm_agriculture.action_agriculture_season"
+            sequence="30"/>
+
+        <!-- All Manufacturing Plans -->
+        <menuitem
+            id="menu_holding_all_mfg_plans"
+            name="All Production Plans"
+            parent="menu_holding_cross_company"
+            action="smart_farm_manufacturing.action_manufacturing_plan"
+            sequence="40"/>
+
+        <!-- All Livestock Herds -->
+        <menuitem
+            id="menu_holding_all_herds"
+            name="All Herds"
+            parent="menu_holding_cross_company"
+            action="smart_farm_livestock.action_livestock_herd"
+            sequence="50"/>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             CONFIGURATION — Company Activity Setup
+             Under existing Smart Farm → Configuration menu
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <menuitem
+            id="menu_company_activity_setup"
+            name="Company Activity Setup"
+            parent="smart_farm_base.menu_smart_farm_config"
+            action="action_company_activity_setup"
+            sequence="5"
+            groups="smart_farm_holding.group_holding_manager"/>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             ENTERPRISE SECURITY — under Configuration
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <menuitem
+            id="menu_holding_config_security"
+            name="Enterprise Groups"
+            parent="smart_farm_base.menu_smart_farm_config"
+            action="base_setup.action_general_configuration"
+            sequence="6"
+            groups="smart_farm_holding.group_holding_manager"/>
+
+    </data>
+</odoo>

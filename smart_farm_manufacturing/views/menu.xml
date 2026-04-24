@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem
+            id="menu_manufacturing_sf_root"
+            name="Manufacturing"
+            sequence="70"
+            groups="smart_farm_manufacturing.group_manufacturing_user"/>
+
+        <menuitem
+            id="menu_manufacturing_sf_projects"
+            name="Projects"
+            parent="menu_manufacturing_sf_root"
+            action="smart_farm_project.action_farm_project"
+            sequence="5"/>
+
+        <menuitem
+            id="menu_manufacturing_sf_production"
+            name="Production"
+            parent="menu_manufacturing_sf_root"
+            sequence="10"/>
+
+        <menuitem
+            id="menu_manufacturing_plan"
+            name="Production Plans"
+            parent="menu_manufacturing_sf_production"
+            action="action_manufacturing_plan"
+            sequence="10"/>
+
+        <menuitem
+            id="menu_manufacturing_work_order"
+            name="Work Orders"
+            parent="menu_manufacturing_sf_production"
+            action="action_manufacturing_work_order"
+            sequence="20"/>
+
+        <menuitem
+            id="menu_manufacturing_qc"
+            name="Quality Control"
+            parent="menu_manufacturing_sf_root"
+            sequence="20"/>
+
+        <menuitem
+            id="menu_manufacturing_qc_check"
+            name="QC Checks"
+            parent="menu_manufacturing_qc"
+            action="action_manufacturing_qc_check"
+            sequence="10"/>
+
+        <menuitem
+            id="menu_manufacturing_dispatch_parent"
+            name="Dispatch"
+            parent="menu_manufacturing_sf_root"
+            sequence="30"/>
+
+        <menuitem
+            id="menu_manufacturing_dispatch"
+            name="Dispatch Orders"
+            parent="menu_manufacturing_dispatch_parent"
+            action="action_manufacturing_dispatch"
+            sequence="10"/>
+
+    </data>
+</odoo>

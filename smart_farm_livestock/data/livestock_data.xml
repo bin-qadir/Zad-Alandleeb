@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="seq_livestock_herd" model="ir.sequence">
+            <field name="name">Livestock Herd</field>
+            <field name="code">livestock.herd</field>
+            <field name="prefix">HRD-%(year)s-</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <record id="seq_livestock_sale" model="ir.sequence">
+            <field name="name">Livestock Sale</field>
+            <field name="code">livestock.sale</field>
+            <field name="prefix">LSS-%(year)s-</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+    </data>
+</odoo>

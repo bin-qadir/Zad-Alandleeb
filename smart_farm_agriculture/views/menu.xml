@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             ROOT APP MENU — Agriculture Company
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <menuitem
+            id="menu_agriculture_root"
+            name="Agriculture"
+            sequence="60"
+            groups="smart_farm_agriculture.group_agriculture_user"/>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             OPERATIONS
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <menuitem
+            id="menu_agriculture_operations"
+            name="Operations"
+            parent="menu_agriculture_root"
+            sequence="10"/>
+
+        <menuitem
+            id="menu_agriculture_season"
+            name="Seasons"
+            parent="menu_agriculture_operations"
+            action="action_agriculture_season"
+            sequence="10"/>
+
+        <menuitem
+            id="menu_agriculture_crop_plan"
+            name="Crop Plans"
+            parent="menu_agriculture_operations"
+            action="action_agriculture_crop_plan"
+            sequence="20"/>
+
+        <menuitem
+            id="menu_agriculture_field_operation"
+            name="Field Operations"
+            parent="menu_agriculture_operations"
+            action="action_agriculture_field_operation"
+            sequence="30"/>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             HARVEST
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <menuitem
+            id="menu_agriculture_harvest_parent"
+            name="Harvest"
+            parent="menu_agriculture_root"
+            sequence="20"/>
+
+        <menuitem
+            id="menu_agriculture_harvest"
+            name="Harvest Records"
+            parent="menu_agriculture_harvest_parent"
+            action="action_agriculture_harvest"
+            sequence="10"/>
+
+        <menuitem
+            id="menu_agriculture_packing"
+            name="Packing &amp; Dispatch"
+            parent="menu_agriculture_harvest_parent"
+            action="action_agriculture_packing"
+            sequence="20"/>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             PROJECTS (link to farm.project filtered by agriculture)
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <menuitem
+            id="menu_agriculture_projects"
+            name="Farm Projects"
+            parent="menu_agriculture_root"
+            action="smart_farm_project.action_farm_project"
+            sequence="5"/>
+
+    </data>
+</odoo>

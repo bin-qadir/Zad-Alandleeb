@@ -1,0 +1,261 @@
+/* ============================================================
+   SMART FARM HOLDING — Enterprise Executive Dashboard
+   SAP/Oracle-style premium UI
+   ============================================================ */
+
+/* ── Root ─────────────────────────────────────────────────── */
+.hd-root {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #1a1f36;
+    background: #f5f7fa;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.hd-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f2d4a 100%);
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+}
+
+.hd-header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.hd-header-icon {
+    width: 52px;
+    height: 52px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.hd-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.hd-subtitle {
+    font-size: 13px;
+    opacity: 0.7;
+    margin-top: 2px;
+}
+
+.hd-refresh-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.hd-refresh-btn:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+/* ── Body ─────────────────────────────────────────────────── */
+.hd-body {
+    padding: 24px 32px;
+}
+
+/* ── Section ──────────────────────────────────────────────── */
+.hd-section {
+    margin-bottom: 28px;
+}
+
+.hd-section-hdr {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #64748b;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ── KPI Cards ────────────────────────────────────────────── */
+.hd-kpi-card {
+    border-radius: 12px;
+    padding: 20px 22px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+    display: block;
+    text-decoration: none;
+}
+
+.hd-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    color: white;
+    text-decoration: none;
+}
+
+.hd-kpi-icon {
+    font-size: 28px;
+    opacity: 0.7;
+    margin-bottom: 12px;
+}
+
+.hd-kpi-val {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.hd-kpi-val .o_field_widget {
+    font-size: 36px;
+    font-weight: 800;
+    color: white !important;
+}
+
+.hd-kpi-unit {
+    font-size: 20px;
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+.hd-kpi-lbl {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+}
+
+.hd-kpi-sub {
+    font-size: 11px;
+    opacity: 0.65;
+    margin-top: 2px;
+}
+
+.hd-kpi-sub .o_field_widget {
+    font-size: 11px;
+    font-weight: 600;
+    color: white !important;
+}
+
+/* Color Variants */
+.hd-navy { background: linear-gradient(135deg, #1e3a5f, #2563eb); }
+.hd-teal { background: linear-gradient(135deg, #0d4f5c, #0891b2); }
+.hd-red  { background: linear-gradient(135deg, #7f1d1d, #dc2626); }
+.hd-orange { background: linear-gradient(135deg, #78350f, #d97706); }
+
+/* ── Activity Cards ──────────────────────────────────────── */
+.hd-activity-card {
+    border-radius: 12px;
+    padding: 20px 22px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    text-align: left;
+    display: block;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.hd-activity-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    color: white;
+    text-decoration: none;
+}
+
+.hd-act-hdr {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    opacity: 0.9;
+}
+
+.hd-act-num {
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+.hd-act-num .o_field_widget {
+    font-size: 40px;
+    font-weight: 800;
+    color: white !important;
+}
+
+.hd-act-sub {
+    font-size: 11px;
+    opacity: 0.7;
+    margin-top: 2px;
+}
+
+.hd-act-sub .o_field_widget {
+    font-size: 11px;
+    font-weight: 600;
+    color: white !important;
+}
+
+/* Activity Colors */
+.hd-construction  { background: linear-gradient(135deg, #1c2d4a, #374151); }
+.hd-agriculture   { background: linear-gradient(135deg, #14532d, #16a34a); }
+.hd-manufacturing { background: linear-gradient(135deg, #312e81, #4f46e5); }
+.hd-livestock     { background: linear-gradient(135deg, #78350f, #b45309); }
+
+/* ── Risk Cards ───────────────────────────────────────────── */
+.hd-risk-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    text-align: center;
+    border: 1px solid #e2e8f0;
+}
+
+.hd-risk-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    margin-bottom: 8px;
+}
+
+.hd-risk-val {
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+.hd-risk-val .o_field_widget {
+    font-size: 42px;
+    font-weight: 800;
+}
+
+.hd-risk-sub {
+    font-size: 11px;
+    color: #94a3b8;
+}

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_agriculture_packing_search" model="ir.ui.view">
+            <field name="name">agriculture.packing.search</field>
+            <field name="model">agriculture.packing</field>
+            <field name="arch" type="xml">
+                <search string="Packing &amp; Dispatch">
+                    <field name="name"/>
+                    <field name="harvest_id"/>
+                    <field name="partner_id"/>
+                    <field name="product_id"/>
+                    <separator/>
+                    <filter name="draft"      string="Draft"      domain="[('state','=','draft')]"/>
+                    <filter name="packing"    string="Packing"    domain="[('state','=','packing')]"/>
+                    <filter name="packed"     string="Packed"     domain="[('state','=','packed')]"/>
+                    <filter name="dispatched" string="Dispatched" domain="[('state','=','dispatched')]"/>
+                    <filter name="delivered"  string="Delivered"  domain="[('state','=','delivered')]"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_season"  string="Season"   context="{'group_by':'season_id'}"/>
+                        <filter name="group_partner" string="Customer" context="{'group_by':'partner_id'}"/>
+                        <filter name="group_state"   string="State"    context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_agriculture_packing_list" model="ir.ui.view">
+            <field name="name">agriculture.packing.list</field>
+            <field name="model">agriculture.packing</field>
+            <field name="arch" type="xml">
+                <list string="Packing &amp; Dispatch" decoration-success="state=='delivered'"
+                      decoration-warning="state in ['dispatched','packed']">
+                    <field name="name"/>
+                    <field name="harvest_id"/>
+                    <field name="season_id"/>
+                    <field name="product_id"/>
+                    <field name="quantity"/>
+                    <field name="weight_net_kg" sum="Net Weight (kg)"/>
+                    <field name="boxes_count" sum="Boxes"/>
+                    <field name="partner_id"/>
+                    <field name="packing_date"/>
+                    <field name="dispatch_date"/>
+                    <field name="total_amount" sum="Total"/>
+                    <field name="currency_id" invisible="True"/>
+                    <field name="state" widget="badge"
+                           decoration-success="state=='delivered'"
+                           decoration-warning="state in ['dispatched','packed']"
+                           decoration-info="state in ['draft','packing']"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_agriculture_packing_form" model="ir.ui.view">
+            <field name="name">agriculture.packing.form</field>
+            <field name="model">agriculture.packing</field>
+            <field name="arch" type="xml">
+                <form string="Packing &amp; Dispatch">
+                    <header>
+                        <button name="action_start_packing" string="Start Packing" type="object"
+                                invisible="state != 'draft'" class="btn-primary"/>
+                        <button name="action_mark_packed"   string="Mark Packed"   type="object"
+                                invisible="state != 'packing'" class="btn-primary"/>
+                        <button name="action_dispatch"      string="Dispatch"      type="object"
+                                invisible="state != 'packed'" class="btn-warning"/>
+                        <button name="action_deliver"       string="Delivered"     type="object"
+                                invisible="state != 'dispatched'" class="btn-success"/>
+                        <button name="action_reset_draft"   string="Reset"         type="object"
+                                invisible="state not in ['packing']"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,packing,packed,dispatched,delivered"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Packing Reference…"/></h1>
+                        </div>
+
+                        <group>
+                            <group string="Context">
+                                <field name="harvest_id"/>
+                                <field name="season_id"/>
+                                <field name="product_id"/>
+                                <field name="uom_id"/>
+                                <field name="partner_id"/>
+                                <field name="destination"/>
+                            </group>
+                            <group string="Quantities">
+                                <field name="quantity"/>
+                                <field name="weight_net_kg"/>
+                                <field name="boxes_count"/>
+                                <field name="weight_per_box_kg"/>
+                            </group>
+                        </group>
+
+                        <group>
+                            <group string="Schedule">
+                                <field name="packing_date"/>
+                                <field name="dispatch_date"/>
+                            </group>
+                            <group string="Financials">
+                                <field name="unit_price"/>
+                                <field name="total_amount"/>
+                                <field name="currency_id" invisible="True"/>
+                            </group>
+                        </group>
+
+                        <group string="Notes">
+                            <field name="notes" colspan="2"/>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_agriculture_packing" model="ir.actions.act_window">
+            <field name="name">Packing &amp; Dispatch</field>
+            <field name="res_model">agriculture.packing</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

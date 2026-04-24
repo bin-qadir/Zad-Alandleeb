@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_livestock_feeding_plan_list" model="ir.ui.view">
+            <field name="name">livestock.feeding.plan.list</field>
+            <field name="model">livestock.feeding.plan</field>
+            <field name="arch" type="xml">
+                <list string="Feeding Plans" decoration-success="state=='done'"
+                      decoration-warning="state=='active'">
+                    <field name="name"/>
+                    <field name="herd_id"/>
+                    <field name="feed_type"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="total_animals"/>
+                    <field name="daily_qty_per_animal_kg"/>
+                    <field name="daily_total_kg"/>
+                    <field name="estimated_total_cost" sum="Total Cost"/>
+                    <field name="currency_id" invisible="True"/>
+                    <field name="state" widget="badge"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_livestock_feeding_plan_form" model="ir.ui.view">
+            <field name="name">livestock.feeding.plan.form</field>
+            <field name="model">livestock.feeding.plan</field>
+            <field name="arch" type="xml">
+                <form string="Feeding Plan">
+                    <header>
+                        <button name="action_activate"    string="Activate"  type="object"
+                                invisible="state != 'draft'" class="btn-primary"/>
+                        <button name="action_complete"    string="Complete"  type="object"
+                                invisible="state != 'active'" class="btn-success"/>
+                        <button name="action_cancel"      string="Cancel"    type="object"
+                                invisible="state in ['done','cancelled']"/>
+                        <button name="action_reset_draft" string="Reset"     type="object"
+                                invisible="state != 'cancelled'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,active,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Feeding Plan Name…"/></h1>
+                        </div>
+                        <group>
+                            <group string="Context">
+                                <field name="herd_id"/>
+                                <field name="feed_type"/>
+                                <field name="feed_source_id"/>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                            </group>
+                            <group string="Quantities">
+                                <field name="total_animals"/>
+                                <field name="daily_qty_per_animal_kg"/>
+                                <field name="daily_total_kg"/>
+                                <field name="cost_per_kg"/>
+                                <field name="estimated_total_cost"/>
+                                <field name="currency_id" invisible="True"/>
+                            </group>
+                        </group>
+                        <group string="Notes">
+                            <field name="notes" colspan="2"/>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_livestock_feeding_plan" model="ir.actions.act_window">
+            <field name="name">Feeding Plans</field>
+            <field name="res_model">livestock.feeding.plan</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

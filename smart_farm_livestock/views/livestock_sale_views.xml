@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_livestock_sale_list" model="ir.ui.view">
+            <field name="name">livestock.sale.list</field>
+            <field name="model">livestock.sale</field>
+            <field name="arch" type="xml">
+                <list string="Livestock Sales" decoration-success="state=='done'"
+                      decoration-warning="state=='confirmed'">
+                    <field name="name"/>
+                    <field name="herd_id"/>
+                    <field name="partner_id"/>
+                    <field name="sale_date"/>
+                    <field name="animals_count"/>
+                    <field name="total_weight_kg"/>
+                    <field name="pricing_method"/>
+                    <field name="total_amount" sum="Total Revenue"/>
+                    <field name="currency_id" invisible="True"/>
+                    <field name="state" widget="badge"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_livestock_sale_form" model="ir.ui.view">
+            <field name="name">livestock.sale.form</field>
+            <field name="model">livestock.sale</field>
+            <field name="arch" type="xml">
+                <form string="Livestock Sale">
+                    <header>
+                        <button name="action_confirm"     string="Confirm"   type="object"
+                                invisible="state != 'draft'" class="btn-primary"/>
+                        <button name="action_invoice"     string="Invoice"   type="object"
+                                invisible="state != 'confirmed'" class="btn-primary"/>
+                        <button name="action_done"        string="Done"      type="object"
+                                invisible="state != 'invoiced'" class="btn-success"/>
+                        <button name="action_cancel"      string="Cancel"    type="object"
+                                invisible="state in ['done','cancelled']"/>
+                        <button name="action_reset_draft" string="Reset"     type="object"
+                                invisible="state != 'cancelled'"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,confirmed,invoiced,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Sale Reference…"/></h1>
+                        </div>
+                        <group>
+                            <group string="Context">
+                                <field name="herd_id"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="partner_id"/>
+                                <field name="sale_date"/>
+                            </group>
+                            <group string="Animals &amp; Weight">
+                                <field name="animals_count"/>
+                                <field name="average_weight_kg"/>
+                                <field name="total_weight_kg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Pricing">
+                                <field name="pricing_method"/>
+                                <field name="price_per_kg" invisible="pricing_method != 'per_kg'"/>
+                                <field name="price_per_head" invisible="pricing_method != 'per_head'"/>
+                                <field name="total_amount"/>
+                                <field name="currency_id" invisible="True"/>
+                            </group>
+                            <group string="AI Layer">
+                                <field name="risk_score" widget="percentpie"/>
+                                <field name="next_recommended_action"/>
+                            </group>
+                        </group>
+                        <group string="Notes">
+                            <field name="notes" colspan="2"/>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_livestock_sale" model="ir.actions.act_window">
+            <field name="name">Livestock Sales</field>
+            <field name="res_model">livestock.sale</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

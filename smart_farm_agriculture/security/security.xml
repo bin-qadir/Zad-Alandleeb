@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             MODULE CATEGORY
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="module_category_agriculture" model="ir.module.category">
+            <field name="name">Agriculture</field>
+            <field name="description">Smart Farm — Agriculture Company operational module.</field>
+            <field name="sequence">60</field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             SECURITY GROUPS
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <!-- Agriculture User -->
+        <record id="group_agriculture_user" model="res.groups">
+            <field name="name">User</field>
+            <field name="category_id" ref="module_category_agriculture"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">
+                Agriculture users can read and create seasons, crop plans, operations, harvest and packing records.
+            </field>
+        </record>
+
+        <!-- Agriculture Manager -->
+        <record id="group_agriculture_manager" model="res.groups">
+            <field name="name">Manager</field>
+            <field name="category_id" ref="module_category_agriculture"/>
+            <field name="implied_ids" eval="[(4, ref('group_agriculture_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+            <field name="comment">
+                Agriculture managers have full access to all agriculture records and configuration.
+            </field>
+        </record>
+
+    </data>
+</odoo>

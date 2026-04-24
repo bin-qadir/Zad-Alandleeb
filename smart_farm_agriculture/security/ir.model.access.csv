@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_agriculture_season_user,agriculture.season user,model_agriculture_season,group_agriculture_user,1,1,1,0
+access_agriculture_season_manager,agriculture.season manager,model_agriculture_season,group_agriculture_manager,1,1,1,1
+access_agriculture_crop_plan_user,agriculture.crop.plan user,model_agriculture_crop_plan,group_agriculture_user,1,1,1,0
+access_agriculture_crop_plan_manager,agriculture.crop.plan manager,model_agriculture_crop_plan,group_agriculture_manager,1,1,1,1
+access_agriculture_field_operation_user,agriculture.field.operation user,model_agriculture_field_operation,group_agriculture_user,1,1,1,0
+access_agriculture_field_operation_manager,agriculture.field.operation manager,model_agriculture_field_operation,group_agriculture_manager,1,1,1,1
+access_agriculture_harvest_user,agriculture.harvest user,model_agriculture_harvest,group_agriculture_user,1,1,1,0
+access_agriculture_harvest_manager,agriculture.harvest manager,model_agriculture_harvest,group_agriculture_manager,1,1,1,1
+access_agriculture_packing_user,agriculture.packing user,model_agriculture_packing,group_agriculture_user,1,1,1,0
+access_agriculture_packing_manager,agriculture.packing manager,model_agriculture_packing,group_agriculture_manager,1,1,1,1

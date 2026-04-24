@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_manufacturing_plan_search" model="ir.ui.view">
+            <field name="name">manufacturing.plan.search</field>
+            <field name="model">manufacturing.plan</field>
+            <field name="arch" type="xml">
+                <search string="Production Plans">
+                    <field name="name"/>
+                    <field name="reference"/>
+                    <field name="responsible_id"/>
+                    <field name="product_id"/>
+                    <separator/>
+                    <filter name="draft"       string="Draft"       domain="[('state','=','draft')]"/>
+                    <filter name="in_progress" string="In Progress" domain="[('state','=','in_progress')]"/>
+                    <filter name="done"        string="Completed"   domain="[('state','=','done')]"/>
+                    <filter name="high_risk"   string="High Risk"   domain="[('risk_score','>=',70)]"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_state"   string="State"   context="{'group_by':'state'}"/>
+                        <filter name="group_product" string="Product" context="{'group_by':'product_id'}"/>
+                        <filter name="group_stage"   string="Lifecycle Stage" context="{'group_by':'lifecycle_stage_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_manufacturing_plan_list" model="ir.ui.view">
+            <field name="name">manufacturing.plan.list</field>
+            <field name="model">manufacturing.plan</field>
+            <field name="arch" type="xml">
+                <list string="Production Plans" decoration-success="state=='done'"
+                      decoration-warning="state=='in_progress'">
+                    <field name="reference"/>
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="planned_qty"/>
+                    <field name="uom_id"/>
+                    <field name="lifecycle_stage_id"/>
+                    <field name="planned_start"/>
+                    <field name="planned_end"/>
+                    <field name="responsible_id" widget="many2one_avatar_user"/>
+                    <field name="budgeted_cost" sum="Budget"/>
+                    <field name="actual_cost" sum="Actual"/>
+                    <field name="currency_id" invisible="True"/>
+                    <field name="risk_score" widget="progressbar" optional="show"/>
+                    <field name="state" widget="badge"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_manufacturing_plan_form" model="ir.ui.view">
+            <field name="name">manufacturing.plan.form</field>
+            <field name="model">manufacturing.plan</field>
+            <field name="arch" type="xml">
+                <form string="Production Plan">
+                    <header>
+                        <button name="action_confirm"     string="Confirm"      type="object"
+                                invisible="state != 'draft'" class="btn-primary"/>
+                        <button name="action_start"       string="Start"        type="object"
+                                invisible="state != 'confirmed'" class="btn-primary"/>
+                        <button name="action_complete"    string="Complete"     type="object"
+                                invisible="state != 'in_progress'" class="btn-success"/>
+                        <button name="action_cancel"      string="Cancel"       type="object"
+                                invisible="state in ['done','cancelled']"/>
+                        <button name="action_reset_draft" string="Reset to Draft" type="object"
+                                invisible="state != 'cancelled'"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,confirmed,in_progress,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_work_orders" type="object"
+                                    class="oe_stat_button" icon="fa-cog">
+                                <field name="work_order_count" widget="statinfo" string="Work Orders"/>
+                            </button>
+                        </div>
+
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Plan Name…"/></h1>
+                            <div><field name="reference" class="text-muted" placeholder="MFG-2026-0001"/></div>
+                        </div>
+
+                        <group>
+                            <group string="Identity">
+                                <field name="farm_project_id"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="lifecycle_stage_id"/>
+                                <field name="responsible_id" widget="many2one_avatar_user"/>
+                                <field name="analytic_account_id"/>
+                            </group>
+                            <group string="Product">
+                                <field name="product_id"/>
+                                <field name="planned_qty"/>
+                                <field name="uom_id"/>
+                                <field name="budgeted_cost"/>
+                                <field name="actual_cost"/>
+                                <field name="currency_id" invisible="True"/>
+                            </group>
+                        </group>
+
+                        <group string="Schedule">
+                            <group>
+                                <field name="planned_start"/>
+                                <field name="planned_end"/>
+                            </group>
+                            <group>
+                                <field name="actual_start"/>
+                                <field name="actual_end"/>
+                            </group>
+                        </group>
+
+                        <group string="AI Decision Layer">
+                            <group>
+                                <field name="risk_score" widget="percentpie"/>
+                                <field name="delay_score" widget="percentpie"/>
+                            </group>
+                            <group>
+                                <field name="budget_risk" widget="percentpie"/>
+                                <field name="claim_readiness" widget="percentpie"/>
+                            </group>
+                            <field name="next_recommended_action" colspan="2"/>
+                        </group>
+
+                        <notebook>
+                            <page string="Work Orders" name="work_orders">
+                                <field name="work_order_ids" mode="list">
+                                    <list>
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="name"/>
+                                        <field name="product_id"/>
+                                        <field name="planned_qty"/>
+                                        <field name="actual_qty"/>
+                                        <field name="planned_date"/>
+                                        <field name="operator_id" widget="many2one_avatar_user"/>
+                                        <field name="qc_result" widget="badge"/>
+                                        <field name="state" widget="badge"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_manufacturing_plan" model="ir.actions.act_window">
+            <field name="name">Production Plans</field>
+            <field name="res_model">manufacturing.plan</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

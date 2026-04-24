@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             agriculture.season — SEARCH
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_agriculture_season_search" model="ir.ui.view">
+            <field name="name">agriculture.season.search</field>
+            <field name="model">agriculture.season</field>
+            <field name="arch" type="xml">
+                <search string="Seasons">
+                    <field name="name" string="Season"/>
+                    <field name="code"/>
+                    <field name="responsible_id"/>
+                    <field name="farm_project_id"/>
+                    <separator/>
+                    <filter name="draft"     string="Draft"     domain="[('state','=','draft')]"/>
+                    <filter name="running"   string="Running"   domain="[('state','=','running')]"/>
+                    <filter name="done"      string="Completed" domain="[('state','=','done')]"/>
+                    <filter name="cancelled" string="Cancelled" domain="[('state','=','cancelled')]"/>
+                    <separator/>
+                    <filter name="high_risk" string="High Risk" domain="[('risk_score','>=',70)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_state"   string="State"   context="{'group_by':'state'}"/>
+                        <filter name="group_project" string="Project" context="{'group_by':'farm_project_id'}"/>
+                        <filter name="group_stage"   string="Lifecycle Stage" context="{'group_by':'lifecycle_stage_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             agriculture.season — LIST
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_agriculture_season_list" model="ir.ui.view">
+            <field name="name">agriculture.season.list</field>
+            <field name="model">agriculture.season</field>
+            <field name="arch" type="xml">
+                <list string="Agriculture Seasons" decoration-success="state=='done'"
+                      decoration-warning="state=='running'" decoration-muted="state=='cancelled'">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="farm_project_id"/>
+                    <field name="lifecycle_stage_id"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="total_area_ha"/>
+                    <field name="responsible_id" widget="many2one_avatar_user"/>
+                    <field name="risk_score" widget="progressbar"/>
+                    <field name="state" widget="badge"
+                           decoration-success="state=='done'"
+                           decoration-warning="state=='running'"
+                           decoration-info="state=='draft'"
+                           decoration-danger="state=='cancelled'"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             agriculture.season — FORM
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_agriculture_season_form" model="ir.ui.view">
+            <field name="name">agriculture.season.form</field>
+            <field name="model">agriculture.season</field>
+            <field name="arch" type="xml">
+                <form string="Agriculture Season">
+                    <header>
+                        <button name="action_start"       string="Start Season"  type="object"
+                                invisible="state != 'draft'" class="btn-primary"/>
+                        <button name="action_complete"    string="Complete"      type="object"
+                                invisible="state != 'running'" class="btn-success"/>
+                        <button name="action_cancel"      string="Cancel"        type="object"
+                                invisible="state in ['done','cancelled']"/>
+                        <button name="action_reset_draft" string="Reset to Draft" type="object"
+                                invisible="state not in ['cancelled']"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,running,done"/>
+                    </header>
+                    <sheet>
+                        <!-- Smart Buttons -->
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_crop_plans" type="object"
+                                    class="oe_stat_button" icon="fa-leaf">
+                                <field name="crop_plan_count" widget="statinfo" string="Crop Plans"/>
+                            </button>
+                            <button name="action_view_operations" type="object"
+                                    class="oe_stat_button" icon="fa-tasks">
+                                <field name="operation_count" widget="statinfo" string="Operations"/>
+                            </button>
+                        </div>
+
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Season Name…"/></h1>
+                            <div>
+                                <field name="code" placeholder="AGR-2026-S1" class="text-muted"/>
+                            </div>
+                        </div>
+
+                        <group>
+                            <group string="Identity">
+                                <field name="farm_project_id"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="lifecycle_stage_id"/>
+                                <field name="responsible_id" widget="many2one_avatar_user"/>
+                                <field name="analytic_account_id"/>
+                            </group>
+                            <group string="Schedule &amp; Area">
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                                <field name="total_area_ha"/>
+                            </group>
+                        </group>
+
+                        <!-- AI Decision Layer -->
+                        <group string="AI Decision Layer" name="ai_layer">
+                            <group>
+                                <field name="risk_score" widget="percentpie"/>
+                                <field name="delay_score" widget="percentpie"/>
+                            </group>
+                            <group>
+                                <field name="budget_risk" widget="percentpie"/>
+                                <field name="claim_readiness" widget="percentpie"/>
+                            </group>
+                            <field name="next_recommended_action" colspan="2"
+                                   placeholder="AI-recommended next action…"/>
+                        </group>
+
+                        <notebook>
+                            <page string="Crop Plans" name="crop_plans">
+                                <field name="crop_plan_ids" mode="list">
+                                    <list>
+                                        <field name="name"/>
+                                        <field name="crop_type_id"/>
+                                        <field name="farm_field_id"/>
+                                        <field name="planting_date"/>
+                                        <field name="expected_harvest_date"/>
+                                        <field name="target_yield_kg"/>
+                                        <field name="actual_yield_kg"/>
+                                        <field name="state" widget="badge"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Field Operations" name="operations">
+                                <field name="operation_ids" mode="list">
+                                    <list>
+                                        <field name="name"/>
+                                        <field name="operation_type"/>
+                                        <field name="planned_date"/>
+                                        <field name="actual_date"/>
+                                        <field name="operator_id" widget="many2one_avatar_user"/>
+                                        <field name="state" widget="badge"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Notes" name="notes">
+                                <field name="description" placeholder="Season notes and observations…"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             ACTION
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="action_agriculture_season" model="ir.actions.act_window">
+            <field name="name">Seasons</field>
+            <field name="res_model">agriculture.season</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_running': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Create your first agriculture season</p>
+                <p>Seasons are the top-level containers for all agriculture activities.</p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

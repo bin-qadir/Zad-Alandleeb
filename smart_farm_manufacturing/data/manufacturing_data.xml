@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="seq_manufacturing_plan" model="ir.sequence">
+            <field name="name">Manufacturing Plan</field>
+            <field name="code">manufacturing.plan</field>
+            <field name="prefix">MFG-%(year)s-</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <record id="seq_manufacturing_dispatch" model="ir.sequence">
+            <field name="name">Manufacturing Dispatch</field>
+            <field name="code">manufacturing.dispatch</field>
+            <field name="prefix">DSP-%(year)s-</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+    </data>
+</odoo>

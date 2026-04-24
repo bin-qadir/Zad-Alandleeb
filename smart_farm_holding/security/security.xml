@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             MODULE CATEGORY — Smart Farm Enterprise
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="module_category_smartfarm_enterprise" model="ir.module.category">
+            <field name="name">Smart Farm Enterprise</field>
+            <field name="description">
+                Enterprise-wide roles for the Smart Farm Holding platform.
+                Covers all companies: Construction, Agriculture, Manufacturing, Livestock.
+            </field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             ENTERPRISE SECURITY GROUPS
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <!--
+            GROUP HIERARCHY:
+            Holding Manager (sees ALL)
+              └─ Activity Company Manager (sees own company)
+                   └─ Activity User (sees own records)
+                        ├─ Finance User (cross-company financial read)
+                        ├─ Procurement User (procurement access)
+                        └─ Project Control User (project control view)
+        -->
+
+        <!-- 1. Activity User — basic operational access -->
+        <record id="group_activity_user" model="res.groups">
+            <field name="name">Activity User</field>
+            <field name="category_id" ref="module_category_smartfarm_enterprise"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">
+                Can read and create records within their assigned company and activity.
+                Cannot access other companies' data.
+            </field>
+        </record>
+
+        <!-- 2. Finance User — financial read access across assigned companies -->
+        <record id="group_finance_user" model="res.groups">
+            <field name="name">Finance User</field>
+            <field name="category_id" ref="module_category_smartfarm_enterprise"/>
+            <field name="implied_ids" eval="[(4, ref('group_activity_user'))]"/>
+            <field name="comment">
+                Finance users can read financial data (costs, revenues, budgets) across
+                their assigned companies. Cannot modify operational records.
+            </field>
+        </record>
+
+        <!-- 3. Procurement User — procurement access -->
+        <record id="group_procurement_user" model="res.groups">
+            <field name="name">Procurement User</field>
+            <field name="category_id" ref="module_category_smartfarm_enterprise"/>
+            <field name="implied_ids" eval="[(4, ref('group_activity_user'))]"/>
+            <field name="comment">
+                Procurement users can manage purchase requisitions, RFQs, and procurement
+                records within their assigned companies.
+            </field>
+        </record>
+
+        <!-- 4. Project Control User — project visibility across companies -->
+        <record id="group_project_control_user" model="res.groups">
+            <field name="name">Project Control User</field>
+            <field name="category_id" ref="module_category_smartfarm_enterprise"/>
+            <field name="implied_ids" eval="[(4, ref('group_activity_user'))]"/>
+            <field name="comment">
+                Project Control users have read access to all projects, schedules,
+                and progress data within their assigned companies.
+            </field>
+        </record>
+
+        <!-- 5. Activity Company Manager — manages one activity company -->
+        <record id="group_activity_company_manager" model="res.groups">
+            <field name="name">Activity Company Manager</field>
+            <field name="category_id" ref="module_category_smartfarm_enterprise"/>
+            <field name="implied_ids" eval="[
+                (4, ref('group_activity_user')),
+                (4, ref('group_finance_user')),
+                (4, ref('group_procurement_user')),
+                (4, ref('group_project_control_user')),
+                (4, ref('smart_farm_agriculture.group_agriculture_manager')),
+                (4, ref('smart_farm_manufacturing.group_manufacturing_manager')),
+                (4, ref('smart_farm_livestock.group_livestock_manager')),
+                (4, ref('construction_project.group_construction_manager')),
+            ]"/>
+            <field name="comment">
+                Manages a single activity company. Full access to own company data.
+                Cannot access data from other companies.
+            </field>
+        </record>
+
+        <!-- 6. Holding Manager — master enterprise role -->
+        <record id="group_holding_manager" model="res.groups">
+            <field name="name">Holding Manager</field>
+            <field name="category_id" ref="module_category_smartfarm_enterprise"/>
+            <field name="implied_ids" eval="[
+                (4, ref('group_activity_company_manager')),
+                (4, ref('smart_farm_base.group_smart_farm_manager')),
+            ]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+            <field name="comment">
+                Master holding role. Sees ALL companies, ALL activities, ALL data.
+                Bypasses all company-scoped record rules.
+                Intended for the CEO, CFO, and Smart Farm Holding administrators.
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_agriculture_field_operation_search" model="ir.ui.view">
+            <field name="name">agriculture.field.operation.search</field>
+            <field name="model">agriculture.field.operation</field>
+            <field name="arch" type="xml">
+                <search string="Field Operations">
+                    <field name="name"/>
+                    <field name="season_id"/>
+                    <field name="crop_plan_id"/>
+                    <field name="operation_type"/>
+                    <separator/>
+                    <filter name="planned"     string="Planned"      domain="[('state','=','planned')]"/>
+                    <filter name="in_progress" string="In Progress"  domain="[('state','=','in_progress')]"/>
+                    <filter name="done"        string="Done"         domain="[('state','=','done')]"/>
+                    <separator/>
+                    <filter name="today"       string="Today"
+                            domain="[('planned_date','=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_type"   string="Type"   context="{'group_by':'operation_type'}"/>
+                        <filter name="group_season" string="Season" context="{'group_by':'season_id'}"/>
+                        <filter name="group_state"  string="State"  context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_agriculture_field_operation_list" model="ir.ui.view">
+            <field name="name">agriculture.field.operation.list</field>
+            <field name="model">agriculture.field.operation</field>
+            <field name="arch" type="xml">
+                <list string="Field Operations" decoration-success="state=='done'"
+                      decoration-warning="state=='in_progress'">
+                    <field name="name"/>
+                    <field name="season_id"/>
+                    <field name="crop_plan_id" optional="show"/>
+                    <field name="operation_type" widget="badge"/>
+                    <field name="planned_date"/>
+                    <field name="actual_date"/>
+                    <field name="operator_id" widget="many2one_avatar_user"/>
+                    <field name="estimated_cost" sum="Est. Cost"/>
+                    <field name="actual_cost" sum="Act. Cost"/>
+                    <field name="state" widget="badge"
+                           decoration-success="state=='done'"
+                           decoration-warning="state=='in_progress'"
+                           decoration-info="state=='planned'"
+                           decoration-danger="state=='cancelled'"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_agriculture_field_operation_form" model="ir.ui.view">
+            <field name="name">agriculture.field.operation.form</field>
+            <field name="model">agriculture.field.operation</field>
+            <field name="arch" type="xml">
+                <form string="Field Operation">
+                    <header>
+                        <button name="action_start"  string="Start"  type="object"
+                                invisible="state != 'planned'" class="btn-primary"/>
+                        <button name="action_done"   string="Done"   type="object"
+                                invisible="state != 'in_progress'" class="btn-success"/>
+                        <button name="action_cancel" string="Cancel" type="object"
+                                invisible="state in ['done','cancelled']"/>
+                        <button name="action_reset"  string="Reset"  type="object"
+                                invisible="state != 'cancelled'"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="planned,in_progress,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Operation Name…"/></h1>
+                        </div>
+
+                        <group>
+                            <group string="Context">
+                                <field name="season_id"/>
+                                <field name="crop_plan_id"
+                                       domain="[('season_id','=',season_id)]"/>
+                                <field name="farm_field_id"/>
+                                <field name="operation_type"/>
+                            </group>
+                            <group string="Schedule &amp; Resources">
+                                <field name="planned_date"/>
+                                <field name="actual_date"/>
+                                <field name="operator_id" widget="many2one_avatar_user"/>
+                                <field name="work_type_id"/>
+                                <field name="cost_type_id"/>
+                            </group>
+                        </group>
+
+                        <group>
+                            <group string="Quantities">
+                                <field name="quantity"/>
+                                <field name="unit"/>
+                            </group>
+                            <group string="Costs">
+                                <field name="estimated_cost"/>
+                                <field name="actual_cost"/>
+                            </group>
+                        </group>
+
+                        <group string="Result">
+                            <field name="result_notes" placeholder="Observations after operation…" colspan="2"/>
+                        </group>
+
+                        <group string="Notes">
+                            <field name="notes" colspan="2"/>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_agriculture_field_operation" model="ir.actions.act_window">
+            <field name="name">Field Operations</field>
+            <field name="res_model">agriculture.field.operation</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

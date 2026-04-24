@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_livestock_herd_search" model="ir.ui.view">
+            <field name="name">livestock.herd.search</field>
+            <field name="model">livestock.herd</field>
+            <field name="arch" type="xml">
+                <search string="Herds">
+                    <field name="name"/>
+                    <field name="reference"/>
+                    <field name="species"/>
+                    <field name="responsible_id"/>
+                    <separator/>
+                    <filter name="active"     string="Active"       domain="[('state','=','active')]"/>
+                    <filter name="fattening"  string="Fattening"    domain="[('state','=','fattening')]"/>
+                    <filter name="sale_ready" string="Ready for Sale" domain="[('state','=','sale_ready')]"/>
+                    <filter name="high_risk"  string="High Risk"    domain="[('risk_score','>=',70)]"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_species" string="Species" context="{'group_by':'species'}"/>
+                        <filter name="group_state"   string="State"   context="{'group_by':'state'}"/>
+                        <filter name="group_stage"   string="Lifecycle Stage" context="{'group_by':'lifecycle_stage_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_livestock_herd_list" model="ir.ui.view">
+            <field name="name">livestock.herd.list</field>
+            <field name="model">livestock.herd</field>
+            <field name="arch" type="xml">
+                <list string="Herds" decoration-success="state in ['sold']"
+                      decoration-warning="state in ['fattening','sale_ready']">
+                    <field name="reference"/>
+                    <field name="name"/>
+                    <field name="species" widget="badge"/>
+                    <field name="breed"/>
+                    <field name="lifecycle_stage_id"/>
+                    <field name="total_animals"/>
+                    <field name="male_count"/>
+                    <field name="female_count"/>
+                    <field name="establishment_date"/>
+                    <field name="target_sale_date"/>
+                    <field name="responsible_id" widget="many2one_avatar_user"/>
+                    <field name="risk_score" widget="progressbar" optional="show"/>
+                    <field name="state" widget="badge"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_livestock_herd_form" model="ir.ui.view">
+            <field name="name">livestock.herd.form</field>
+            <field name="model">livestock.herd</field>
+            <field name="arch" type="xml">
+                <form string="Livestock Herd">
+                    <header>
+                        <button name="action_activate"       string="Activate"       type="object"
+                                invisible="state != 'draft'" class="btn-primary"/>
+                        <button name="action_start_fattening" string="Start Fattening" type="object"
+                                invisible="state != 'active'" class="btn-primary"/>
+                        <button name="action_ready_for_sale" string="Ready for Sale"  type="object"
+                                invisible="state != 'fattening'" class="btn-warning"/>
+                        <button name="action_mark_sold"      string="Mark Sold"       type="object"
+                                invisible="state != 'sale_ready'" class="btn-success"/>
+                        <button name="action_cancel"         string="Cancel"          type="object"
+                                invisible="state in ['sold','cancelled']"/>
+                        <button name="action_reset_draft"    string="Reset"           type="object"
+                                invisible="state != 'cancelled'"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,active,fattening,sale_ready,sold"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_animals" type="object"
+                                    class="oe_stat_button" icon="fa-paw">
+                                <div class="o_stat_info">
+                                    <field name="total_animals" class="o_stat_value"/>
+                                    <span class="o_stat_text">Animals</span>
+                                </div>
+                            </button>
+                            <button name="action_view_health_checks" type="object"
+                                    class="oe_stat_button" icon="fa-medkit">
+                                <field name="health_check_count" widget="statinfo" string="Health Checks"/>
+                            </button>
+                            <button name="action_view_feeding_plans" type="object"
+                                    class="oe_stat_button" icon="fa-leaf">
+                                <field name="feeding_plan_count" widget="statinfo" string="Feeding Plans"/>
+                            </button>
+                        </div>
+
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Herd Name…"/></h1>
+                            <div><field name="reference" class="text-muted" placeholder="HRD-2026-0001"/></div>
+                        </div>
+
+                        <group>
+                            <group string="Identity">
+                                <field name="species"/>
+                                <field name="breed"/>
+                                <field name="lifecycle_stage_id"/>
+                                <field name="farm_project_id"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="responsible_id" widget="many2one_avatar_user"/>
+                                <field name="analytic_account_id"/>
+                            </group>
+                            <group string="Count &amp; Schedule">
+                                <field name="total_animals"/>
+                                <field name="male_count"/>
+                                <field name="female_count"/>
+                                <field name="establishment_date"/>
+                                <field name="target_sale_date"/>
+                            </group>
+                        </group>
+
+                        <group string="AI Decision Layer">
+                            <group>
+                                <field name="risk_score" widget="percentpie"/>
+                                <field name="delay_score" widget="percentpie"/>
+                            </group>
+                            <group>
+                                <field name="budget_risk" widget="percentpie"/>
+                            </group>
+                            <field name="next_recommended_action" colspan="2"/>
+                        </group>
+
+                        <notebook>
+                            <page string="Animals" name="animals">
+                                <field name="animal_ids" mode="list">
+                                    <list>
+                                        <field name="tag_number"/>
+                                        <field name="name"/>
+                                        <field name="gender" widget="badge"/>
+                                        <field name="birth_date"/>
+                                        <field name="breed"/>
+                                        <field name="weight_current_kg"/>
+                                        <field name="weight_target_kg"/>
+                                        <field name="state" widget="badge"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Health Checks" name="health">
+                                <field name="health_check_ids" mode="list">
+                                    <list>
+                                        <field name="name"/>
+                                        <field name="check_date"/>
+                                        <field name="check_type"/>
+                                        <field name="animals_treated"/>
+                                        <field name="result" widget="badge"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Feeding Plans" name="feeding">
+                                <field name="feeding_plan_ids" mode="list">
+                                    <list>
+                                        <field name="name"/>
+                                        <field name="start_date"/>
+                                        <field name="end_date"/>
+                                        <field name="feed_type"/>
+                                        <field name="daily_total_kg"/>
+                                        <field name="state" widget="badge"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_livestock_herd" model="ir.actions.act_window">
+            <field name="name">Herds</field>
+            <field name="res_model">livestock.herd</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

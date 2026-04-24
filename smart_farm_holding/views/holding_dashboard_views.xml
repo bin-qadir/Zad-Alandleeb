@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             smartfarm.holding.dashboard — FORM (Executive Dashboard)
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_holding_dashboard_form" model="ir.ui.view">
+            <field name="name">smartfarm.holding.dashboard.form</field>
+            <field name="model">smartfarm.holding.dashboard</field>
+            <field name="arch" type="xml">
+                <form string="Smart Farm Holding — Executive Dashboard"
+                      create="false" delete="false">
+                    <sheet>
+                        <field name="currency_id" invisible="True"/>
+
+                        <div class="hd-root">
+
+                            <!-- ── HEADER ──────────────────────────────────── -->
+                            <div class="hd-header">
+                                <div class="hd-header-left">
+                                    <div class="hd-header-icon">
+                                        <i class="fa fa-building"/>
+                                    </div>
+                                    <div>
+                                        <div class="hd-title">Smart Farm Holding</div>
+                                        <div class="hd-subtitle">
+                                            Enterprise Executive Dashboard
+                                            — <field name="holding_company_name" readonly="True"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button name="action_refresh" type="object"
+                                        class="hd-refresh-btn">
+                                    <i class="fa fa-refresh me-1"/> Refresh
+                                </button>
+                            </div>
+
+                            <div class="hd-body">
+
+                                <!-- ── § 1 COMPANY OVERVIEW ─────────────────── -->
+                                <div class="hd-section">
+                                    <div class="hd-section-hdr">
+                                        <i class="fa fa-sitemap"/> Enterprise Overview
+                                    </div>
+                                    <div class="row g-3">
+
+                                        <div class="col-lg-3 col-md-6">
+                                            <button name="action_view_company_setup" type="object"
+                                                    class="hd-kpi-card hd-navy w-100 border-0 p-0">
+                                                <div class="p-3 text-start">
+                                                    <div class="hd-kpi-icon">
+                                                        <i class="fa fa-building-o"/>
+                                                    </div>
+                                                    <div class="hd-kpi-val">
+                                                        <field name="total_companies" readonly="True"/>
+                                                    </div>
+                                                    <div class="hd-kpi-lbl">Companies</div>
+                                                </div>
+                                            </button>
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-6">
+                                            <button name="action_view_all_projects" type="object"
+                                                    class="hd-kpi-card hd-teal w-100 border-0 p-0">
+                                                <div class="p-3 text-start">
+                                                    <div class="hd-kpi-icon">
+                                                        <i class="fa fa-folder-open"/>
+                                                    </div>
+                                                    <div class="hd-kpi-val">
+                                                        <field name="total_projects" readonly="True"/>
+                                                    </div>
+                                                    <div class="hd-kpi-lbl">Total Projects</div>
+                                                    <div class="hd-kpi-sub">
+                                                        <field name="active_projects" readonly="True"/>
+                                                        active
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-6">
+                                            <button name="action_view_high_risk" type="object"
+                                                    class="hd-kpi-card hd-red w-100 border-0 p-0">
+                                                <div class="p-3 text-start">
+                                                    <div class="hd-kpi-icon">
+                                                        <i class="fa fa-exclamation-triangle"/>
+                                                    </div>
+                                                    <div class="hd-kpi-val">
+                                                        <field name="high_risk_items" readonly="True"/>
+                                                    </div>
+                                                    <div class="hd-kpi-lbl">High Risk Items</div>
+                                                    <div class="hd-kpi-sub">
+                                                        <field name="critical_risk_items" readonly="True"/>
+                                                        critical
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-6">
+                                            <div class="hd-kpi-card hd-orange">
+                                                <div class="hd-kpi-icon">
+                                                    <i class="fa fa-tachometer"/>
+                                                </div>
+                                                <div class="hd-kpi-val">
+                                                    <field name="overall_risk_score" readonly="True"/>
+                                                    <span class="hd-kpi-unit">%</span>
+                                                </div>
+                                                <div class="hd-kpi-lbl">Overall Risk Score</div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- ── § 2 ACTIVITY BREAKDOWN ──────────────── -->
+                                <div class="hd-section">
+                                    <div class="hd-section-hdr">
+                                        <i class="fa fa-th-large"/> Activity Companies
+                                    </div>
+                                    <div class="row g-3">
+
+                                        <!-- Construction -->
+                                        <div class="col-lg-3 col-md-6">
+                                            <button name="action_view_construction_projects"
+                                                    type="object"
+                                                    class="hd-activity-card hd-construction w-100 border-0 p-0">
+                                                <div class="p-3 text-start">
+                                                    <div class="hd-act-hdr">
+                                                        <i class="fa fa-building me-2"/>
+                                                        Construction
+                                                    </div>
+                                                    <div class="hd-act-num">
+                                                        <field name="total_construction" readonly="True"/>
+                                                    </div>
+                                                    <div class="hd-act-sub">
+                                                        Projects •
+                                                        <field name="active_construction" readonly="True"/>
+                                                        active
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        </div>
+
+                                        <!-- Agriculture -->
+                                        <div class="col-lg-3 col-md-6">
+                                            <button name="action_view_agriculture_seasons"
+                                                    type="object"
+                                                    class="hd-activity-card hd-agriculture w-100 border-0 p-0">
+                                                <div class="p-3 text-start">
+                                                    <div class="hd-act-hdr">
+                                                        <i class="fa fa-leaf me-2"/>
+                                                        Agriculture
+                                                    </div>
+                                                    <div class="hd-act-num">
+                                                        <field name="total_seasons" readonly="True"/>
+                                                    </div>
+                                                    <div class="hd-act-sub">
+                                                        Seasons •
+                                                        <field name="running_seasons" readonly="True"/>
+                                                        running
+                                                    </div>
+                                                    <div class="hd-act-sub">
+                                                        <field name="total_crop_plans" readonly="True"/>
+                                                        crop plans •
+                                                        <field name="pending_harvests" readonly="True"/>
+                                                        pending harvest
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        </div>
+
+                                        <!-- Manufacturing -->
+                                        <div class="col-lg-3 col-md-6">
+                                            <button name="action_view_manufacturing_plans"
+                                                    type="object"
+                                                    class="hd-activity-card hd-manufacturing w-100 border-0 p-0">
+                                                <div class="p-3 text-start">
+                                                    <div class="hd-act-hdr">
+                                                        <i class="fa fa-industry me-2"/>
+                                                        Manufacturing
+                                                    </div>
+                                                    <div class="hd-act-num">
+                                                        <field name="total_production_plans" readonly="True"/>
+                                                    </div>
+                                                    <div class="hd-act-sub">
+                                                        Plans •
+                                                        <field name="active_production_plans" readonly="True"/>
+                                                        active
+                                                    </div>
+                                                    <div class="hd-act-sub">
+                                                        <field name="pending_dispatch" readonly="True"/>
+                                                        pending dispatch
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        </div>
+
+                                        <!-- Livestock -->
+                                        <div class="col-lg-3 col-md-6">
+                                            <button name="action_view_livestock_herds"
+                                                    type="object"
+                                                    class="hd-activity-card hd-livestock w-100 border-0 p-0">
+                                                <div class="p-3 text-start">
+                                                    <div class="hd-act-hdr">
+                                                        <i class="fa fa-paw me-2"/>
+                                                        Livestock
+                                                    </div>
+                                                    <div class="hd-act-num">
+                                                        <field name="total_herds" readonly="True"/>
+                                                    </div>
+                                                    <div class="hd-act-sub">
+                                                        Herds •
+                                                        <field name="active_herds" readonly="True"/>
+                                                        active
+                                                    </div>
+                                                    <div class="hd-act-sub">
+                                                        <field name="total_animals" readonly="True"/>
+                                                        animals •
+                                                        <field name="pending_livestock_sales" readonly="True"/>
+                                                        pending sales
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- ── § 3 AI RISK INTELLIGENCE ───────────── -->
+                                <div class="hd-section">
+                                    <div class="hd-section-hdr">
+                                        <i class="fa fa-brain"/> AI Risk Intelligence
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-lg-4">
+                                            <div class="hd-risk-card">
+                                                <div class="hd-risk-label">Portfolio Risk Score</div>
+                                                <div class="hd-risk-val text-warning">
+                                                    <field name="overall_risk_score" readonly="True"/>%
+                                                </div>
+                                                <div class="hd-risk-sub">
+                                                    Average across all active operations
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="hd-risk-card">
+                                                <div class="hd-risk-label">High Risk Items</div>
+                                                <div class="hd-risk-val text-danger">
+                                                    <field name="high_risk_items" readonly="True"/>
+                                                </div>
+                                                <div class="hd-risk-sub">
+                                                    Items with risk score ≥ 70
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="hd-risk-card">
+                                                <div class="hd-risk-label">Critical Risk Items</div>
+                                                <div class="hd-risk-val text-danger fw-bold">
+                                                    <field name="critical_risk_items" readonly="True"/>
+                                                </div>
+                                                <div class="hd-risk-sub">
+                                                    Items with risk score ≥ 90 — immediate action required
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             ACTION — Open Dashboard
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="action_holding_dashboard" model="ir.actions.act_window">
+            <field name="name">Holding Executive Dashboard</field>
+            <field name="res_model">smartfarm.holding.dashboard</field>
+            <field name="view_mode">form</field>
+            <field name="res_id" ref="holding_dashboard_singleton"/>
+            <field name="target">current</field>
+        </record>
+
+    </data>
+</odoo>

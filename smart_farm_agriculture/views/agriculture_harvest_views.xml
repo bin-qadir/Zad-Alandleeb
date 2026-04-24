@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_agriculture_harvest_search" model="ir.ui.view">
+            <field name="name">agriculture.harvest.search</field>
+            <field name="model">agriculture.harvest</field>
+            <field name="arch" type="xml">
+                <search string="Harvest Records">
+                    <field name="name"/>
+                    <field name="crop_plan_id"/>
+                    <field name="season_id"/>
+                    <field name="quality"/>
+                    <separator/>
+                    <filter name="draft"     string="Draft"      domain="[('state','=','draft')]"/>
+                    <filter name="confirmed" string="Confirmed"  domain="[('state','=','confirmed')]"/>
+                    <filter name="packed"    string="Packed"     domain="[('state','=','packed')]"/>
+                    <filter name="dispatched" string="Dispatched" domain="[('state','=','dispatched')]"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_season"  string="Season"    context="{'group_by':'season_id'}"/>
+                        <filter name="group_quality" string="Quality"   context="{'group_by':'quality'}"/>
+                        <filter name="group_state"   string="State"     context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_agriculture_harvest_list" model="ir.ui.view">
+            <field name="name">agriculture.harvest.list</field>
+            <field name="model">agriculture.harvest</field>
+            <field name="arch" type="xml">
+                <list string="Harvest Records" decoration-success="state=='dispatched'"
+                      decoration-warning="state=='packed'">
+                    <field name="name"/>
+                    <field name="crop_plan_id"/>
+                    <field name="season_id"/>
+                    <field name="harvest_date"/>
+                    <field name="quantity_kg" sum="Total (kg)"/>
+                    <field name="net_quantity_kg" sum="Net (kg)"/>
+                    <field name="quality" widget="badge"/>
+                    <field name="state" widget="badge"
+                           decoration-success="state=='dispatched'"
+                           decoration-warning="state in ['packed','confirmed']"
+                           decoration-info="state=='draft'"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_agriculture_harvest_form" model="ir.ui.view">
+            <field name="name">agriculture.harvest.form</field>
+            <field name="model">agriculture.harvest</field>
+            <field name="arch" type="xml">
+                <form string="Harvest Record">
+                    <header>
+                        <button name="action_confirm"     string="Confirm"    type="object"
+                                invisible="state != 'draft'" class="btn-primary"/>
+                        <button name="action_mark_packed" string="Mark Packed" type="object"
+                                invisible="state != 'confirmed'" class="btn-primary"/>
+                        <button name="action_dispatch"    string="Dispatch"   type="object"
+                                invisible="state != 'packed'" class="btn-success"/>
+                        <button name="action_reset_draft" string="Reset"      type="object"
+                                invisible="state != 'draft'"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,confirmed,packed,dispatched"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_packing" type="object"
+                                    class="oe_stat_button" icon="fa-archive">
+                                <field name="packing_count" widget="statinfo" string="Packing"/>
+                            </button>
+                        </div>
+
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Harvest Reference…"/></h1>
+                        </div>
+
+                        <group>
+                            <group string="Context">
+                                <field name="crop_plan_id"/>
+                                <field name="season_id"/>
+                                <field name="farm_field_id"/>
+                                <field name="harvested_by_id" widget="many2one_avatar_user"/>
+                                <field name="supervisor_id" widget="many2one_avatar_user"/>
+                            </group>
+                            <group string="Harvest Data">
+                                <field name="harvest_date"/>
+                                <field name="quantity_kg"/>
+                                <field name="rejection_kg"/>
+                                <field name="net_quantity_kg"/>
+                                <field name="moisture_pct"/>
+                                <field name="quality"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Packing Orders" name="packing">
+                                <field name="packing_ids" mode="list">
+                                    <list>
+                                        <field name="name"/>
+                                        <field name="packing_date"/>
+                                        <field name="product_id"/>
+                                        <field name="quantity"/>
+                                        <field name="weight_net_kg" sum="Net Weight"/>
+                                        <field name="partner_id"/>
+                                        <field name="state" widget="badge"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_agriculture_harvest" model="ir.actions.act_window">
+            <field name="name">Harvest Records</field>
+            <field name="res_model">agriculture.harvest</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

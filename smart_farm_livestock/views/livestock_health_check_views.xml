@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_livestock_health_check_list" model="ir.ui.view">
+            <field name="name">livestock.health.check.list</field>
+            <field name="model">livestock.health.check</field>
+            <field name="arch" type="xml">
+                <list string="Health Checks" decoration-danger="result=='critical'"
+                      decoration-success="result=='healthy'">
+                    <field name="name"/>
+                    <field name="herd_id"/>
+                    <field name="animal_id"/>
+                    <field name="check_date"/>
+                    <field name="check_type"/>
+                    <field name="animals_treated"/>
+                    <field name="medication"/>
+                    <field name="next_check_date"/>
+                    <field name="cost" sum="Total Cost"/>
+                    <field name="currency_id" invisible="True"/>
+                    <field name="result" widget="badge"/>
+                    <field name="state" widget="badge"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_livestock_health_check_form" model="ir.ui.view">
+            <field name="name">livestock.health.check.form</field>
+            <field name="model">livestock.health.check</field>
+            <field name="arch" type="xml">
+                <form string="Health Check">
+                    <header>
+                        <button name="action_complete"    string="Complete" type="object"
+                                invisible="state != 'draft'" class="btn-primary"/>
+                        <button name="action_reset_draft" string="Reset"    type="object"
+                                invisible="state != 'done'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Health Check Reference…"/></h1>
+                        </div>
+                        <group>
+                            <group string="Context">
+                                <field name="herd_id"/>
+                                <field name="animal_id"/>
+                                <field name="check_date"/>
+                                <field name="check_type"/>
+                                <field name="veterinarian_id" widget="many2one_avatar_user"/>
+                                <field name="veterinarian_name"/>
+                                <field name="animals_treated"/>
+                            </group>
+                            <group string="Medical">
+                                <field name="medication"/>
+                                <field name="dosage"/>
+                                <field name="cost"/>
+                                <field name="currency_id" invisible="True"/>
+                                <field name="next_check_date"/>
+                                <field name="result" widget="badge"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="diagnosis" string="Diagnosis" colspan="2"/>
+                            <field name="treatment" string="Treatment Applied" colspan="2"/>
+                            <field name="notes" colspan="2"/>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_livestock_health_check" model="ir.actions.act_window">
+            <field name="name">Health Checks</field>
+            <field name="res_model">livestock.health.check</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

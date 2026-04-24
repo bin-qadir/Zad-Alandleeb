@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_manufacturing_dispatch_list" model="ir.ui.view">
+            <field name="name">manufacturing.dispatch.list</field>
+            <field name="model">manufacturing.dispatch</field>
+            <field name="arch" type="xml">
+                <list string="Dispatch Orders" decoration-success="state=='delivered'"
+                      decoration-warning="state=='dispatched'">
+                    <field name="name"/>
+                    <field name="plan_id"/>
+                    <field name="product_id"/>
+                    <field name="lot_number"/>
+                    <field name="quantity"/>
+                    <field name="uom_id"/>
+                    <field name="partner_id"/>
+                    <field name="dispatch_date"/>
+                    <field name="delivery_date"/>
+                    <field name="total_amount" sum="Total"/>
+                    <field name="currency_id" invisible="True"/>
+                    <field name="state" widget="badge"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_manufacturing_dispatch_form" model="ir.ui.view">
+            <field name="name">manufacturing.dispatch.form</field>
+            <field name="model">manufacturing.dispatch</field>
+            <field name="arch" type="xml">
+                <form string="Dispatch Order">
+                    <header>
+                        <button name="action_confirm"    string="Confirm"    type="object"
+                                invisible="state != 'draft'" class="btn-primary"/>
+                        <button name="action_dispatch"   string="Dispatch"   type="object"
+                                invisible="state != 'confirmed'" class="btn-warning"/>
+                        <button name="action_deliver"    string="Delivered"  type="object"
+                                invisible="state != 'dispatched'" class="btn-success"/>
+                        <button name="action_cancel"     string="Cancel"     type="object"
+                                invisible="state in ['delivered','cancelled']"/>
+                        <button name="action_reset_draft" string="Reset"     type="object"
+                                invisible="state != 'cancelled'"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,confirmed,dispatched,delivered"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="Dispatch Reference…"/></h1>
+                        </div>
+                        <group>
+                            <group string="Context">
+                                <field name="plan_id"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="partner_id"/>
+                                <field name="destination"/>
+                            </group>
+                            <group string="Goods">
+                                <field name="product_id"/>
+                                <field name="quantity"/>
+                                <field name="uom_id"/>
+                                <field name="lot_number"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Schedule">
+                                <field name="dispatch_date"/>
+                                <field name="delivery_date"/>
+                            </group>
+                            <group string="Financials">
+                                <field name="unit_price"/>
+                                <field name="total_amount"/>
+                                <field name="currency_id" invisible="True"/>
+                            </group>
+                        </group>
+                        <group string="Notes">
+                            <field name="notes" colspan="2"/>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_manufacturing_dispatch" model="ir.actions.act_window">
+            <field name="name">Dispatch Orders</field>
+            <field name="res_model">manufacturing.dispatch</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

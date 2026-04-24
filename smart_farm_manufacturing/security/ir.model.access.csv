@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_manufacturing_plan_user,manufacturing.plan user,model_manufacturing_plan,group_manufacturing_user,1,1,1,0
+access_manufacturing_plan_manager,manufacturing.plan manager,model_manufacturing_plan,group_manufacturing_manager,1,1,1,1
+access_manufacturing_work_order_user,manufacturing.work.order user,model_manufacturing_work_order,group_manufacturing_user,1,1,1,0
+access_manufacturing_work_order_manager,manufacturing.work.order manager,model_manufacturing_work_order,group_manufacturing_manager,1,1,1,1
+access_manufacturing_qc_check_user,manufacturing.qc.check user,model_manufacturing_qc_check,group_manufacturing_user,1,1,1,0
+access_manufacturing_qc_check_manager,manufacturing.qc.check manager,model_manufacturing_qc_check,group_manufacturing_manager,1,1,1,1
+access_manufacturing_dispatch_user,manufacturing.dispatch user,model_manufacturing_dispatch,group_manufacturing_user,1,1,1,0
+access_manufacturing_dispatch_manager,manufacturing.dispatch manager,model_manufacturing_dispatch,group_manufacturing_manager,1,1,1,1

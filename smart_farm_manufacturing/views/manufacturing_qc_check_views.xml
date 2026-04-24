@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_manufacturing_qc_check_list" model="ir.ui.view">
+            <field name="name">manufacturing.qc.check.list</field>
+            <field name="model">manufacturing.qc.check</field>
+            <field name="arch" type="xml">
+                <list string="QC Checks" decoration-success="result=='pass'"
+                      decoration-danger="result=='fail'" decoration-warning="result=='rework'">
+                    <field name="name"/>
+                    <field name="plan_id"/>
+                    <field name="work_order_id"/>
+                    <field name="check_date"/>
+                    <field name="check_type"/>
+                    <field name="inspector_id" widget="many2one_avatar_user"/>
+                    <field name="sample_qty"/>
+                    <field name="pass_qty"/>
+                    <field name="fail_qty"/>
+                    <field name="result" widget="badge"
+                           decoration-success="result=='pass'"
+                           decoration-danger="result=='fail'"
+                           decoration-warning="result=='rework'"
+                           decoration-info="result=='pending'"/>
+                    <field name="state" widget="badge"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_manufacturing_qc_check_form" model="ir.ui.view">
+            <field name="name">manufacturing.qc.check.form</field>
+            <field name="model">manufacturing.qc.check</field>
+            <field name="arch" type="xml">
+                <form string="QC Check">
+                    <header>
+                        <button name="action_start_check" string="Start Check" type="object"
+                                invisible="state != 'draft'" class="btn-primary"/>
+                        <button name="action_pass"   string="Pass"   type="object"
+                                invisible="state != 'checking'" class="btn-success"/>
+                        <button name="action_fail"   string="Fail"   type="object"
+                                invisible="state != 'checking'" class="btn-danger"/>
+                        <button name="action_rework" string="Rework" type="object"
+                                invisible="state != 'checking'" class="btn-warning"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,checking,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="QC Reference…"/></h1>
+                        </div>
+                        <group>
+                            <group string="Context">
+                                <field name="work_order_id"/>
+                                <field name="plan_id"/>
+                                <field name="check_date"/>
+                                <field name="inspector_id" widget="many2one_avatar_user"/>
+                                <field name="check_type"/>
+                            </group>
+                            <group string="Results">
+                                <field name="result" widget="badge"/>
+                                <field name="sample_qty"/>
+                                <field name="pass_qty"/>
+                                <field name="fail_qty"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="defect_description" string="Defect Description" colspan="2"/>
+                            <field name="corrective_action" string="Corrective Action" colspan="2"/>
+                            <field name="notes" colspan="2"/>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_manufacturing_qc_check" model="ir.actions.act_window">
+            <field name="name">QC Checks</field>
+            <field name="res_model">manufacturing.qc.check</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

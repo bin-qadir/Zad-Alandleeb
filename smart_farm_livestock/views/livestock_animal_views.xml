@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_livestock_animal_list" model="ir.ui.view">
+            <field name="name">livestock.animal.list</field>
+            <field name="model">livestock.animal</field>
+            <field name="arch" type="xml">
+                <list string="Animals" decoration-danger="state=='sick'"
+                      decoration-muted="state in ['sold','dead']">
+                    <field name="tag_number"/>
+                    <field name="name"/>
+                    <field name="herd_id"/>
+                    <field name="species"/>
+                    <field name="breed"/>
+                    <field name="gender" widget="badge"/>
+                    <field name="birth_date"/>
+                    <field name="weight_current_kg"/>
+                    <field name="weight_target_kg"/>
+                    <field name="state" widget="badge"
+                           decoration-success="state=='active'"
+                           decoration-warning="state in ['breeding','fattening']"
+                           decoration-danger="state=='sick'"
+                           decoration-muted="state in ['sold','dead']"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_livestock_animal_form" model="ir.ui.view">
+            <field name="name">livestock.animal.form</field>
+            <field name="model">livestock.animal</field>
+            <field name="arch" type="xml">
+                <form string="Animal">
+                    <header>
+                        <button name="action_set_breeding"  string="Breeding"   type="object"
+                                invisible="state != 'active'" class="btn-primary"/>
+                        <button name="action_set_fattening" string="Fattening"  type="object"
+                                invisible="state not in ['active','breeding']" class="btn-primary"/>
+                        <button name="action_set_active"    string="Set Active" type="object"
+                                invisible="state in ['active','sold','dead']"/>
+                        <button name="action_set_sick"      string="Mark Sick"  type="object"
+                                invisible="state in ['sold','dead','sick']" class="btn-danger"/>
+                        <button name="action_mark_sold"     string="Mark Sold"  type="object"
+                                invisible="state in ['sold','dead']" class="btn-success"/>
+                        <button name="action_mark_dead"     string="Mark Dead / Culled" type="object"
+                                invisible="state in ['sold','dead']"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="active,breeding,fattening,sold"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="tag_number"/>
+                            <h1><field name="tag_number" placeholder="Tag Number…"/></h1>
+                            <div><field name="name" placeholder="Optional name…" class="text-muted"/></div>
+                        </div>
+                        <group>
+                            <group string="Identity">
+                                <field name="herd_id"/>
+                                <field name="species"/>
+                                <field name="breed"/>
+                                <field name="gender"/>
+                                <field name="birth_date"/>
+                                <field name="age_months"/>
+                                <field name="source"/>
+                                <field name="mother_id"/>
+                            </group>
+                            <group string="Physical">
+                                <field name="weight_initial_kg"/>
+                                <field name="weight_current_kg"/>
+                                <field name="weight_target_kg"/>
+                            </group>
+                        </group>
+                        <group string="Notes">
+                            <field name="notes" colspan="2"/>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_livestock_animal" model="ir.actions.act_window">
+            <field name="name">Animals</field>
+            <field name="res_model">livestock.animal</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             smartfarm.company.activity — SEARCH
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_company_activity_search" model="ir.ui.view">
+            <field name="name">smartfarm.company.activity.search</field>
+            <field name="model">smartfarm.company.activity</field>
+            <field name="arch" type="xml">
+                <search string="Company Activity Setup">
+                    <field name="company_id"/>
+                    <field name="business_activity"/>
+                    <separator/>
+                    <filter name="holding"    string="Holding"    domain="[('is_holding','=',True)]"/>
+                    <filter name="construction" string="Construction"
+                            domain="[('has_construction','=',True)]"/>
+                    <filter name="agriculture"  string="Agriculture"
+                            domain="[('has_agriculture','=',True)]"/>
+                    <filter name="manufacturing" string="Manufacturing"
+                            domain="[('has_manufacturing','=',True)]"/>
+                    <filter name="livestock"    string="Livestock"
+                            domain="[('has_livestock','=',True)]"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             smartfarm.company.activity — LIST
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_company_activity_list" model="ir.ui.view">
+            <field name="name">smartfarm.company.activity.list</field>
+            <field name="model">smartfarm.company.activity</field>
+            <field name="arch" type="xml">
+                <list string="Company Activity Setup"
+                      decoration-info="is_holding">
+                    <field name="company_id"/>
+                    <field name="is_holding" widget="boolean_toggle"/>
+                    <field name="parent_company_id"/>
+                    <field name="business_activity" widget="badge"/>
+                    <field name="has_construction"/>
+                    <field name="has_agriculture"/>
+                    <field name="has_manufacturing"/>
+                    <field name="has_livestock"/>
+                    <field name="show_inside_smart_farm"/>
+                    <field name="show_as_odoo_app"/>
+                    <field name="total_projects_count"/>
+                    <field name="active_projects_count"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             smartfarm.company.activity — FORM
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="view_company_activity_form" model="ir.ui.view">
+            <field name="name">smartfarm.company.activity.form</field>
+            <field name="model">smartfarm.company.activity</field>
+            <field name="arch" type="xml">
+                <form string="Company Activity Setup">
+                    <sheet>
+
+                        <!-- Smart Buttons -->
+                        <div class="oe_button_box" name="button_box">
+                            <div class="o_stat_button" icon="fa-folder">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_projects_count"/>
+                                    </span>
+                                    <span class="o_stat_text">Total Projects</span>
+                                </div>
+                            </div>
+                            <div class="o_stat_button" icon="fa-play">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="active_projects_count"/>
+                                    </span>
+                                    <span class="o_stat_text">Active</span>
+                                </div>
+                            </div>
+                            <div class="o_stat_button" icon="fa-exclamation-triangle">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="high_risk_count"/>
+                                    </span>
+                                    <span class="o_stat_text">High Risk</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Header banner for holding -->
+                        <div class="alert alert-info" role="alert"
+                             invisible="not is_holding">
+                            <i class="fa fa-building me-2"/>
+                            <strong>Holding Company</strong> — This company acts as the
+                            master enterprise holding. Users with the
+                            <em>Holding Manager</em> role assigned to this company
+                            will see ALL data across all activity companies.
+                        </div>
+
+                        <div class="oe_title">
+                            <label for="company_id"/>
+                            <h1><field name="company_id" placeholder="Select Company…"/></h1>
+                        </div>
+
+                        <group>
+                            <group string="Holding Setup">
+                                <field name="is_holding"/>
+                                <field name="parent_company_id"
+                                       invisible="is_holding"/>
+                            </group>
+                            <group string="Primary Activity">
+                                <field name="business_activity"
+                                       invisible="is_holding"/>
+                            </group>
+                        </group>
+
+                        <group string="Activity Modules Enabled">
+                            <group>
+                                <field name="has_construction"/>
+                                <field name="has_agriculture"/>
+                            </group>
+                            <group>
+                                <field name="has_manufacturing"/>
+                                <field name="has_livestock"/>
+                            </group>
+                        </group>
+
+                        <group string="Menu Visibility">
+                            <group>
+                                <field name="show_inside_smart_farm"/>
+                            </group>
+                            <group>
+                                <field name="show_as_odoo_app"/>
+                            </group>
+                        </group>
+
+                        <group string="Notes">
+                            <field name="notes" colspan="2"
+                                   placeholder="Configuration notes…"/>
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             ACTION
+        ══════════════════════════════════════════════════════════════════ -->
+
+        <record id="action_company_activity_setup" model="ir.actions.act_window">
+            <field name="name">Company Activity Setup</field>
+            <field name="res_model">smartfarm.company.activity</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Set up your company structure
+                </p>
+                <p>
+                    Configure the holding company and each operational company
+                    (Construction, Agriculture, Manufacturing, Livestock).
+                    Define which activity modules are enabled for each company
+                    and control menu visibility.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem
+            id="menu_livestock_root"
+            name="Livestock"
+            sequence="80"
+            groups="smart_farm_livestock.group_livestock_user"/>
+
+        <menuitem
+            id="menu_livestock_projects"
+            name="Projects"
+            parent="menu_livestock_root"
+            action="smart_farm_project.action_farm_project"
+            sequence="5"/>
+
+        <menuitem
+            id="menu_livestock_herds_parent"
+            name="Herds"
+            parent="menu_livestock_root"
+            sequence="10"/>
+
+        <menuitem
+            id="menu_livestock_herd"
+            name="Herds"
+            parent="menu_livestock_herds_parent"
+            action="action_livestock_herd"
+            sequence="10"/>
+
+        <menuitem
+            id="menu_livestock_animal"
+            name="Animals"
+            parent="menu_livestock_herds_parent"
+            action="action_livestock_animal"
+            sequence="20"/>
+
+        <menuitem
+            id="menu_livestock_operations_parent"
+            name="Operations"
+            parent="menu_livestock_root"
+            sequence="20"/>
+
+        <menuitem
+            id="menu_livestock_health_check"
+            name="Health Checks"
+            parent="menu_livestock_operations_parent"
+            action="action_livestock_health_check"
+            sequence="10"/>
+
+        <menuitem
+            id="menu_livestock_feeding_plan"
+            name="Feeding Plans"
+            parent="menu_livestock_operations_parent"
+            action="action_livestock_feeding_plan"
+            sequence="20"/>
+
+        <menuitem
+            id="menu_livestock_sales_parent"
+            name="Sales"
+            parent="menu_livestock_root"
+            sequence="30"/>
+
+        <menuitem
+            id="menu_livestock_sale"
+            name="Livestock Sales"
+            parent="menu_livestock_sales_parent"
+            action="action_livestock_sale"
+            sequence="10"/>
+
+    </data>
+</odoo>

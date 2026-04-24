@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_company_activity_user,smartfarm.company.activity user,model_smartfarm_company_activity,group_activity_user,1,0,0,0
+access_company_activity_manager,smartfarm.company.activity manager,model_smartfarm_company_activity,group_activity_company_manager,1,0,0,0
+access_company_activity_holding,smartfarm.company.activity holding,model_smartfarm_company_activity,group_holding_manager,1,1,1,1
+access_holding_dashboard_user,smartfarm.holding.dashboard user,model_smartfarm_holding_dashboard,group_activity_user,1,0,0,0
+access_holding_dashboard_manager,smartfarm.holding.dashboard manager,model_smartfarm_holding_dashboard,group_activity_company_manager,1,0,0,0
+access_holding_dashboard_holding,smartfarm.holding.dashboard holding,model_smartfarm_holding_dashboard,group_holding_manager,1,1,1,1
