@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Singleton Construction Dashboard record -->
+    <record id="construction_dashboard_singleton" model="farm.construction.dashboard">
+        <field name="name">Construction Dashboard</field>
+    </record>
+</odoo>

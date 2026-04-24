@@ -2,11 +2,25 @@
 <odoo>
     <data>
 
-        <!-- ══════════════════════════════════════════════════════════════════
-             HOLDING DASHBOARD — under Smart Farm root menu
-             (sequence 1 = first item, before Projects)
-        ══════════════════════════════════════════════════════════════════ -->
+        <!--
+            ══════════════════════════════════════════════════════════════════
+            HOLDING MENUS — frozen until Construction is complete
+            ══════════════════════════════════════════════════════════════════
 
+            "Holding Dashboard" and "All Companies" cross-company menus are
+            hidden at DB level (active=False).  They are NOT deleted —
+            the views, models, and security groups are fully preserved.
+
+            Once Construction is stabilised and Agriculture / Manufacturing /
+            Livestock workflows are ready, these menus will be re-enabled.
+
+            The only holding-visible items are admin-only configuration
+            entries (Company Activity Setup, Enterprise Groups), which are
+            restricted to group_holding_manager and rarely needed.
+            ══════════════════════════════════════════════════════════════════
+        -->
+
+        <!-- Holding Dashboard — deactivated, re-enable after all activities complete -->
         <menuitem
             id="menu_holding_dashboard"
             name="Holding Dashboard"
@@ -15,11 +29,7 @@
             sequence="1"
             groups="smart_farm_holding.group_holding_manager,smart_farm_holding.group_activity_company_manager"/>
 
-        <!-- ══════════════════════════════════════════════════════════════════
-             CROSS-COMPANY VIEWS — under Smart Farm root menu
-             Visible to Holding Manager only
-        ══════════════════════════════════════════════════════════════════ -->
-
+        <!-- All Companies parent — deactivated -->
         <menuitem
             id="menu_holding_cross_company"
             name="All Companies"
@@ -27,39 +37,31 @@
             sequence="2"
             groups="smart_farm_holding.group_holding_manager"/>
 
-        <!-- All Farm Projects (cross-company, all activities) -->
+        <!-- Cross-company sub-items (preserved, accessible via parent when re-enabled) -->
         <menuitem
             id="menu_holding_all_farm_projects"
             name="All Projects"
             parent="menu_holding_cross_company"
             action="smart_farm_project.action_farm_project"
             sequence="10"/>
-
-        <!-- All Construction Projects (filtered by activity) -->
         <menuitem
             id="menu_holding_all_construction"
             name="Construction Projects"
             parent="menu_holding_cross_company"
             action="smart_farm_construction.action_con_projects"
             sequence="20"/>
-
-        <!-- All Agriculture Projects (filtered by activity) -->
         <menuitem
             id="menu_holding_all_agriculture"
             name="Agriculture Projects"
             parent="menu_holding_cross_company"
             action="smart_farm_agriculture.action_agr_projects"
             sequence="30"/>
-
-        <!-- All Manufacturing Projects (filtered by activity) -->
         <menuitem
             id="menu_holding_all_manufacturing"
             name="Manufacturing Projects"
             parent="menu_holding_cross_company"
             action="smart_farm_manufacturing.action_mfg_projects"
             sequence="40"/>
-
-        <!-- All Livestock Projects (filtered by activity) -->
         <menuitem
             id="menu_holding_all_livestock"
             name="Livestock Projects"
@@ -67,11 +69,7 @@
             action="smart_farm_livestock.action_ls_projects"
             sequence="50"/>
 
-        <!-- ══════════════════════════════════════════════════════════════════
-             CONFIGURATION — Company Activity Setup
-             Under existing Smart Farm → Configuration menu
-        ══════════════════════════════════════════════════════════════════ -->
-
+        <!-- Configuration: Company Activity Setup (admin-only, preserved) -->
         <menuitem
             id="menu_company_activity_setup"
             name="Company Activity Setup"
@@ -80,10 +78,7 @@
             sequence="5"
             groups="smart_farm_holding.group_holding_manager"/>
 
-        <!-- ══════════════════════════════════════════════════════════════════
-             ENTERPRISE SECURITY — under Configuration
-        ══════════════════════════════════════════════════════════════════ -->
-
+        <!-- Configuration: Enterprise Groups (admin-only, preserved) -->
         <menuitem
             id="menu_holding_config_security"
             name="Enterprise Groups"
@@ -91,6 +86,10 @@
             action="base_setup.action_general_configuration"
             sequence="6"
             groups="smart_farm_holding.group_holding_manager"/>
+
+        <!-- ══ Deactivate the Holding Dashboard and All Companies menus ══ -->
+        <record id="menu_holding_dashboard"       model="ir.ui.menu"><field name="active" eval="False"/></record>
+        <record id="menu_holding_cross_company"   model="ir.ui.menu"><field name="active" eval="False"/></record>
 
     </data>
 </odoo>

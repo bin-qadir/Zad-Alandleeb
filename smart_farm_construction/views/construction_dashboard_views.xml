@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ╔══════════════════════════════════════════════════════════════════════╗
+     ║  CONSTRUCTION EXECUTIVE DASHBOARD                                  ║
+     ║  5 sections: Portfolio KPIs · Progress · Phases · Stages · Depts  ║
+     ╚══════════════════════════════════════════════════════════════════════╝ -->
+
+<record id="view_construction_dashboard_form" model="ir.ui.view">
+    <field name="name">farm.construction.dashboard.form</field>
+    <field name="model">farm.construction.dashboard</field>
+    <field name="arch" type="xml">
+        <form string="Construction Dashboard"
+              create="false" delete="false" edit="false">
+            <sheet>
+                <field name="currency_id" invisible="True"/>
+
+                <div class="cd-root">
+
+                    <!-- ── HEADER ───────────────────────────────────────── -->
+                    <div class="cd-header">
+                        <div class="cd-header-left">
+                            <div class="cd-header-icon">
+                                <i class="fa fa-building fa-lg"/>
+                            </div>
+                            <div>
+                                <div class="cd-title">Construction</div>
+                                <div class="cd-subtitle">Executive Dashboard — live on every open</div>
+                            </div>
+                        </div>
+                        <button name="action_refresh" type="object" class="cd-refresh-btn">
+                            <i class="fa fa-refresh me-1"/> Refresh
+                        </button>
+                    </div>
+
+                    <div class="cd-body">
+
+                        <!-- ── § 1  PORTFOLIO KPIs ───────────────────────── -->
+                        <div class="cd-section">
+                            <div class="cd-section-hdr">
+                                <i class="fa fa-bar-chart"/> Portfolio KPIs
+                            </div>
+                            <div class="cd-section-body">
+                                <div class="cd-kpi-strip">
+
+                                    <button name="action_view_all_jos" type="object"
+                                            class="cd-kpi cd-kpi--indigo">
+                                        <div class="cd-kpi-icon"><i class="fa fa-briefcase"/></div>
+                                        <div class="cd-kpi-val">
+                                            <field name="total_jos" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-kpi-lbl">Total Jobs</div>
+                                    </button>
+
+                                    <button name="action_view_all_jos" type="object"
+                                            class="cd-kpi cd-kpi--teal">
+                                        <div class="cd-kpi-icon"><i class="fa fa-file-text-o"/></div>
+                                        <div class="cd-kpi-val cd-kpi-val--sm">
+                                            <field name="planned_value" readonly="1" nolabel="1"
+                                                   widget="monetary"
+                                                   options="{'currency_field':'currency_id'}"/>
+                                        </div>
+                                        <div class="cd-kpi-lbl">Planned Value</div>
+                                    </button>
+
+                                    <button name="action_view_approved_jos" type="object"
+                                            class="cd-kpi cd-kpi--green">
+                                        <div class="cd-kpi-icon"><i class="fa fa-check-circle"/></div>
+                                        <div class="cd-kpi-val cd-kpi-val--sm">
+                                            <field name="approved_amount" readonly="1" nolabel="1"
+                                                   widget="monetary"
+                                                   options="{'currency_field':'currency_id'}"/>
+                                        </div>
+                                        <div class="cd-kpi-lbl">Approved Amount</div>
+                                    </button>
+
+                                    <button name="action_view_ready_claim_jos" type="object"
+                                            class="cd-kpi cd-kpi--amber">
+                                        <div class="cd-kpi-icon"><i class="fa fa-money"/></div>
+                                        <div class="cd-kpi-val cd-kpi-val--sm">
+                                            <field name="claimable_amount" readonly="1" nolabel="1"
+                                                   widget="monetary"
+                                                   options="{'currency_field':'currency_id'}"/>
+                                        </div>
+                                        <div class="cd-kpi-lbl">Claimable</div>
+                                    </button>
+
+                                    <button name="action_view_claimed_jos" type="object"
+                                            class="cd-kpi cd-kpi--rose">
+                                        <div class="cd-kpi-icon"><i class="fa fa-flag-checkered"/></div>
+                                        <div class="cd-kpi-val cd-kpi-val--sm">
+                                            <field name="claimed_amount" readonly="1" nolabel="1"
+                                                   widget="monetary"
+                                                   options="{'currency_field':'currency_id'}"/>
+                                        </div>
+                                        <div class="cd-kpi-lbl">Claimed</div>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── § 2  EXECUTION PROGRESS ──────────────────── -->
+                        <div class="cd-section">
+                            <div class="cd-section-hdr">
+                                <i class="fa fa-tasks"/> Execution Progress
+                            </div>
+                            <div class="cd-section-body">
+                                <div class="cd-progress-wrap">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <span class="fw-semibold text-muted" style="font-size:13px">
+                                            Overall Execution Progress (Approved Qty / Planned Qty)
+                                        </span>
+                                        <span class="fw-bold" style="font-size:24px;color:#16a34a">
+                                            <field name="progress_pct" readonly="1" nolabel="1"
+                                                   widget="float" options="{'digits': [16,1]}"/>%
+                                        </span>
+                                    </div>
+                                    <div class="cd-progress-bar-bg">
+                                        <div class="cd-progress-bar-fill" style="width: 0%"/>
+                                    </div>
+                                    <div class="cd-progress-labels">
+                                        <span>0%</span>
+                                        <span>25%</span>
+                                        <span>50%</span>
+                                        <span>75%</span>
+                                        <span>100%</span>
+                                    </div>
+                                </div>
+                                <div class="mt-3 d-flex gap-4 flex-wrap" style="font-size:13px;color:#6c757d">
+                                    <span>
+                                        <i class="fa fa-folder-open me-1"/>
+                                        <field name="total_projects" readonly="1" nolabel="1"/>
+                                        Projects
+                                        (<field name="active_projects" readonly="1" nolabel="1"/> active)
+                                    </span>
+                                    <span>
+                                        <i class="fa fa-briefcase me-1"/>
+                                        <field name="total_jos" readonly="1" nolabel="1"/>
+                                        Job Orders
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── § 3  PROJECT PHASES ──────────────────────── -->
+                        <div class="cd-section">
+                            <div class="cd-section-hdr">
+                                <i class="fa fa-sitemap"/> Project Phases
+                            </div>
+                            <div class="cd-section-body">
+                                <div class="cd-phase-grid">
+
+                                    <button name="action_view_pre_tender" type="object"
+                                            class="cd-phase-card cd-phase--pre">
+                                        <div class="cd-phase-num">
+                                            <field name="phase_pre_tender" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-phase-lbl">Pre-Tender</div>
+                                    </button>
+
+                                    <button name="action_view_tender" type="object"
+                                            class="cd-phase-card cd-phase--tender">
+                                        <div class="cd-phase-num">
+                                            <field name="phase_tender" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-phase-lbl">Tender</div>
+                                    </button>
+
+                                    <button name="action_view_post_tender" type="object"
+                                            class="cd-phase-card cd-phase--post">
+                                        <div class="cd-phase-num">
+                                            <field name="phase_post_tender" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-phase-lbl">Post-Tender</div>
+                                    </button>
+
+                                    <button name="action_view_execution_phase" type="object"
+                                            class="cd-phase-card cd-phase--exec">
+                                        <div class="cd-phase-num">
+                                            <field name="phase_execution" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-phase-lbl">Execution</div>
+                                    </button>
+
+                                    <button name="action_view_closure_phase" type="object"
+                                            class="cd-phase-card cd-phase--close">
+                                        <div class="cd-phase-num">
+                                            <field name="phase_closure" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-phase-lbl">Closure</div>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── § 4  STAGE DISTRIBUTION ──────────────────── -->
+                        <div class="cd-section">
+                            <div class="cd-section-hdr">
+                                <i class="fa fa-th-list"/> Job Order Stage Distribution
+                            </div>
+                            <div class="cd-section-body">
+                                <div class="cd-stage-grid">
+
+                                    <button name="action_view_draft_jos" type="object"
+                                            class="cd-stage-card cd-stage--draft">
+                                        <div class="cd-stage-num">
+                                            <field name="stage_draft" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-stage-lbl">Draft</div>
+                                    </button>
+
+                                    <button name="action_view_approved_jos" type="object"
+                                            class="cd-stage-card cd-stage--appr">
+                                        <div class="cd-stage-num">
+                                            <field name="stage_approved" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-stage-lbl">Approved</div>
+                                    </button>
+
+                                    <button name="action_view_in_progress_jos" type="object"
+                                            class="cd-stage-card cd-stage--prog">
+                                        <div class="cd-stage-num">
+                                            <field name="stage_in_progress" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-stage-lbl">In Progress</div>
+                                    </button>
+
+                                    <button name="action_view_handover_jos" type="object"
+                                            class="cd-stage-card cd-stage--hand">
+                                        <div class="cd-stage-num">
+                                            <field name="stage_handover_requested" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-stage-lbl">Handover Req</div>
+                                    </button>
+
+                                    <button name="action_view_inspection_jos" type="object"
+                                            class="cd-stage-card cd-stage--insp">
+                                        <div class="cd-stage-num">
+                                            <field name="stage_under_inspection" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-stage-lbl">Inspection</div>
+                                    </button>
+
+                                    <button name="action_view_accepted_jos" type="object"
+                                            class="cd-stage-card cd-stage--acc">
+                                        <div class="cd-stage-num">
+                                            <field name="stage_accepted" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-stage-lbl">Accepted</div>
+                                    </button>
+
+                                    <button name="action_view_ready_claim_jos" type="object"
+                                            class="cd-stage-card cd-stage--ready">
+                                        <div class="cd-stage-num">
+                                            <field name="stage_ready_for_claim" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-stage-lbl">Ready to Claim</div>
+                                    </button>
+
+                                    <button name="action_view_claimed_jos" type="object"
+                                            class="cd-stage-card cd-stage--claimed">
+                                        <div class="cd-stage-num">
+                                            <field name="stage_claimed" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-stage-lbl">Claimed</div>
+                                    </button>
+
+                                    <button name="action_view_closed_jos" type="object"
+                                            class="cd-stage-card cd-stage--closed">
+                                        <div class="cd-stage-num">
+                                            <field name="stage_closed" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-stage-lbl">Closed</div>
+                                    </button>
+
+                                    <button name="action_view_overdue_jos" type="object"
+                                            class="cd-stage-card cd-stage--overdue">
+                                        <div class="cd-stage-num">
+                                            <field name="stage_overdue" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-stage-lbl">Overdue</div>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── § 5  DEPARTMENT BREAKDOWN ────────────────── -->
+                        <div class="cd-section">
+                            <div class="cd-section-hdr">
+                                <i class="fa fa-cubes"/> Department Breakdown
+                            </div>
+                            <div class="cd-section-body">
+                                <div class="cd-dept-grid">
+
+                                    <button name="action_view_civil_jos" type="object"
+                                            class="cd-dept-card cd-dept--civil">
+                                        <div class="cd-dept-icon"><i class="fa fa-road"/></div>
+                                        <div class="cd-dept-info">
+                                            <div class="cd-dept-num">
+                                                <field name="dept_civil" readonly="1" nolabel="1"/>
+                                            </div>
+                                            <div class="cd-dept-lbl">Civil</div>
+                                        </div>
+                                    </button>
+
+                                    <button name="action_view_structure_jos" type="object"
+                                            class="cd-dept-card cd-dept--struct">
+                                        <div class="cd-dept-icon"><i class="fa fa-columns"/></div>
+                                        <div class="cd-dept-info">
+                                            <div class="cd-dept-num">
+                                                <field name="dept_structure" readonly="1" nolabel="1"/>
+                                            </div>
+                                            <div class="cd-dept-lbl">Structure</div>
+                                        </div>
+                                    </button>
+
+                                    <button name="action_view_arch_jos" type="object"
+                                            class="cd-dept-card cd-dept--arch">
+                                        <div class="cd-dept-icon"><i class="fa fa-home"/></div>
+                                        <div class="cd-dept-info">
+                                            <div class="cd-dept-num">
+                                                <field name="dept_arch" readonly="1" nolabel="1"/>
+                                            </div>
+                                            <div class="cd-dept-lbl">Architectural</div>
+                                        </div>
+                                    </button>
+
+                                    <button name="action_view_mech_jos" type="object"
+                                            class="cd-dept-card cd-dept--mech">
+                                        <div class="cd-dept-icon"><i class="fa fa-cogs"/></div>
+                                        <div class="cd-dept-info">
+                                            <div class="cd-dept-num">
+                                                <field name="dept_mechanical" readonly="1" nolabel="1"/>
+                                            </div>
+                                            <div class="cd-dept-lbl">Mechanical</div>
+                                        </div>
+                                    </button>
+
+                                    <button name="action_view_elec_jos" type="object"
+                                            class="cd-dept-card cd-dept--elec">
+                                        <div class="cd-dept-icon"><i class="fa fa-bolt"/></div>
+                                        <div class="cd-dept-info">
+                                            <div class="cd-dept-num">
+                                                <field name="dept_electrical" readonly="1" nolabel="1"/>
+                                            </div>
+                                            <div class="cd-dept-lbl">Electrical</div>
+                                        </div>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- /cd-body -->
+                </div><!-- /cd-root -->
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- ══ ACTION — open singleton ══════════════════════════════════════════ -->
+<record id="action_construction_dashboard" model="ir.actions.act_window">
+    <field name="name">Construction Dashboard</field>
+    <field name="res_model">farm.construction.dashboard</field>
+    <field name="view_mode">form</field>
+    <field name="res_id" ref="smart_farm_construction.construction_dashboard_singleton"/>
+    <field name="target">current</field>
+    <field name="context">{'form_view_initial_mode': 'readonly'}</field>
+</record>
+
+</data>
+</odoo>

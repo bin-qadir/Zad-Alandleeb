@@ -1,0 +1,205 @@
+/* ============================================================
+   CONSTRUCTION DASHBOARD — Enterprise Layout
+   ============================================================ */
+
+/* ── Root wrapper ──────────────────────────────────────────── */
+.cd-root {
+    font-family: var(--o-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+    background: #f4f6f9;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* ── Header ────────────────────────────────────────────────── */
+.cd-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #1a2e4a 0%, #2c4a6e 100%);
+    color: #fff;
+    border-radius: 8px 8px 0 0;
+}
+.cd-header-left  { display: flex; align-items: center; gap: 16px; }
+.cd-header-icon  {
+    width: 48px; height: 48px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+}
+.cd-title   { font-size: 20px; font-weight: 700; letter-spacing: .3px; }
+.cd-subtitle { font-size: 12px; color: rgba(255,255,255,.65); margin-top: 2px; }
+
+.cd-refresh-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    border-radius: 6px;
+    padding: 7px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .2s;
+}
+.cd-refresh-btn:hover { background: rgba(255,255,255,0.25); }
+
+/* ── Body ──────────────────────────────────────────────────── */
+.cd-body { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
+
+/* ── Section ───────────────────────────────────────────────── */
+.cd-section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    overflow: hidden;
+}
+.cd-section-hdr {
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 20px;
+    font-size: 13px; font-weight: 600;
+    color: #1a2e4a;
+    border-bottom: 1px solid #e9ecef;
+    background: #fafbfc;
+}
+.cd-section-body { padding: 20px; }
+
+/* ── KPI strip (top 5 cards) ───────────────────────────────── */
+.cd-kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+}
+.cd-kpi {
+    border-radius: 10px;
+    padding: 18px;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    text-align: left;
+    transition: transform .15s, box-shadow .15s;
+    width: 100%;
+}
+.cd-kpi:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.15); }
+.cd-kpi--indigo   { background: linear-gradient(135deg,#3b4fc8,#6979f8); }
+.cd-kpi--teal     { background: linear-gradient(135deg,#0f766e,#14b8a6); }
+.cd-kpi--green    { background: linear-gradient(135deg,#15803d,#22c55e); }
+.cd-kpi--amber    { background: linear-gradient(135deg,#b45309,#f59e0b); }
+.cd-kpi--rose     { background: linear-gradient(135deg,#be123c,#f43f5e); }
+.cd-kpi-icon  { font-size: 20px; opacity: .8; margin-bottom: 8px; }
+.cd-kpi-val   { font-size: 26px; font-weight: 700; line-height: 1; }
+.cd-kpi-val--sm { font-size: 18px; }
+.cd-kpi-lbl   { font-size: 12px; opacity: .85; margin-top: 4px; }
+
+/* ── Progress bar ──────────────────────────────────────────── */
+.cd-progress-wrap { padding: 8px 0; }
+.cd-progress-bar-bg {
+    height: 14px;
+    background: #e9ecef;
+    border-radius: 7px;
+    overflow: hidden;
+    margin: 8px 0;
+}
+.cd-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+    border-radius: 7px;
+    transition: width .5s ease;
+}
+.cd-progress-labels { display: flex; justify-content: space-between; font-size: 12px; color: #6c757d; }
+
+/* ── Phase cards ───────────────────────────────────────────── */
+.cd-phase-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+}
+.cd-phase-card {
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all .15s;
+    background: #f8fafc;
+    width: 100%;
+}
+.cd-phase-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+.cd-phase--pre    { border-color: #93c5fd; }
+.cd-phase--pre:hover    { background: #eff6ff; }
+.cd-phase--tender { border-color: #fde68a; }
+.cd-phase--tender:hover { background: #fffbeb; }
+.cd-phase--post   { border-color: #a7f3d0; }
+.cd-phase--post:hover   { background: #ecfdf5; }
+.cd-phase--exec   { border-color: #6ee7b7; }
+.cd-phase--exec:hover   { background: #d1fae5; }
+.cd-phase--close  { border-color: #c4b5fd; }
+.cd-phase--close:hover  { background: #f5f3ff; }
+.cd-phase-num  { font-size: 28px; font-weight: 700; color: #1a2e4a; line-height: 1; }
+.cd-phase-lbl  { font-size: 12px; color: #6c757d; margin-top: 4px; }
+
+/* ── Stage distribution ────────────────────────────────────── */
+.cd-stage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 10px;
+}
+.cd-stage-card {
+    border-radius: 8px;
+    padding: 12px 10px;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    transition: all .15s;
+    width: 100%;
+}
+.cd-stage-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+.cd-stage--draft   { background: #f1f5f9; color: #475569; }
+.cd-stage--appr    { background: #dbeafe; color: #1d4ed8; }
+.cd-stage--prog    { background: #dcfce7; color: #15803d; }
+.cd-stage--hand    { background: #fef3c7; color: #b45309; }
+.cd-stage--insp    { background: #ede9fe; color: #7c3aed; }
+.cd-stage--acc     { background: #d1fae5; color: #065f46; }
+.cd-stage--ready   { background: #fce7f3; color: #9d174d; }
+.cd-stage--claimed { background: #e0f2fe; color: #0369a1; }
+.cd-stage--closed  { background: #f0fdf4; color: #166534; }
+.cd-stage--overdue { background: #fee2e2; color: #991b1b; }
+.cd-stage-num  { font-size: 22px; font-weight: 700; }
+.cd-stage-lbl  { font-size: 11px; margin-top: 3px; font-weight: 500; }
+
+/* ── Department breakdown ──────────────────────────────────── */
+.cd-dept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 14px;
+}
+.cd-dept-card {
+    border-radius: 10px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    border: none;
+    text-align: left;
+    transition: all .15s;
+    width: 100%;
+}
+.cd-dept-card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,.12); }
+.cd-dept--civil  { background: linear-gradient(135deg,#1e3a5f,#2563eb); color:#fff; }
+.cd-dept--struct { background: linear-gradient(135deg,#312e81,#4f46e5); color:#fff; }
+.cd-dept--arch   { background: linear-gradient(135deg,#134e4a,#0d9488); color:#fff; }
+.cd-dept--mech   { background: linear-gradient(135deg,#78350f,#d97706); color:#fff; }
+.cd-dept--elec   { background: linear-gradient(135deg,#7f1d1d,#ef4444); color:#fff; }
+.cd-dept-icon { font-size: 24px; opacity: .85; flex-shrink: 0; }
+.cd-dept-info {}
+.cd-dept-num  { font-size: 22px; font-weight: 700; line-height: 1; }
+.cd-dept-lbl  { font-size: 12px; opacity: .8; margin-top: 2px; }
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .cd-kpi-strip    { grid-template-columns: 1fr 1fr; }
+    .cd-phase-grid   { grid-template-columns: 1fr 1fr; }
+    .cd-stage-grid   { grid-template-columns: 1fr 1fr 1fr; }
+    .cd-dept-grid    { grid-template-columns: 1fr 1fr; }
+    .cd-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+}

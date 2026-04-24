@@ -4,8 +4,17 @@
 
 <!--
     ══════════════════════════════════════════════════════════════════
-    SMART FARM CONSTRUCTION — Menu Structure
-    Mirrors Smart Farm exactly. Filtered by business_activity = 'construction'.
+    SMART FARM CONSTRUCTION — Clean Enterprise Menu
+    ══════════════════════════════════════════════════════════════════
+
+    Visible:
+      1. Dashboard  — Construction Executive Dashboard
+      2. Projects   — All construction projects (gateway to all sub-flows)
+      3. Configuration — Divisions · Subdivisions (reference data)
+
+    All operational flows (BOQ, Materials, Procurement, Execution,
+    Inspection, Approval, Claims, Invoices) are accessed from inside
+    the Project form via tabs — NOT from the top-level menu.
     ══════════════════════════════════════════════════════════════════
 -->
 
@@ -35,95 +44,46 @@
     sequence="20"
 />
 
-<!-- 3. Divisions -->
+<!-- 3. Configuration (parent) -->
 <menuitem
-    id="menu_sf_construction_divisions"
-    name="Divisions"
+    id="menu_sf_construction_config"
+    name="Configuration"
     parent="menu_sf_construction_root"
-    action="action_con_divisions"
-    sequence="30"
-/>
-
-<!-- 4. Subdivisions -->
-<menuitem
-    id="menu_sf_construction_subdivisions"
-    name="Subdivisions"
-    parent="menu_sf_construction_root"
-    action="action_con_subdivisions"
-    sequence="40"
-/>
-
-<!-- 5. BOQ -->
-<menuitem
-    id="menu_sf_construction_boq"
-    name="BOQ"
-    parent="menu_sf_construction_root"
-    action="action_con_boq"
-    sequence="50"
-/>
-
-<!-- 6. Material -->
-<menuitem
-    id="menu_sf_construction_material"
-    name="Material"
-    parent="menu_sf_construction_root"
-    action="action_con_material"
-    sequence="60"
-/>
-
-<!-- 7. Procurement -->
-<menuitem
-    id="menu_sf_construction_procurement"
-    name="Procurement"
-    parent="menu_sf_construction_root"
-    action="action_con_procurement"
-    sequence="70"
-/>
-
-<!-- 8. Execution -->
-<menuitem
-    id="menu_sf_construction_execution"
-    name="Execution"
-    parent="menu_sf_construction_root"
-    action="action_con_execution"
-    sequence="80"
-/>
-
-<!-- 9. Inspection -->
-<menuitem
-    id="menu_sf_construction_inspection"
-    name="Inspection"
-    parent="menu_sf_construction_root"
-    action="action_con_inspection"
     sequence="90"
 />
 
-<!-- 10. Approval -->
+<!-- 3a. Divisions (under Configuration) -->
 <menuitem
-    id="menu_sf_construction_approval"
-    name="Approval"
-    parent="menu_sf_construction_root"
-    action="action_con_approval"
-    sequence="100"
+    id="menu_sf_construction_divisions"
+    name="Divisions"
+    parent="menu_sf_construction_config"
+    action="action_con_divisions"
+    sequence="10"
 />
 
-<!-- 11. Claims -->
+<!-- 3b. Subdivisions (under Configuration) -->
 <menuitem
-    id="menu_sf_construction_claims"
-    name="Claims"
-    parent="menu_sf_construction_root"
-    action="action_con_claims"
-    sequence="110"
+    id="menu_sf_construction_subdivisions"
+    name="Subdivisions"
+    parent="menu_sf_construction_config"
+    action="action_con_subdivisions"
+    sequence="20"
 />
 
-<!-- 12. Invoices / Purchase Orders -->
-<menuitem
-    id="menu_sf_construction_invoices"
-    name="Invoices"
-    parent="menu_sf_construction_root"
-    action="action_con_invoices"
-    sequence="120"
-/>
+<!--
+    ══════════════════════════════════════════════════════════════════
+    DEACTIVATED — operational menus moved inside Project form tabs
+    Records preserved; menus hidden at DB level (active=False).
+    ══════════════════════════════════════════════════════════════════
+-->
+<record id="menu_sf_construction_boq"         model="ir.ui.menu"><field name="active" eval="False"/></record>
+<record id="menu_sf_construction_material"    model="ir.ui.menu"><field name="active" eval="False"/></record>
+<record id="menu_sf_construction_procurement" model="ir.ui.menu"><field name="active" eval="False"/></record>
+<record id="menu_sf_construction_execution"   model="ir.ui.menu"><field name="active" eval="False"/></record>
+<record id="menu_sf_construction_inspection"  model="ir.ui.menu"><field name="active" eval="False"/></record>
+<record id="menu_sf_construction_approval"    model="ir.ui.menu"><field name="active" eval="False"/></record>
+<record id="menu_sf_construction_claims"      model="ir.ui.menu"><field name="active" eval="False"/></record>
+<record id="menu_sf_construction_invoices"    model="ir.ui.menu"><field name="active" eval="False"/></record>
 
 </data>
 </odoo>

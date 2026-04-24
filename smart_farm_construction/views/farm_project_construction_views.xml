@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ╔══════════════════════════════════════════════════════════════════════╗
+     ║  FARM PROJECT — Construction overlay                               ║
+     ║  Adds:                                                             ║
+     ║    1. Construction Phase field in the main info group             ║
+     ║    2. Smart button strip: Material Requests, Procurement, POs     ║
+     ║    3. Notebook with 9 operational tabs                            ║
+     ╚══════════════════════════════════════════════════════════════════════╝ -->
+
+<record id="view_farm_project_construction_form_inherit" model="ir.ui.view">
+    <field name="name">farm.project.construction.form.inherit</field>
+    <field name="model">farm.project</field>
+    <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
+    <field name="arch" type="xml">
+
+        <!-- ── 1. Inject Construction Phase into the main info group ──── -->
+        <field name="lifecycle_stage_id" position="before">
+            <field name="construction_phase"
+                   widget="radio"
+                   invisible="business_activity != 'construction'"
+                   options="{'horizontal': true}"/>
+        </field>
+
+        <!-- ── 2. Smart buttons: Material Requests, Procurement, POs ──── -->
+        <xpath expr="//div[@name='button_box']" position="inside">
+
+            <button name="action_open_material_requests" type="object"
+                    class="epd-mini-kpi epd-mini-kpi--blue"
+                    title="Open Material Requests"
+                    invisible="business_activity != 'construction'">
+                <i class="fa fa-truck epd-mini-icon" title="Material Requests"/>
+                <div class="epd-mini-value">
+                    <field name="material_request_count" nolabel="1"/>
+                </div>
+                <div class="epd-mini-label">Materials</div>
+            </button>
+
+            <button name="action_open_procurement" type="object"
+                    class="epd-mini-kpi epd-mini-kpi--amber"
+                    title="Open Procurement Documents"
+                    invisible="business_activity != 'construction'">
+                <i class="fa fa-shopping-cart epd-mini-icon" title="Procurement"/>
+                <div class="epd-mini-value">
+                    <field name="procurement_count" nolabel="1"/>
+                </div>
+                <div class="epd-mini-label">Procurement</div>
+            </button>
+
+            <button name="action_open_purchase_orders" type="object"
+                    class="epd-mini-kpi epd-mini-kpi--green"
+                    title="Open Purchase Orders"
+                    invisible="business_activity != 'construction'">
+                <i class="fa fa-file-text-o epd-mini-icon" title="Purchase Orders"/>
+                <div class="epd-mini-value">
+                    <field name="purchase_order_count" nolabel="1"/>
+                </div>
+                <div class="epd-mini-label">POs</div>
+            </button>
+
+        </xpath>
+
+        <!-- ── 3. Notebook — inject before description field ─────────── -->
+        <!-- We append the notebook after the last group in sheet -->
+        <xpath expr="//sheet/div[@name='main_action_buttons']" position="after">
+
+            <notebook invisible="business_activity != 'construction'">
+
+                <!-- ── Tab 1: Scope (BOQ) ──────────────────────────────── -->
+                <page string="Scope (BOQ)" name="tab_boq">
+                    <div class="mb-3 d-flex gap-2">
+                        <button name="action_new_boq" type="object"
+                                string="New BOQ"
+                                class="btn btn-primary btn-sm"
+                                icon="fa-plus"/>
+                        <button name="action_open_boqs" type="object"
+                                string="All BOQs"
+                                class="btn btn-outline-secondary btn-sm"
+                                icon="fa-list"
+                                invisible="boq_count == 0"/>
+                    </div>
+                    <field name="boq_ids" nolabel="1"
+                           mode="list"
+                           context="{'default_project_id': id}">
+                        <list string="Cost Structures">
+                            <field name="name"/>
+                            <field name="date" string="Date" optional="show"/>
+                            <field name="state" widget="badge"
+                                   decoration-info="state == 'draft'"
+                                   decoration-warning="state == 'submitted'"
+                                   decoration-success="state == 'approved'"
+                                   optional="show"/>
+                            <field name="total" string="BOQ Amount" optional="show"/>
+                        </list>
+                    </field>
+                </page>
+
+                <!-- ── Tab 2: Tasks ────────────────────────────────────── -->
+                <page string="Tasks" name="tab_tasks">
+                    <div class="mb-3 d-flex align-items-center gap-3">
+                        <button name="action_open_tasks" type="object"
+                                string="Open All Tasks"
+                                class="btn btn-primary btn-sm"
+                                icon="fa-external-link"
+                                invisible="not odoo_project_id"/>
+                        <span class="text-muted" style="font-size:13px"
+                              invisible="odoo_project_id">
+                            <i class="fa fa-info-circle me-1"/>
+                            Tasks are managed via the linked Odoo Project.
+                            Save this project first to auto-create the Odoo project link.
+                        </span>
+                        <span class="text-muted" style="font-size:13px"
+                              invisible="not odoo_project_id">
+                            <i class="fa fa-check-square-o me-1"/>
+                            <field name="task_count" nolabel="1"/> task(s) in
+                            <field name="odoo_project_id" nolabel="1" readonly="1"/>
+                        </span>
+                    </div>
+                </page>
+
+                <!-- ── Tab 3: Materials ────────────────────────────────── -->
+                <page string="Materials" name="tab_materials">
+                    <div class="mb-3">
+                        <button name="action_open_material_requests" type="object"
+                                string="New Request"
+                                class="btn btn-primary btn-sm"
+                                icon="fa-plus"/>
+                    </div>
+                    <field name="material_request_ids" nolabel="1"
+                           mode="list"
+                           context="{
+                               'default_project_id': id,
+                               'default_business_activity': 'construction'
+                           }">
+                        <list string="Material Requests">
+                            <field name="name"/>
+                            <field name="request_date" optional="show"/>
+                            <field name="state" widget="badge"
+                                   decoration-info="state == 'draft'"
+                                   decoration-warning="state == 'to_approve'"
+                                   decoration-success="state == 'approved'"
+                                   decoration-danger="state == 'rejected'"
+                                   optional="show"/>
+                            <field name="total_estimated_cost" string="Est. Cost" optional="show"/>
+                        </list>
+                    </field>
+                </page>
+
+                <!-- ── Tab 4: Procurement ──────────────────────────────── -->
+                <page string="Procurement" name="tab_procurement">
+                    <div class="mb-3">
+                        <button name="action_open_procurement" type="object"
+                                string="Open Procurement"
+                                class="btn btn-primary btn-sm"
+                                icon="fa-external-link"/>
+                        <span class="ms-3 text-muted" style="font-size:13px">
+                            <field name="procurement_count" nolabel="1"/> BOQ analysis document(s)
+                        </span>
+                    </div>
+                </page>
+
+                <!-- ── Tab 5: Resources ────────────────────────────────── -->
+                <page string="Resources" name="tab_resources">
+                    <div class="p-4 text-center text-muted" style="font-size:13px">
+                        <i class="fa fa-users fa-2x mb-3 d-block"/>
+                        <strong>Resource Allocation</strong><br/>
+                        Assign labour, equipment, and subcontractors to this project.<br/>
+                        <span class="badge bg-warning text-dark mt-2">Coming Next Phase</span>
+                    </div>
+                </page>
+
+                <!-- ── Tab 6: Execution ────────────────────────────────── -->
+                <page string="Execution" name="tab_execution">
+                    <div class="mb-3 d-flex gap-2">
+                        <button name="action_open_job_orders" type="object"
+                                string="All Job Orders"
+                                class="btn btn-outline-secondary btn-sm"
+                                icon="fa-list"
+                                invisible="job_order_count == 0"/>
+                        <button name="action_open_execution_jos" type="object"
+                                string="Active Execution"
+                                class="btn btn-primary btn-sm"
+                                icon="fa-play"/>
+                    </div>
+                    <div class="row g-3 mb-3" invisible="job_order_count == 0">
+                        <div class="col-md-3">
+                            <div class="border rounded p-3 text-center">
+                                <div class="fs-4 fw-bold text-success">
+                                    <field name="execution_progress_pct" nolabel="1"
+                                           widget="float" options="{'digits': [16,1]}"/>%
+                                </div>
+                                <div class="text-muted small">Progress</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded p-3 text-center">
+                                <div class="fs-4 fw-bold text-primary">
+                                    <field name="jo_count_in_progress" nolabel="1"/>
+                                </div>
+                                <div class="text-muted small">In Progress</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded p-3 text-center">
+                                <div class="fs-4 fw-bold text-warning">
+                                    <field name="jo_count_under_inspection" nolabel="1"/>
+                                </div>
+                                <div class="text-muted small">Under Inspection</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded p-3 text-center">
+                                <div class="fs-4 fw-bold text-info">
+                                    <field name="job_order_count" nolabel="1"/>
+                                </div>
+                                <div class="text-muted small">Total JOs</div>
+                            </div>
+                        </div>
+                    </div>
+                    <field name="job_order_ids" nolabel="1"
+                           mode="list"
+                           domain="[('jo_stage', 'in', ['approved', 'in_progress'])]">
+                        <list string="Active Execution">
+                            <field name="name"/>
+                            <field name="department" widget="badge" optional="show"/>
+                            <field name="jo_stage" widget="badge"
+                                   decoration-info="jo_stage == 'approved'"
+                                   decoration-success="jo_stage == 'in_progress'"/>
+                            <field name="planned_qty" optional="show"/>
+                            <field name="approved_qty" optional="show"/>
+                            <field name="approved_amount" optional="show"/>
+                            <field name="planned_end_date" optional="show"/>
+                        </list>
+                    </field>
+                </page>
+
+                <!-- ── Tab 7: Inspection ───────────────────────────────── -->
+                <page string="Inspection" name="tab_inspection">
+                    <div class="mb-3">
+                        <button name="action_open_inspection_jos" type="object"
+                                string="Open Inspection"
+                                class="btn btn-primary btn-sm"
+                                icon="fa-external-link"/>
+                    </div>
+                    <field name="job_order_ids" nolabel="1"
+                           mode="list"
+                           domain="[('jo_stage', 'in', ['handover_requested','under_inspection','partially_accepted','accepted'])]">
+                        <list string="Inspection &amp; Approval">
+                            <field name="name"/>
+                            <field name="department" widget="badge" optional="show"/>
+                            <field name="jo_stage" widget="badge"
+                                   decoration-warning="jo_stage == 'handover_requested'"
+                                   decoration-info="jo_stage == 'under_inspection'"
+                                   decoration-success="jo_stage in ['partially_accepted','accepted']"/>
+                            <field name="approved_qty" optional="show"/>
+                            <field name="approved_amount" optional="show"/>
+                            <field name="claimable_amount" optional="show"/>
+                        </list>
+                    </field>
+                </page>
+
+                <!-- ── Tab 8: Claims ───────────────────────────────────── -->
+                <page string="Claims" name="tab_claims">
+                    <div class="mb-3 d-flex align-items-center gap-3">
+                        <button name="action_open_claims_jos" type="object"
+                                string="Open Claims"
+                                class="btn btn-primary btn-sm"
+                                icon="fa-external-link"/>
+                        <span class="text-muted" style="font-size:13px">
+                            Ready to Claim:
+                            <field name="jo_count_ready_for_claim" nolabel="1"/> JOs ·
+                            Claimed:
+                            <field name="jo_count_claimed" nolabel="1"/> JOs
+                        </span>
+                    </div>
+                    <field name="job_order_ids" nolabel="1"
+                           mode="list"
+                           domain="[('jo_stage', 'in', ['ready_for_claim', 'claimed'])]">
+                        <list string="Claims">
+                            <field name="name"/>
+                            <field name="department" widget="badge" optional="show"/>
+                            <field name="jo_stage" widget="badge"
+                                   decoration-warning="jo_stage == 'ready_for_claim'"
+                                   decoration-success="jo_stage == 'claimed'"/>
+                            <field name="claimable_amount" optional="show"/>
+                            <field name="claim_amount" optional="show"/>
+                        </list>
+                    </field>
+                </page>
+
+                <!-- ── Tab 9: Financial ────────────────────────────────── -->
+                <page string="Financial" name="tab_financial">
+                    <group string="Financial Summary" col="2">
+                        <group>
+                            <field name="total_approved_amount" readonly="1"
+                                   widget="float" options="{'digits': [16,2]}"/>
+                            <field name="total_claimable_amount" readonly="1"
+                                   widget="float" options="{'digits': [16,2]}"/>
+                        </group>
+                        <group>
+                            <field name="total_claimed_amount" readonly="1"
+                                   widget="float" options="{'digits': [16,2]}"/>
+                            <field name="execution_progress_pct" readonly="1"
+                                   widget="float" options="{'digits': [16,1]}"/>
+                        </group>
+                    </group>
+                    <div class="mb-3 mt-2">
+                        <button name="action_open_purchase_orders" type="object"
+                                string="View Purchase Orders"
+                                class="btn btn-outline-secondary btn-sm"
+                                icon="fa-file-text-o"/>
+                    </div>
+                </page>
+
+            </notebook>
+        </xpath>
+
+    </field>
+</record>
+
+</data>
+</odoo>

@@ -13,12 +13,14 @@
     ══════════════════════════════════════════════════════════════════
 -->
 
-<!-- ── 1. Dashboard ──────────────────────────────────────────────── -->
-<record id="action_con_dashboard" model="ir.actions.server">
+<!-- ── 1. Dashboard — opens the Construction Executive Dashboard ──── -->
+<record id="action_con_dashboard" model="ir.actions.act_window">
     <field name="name">Construction Dashboard</field>
-    <field name="model_id" ref="smart_farm_dashboard.model_farm_activity_dashboard"/>
-    <field name="state">code</field>
-    <field name="code">action = model.action_open_construction()</field>
+    <field name="res_model">farm.construction.dashboard</field>
+    <field name="view_mode">form</field>
+    <field name="res_id" ref="smart_farm_construction.construction_dashboard_singleton"/>
+    <field name="target">current</field>
+    <field name="context">{'form_view_initial_mode': 'readonly'}</field>
 </record>
 
 <!-- ── 2. Projects ───────────────────────────────────────────────── -->

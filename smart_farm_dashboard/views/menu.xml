@@ -97,13 +97,22 @@
              active=False is enforced at DB level and is not group-dependent.
              The action records and views are preserved for programmatic access. -->
 
+        <!-- Deactivate execution/civil sub-menus (already done) -->
         <record id="menu_farm_dashboard_construction_execution" model="ir.ui.menu">
             <field name="active" eval="False"/>
         </record>
-
         <record id="menu_farm_dashboard_civil" model="ir.ui.menu">
             <field name="active" eval="False"/>
         </record>
+
+        <!--
+            Deactivate Agriculture / Manufacturing / Livestock dashboard menus.
+            These activities are not yet built — placeholder only.
+            Re-enable once each activity workflow is complete.
+        -->
+        <record id="menu_farm_dashboard_agriculture"   model="ir.ui.menu"><field name="active" eval="False"/></record>
+        <record id="menu_farm_dashboard_manufacturing" model="ir.ui.menu"><field name="active" eval="False"/></record>
+        <record id="menu_farm_dashboard_livestock"     model="ir.ui.menu"><field name="active" eval="False"/></record>
 
     </data>
 </odoo>
