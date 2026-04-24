@@ -46,6 +46,16 @@ class ConstructionAiInsight(models.Model):
         ondelete='cascade',
         index=True,
     )
+    job_order_id = fields.Many2one(
+        'farm.job.order',
+        string='Job Order',
+        ondelete='set null',
+        index=True,
+        help=(
+            'Optional: link this insight to a specific Job Order for '
+            'job-order-level AI analysis. Leave empty for project-level insights.'
+        ),
+    )
     business_activity = fields.Selection(
         related='project_id.business_activity',
         store=True,

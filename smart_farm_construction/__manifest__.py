@@ -37,6 +37,7 @@
         'views/construction_dashboard_views.xml',
         'views/construction_ai_insight_views.xml',
         'views/farm_project_construction_views.xml',
+        'views/farm_job_order_construction_inherit.xml',
         'views/menu.xml',
     ],
     'assets': {

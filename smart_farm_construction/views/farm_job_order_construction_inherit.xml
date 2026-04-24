@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ╔══════════════════════════════════════════════════════════════════════╗
+     ║  FARM JOB ORDER — Construction AI Insight Panel                    ║
+     ║                                                                    ║
+     ║  Injects the AI Insight Panel BELOW the Execution Control Panel.   ║
+     ║  SAFE MODE: zero changes to existing ECP or any existing logic.    ║
+     ╚══════════════════════════════════════════════════════════════════════╝ -->
+
+<record id="view_farm_job_order_construction_ai_inherit" model="ir.ui.view">
+    <field name="name">farm.job.order.construction.ai.inherit</field>
+    <field name="model">farm.job.order</field>
+    <field name="inherit_id" ref="smart_farm_execution.view_farm_job_order_form"/>
+    <field name="arch" type="xml">
+
+        <!-- Inject AI panel directly after the ECP container div -->
+        <xpath expr="//div[contains(@class,'ecp-container')]" position="after">
+
+            <!-- ══════════════════════════════════════════════════════════
+                 AI INSIGHT PANEL
+                 Visible only for Construction Job Orders
+                 Shows project-level AI risk broken down per risk category
+            ══════════════════════════════════════════════════════════ -->
+            <div class="aip-container"
+                 invisible="business_activity != 'construction' or not jo_ai_status">
+
+                <!-- Panel header -->
+                <div class="aip-header">
+                    <span class="aip-header-icon">&#129302;</span>
+                    <span class="aip-header-title">AI Insight Panel</span>
+                    <span class="aip-header-badge aip-badge--critical"
+                          invisible="jo_ai_status != 'critical'">CRITICAL</span>
+                    <span class="aip-header-badge aip-badge--warning"
+                          invisible="jo_ai_status != 'warning'">WARNING</span>
+                    <span class="aip-header-badge aip-badge--healthy"
+                          invisible="jo_ai_status != 'healthy'">HEALTHY</span>
+                    <span class="aip-header-score">
+                        Overall Risk:
+                        <field name="jo_ai_risk_score" readonly="1" nolabel="1"
+                               widget="float" options="{'digits':[16,1]}"/>%
+                    </span>
+                    <button name="action_open_project_ai_insight" type="object"
+                            string="View Full Insight" icon="fa-external-link"
+                            class="btn btn-sm aip-link-btn ms-auto"/>
+                </div>
+
+                <!-- Risk score cards row -->
+                <div class="aip-grid">
+
+                    <!-- Delay Risk -->
+                    <div class="aip-card aip-card--delay">
+                        <div class="aip-card-icon"><i class="fa fa-clock-o" title="Delay Risk"/></div>
+                        <div class="aip-card-value">
+                            <field name="jo_ai_delay_score" readonly="1" nolabel="1"
+                                   widget="float" options="{'digits':[16,1]}"/>
+                        </div>
+                        <div class="aip-card-lbl">Delay Risk</div>
+                        <div class="aip-card-sub">Schedule overrun</div>
+                        <div class="aip-card-hint" invisible="jo_ai_delay_score &lt; 50">
+                            <i class="fa fa-arrow-up text-danger" title="High"/>
+                            Add manpower on critical path
+                        </div>
+                    </div>
+
+                    <!-- Cost Risk -->
+                    <div class="aip-card aip-card--cost">
+                        <div class="aip-card-icon"><i class="fa fa-usd" title="Cost Risk"/></div>
+                        <div class="aip-card-value">
+                            <field name="jo_ai_cost_risk" readonly="1" nolabel="1"
+                                   widget="float" options="{'digits':[16,1]}"/>
+                        </div>
+                        <div class="aip-card-lbl">Cost Risk</div>
+                        <div class="aip-card-sub">Budget variance</div>
+                        <div class="aip-card-hint" invisible="jo_ai_cost_risk &lt; 50">
+                            <i class="fa fa-arrow-up text-danger" title="High"/>
+                            Review BOQ margins
+                        </div>
+                    </div>
+
+                    <!-- Procurement Risk -->
+                    <div class="aip-card aip-card--procurement">
+                        <div class="aip-card-icon"><i class="fa fa-shopping-cart" title="Procurement Risk"/></div>
+                        <div class="aip-card-value">
+                            <field name="jo_ai_procurement_risk" readonly="1" nolabel="1"
+                                   widget="float" options="{'digits':[16,1]}"/>
+                        </div>
+                        <div class="aip-card-lbl">Procurement</div>
+                        <div class="aip-card-sub">Material delays</div>
+                        <div class="aip-card-hint" invisible="jo_ai_procurement_risk &lt; 50">
+                            <i class="fa fa-arrow-up text-danger" title="High"/>
+                            Expedite procurement
+                        </div>
+                    </div>
+
+                    <!-- Execution Risk -->
+                    <div class="aip-card aip-card--execution">
+                        <div class="aip-card-icon"><i class="fa fa-cogs" title="Execution Risk"/></div>
+                        <div class="aip-card-value">
+                            <field name="jo_ai_execution_risk" readonly="1" nolabel="1"
+                                   widget="float" options="{'digits':[16,1]}"/>
+                        </div>
+                        <div class="aip-card-lbl">Execution</div>
+                        <div class="aip-card-sub">JO throughput</div>
+                        <div class="aip-card-hint" invisible="jo_ai_execution_risk &lt; 50">
+                            <i class="fa fa-arrow-up text-danger" title="High"/>
+                            Clear inspection queue
+                        </div>
+                    </div>
+
+                    <!-- Claim Risk -->
+                    <div class="aip-card aip-card--claim">
+                        <div class="aip-card-icon"><i class="fa fa-money" title="Claim Risk"/></div>
+                        <div class="aip-card-value">
+                            <field name="jo_ai_claim_risk" readonly="1" nolabel="1"
+                                   widget="float" options="{'digits':[16,1]}"/>
+                        </div>
+                        <div class="aip-card-lbl">Claim Risk</div>
+                        <div class="aip-card-sub">Revenue recovery</div>
+                        <div class="aip-card-hint" invisible="jo_ai_claim_risk &lt; 50">
+                            <i class="fa fa-arrow-up text-danger" title="High"/>
+                            Submit claim now
+                        </div>
+                    </div>
+
+                </div><!-- /aip-grid -->
+
+                <!-- Recommended Actions -->
+                <div class="aip-actions-section" invisible="not jo_ai_recommendation">
+                    <div class="aip-actions-title">
+                        <i class="fa fa-lightbulb-o me-2" title="Recommended Actions"/>
+                        Recommended Actions
+                    </div>
+                    <div class="aip-actions-body">
+                        <field name="jo_ai_recommendation" readonly="1" nolabel="1"/>
+                    </div>
+                </div>
+
+            </div><!-- /aip-container -->
+
+        </xpath>
+
+    </field>
+</record>
+
+</data>
+</odoo>
