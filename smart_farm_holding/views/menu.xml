@@ -27,44 +27,44 @@
             sequence="2"
             groups="smart_farm_holding.group_holding_manager"/>
 
-        <!-- All Farm Projects (cross-company) -->
+        <!-- All Farm Projects (cross-company, all activities) -->
         <menuitem
             id="menu_holding_all_farm_projects"
-            name="All Farm Projects"
+            name="All Projects"
             parent="menu_holding_cross_company"
             action="smart_farm_project.action_farm_project"
             sequence="10"/>
 
-        <!-- All Construction Projects (cross-company) -->
+        <!-- All Construction Projects (filtered by activity) -->
         <menuitem
             id="menu_holding_all_construction"
-            name="All Construction Projects"
+            name="Construction Projects"
             parent="menu_holding_cross_company"
-            action="construction_project.action_construction_project"
+            action="smart_farm_construction.action_con_projects"
             sequence="20"/>
 
-        <!-- All Agriculture Seasons -->
+        <!-- All Agriculture Projects (filtered by activity) -->
         <menuitem
-            id="menu_holding_all_seasons"
-            name="All Agriculture Seasons"
+            id="menu_holding_all_agriculture"
+            name="Agriculture Projects"
             parent="menu_holding_cross_company"
-            action="smart_farm_agriculture.action_agriculture_season"
+            action="smart_farm_agriculture.action_agr_projects"
             sequence="30"/>
 
-        <!-- All Manufacturing Plans -->
+        <!-- All Manufacturing Projects (filtered by activity) -->
         <menuitem
-            id="menu_holding_all_mfg_plans"
-            name="All Production Plans"
+            id="menu_holding_all_manufacturing"
+            name="Manufacturing Projects"
             parent="menu_holding_cross_company"
-            action="smart_farm_manufacturing.action_manufacturing_plan"
+            action="smart_farm_manufacturing.action_mfg_projects"
             sequence="40"/>
 
-        <!-- All Livestock Herds -->
+        <!-- All Livestock Projects (filtered by activity) -->
         <menuitem
-            id="menu_holding_all_herds"
-            name="All Herds"
+            id="menu_holding_all_livestock"
+            name="Livestock Projects"
             parent="menu_holding_cross_company"
-            action="smart_farm_livestock.action_livestock_herd"
+            action="smart_farm_livestock.action_ls_projects"
             sequence="50"/>
 
         <!-- ══════════════════════════════════════════════════════════════════

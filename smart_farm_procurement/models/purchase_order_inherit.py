@@ -12,6 +12,13 @@ class PurchaseOrderFarm(models.Model):
         ondelete='set null',
         index=True,
     )
+    farm_business_activity = fields.Selection(
+        related='farm_project_id.business_activity',
+        store=True,
+        index=True,
+        string='Business Activity',
+        help='Derived from the linked Farm Project. Used for activity-filtered views.',
+    )
     farm_boq_id = fields.Many2one(
         'farm.boq',
         string='BOQ Document',

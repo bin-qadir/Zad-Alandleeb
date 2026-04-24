@@ -82,14 +82,11 @@
                 (4, ref('group_finance_user')),
                 (4, ref('group_procurement_user')),
                 (4, ref('group_project_control_user')),
-                (4, ref('smart_farm_agriculture.group_agriculture_manager')),
-                (4, ref('smart_farm_manufacturing.group_manufacturing_manager')),
-                (4, ref('smart_farm_livestock.group_livestock_manager')),
-                (4, ref('construction_project.group_construction_manager')),
             ]"/>
             <field name="comment">
                 Manages a single activity company. Full access to own company data.
                 Cannot access data from other companies.
+                All activity-specific groups are unified through the Smart Farm engine.
             </field>
         </record>
 

@@ -1,17 +1,17 @@
 {
-    'name': 'Smart Farm — Livestock',
-    'version': '18.0.2.0.0',
-    'summary': 'Livestock activity — filtered mirror of Smart Farm engine',
+    'name': 'Smart Farm — Construction',
+    'version': '18.0.1.0.0',
+    'summary': 'Construction activity — filtered mirror of Smart Farm engine',
     'description': (
-        'Standalone application for the Livestock business activity.\n\n'
+        'Standalone application for the Construction business activity.\n\n'
         'This module is a FILTERED MIRROR of the Smart Farm engine.\n'
         'NO separate models. NO duplicate logic.\n\n'
         'All records shown here are farm.project / farm.boq / farm.job.order\n'
-        'records with business_activity = "livestock".\n\n'
+        'records with business_activity = "construction".\n\n'
         'Menu: Dashboard · Projects · Divisions · Subdivisions · BOQ · '
         'Material · Procurement · Execution · Inspection · Approval · Claims · Invoices'
     ),
-    'category': 'Smart Farm/Livestock',
+    'category': 'Smart Farm',
     'author': 'bin-qadir',
     'license': 'LGPL-3',
     'depends': [

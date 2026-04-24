@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
-    <menuitem
-        id="menu_construction_procurement"
-        name="Procurements"
+<data>
+    <!-- Procurement menu deactivated — Construction uses smart_farm_construction app -->
+    <menuitem id="menu_construction_procurement" name="Procurements"
         parent="construction_project.menu_construction_root"
-        action="action_construction_procurement"
-        sequence="80"/>
-
+        action="action_construction_procurement" sequence="80" groups="base.group_no_one"/>
+</data>
 </odoo>

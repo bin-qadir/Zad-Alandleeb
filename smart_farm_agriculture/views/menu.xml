@@ -1,82 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
+<data>
 
-        <!-- ══════════════════════════════════════════════════════════════════
-             ROOT APP MENU — Agriculture Company
-        ══════════════════════════════════════════════════════════════════ -->
+<!--
+    ══════════════════════════════════════════════════════════════════
+    SMART FARM AGRICULTURE — Menu Structure
+    Mirrors Smart Farm exactly. Filtered by business_activity = 'agriculture'.
+    ══════════════════════════════════════════════════════════════════
+-->
 
-        <menuitem
-            id="menu_agriculture_root"
-            name="Agriculture"
-            sequence="60"
-            groups="smart_farm_agriculture.group_agriculture_user"/>
+<!-- ROOT APP MENU -->
+<menuitem
+    id="menu_sf_agriculture_root"
+    name="Agriculture"
+    sequence="120"
+    web_icon="smart_farm_agriculture,static/description/icon.png"
+/>
 
-        <!-- ══════════════════════════════════════════════════════════════════
-             OPERATIONS
-        ══════════════════════════════════════════════════════════════════ -->
+<!-- 1. Dashboard -->
+<menuitem
+    id="menu_sf_agriculture_dashboard"
+    name="Dashboard"
+    parent="menu_sf_agriculture_root"
+    action="action_agr_dashboard"
+    sequence="10"
+/>
 
-        <menuitem
-            id="menu_agriculture_operations"
-            name="Operations"
-            parent="menu_agriculture_root"
-            sequence="10"/>
+<!-- 2. Projects -->
+<menuitem
+    id="menu_sf_agriculture_projects"
+    name="Projects"
+    parent="menu_sf_agriculture_root"
+    action="action_agr_projects"
+    sequence="20"
+/>
 
-        <menuitem
-            id="menu_agriculture_season"
-            name="Seasons"
-            parent="menu_agriculture_operations"
-            action="action_agriculture_season"
-            sequence="10"/>
+<!-- 3. Divisions -->
+<menuitem
+    id="menu_sf_agriculture_divisions"
+    name="Divisions"
+    parent="menu_sf_agriculture_root"
+    action="action_agr_divisions"
+    sequence="30"
+/>
 
-        <menuitem
-            id="menu_agriculture_crop_plan"
-            name="Crop Plans"
-            parent="menu_agriculture_operations"
-            action="action_agriculture_crop_plan"
-            sequence="20"/>
+<!-- 4. Subdivisions -->
+<menuitem
+    id="menu_sf_agriculture_subdivisions"
+    name="Subdivisions"
+    parent="menu_sf_agriculture_root"
+    action="action_agr_subdivisions"
+    sequence="40"
+/>
 
-        <menuitem
-            id="menu_agriculture_field_operation"
-            name="Field Operations"
-            parent="menu_agriculture_operations"
-            action="action_agriculture_field_operation"
-            sequence="30"/>
+<!-- 5. BOQ -->
+<menuitem
+    id="menu_sf_agriculture_boq"
+    name="BOQ"
+    parent="menu_sf_agriculture_root"
+    action="action_agr_boq"
+    sequence="50"
+/>
 
-        <!-- ══════════════════════════════════════════════════════════════════
-             HARVEST
-        ══════════════════════════════════════════════════════════════════ -->
+<!-- 6. Material -->
+<menuitem
+    id="menu_sf_agriculture_material"
+    name="Material"
+    parent="menu_sf_agriculture_root"
+    action="action_agr_material"
+    sequence="60"
+/>
 
-        <menuitem
-            id="menu_agriculture_harvest_parent"
-            name="Harvest"
-            parent="menu_agriculture_root"
-            sequence="20"/>
+<!-- 7. Procurement -->
+<menuitem
+    id="menu_sf_agriculture_procurement"
+    name="Procurement"
+    parent="menu_sf_agriculture_root"
+    action="action_agr_procurement"
+    sequence="70"
+/>
 
-        <menuitem
-            id="menu_agriculture_harvest"
-            name="Harvest Records"
-            parent="menu_agriculture_harvest_parent"
-            action="action_agriculture_harvest"
-            sequence="10"/>
+<!-- 8. Execution -->
+<menuitem
+    id="menu_sf_agriculture_execution"
+    name="Execution"
+    parent="menu_sf_agriculture_root"
+    action="action_agr_execution"
+    sequence="80"
+/>
 
-        <menuitem
-            id="menu_agriculture_packing"
-            name="Packing &amp; Dispatch"
-            parent="menu_agriculture_harvest_parent"
-            action="action_agriculture_packing"
-            sequence="20"/>
+<!-- 9. Inspection -->
+<menuitem
+    id="menu_sf_agriculture_inspection"
+    name="Inspection"
+    parent="menu_sf_agriculture_root"
+    action="action_agr_inspection"
+    sequence="90"
+/>
 
-        <!-- ══════════════════════════════════════════════════════════════════
-             PROJECTS (link to farm.project filtered by agriculture)
-        ══════════════════════════════════════════════════════════════════ -->
+<!-- 10. Approval -->
+<menuitem
+    id="menu_sf_agriculture_approval"
+    name="Approval"
+    parent="menu_sf_agriculture_root"
+    action="action_agr_approval"
+    sequence="100"
+/>
 
-        <menuitem
-            id="menu_agriculture_projects"
-            name="Farm Projects"
-            parent="menu_agriculture_root"
-            action="smart_farm_project.action_farm_project"
-            sequence="5"/>
+<!-- 11. Claims -->
+<menuitem
+    id="menu_sf_agriculture_claims"
+    name="Claims"
+    parent="menu_sf_agriculture_root"
+    action="action_agr_claims"
+    sequence="110"
+/>
 
-    </data>
+<!-- 12. Invoices / Purchase Orders -->
+<menuitem
+    id="menu_sf_agriculture_invoices"
+    name="Invoices"
+    parent="menu_sf_agriculture_root"
+    action="action_agr_invoices"
+    sequence="120"
+/>
+
+</data>
 </odoo>

@@ -1,65 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
+<data>
 
-        <menuitem
-            id="menu_manufacturing_sf_root"
-            name="Manufacturing"
-            sequence="70"
-            groups="smart_farm_manufacturing.group_manufacturing_user"/>
+<!--
+    ══════════════════════════════════════════════════════════════════
+    SMART FARM MANUFACTURING — Menu Structure
+    Mirrors Smart Farm exactly. Filtered by business_activity = 'manufacturing'.
+    ══════════════════════════════════════════════════════════════════
+-->
 
-        <menuitem
-            id="menu_manufacturing_sf_projects"
-            name="Projects"
-            parent="menu_manufacturing_sf_root"
-            action="smart_farm_project.action_farm_project"
-            sequence="5"/>
+<!-- ROOT APP MENU -->
+<menuitem
+    id="menu_sf_manufacturing_root"
+    name="Manufacturing"
+    sequence="140"
+    web_icon="smart_farm_manufacturing,static/description/icon.png"
+/>
 
-        <menuitem
-            id="menu_manufacturing_sf_production"
-            name="Production"
-            parent="menu_manufacturing_sf_root"
-            sequence="10"/>
+<!-- 1. Dashboard -->
+<menuitem
+    id="menu_sf_manufacturing_dashboard"
+    name="Dashboard"
+    parent="menu_sf_manufacturing_root"
+    action="action_mfg_dashboard"
+    sequence="10"
+/>
 
-        <menuitem
-            id="menu_manufacturing_plan"
-            name="Production Plans"
-            parent="menu_manufacturing_sf_production"
-            action="action_manufacturing_plan"
-            sequence="10"/>
+<!-- 2. Projects -->
+<menuitem
+    id="menu_sf_manufacturing_projects"
+    name="Projects"
+    parent="menu_sf_manufacturing_root"
+    action="action_mfg_projects"
+    sequence="20"
+/>
 
-        <menuitem
-            id="menu_manufacturing_work_order"
-            name="Work Orders"
-            parent="menu_manufacturing_sf_production"
-            action="action_manufacturing_work_order"
-            sequence="20"/>
+<!-- 3. Divisions -->
+<menuitem
+    id="menu_sf_manufacturing_divisions"
+    name="Divisions"
+    parent="menu_sf_manufacturing_root"
+    action="action_mfg_divisions"
+    sequence="30"
+/>
 
-        <menuitem
-            id="menu_manufacturing_qc"
-            name="Quality Control"
-            parent="menu_manufacturing_sf_root"
-            sequence="20"/>
+<!-- 4. Subdivisions -->
+<menuitem
+    id="menu_sf_manufacturing_subdivisions"
+    name="Subdivisions"
+    parent="menu_sf_manufacturing_root"
+    action="action_mfg_subdivisions"
+    sequence="40"
+/>
 
-        <menuitem
-            id="menu_manufacturing_qc_check"
-            name="QC Checks"
-            parent="menu_manufacturing_qc"
-            action="action_manufacturing_qc_check"
-            sequence="10"/>
+<!-- 5. BOQ -->
+<menuitem
+    id="menu_sf_manufacturing_boq"
+    name="BOQ"
+    parent="menu_sf_manufacturing_root"
+    action="action_mfg_boq"
+    sequence="50"
+/>
 
-        <menuitem
-            id="menu_manufacturing_dispatch_parent"
-            name="Dispatch"
-            parent="menu_manufacturing_sf_root"
-            sequence="30"/>
+<!-- 6. Material -->
+<menuitem
+    id="menu_sf_manufacturing_material"
+    name="Material"
+    parent="menu_sf_manufacturing_root"
+    action="action_mfg_material"
+    sequence="60"
+/>
 
-        <menuitem
-            id="menu_manufacturing_dispatch"
-            name="Dispatch Orders"
-            parent="menu_manufacturing_dispatch_parent"
-            action="action_manufacturing_dispatch"
-            sequence="10"/>
+<!-- 7. Procurement -->
+<menuitem
+    id="menu_sf_manufacturing_procurement"
+    name="Procurement"
+    parent="menu_sf_manufacturing_root"
+    action="action_mfg_procurement"
+    sequence="70"
+/>
 
-    </data>
+<!-- 8. Execution -->
+<menuitem
+    id="menu_sf_manufacturing_execution"
+    name="Execution"
+    parent="menu_sf_manufacturing_root"
+    action="action_mfg_execution"
+    sequence="80"
+/>
+
+<!-- 9. Inspection -->
+<menuitem
+    id="menu_sf_manufacturing_inspection"
+    name="Inspection"
+    parent="menu_sf_manufacturing_root"
+    action="action_mfg_inspection"
+    sequence="90"
+/>
+
+<!-- 10. Approval -->
+<menuitem
+    id="menu_sf_manufacturing_approval"
+    name="Approval"
+    parent="menu_sf_manufacturing_root"
+    action="action_mfg_approval"
+    sequence="100"
+/>
+
+<!-- 11. Claims -->
+<menuitem
+    id="menu_sf_manufacturing_claims"
+    name="Claims"
+    parent="menu_sf_manufacturing_root"
+    action="action_mfg_claims"
+    sequence="110"
+/>
+
+<!-- 12. Invoices / Purchase Orders -->
+<menuitem
+    id="menu_sf_manufacturing_invoices"
+    name="Invoices"
+    parent="menu_sf_manufacturing_root"
+    action="action_mfg_invoices"
+    sequence="120"
+/>
+
+</data>
 </odoo>

@@ -1,27 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
-    <!--
-        Extend the Phase 1 Construction top-level menu with BOQ entries.
-        Parent: construction_project.menu_construction_root
-    -->
-
-    <!-- ─── BOQ ───────────────────────────────────────────────────────────── -->
-
-    <menuitem
-        id="menu_construction_boq"
-        name="Bills of Quantities"
+<data>
+    <!-- BOQ menus deactivated — Construction uses smart_farm_construction app -->
+    <menuitem id="menu_construction_boq" name="Bills of Quantities"
         parent="construction_project.menu_construction_root"
-        action="action_construction_boq"
-        sequence="40"/>
-
-    <!-- ─── BOQ Lines ─────────────────────────────────────────────────────── -->
-
-    <menuitem
-        id="menu_construction_boq_lines"
-        name="BOQ Lines"
+        action="action_construction_boq" sequence="40" groups="base.group_no_one"/>
+    <menuitem id="menu_construction_boq_lines" name="BOQ Lines"
         parent="construction_project.menu_construction_root"
-        action="action_construction_boq_line"
-        sequence="50"/>
-
+        action="action_construction_boq_line" sequence="50" groups="base.group_no_one"/>
+</data>
 </odoo>

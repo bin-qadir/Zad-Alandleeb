@@ -43,6 +43,13 @@ class FarmMaterialRequest(models.Model):
         index=True,
         tracking=True,
     )
+    business_activity = fields.Selection(
+        related='project_id.business_activity',
+        store=True,
+        index=True,
+        string='Business Activity',
+        help='Derived from the linked Farm Project. Used for activity-filtered views.',
+    )
     job_order_id = fields.Many2one(
         'farm.job.order',
         string='Job Order',

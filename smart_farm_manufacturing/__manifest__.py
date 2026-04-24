@@ -1,36 +1,26 @@
 {
     'name': 'Smart Farm — Manufacturing',
-    'version': '18.0.1.0.0',
-    'summary': 'Manufacturing Company — production planning, work orders, QC, dispatch',
+    'version': '18.0.2.0.0',
+    'summary': 'Manufacturing activity — filtered mirror of Smart Farm engine',
     'description': (
-        'Operational module for the Manufacturing / Packing Company.\n\n'
-        'Provides:\n'
-        '• Production Plans\n'
-        '• Work Orders (manufacturing runs)\n'
-        '• Quality Control Checks\n'
-        '• Finished Goods & Dispatch\n\n'
-        'All records are company-scoped and tied to the manufacturing lifecycle.\n'
-        'AI decision layer: risk_score, delay_score, budget_risk, next_recommended_action.\n'
+        'Standalone application for the Manufacturing / Packing business activity.\n\n'
+        'This module is a FILTERED MIRROR of the Smart Farm engine.\n'
+        'NO separate models. NO duplicate logic.\n\n'
+        'All records shown here are farm.project / farm.boq / farm.job.order\n'
+        'records with business_activity = "manufacturing".\n\n'
+        'Menu: Dashboard · Projects · Divisions · Subdivisions · BOQ · '
+        'Material · Procurement · Execution · Inspection · Approval · Claims · Invoices'
     ),
     'category': 'Smart Farm/Manufacturing',
     'author': 'bin-qadir',
     'license': 'LGPL-3',
     'depends': [
-        'smart_farm_base',
-        'smart_farm_project',
-        'smart_farm_master',
-        'analytic',
-        'mail',
-        'uom',
+        'smart_farm_material_request',   # full Smart Farm engine chain
+        'smart_farm_work_structure',     # Divisions / Subdivisions reference data
     ],
     'data': [
-        'security/security.xml',
         'security/ir.model.access.csv',
-        'data/manufacturing_data.xml',
-        'views/manufacturing_plan_views.xml',
-        'views/manufacturing_work_order_views.xml',
-        'views/manufacturing_qc_check_views.xml',
-        'views/manufacturing_dispatch_views.xml',
+        'views/actions.xml',
         'views/menu.xml',
     ],
     'installable': True,

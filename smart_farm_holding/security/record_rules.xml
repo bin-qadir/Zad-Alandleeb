@@ -13,23 +13,15 @@
             • Rules use `allowed_company_ids` from the user context (standard Odoo
               multi-company mechanism) + our enterprise groups
 
-            MODELS COVERED:
-            • farm.project                (Agriculture / Manufacturing / Livestock projects)
-            • agriculture.season          (Agriculture operations)
-            • agriculture.crop.plan
-            • agriculture.field.operation
-            • agriculture.harvest
-            • agriculture.packing
-            • manufacturing.plan          (Manufacturing operations)
-            • manufacturing.work.order
-            • manufacturing.qc.check
-            • manufacturing.dispatch
-            • livestock.herd              (Livestock operations)
-            • livestock.animal
-            • livestock.health.check
-            • livestock.feeding.plan
-            • livestock.sale
-            • construction.project        (Construction operations)
+            MODELS COVERED (Smart Farm engine — all filtered by company):
+            • farm.project     — all activities (construction/agriculture/mfg/livestock)
+            • farm.job.order   — all execution records
+            • farm.boq         — bill of quantities
+            • farm.material.request — material procurement requests
+
+            NOTE: Separate activity-specific models (agriculture.season,
+            livestock.herd, manufacturing.plan, construction.project) are no longer
+            used. All activities run on the unified Smart Farm engine.
             ══════════════════════════════════════════════════════════════════
         -->
 
@@ -53,210 +45,9 @@
             <field name="perm_unlink" eval="True"/>
         </record>
 
-        <!-- ── agriculture.season ────────────────────────────────────────── -->
-
-        <record id="rule_agriculture_season_company" model="ir.rule">
-            <field name="name">Agriculture Season — Company Isolation</field>
-            <field name="model_id" ref="smart_farm_agriculture.model_agriculture_season"/>
-            <field name="domain_force">[
-                '|',
-                ('company_id', '=', False),
-                ('company_id', 'in', company_ids)
-            ]</field>
-            <field name="groups" eval="[
-                (4, ref('group_activity_user')),
-                (4, ref('group_activity_company_manager')),
-            ]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
-        </record>
-
-        <!-- ── agriculture.crop.plan ─────────────────────────────────────── -->
-
-        <record id="rule_agriculture_crop_plan_company" model="ir.rule">
-            <field name="name">Agriculture Crop Plan — Company Isolation</field>
-            <field name="model_id" ref="smart_farm_agriculture.model_agriculture_crop_plan"/>
-            <field name="domain_force">[
-                '|',
-                ('company_id', '=', False),
-                ('company_id', 'in', company_ids)
-            ]</field>
-            <field name="groups" eval="[
-                (4, ref('group_activity_user')),
-                (4, ref('group_activity_company_manager')),
-            ]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
-        </record>
-
-        <!-- ── agriculture.field.operation ───────────────────────────────── -->
-
-        <record id="rule_agriculture_field_operation_company" model="ir.rule">
-            <field name="name">Agriculture Field Operation — Company Isolation</field>
-            <field name="model_id" ref="smart_farm_agriculture.model_agriculture_field_operation"/>
-            <field name="domain_force">[
-                '|',
-                ('company_id', '=', False),
-                ('company_id', 'in', company_ids)
-            ]</field>
-            <field name="groups" eval="[
-                (4, ref('group_activity_user')),
-                (4, ref('group_activity_company_manager')),
-            ]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
-        </record>
-
-        <!-- ── agriculture.harvest ───────────────────────────────────────── -->
-
-        <record id="rule_agriculture_harvest_company" model="ir.rule">
-            <field name="name">Agriculture Harvest — Company Isolation</field>
-            <field name="model_id" ref="smart_farm_agriculture.model_agriculture_harvest"/>
-            <field name="domain_force">[
-                '|',
-                ('company_id', '=', False),
-                ('company_id', 'in', company_ids)
-            ]</field>
-            <field name="groups" eval="[
-                (4, ref('group_activity_user')),
-                (4, ref('group_activity_company_manager')),
-            ]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
-        </record>
-
-        <!-- ── agriculture.packing ───────────────────────────────────────── -->
-
-        <record id="rule_agriculture_packing_company" model="ir.rule">
-            <field name="name">Agriculture Packing — Company Isolation</field>
-            <field name="model_id" ref="smart_farm_agriculture.model_agriculture_packing"/>
-            <field name="domain_force">[
-                '|',
-                ('company_id', '=', False),
-                ('company_id', 'in', company_ids)
-            ]</field>
-            <field name="groups" eval="[
-                (4, ref('group_activity_user')),
-                (4, ref('group_activity_company_manager')),
-            ]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
-        </record>
-
-        <!-- ── manufacturing.plan ────────────────────────────────────────── -->
-
-        <record id="rule_manufacturing_plan_company" model="ir.rule">
-            <field name="name">Manufacturing Plan — Company Isolation</field>
-            <field name="model_id" ref="smart_farm_manufacturing.model_manufacturing_plan"/>
-            <field name="domain_force">[
-                '|',
-                ('company_id', '=', False),
-                ('company_id', 'in', company_ids)
-            ]</field>
-            <field name="groups" eval="[
-                (4, ref('group_activity_user')),
-                (4, ref('group_activity_company_manager')),
-            ]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
-        </record>
-
-        <!-- ── manufacturing.dispatch ────────────────────────────────────── -->
-
-        <record id="rule_manufacturing_dispatch_company" model="ir.rule">
-            <field name="name">Manufacturing Dispatch — Company Isolation</field>
-            <field name="model_id" ref="smart_farm_manufacturing.model_manufacturing_dispatch"/>
-            <field name="domain_force">[
-                '|',
-                ('company_id', '=', False),
-                ('company_id', 'in', company_ids)
-            ]</field>
-            <field name="groups" eval="[
-                (4, ref('group_activity_user')),
-                (4, ref('group_activity_company_manager')),
-            ]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
-        </record>
-
-        <!-- ── livestock.herd ────────────────────────────────────────────── -->
-
-        <record id="rule_livestock_herd_company" model="ir.rule">
-            <field name="name">Livestock Herd — Company Isolation</field>
-            <field name="model_id" ref="smart_farm_livestock.model_livestock_herd"/>
-            <field name="domain_force">[
-                '|',
-                ('company_id', '=', False),
-                ('company_id', 'in', company_ids)
-            ]</field>
-            <field name="groups" eval="[
-                (4, ref('group_activity_user')),
-                (4, ref('group_activity_company_manager')),
-            ]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
-        </record>
-
-        <!-- ── livestock.sale ────────────────────────────────────────────── -->
-
-        <record id="rule_livestock_sale_company" model="ir.rule">
-            <field name="name">Livestock Sale — Company Isolation</field>
-            <field name="model_id" ref="smart_farm_livestock.model_livestock_sale"/>
-            <field name="domain_force">[
-                '|',
-                ('company_id', '=', False),
-                ('company_id', 'in', company_ids)
-            ]</field>
-            <field name="groups" eval="[
-                (4, ref('group_activity_user')),
-                (4, ref('group_activity_company_manager')),
-            ]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
-        </record>
-
-        <!-- ── construction.project ──────────────────────────────────────── -->
-
-        <record id="rule_construction_project_company" model="ir.rule">
-            <field name="name">Construction Project — Company Isolation</field>
-            <field name="model_id" ref="construction_project.model_construction_project"/>
-            <field name="domain_force">[
-                '|',
-                ('company_id', '=', False),
-                ('company_id', 'in', company_ids)
-            ]</field>
-            <field name="groups" eval="[
-                (4, ref('group_activity_user')),
-                (4, ref('group_activity_company_manager')),
-            ]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
-        </record>
-
         <!-- ── smartfarm.company.activity ────────────────────────────────── -->
 
         <!-- Only Holding Managers can see ALL company configs -->
-        <!-- Activity Company Managers see only their own config -->
         <record id="rule_company_activity_manager" model="ir.rule">
             <field name="name">Company Activity Config — Holding Manager Bypass</field>
             <field name="model_id" ref="model_smartfarm_company_activity"/>

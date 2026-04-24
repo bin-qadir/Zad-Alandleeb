@@ -1,22 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
-    <!--
-        Phase 3 menu entries under the existing Construction root menu.
-    -->
-
-    <menuitem
-        id="menu_construction_material_plan"
-        name="Material Plans"
+<data>
+    <!-- Material menus deactivated — Construction uses smart_farm_construction app -->
+    <menuitem id="menu_construction_material_plan" name="Material Plans"
         parent="construction_project.menu_construction_root"
-        action="action_construction_material_plan"
-        sequence="60"/>
-
-    <menuitem
-        id="menu_construction_material_request"
-        name="Material Requests"
+        action="action_construction_material_plan" sequence="60" groups="base.group_no_one"/>
+    <menuitem id="menu_construction_material_request" name="Material Requests"
         parent="construction_project.menu_construction_root"
-        action="action_construction_material_request"
-        sequence="70"/>
-
+        action="action_construction_material_request" sequence="70" groups="base.group_no_one"/>
+</data>
 </odoo>

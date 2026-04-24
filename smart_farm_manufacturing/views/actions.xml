@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!--
+    ══════════════════════════════════════════════════════════════════
+    SMART FARM MANUFACTURING — Filtered Actions
+    ══════════════════════════════════════════════════════════════════
+    All actions filter on business_activity = 'manufacturing'.
+    NO new models. Pure filtered mirror of Smart Farm engine.
+    ══════════════════════════════════════════════════════════════════
+-->
+
+<!-- ── 1. Dashboard ──────────────────────────────────────────────── -->
+<record id="action_mfg_dashboard" model="ir.actions.server">
+    <field name="name">Manufacturing Dashboard</field>
+    <field name="model_id" ref="smart_farm_dashboard.model_farm_activity_dashboard"/>
+    <field name="state">code</field>
+    <field name="code">action = model.action_open_manufacturing()</field>
+</record>
+
+<!-- ── 2. Projects ───────────────────────────────────────────────── -->
+<record id="action_mfg_projects" model="ir.actions.act_window">
+    <field name="name">Manufacturing Projects</field>
+    <field name="res_model">farm.project</field>
+    <field name="view_mode">list,form,kanban</field>
+    <field name="domain">[('business_activity', '=', 'manufacturing')]</field>
+    <field name="context">{
+        'default_business_activity': 'manufacturing',
+        'search_default_filter_manufacturing': 1
+    }</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            Create your first manufacturing project!
+        </p>
+    </field>
+</record>
+
+<!-- ── 3. Divisions ──────────────────────────────────────────────── -->
+<record id="action_mfg_divisions" model="ir.actions.act_window">
+    <field name="name">Divisions</field>
+    <field name="res_model">farm.division.work</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[]</field>
+</record>
+
+<!-- ── 4. Subdivisions ───────────────────────────────────────────── -->
+<record id="action_mfg_subdivisions" model="ir.actions.act_window">
+    <field name="name">Subdivisions</field>
+    <field name="res_model">farm.subdivision.work</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[]</field>
+</record>
+
+<!-- ── 5. BOQ ────────────────────────────────────────────────────── -->
+<record id="action_mfg_boq" model="ir.actions.act_window">
+    <field name="name">Manufacturing BOQ</field>
+    <field name="res_model">farm.boq</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('business_activity', '=', 'manufacturing')]</field>
+    <field name="context">{'default_business_activity': 'manufacturing'}</field>
+</record>
+
+<!-- ── 6. Material Requests ──────────────────────────────────────── -->
+<record id="action_mfg_material" model="ir.actions.act_window">
+    <field name="name">Material Requests</field>
+    <field name="res_model">farm.material.request</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('business_activity', '=', 'manufacturing')]</field>
+    <field name="context">{'default_business_activity': 'manufacturing'}</field>
+</record>
+
+<!-- ── 7. Procurement (BOQ Analysis) ─────────────────────────────── -->
+<record id="action_mfg_procurement" model="ir.actions.act_window">
+    <field name="name">Procurement</field>
+    <field name="res_model">farm.boq.analysis</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('business_activity', '=', 'manufacturing')]</field>
+    <field name="context">{'default_business_activity': 'manufacturing'}</field>
+</record>
+
+<!-- ── 8. Execution ───────────────────────────────────────────────── -->
+<record id="action_mfg_execution" model="ir.actions.act_window">
+    <field name="name">Execution</field>
+    <field name="res_model">farm.job.order</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('business_activity', '=', 'manufacturing')]</field>
+    <field name="context">{'default_business_activity': 'manufacturing'}</field>
+</record>
+
+<!-- ── 9. Inspection ─────────────────────────────────────────────── -->
+<record id="action_mfg_inspection" model="ir.actions.act_window">
+    <field name="name">Inspection</field>
+    <field name="res_model">farm.job.order</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[
+        ('business_activity', '=', 'manufacturing'),
+        ('jo_stage', 'in', ['handover_requested', 'under_inspection'])
+    ]</field>
+    <field name="context">{'default_business_activity': 'manufacturing'}</field>
+</record>
+
+<!-- ── 10. Approval ───────────────────────────────────────────────── -->
+<record id="action_mfg_approval" model="ir.actions.act_window">
+    <field name="name">Approval</field>
+    <field name="res_model">farm.job.order</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[
+        ('business_activity', '=', 'manufacturing'),
+        ('jo_stage', 'in', ['under_inspection', 'partially_accepted', 'accepted'])
+    ]</field>
+    <field name="context">{'default_business_activity': 'manufacturing'}</field>
+</record>
+
+<!-- ── 11. Claims ────────────────────────────────────────────────── -->
+<record id="action_mfg_claims" model="ir.actions.act_window">
+    <field name="name">Claims</field>
+    <field name="res_model">farm.job.order</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[
+        ('business_activity', '=', 'manufacturing'),
+        ('jo_stage', 'in', ['ready_for_claim', 'claimed'])
+    ]</field>
+    <field name="context">{'default_business_activity': 'manufacturing'}</field>
+</record>
+
+<!-- ── 12. Invoices (Purchase Orders) ────────────────────────────── -->
+<record id="action_mfg_invoices" model="ir.actions.act_window">
+    <field name="name">Purchase Orders</field>
+    <field name="res_model">purchase.order</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('farm_business_activity', '=', 'manufacturing')]</field>
+    <field name="context">{'default_farm_business_activity': 'manufacturing'}</field>
+</record>
+
+</data>
+</odoo>

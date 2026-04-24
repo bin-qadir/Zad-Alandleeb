@@ -1,11 +1,1 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_livestock_herd_user,livestock.herd user,model_livestock_herd,group_livestock_user,1,1,1,0
-access_livestock_herd_manager,livestock.herd manager,model_livestock_herd,group_livestock_manager,1,1,1,1
-access_livestock_animal_user,livestock.animal user,model_livestock_animal,group_livestock_user,1,1,1,0
-access_livestock_animal_manager,livestock.animal manager,model_livestock_animal,group_livestock_manager,1,1,1,1
-access_livestock_health_check_user,livestock.health.check user,model_livestock_health_check,group_livestock_user,1,1,1,0
-access_livestock_health_check_manager,livestock.health.check manager,model_livestock_health_check,group_livestock_manager,1,1,1,1
-access_livestock_feeding_plan_user,livestock.feeding.plan user,model_livestock_feeding_plan,group_livestock_user,1,1,1,0
-access_livestock_feeding_plan_manager,livestock.feeding.plan manager,model_livestock_feeding_plan,group_livestock_manager,1,1,1,1
-access_livestock_sale_user,livestock.sale user,model_livestock_sale,group_livestock_user,1,1,1,0
-access_livestock_sale_manager,livestock.sale manager,model_livestock_sale,group_livestock_manager,1,1,1,1

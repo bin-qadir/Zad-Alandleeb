@@ -36,10 +36,10 @@
         'smart_farm_base',
         'smart_farm_project',
         'smart_farm_execution',
-        'construction_project',
-        'smart_farm_agriculture',
-        'smart_farm_manufacturing',
-        'smart_farm_livestock',
+        'smart_farm_construction',    # filtered mirror — replaces construction_project
+        'smart_farm_agriculture',     # filtered mirror — no own models
+        'smart_farm_manufacturing',   # filtered mirror — no own models
+        'smart_farm_livestock',       # filtered mirror — no own models
     ],
     'data': [
         'security/security.xml',

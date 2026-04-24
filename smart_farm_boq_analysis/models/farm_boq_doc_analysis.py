@@ -57,6 +57,13 @@ class FarmBoqDocAnalysis(models.Model):
         store=True,
         index=True,
     )
+    business_activity = fields.Selection(
+        related='boq_id.business_activity',
+        store=True,
+        index=True,
+        string='Business Activity',
+        help='Derived from the linked BOQ → Project. Used for activity-filtered views.',
+    )
     currency_id = fields.Many2one(
         'res.currency',
         related='boq_id.currency_id',

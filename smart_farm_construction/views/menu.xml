@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!--
+    ══════════════════════════════════════════════════════════════════
+    SMART FARM CONSTRUCTION — Menu Structure
+    Mirrors Smart Farm exactly. Filtered by business_activity = 'construction'.
+    ══════════════════════════════════════════════════════════════════
+-->
+
+<!-- ROOT APP MENU -->
+<menuitem
+    id="menu_sf_construction_root"
+    name="Construction"
+    sequence="110"
+    web_icon="smart_farm_construction,static/description/icon.png"
+/>
+
+<!-- 1. Dashboard -->
+<menuitem
+    id="menu_sf_construction_dashboard"
+    name="Dashboard"
+    parent="menu_sf_construction_root"
+    action="action_con_dashboard"
+    sequence="10"
+/>
+
+<!-- 2. Projects -->
+<menuitem
+    id="menu_sf_construction_projects"
+    name="Projects"
+    parent="menu_sf_construction_root"
+    action="action_con_projects"
+    sequence="20"
+/>
+
+<!-- 3. Divisions -->
+<menuitem
+    id="menu_sf_construction_divisions"
+    name="Divisions"
+    parent="menu_sf_construction_root"
+    action="action_con_divisions"
+    sequence="30"
+/>
+
+<!-- 4. Subdivisions -->
+<menuitem
+    id="menu_sf_construction_subdivisions"
+    name="Subdivisions"
+    parent="menu_sf_construction_root"
+    action="action_con_subdivisions"
+    sequence="40"
+/>
+
+<!-- 5. BOQ -->
+<menuitem
+    id="menu_sf_construction_boq"
+    name="BOQ"
+    parent="menu_sf_construction_root"
+    action="action_con_boq"
+    sequence="50"
+/>
+
+<!-- 6. Material -->
+<menuitem
+    id="menu_sf_construction_material"
+    name="Material"
+    parent="menu_sf_construction_root"
+    action="action_con_material"
+    sequence="60"
+/>
+
+<!-- 7. Procurement -->
+<menuitem
+    id="menu_sf_construction_procurement"
+    name="Procurement"
+    parent="menu_sf_construction_root"
+    action="action_con_procurement"
+    sequence="70"
+/>
+
+<!-- 8. Execution -->
+<menuitem
+    id="menu_sf_construction_execution"
+    name="Execution"
+    parent="menu_sf_construction_root"
+    action="action_con_execution"
+    sequence="80"
+/>
+
+<!-- 9. Inspection -->
+<menuitem
+    id="menu_sf_construction_inspection"
+    name="Inspection"
+    parent="menu_sf_construction_root"
+    action="action_con_inspection"
+    sequence="90"
+/>
+
+<!-- 10. Approval -->
+<menuitem
+    id="menu_sf_construction_approval"
+    name="Approval"
+    parent="menu_sf_construction_root"
+    action="action_con_approval"
+    sequence="100"
+/>
+
+<!-- 11. Claims -->
+<menuitem
+    id="menu_sf_construction_claims"
+    name="Claims"
+    parent="menu_sf_construction_root"
+    action="action_con_claims"
+    sequence="110"
+/>
+
+<!-- 12. Invoices / Purchase Orders -->
+<menuitem
+    id="menu_sf_construction_invoices"
+    name="Invoices"
+    parent="menu_sf_construction_root"
+    action="action_con_invoices"
+    sequence="120"
+/>
+
+</data>
+</odoo>

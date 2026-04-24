@@ -28,6 +28,13 @@ class FarmBoq(models.Model):
         ondelete='restrict',
         index=True,
     )
+    business_activity = fields.Selection(
+        related='project_id.business_activity',
+        store=True,
+        index=True,
+        string='Business Activity',
+        help='Derived from the linked Farm Project. Used for activity-filtered views.',
+    )
     date = fields.Date(string='Date', default=fields.Date.today)
     note = fields.Text(string='Notes')
 

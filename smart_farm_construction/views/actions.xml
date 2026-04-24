@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!--
+    ══════════════════════════════════════════════════════════════════
+    SMART FARM CONSTRUCTION — Filtered Actions
+    ══════════════════════════════════════════════════════════════════
+
+    All actions filter on business_activity = 'construction'.
+    NO new models are defined. This is a pure filtered mirror of the
+    Smart Farm engine (SAP/Oracle-style modular isolation).
+    ══════════════════════════════════════════════════════════════════
+-->
+
+<!-- ── 1. Dashboard ──────────────────────────────────────────────── -->
+<record id="action_con_dashboard" model="ir.actions.server">
+    <field name="name">Construction Dashboard</field>
+    <field name="model_id" ref="smart_farm_dashboard.model_farm_activity_dashboard"/>
+    <field name="state">code</field>
+    <field name="code">action = model.action_open_construction()</field>
+</record>
+
+<!-- ── 2. Projects ───────────────────────────────────────────────── -->
+<record id="action_con_projects" model="ir.actions.act_window">
+    <field name="name">Construction Projects</field>
+    <field name="res_model">farm.project</field>
+    <field name="view_mode">list,form,kanban</field>
+    <field name="domain">[('business_activity', '=', 'construction')]</field>
+    <field name="context">{
+        'default_business_activity': 'construction',
+        'search_default_filter_construction': 1
+    }</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            Create your first construction project!
+        </p>
+    </field>
+</record>
+
+<!-- ── 3. Divisions ──────────────────────────────────────────────── -->
+<record id="action_con_divisions" model="ir.actions.act_window">
+    <field name="name">Divisions</field>
+    <field name="res_model">farm.division.work</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[]</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            No division work categories defined yet.
+        </p>
+    </field>
+</record>
+
+<!-- ── 4. Subdivisions ───────────────────────────────────────────── -->
+<record id="action_con_subdivisions" model="ir.actions.act_window">
+    <field name="name">Subdivisions</field>
+    <field name="res_model">farm.subdivision.work</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[]</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            No subdivision work categories defined yet.
+        </p>
+    </field>
+</record>
+
+<!-- ── 5. BOQ ────────────────────────────────────────────────────── -->
+<record id="action_con_boq" model="ir.actions.act_window">
+    <field name="name">Construction BOQ</field>
+    <field name="res_model">farm.boq</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('business_activity', '=', 'construction')]</field>
+    <field name="context">{
+        'default_business_activity': 'construction'
+    }</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            No BOQ documents for Construction yet.
+        </p>
+    </field>
+</record>
+
+<!-- ── 6. Material Requests ──────────────────────────────────────── -->
+<record id="action_con_material" model="ir.actions.act_window">
+    <field name="name">Material Requests</field>
+    <field name="res_model">farm.material.request</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('business_activity', '=', 'construction')]</field>
+    <field name="context">{
+        'default_business_activity': 'construction'
+    }</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            No material requests for Construction yet.
+        </p>
+    </field>
+</record>
+
+<!-- ── 7. Procurement (BOQ Analysis → RFQ) ───────────────────────── -->
+<record id="action_con_procurement" model="ir.actions.act_window">
+    <field name="name">Procurement</field>
+    <field name="res_model">farm.boq.analysis</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('business_activity', '=', 'construction')]</field>
+    <field name="context">{
+        'default_business_activity': 'construction'
+    }</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            No BOQ analysis / procurement documents for Construction yet.
+        </p>
+    </field>
+</record>
+
+<!-- ── 8. Execution (all job orders) ─────────────────────────────── -->
+<record id="action_con_execution" model="ir.actions.act_window">
+    <field name="name">Execution</field>
+    <field name="res_model">farm.job.order</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('business_activity', '=', 'construction')]</field>
+    <field name="context">{
+        'default_business_activity': 'construction'
+    }</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            No job orders for Construction yet.
+        </p>
+    </field>
+</record>
+
+<!-- ── 9. Inspection ─────────────────────────────────────────────── -->
+<record id="action_con_inspection" model="ir.actions.act_window">
+    <field name="name">Inspection</field>
+    <field name="res_model">farm.job.order</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[
+        ('business_activity', '=', 'construction'),
+        ('jo_stage', 'in', ['handover_requested', 'under_inspection'])
+    ]</field>
+    <field name="context">{
+        'default_business_activity': 'construction'
+    }</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            No job orders pending inspection for Construction.
+        </p>
+    </field>
+</record>
+
+<!-- ── 10. Approval ───────────────────────────────────────────────── -->
+<record id="action_con_approval" model="ir.actions.act_window">
+    <field name="name">Approval</field>
+    <field name="res_model">farm.job.order</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[
+        ('business_activity', '=', 'construction'),
+        ('jo_stage', 'in', ['under_inspection', 'partially_accepted', 'accepted'])
+    ]</field>
+    <field name="context">{
+        'default_business_activity': 'construction'
+    }</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            No job orders pending approval for Construction.
+        </p>
+    </field>
+</record>
+
+<!-- ── 11. Claims ────────────────────────────────────────────────── -->
+<record id="action_con_claims" model="ir.actions.act_window">
+    <field name="name">Claims</field>
+    <field name="res_model">farm.job.order</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[
+        ('business_activity', '=', 'construction'),
+        ('jo_stage', 'in', ['ready_for_claim', 'claimed'])
+    ]</field>
+    <field name="context">{
+        'default_business_activity': 'construction'
+    }</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            No claims for Construction yet.
+        </p>
+    </field>
+</record>
+
+<!-- ── 12. Invoices (Purchase Orders linked to construction) ─────── -->
+<record id="action_con_invoices" model="ir.actions.act_window">
+    <field name="name">Purchase Orders</field>
+    <field name="res_model">purchase.order</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('farm_business_activity', '=', 'construction')]</field>
+    <field name="context">{
+        'default_farm_business_activity': 'construction'
+    }</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            No purchase orders for Construction yet.
+        </p>
+    </field>
+</record>
+
+</data>
+</odoo>

@@ -7,6 +7,11 @@ class SmartfarmHoldingDashboard(models.Model):
 
     Aggregates KPIs across ALL companies and ALL business activities.
     This is the SAP/Oracle-style control tower for the Smart Farm holding.
+
+    All KPIs are computed from the unified Smart Farm engine:
+      - farm.project  (filtered by business_activity)
+      - farm.job.order (filtered by business_activity)
+    NO separate activity-specific models are used.
     """
 
     _name = 'smartfarm.holding.dashboard'
@@ -42,7 +47,7 @@ class SmartfarmHoldingDashboard(models.Model):
         store=False,
     )
     construction_projects = fields.Integer(
-        string='Construction (Farm Projects)',
+        string='Construction Projects',
         compute='_compute_project_kpis',
         store=False,
     )
@@ -62,25 +67,25 @@ class SmartfarmHoldingDashboard(models.Model):
         store=False,
     )
 
-    # ── Agriculture KPIs ──────────────────────────────────────────────────────
+    # ── Agriculture KPIs (computed from farm.project + farm.job.order) ───────
 
     total_seasons = fields.Integer(
-        string='Agriculture Seasons',
+        string='Agriculture — Total Projects',
         compute='_compute_agriculture_kpis',
         store=False,
     )
     running_seasons = fields.Integer(
-        string='Running Seasons',
+        string='Agriculture — Running',
         compute='_compute_agriculture_kpis',
         store=False,
     )
     total_crop_plans = fields.Integer(
-        string='Crop Plans',
+        string='Agriculture — Job Orders',
         compute='_compute_agriculture_kpis',
         store=False,
     )
     pending_harvests = fields.Integer(
-        string='Pending Harvests',
+        string='Agriculture — Pending Execution',
         compute='_compute_agriculture_kpis',
         store=False,
     )
@@ -88,17 +93,17 @@ class SmartfarmHoldingDashboard(models.Model):
     # ── Manufacturing KPIs ────────────────────────────────────────────────────
 
     total_production_plans = fields.Integer(
-        string='Production Plans',
+        string='Manufacturing — Total Projects',
         compute='_compute_manufacturing_kpis',
         store=False,
     )
     active_production_plans = fields.Integer(
-        string='Active Plans',
+        string='Manufacturing — Active',
         compute='_compute_manufacturing_kpis',
         store=False,
     )
     pending_dispatch = fields.Integer(
-        string='Pending Dispatches',
+        string='Manufacturing — In Progress JOs',
         compute='_compute_manufacturing_kpis',
         store=False,
     )
@@ -106,22 +111,22 @@ class SmartfarmHoldingDashboard(models.Model):
     # ── Livestock KPIs ────────────────────────────────────────────────────────
 
     total_herds = fields.Integer(
-        string='Herds',
+        string='Livestock — Total Projects',
         compute='_compute_livestock_kpis',
         store=False,
     )
     active_herds = fields.Integer(
-        string='Active Herds',
+        string='Livestock — Active',
         compute='_compute_livestock_kpis',
         store=False,
     )
     total_animals = fields.Integer(
-        string='Total Animals',
+        string='Livestock — Job Orders',
         compute='_compute_livestock_kpis',
         store=False,
     )
     pending_livestock_sales = fields.Integer(
-        string='Pending Livestock Sales',
+        string='Livestock — Claims Pending',
         compute='_compute_livestock_kpis',
         store=False,
     )
@@ -129,12 +134,12 @@ class SmartfarmHoldingDashboard(models.Model):
     # ── Construction KPIs ─────────────────────────────────────────────────────
 
     total_construction = fields.Integer(
-        string='Construction Projects',
+        string='Construction — Total Projects',
         compute='_compute_construction_kpis',
         store=False,
     )
     active_construction = fields.Integer(
-        string='Active Construction',
+        string='Construction — Active',
         compute='_compute_construction_kpis',
         store=False,
     )
@@ -146,7 +151,7 @@ class SmartfarmHoldingDashboard(models.Model):
         compute='_compute_risk_kpis',
         store=False,
         digits=(5, 1),
-        help='Average risk score across all active projects and operations.',
+        help='Average risk score across all active projects.',
     )
     high_risk_items = fields.Integer(
         string='High Risk Items (≥70)',
@@ -186,101 +191,86 @@ class SmartfarmHoldingDashboard(models.Model):
 
     def _compute_project_kpis(self):
         FarmProject = self.env['farm.project']
-        ConstructionProject = self.env['construction.project']
         for rec in self:
-            farm_projects = FarmProject.search([])
-            con_projects = ConstructionProject.search([])
-
-            rec.total_projects = len(farm_projects) + len(con_projects)
-            rec.active_projects = (
-                len(farm_projects.filtered(lambda p: p.state == 'running')) +
-                len(con_projects.filtered(
-                    lambda p: p.state in ['planning', 'execution', 'running']))
-            )
+            all_projects = FarmProject.search([])
+            rec.total_projects = len(all_projects)
+            rec.active_projects = len(all_projects.filtered(lambda p: p.state == 'running'))
             rec.construction_projects = len(
-                farm_projects.filtered(lambda p: p.business_activity == 'construction')
-            ) + len(con_projects)
+                all_projects.filtered(lambda p: p.business_activity == 'construction')
+            )
             rec.agriculture_projects = len(
-                farm_projects.filtered(lambda p: p.business_activity == 'agriculture')
+                all_projects.filtered(lambda p: p.business_activity == 'agriculture')
             )
             rec.manufacturing_projects = len(
-                farm_projects.filtered(lambda p: p.business_activity == 'manufacturing')
+                all_projects.filtered(lambda p: p.business_activity == 'manufacturing')
             )
             rec.livestock_projects = len(
-                farm_projects.filtered(lambda p: p.business_activity == 'livestock')
+                all_projects.filtered(lambda p: p.business_activity == 'livestock')
             )
 
     def _compute_agriculture_kpis(self):
-        Season = self.env['agriculture.season']
-        CropPlan = self.env['agriculture.crop.plan']
-        Harvest = self.env['agriculture.harvest']
+        """Agriculture KPIs from farm.project + farm.job.order (filtered by activity)."""
+        FarmProject = self.env['farm.project']
+        JobOrder = self.env['farm.job.order']
         for rec in self:
-            all_seasons = Season.search([])
-            rec.total_seasons = len(all_seasons)
-            rec.running_seasons = len(all_seasons.filtered(lambda s: s.state == 'running'))
-            rec.total_crop_plans = CropPlan.search_count([])
-            rec.pending_harvests = Harvest.search_count(
-                [('state', 'in', ['draft', 'confirmed'])]
+            agr_projects = FarmProject.search([('business_activity', '=', 'agriculture')])
+            rec.total_seasons = len(agr_projects)
+            rec.running_seasons = len(agr_projects.filtered(lambda p: p.state == 'running'))
+            rec.total_crop_plans = JobOrder.search_count(
+                [('business_activity', '=', 'agriculture')]
             )
+            rec.pending_harvests = JobOrder.search_count([
+                ('business_activity', '=', 'agriculture'),
+                ('jo_stage', 'in', ['draft', 'approved', 'in_progress']),
+            ])
 
     def _compute_manufacturing_kpis(self):
-        Plan = self.env['manufacturing.plan']
-        Dispatch = self.env['manufacturing.dispatch']
+        """Manufacturing KPIs from farm.project + farm.job.order."""
+        FarmProject = self.env['farm.project']
+        JobOrder = self.env['farm.job.order']
         for rec in self:
-            all_plans = Plan.search([])
-            rec.total_production_plans = len(all_plans)
+            mfg_projects = FarmProject.search([('business_activity', '=', 'manufacturing')])
+            rec.total_production_plans = len(mfg_projects)
             rec.active_production_plans = len(
-                all_plans.filtered(lambda p: p.state == 'in_progress')
+                mfg_projects.filtered(lambda p: p.state == 'running')
             )
-            rec.pending_dispatch = Dispatch.search_count(
-                [('state', 'in', ['draft', 'confirmed'])]
-            )
+            rec.pending_dispatch = JobOrder.search_count([
+                ('business_activity', '=', 'manufacturing'),
+                ('jo_stage', '=', 'in_progress'),
+            ])
 
     def _compute_livestock_kpis(self):
-        Herd = self.env['livestock.herd']
-        Animal = self.env['livestock.animal']
-        Sale = self.env['livestock.sale']
+        """Livestock KPIs from farm.project + farm.job.order."""
+        FarmProject = self.env['farm.project']
+        JobOrder = self.env['farm.job.order']
         for rec in self:
-            all_herds = Herd.search([])
-            rec.total_herds = len(all_herds)
-            rec.active_herds = len(
-                all_herds.filtered(lambda h: h.state in ['active', 'fattening', 'sale_ready'])
+            ls_projects = FarmProject.search([('business_activity', '=', 'livestock')])
+            rec.total_herds = len(ls_projects)
+            rec.active_herds = len(ls_projects.filtered(lambda p: p.state == 'running'))
+            rec.total_animals = JobOrder.search_count(
+                [('business_activity', '=', 'livestock')]
             )
-            rec.total_animals = Animal.search_count(
-                [('state', 'not in', ['sold', 'dead'])]
-            )
-            rec.pending_livestock_sales = Sale.search_count(
-                [('state', 'in', ['draft', 'confirmed'])]
-            )
+            rec.pending_livestock_sales = JobOrder.search_count([
+                ('business_activity', '=', 'livestock'),
+                ('jo_stage', 'in', ['ready_for_claim', 'claimed']),
+            ])
 
     def _compute_construction_kpis(self):
-        ConProject = self.env['construction.project']
+        """Construction KPIs from farm.project (filtered by activity)."""
+        FarmProject = self.env['farm.project']
         for rec in self:
-            all_con = ConProject.search([])
-            rec.total_construction = len(all_con)
+            con_projects = FarmProject.search([('business_activity', '=', 'construction')])
+            rec.total_construction = len(con_projects)
             rec.active_construction = len(
-                all_con.filtered(lambda p: p.state in ['planning', 'execution', 'running'])
+                con_projects.filtered(lambda p: p.state == 'running')
             )
 
     def _compute_risk_kpis(self):
-        Season = self.env['agriculture.season']
-        Herd = self.env['livestock.herd']
-        Plan = self.env['manufacturing.plan']
+        """Risk KPIs from farm.project (has risk_score from holding extension)."""
+        FarmProject = self.env['farm.project']
         for rec in self:
-            risk_items = []
-
-            # Collect risk scores from agriculture
-            seasons = Season.search([('state', 'not in', ['done', 'cancelled'])])
-            risk_items.extend(seasons.mapped('risk_score'))
-
-            # Livestock
-            herds = Herd.search([('state', 'not in', ['sold', 'cancelled'])])
-            risk_items.extend(herds.mapped('risk_score'))
-
-            # Manufacturing
-            plans = Plan.search([('state', 'not in', ['done', 'cancelled'])])
-            risk_items.extend(plans.mapped('risk_score'))
-
+            active_projects = FarmProject.search([('state', '=', 'running')])
+            risk_items = active_projects.mapped('risk_score')
             if risk_items:
                 rec.overall_risk_score = sum(risk_items) / len(risk_items)
                 rec.high_risk_items = sum(1 for r in risk_items if r >= 70)
@@ -309,46 +299,54 @@ class SmartfarmHoldingDashboard(models.Model):
         }
 
     def action_view_agriculture_seasons(self):
+        """Agriculture — opens farm.project filtered by agriculture."""
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Agriculture Seasons'),
-            'res_model': 'agriculture.season',
+            'name': _('Agriculture Projects'),
+            'res_model': 'farm.project',
             'view_mode': 'list,form',
-            'domain': [],
+            'domain': [('business_activity', '=', 'agriculture')],
+            'context': {'default_business_activity': 'agriculture'},
         }
 
     def action_view_manufacturing_plans(self):
+        """Manufacturing — opens farm.project filtered by manufacturing."""
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Production Plans'),
-            'res_model': 'manufacturing.plan',
+            'name': _('Manufacturing Projects'),
+            'res_model': 'farm.project',
             'view_mode': 'list,form',
-            'domain': [],
+            'domain': [('business_activity', '=', 'manufacturing')],
+            'context': {'default_business_activity': 'manufacturing'},
         }
 
     def action_view_livestock_herds(self):
+        """Livestock — opens farm.project filtered by livestock."""
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Herds'),
-            'res_model': 'livestock.herd',
+            'name': _('Livestock Projects'),
+            'res_model': 'farm.project',
             'view_mode': 'list,form',
-            'domain': [],
+            'domain': [('business_activity', '=', 'livestock')],
+            'context': {'default_business_activity': 'livestock'},
         }
 
     def action_view_construction_projects(self):
+        """Construction — opens farm.project filtered by construction."""
         return {
             'type': 'ir.actions.act_window',
             'name': _('Construction Projects'),
-            'res_model': 'construction.project',
+            'res_model': 'farm.project',
             'view_mode': 'list,form',
-            'domain': [],
+            'domain': [('business_activity', '=', 'construction')],
+            'context': {'default_business_activity': 'construction'},
         }
 
     def action_view_high_risk(self):
         return {
             'type': 'ir.actions.act_window',
-            'name': _('High Risk — Agriculture Seasons'),
-            'res_model': 'agriculture.season',
+            'name': _('High Risk Projects'),
+            'res_model': 'farm.project',
             'view_mode': 'list,form',
             'domain': [('risk_score', '>=', 70)],
         }
