@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ===== farm.project form — holding overlay ===== -->
+        <!--
+            When smart_farm_holding is installed, business_activity is computed
+            from the company and must not be user-editable.
+
+            This view:
+              1. Replaces the radio widget with a readonly badge.
+              2. Injects project_label above it so users see "Construction Project" etc.
+              3. Injects company_id into the right group.
+        -->
+
+        <record id="view_farm_project_holding_form_inherit" model="ir.ui.view">
+            <field name="name">farm.project.holding.form.inherit</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
+            <field name="arch" type="xml">
+
+                <!-- 1. Replace the manual radio with a readonly badge -->
+                <field name="business_activity" position="replace">
+                    <field name="business_activity" widget="badge"
+                           decoration-info="business_activity == 'construction'"
+                           decoration-success="business_activity == 'agriculture'"
+                           decoration-warning="business_activity == 'manufacturing'"
+                           decoration-danger="business_activity == 'livestock'"
+                           readonly="1"
+                           string="Business Activity"/>
+                </field>
+
+                <!-- 2. Inject project_label above business_activity -->
+                <field name="business_activity" position="before">
+                    <field name="project_label"
+                           string="Project Type"
+                           readonly="1"
+                           invisible="not project_label"/>
+                </field>
+
+                <!-- 3. Inject company_id into the right-hand group -->
+                <group name="group_project_link" position="inside">
+                    <field name="company_id"
+                           options="{'no_create': True}"
+                           readonly="1"/>
+                </group>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

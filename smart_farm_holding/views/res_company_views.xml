@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ===== Inject Business Activity into res.company form ===== -->
+        <!-- Appears in Settings → Companies → company form -->
+
+        <record id="view_res_company_holding_form" model="ir.ui.view">
+            <field name="name">res.company.holding.business_activity</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <!-- Inject after the company name field in the General Information tab -->
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="business_activity"
+                           string="Business Activity"
+                           widget="radio"
+                           options="{'horizontal': true}"
+                           help="Set the primary business domain for this company. Leave empty for the master Holding Company. All projects and job orders under this company will automatically inherit this activity."/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

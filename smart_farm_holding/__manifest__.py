@@ -35,6 +35,7 @@
     'depends': [
         'smart_farm_base',
         'smart_farm_project',
+        'smart_farm_execution',
         'construction_project',
         'smart_farm_agriculture',
         'smart_farm_manufacturing',
@@ -45,6 +46,8 @@
         'security/record_rules.xml',
         'security/ir.model.access.csv',
         'data/holding_data.xml',
+        'views/res_company_views.xml',
+        'views/farm_project_views_inherit.xml',
         'views/company_activity_views.xml',
         'views/holding_dashboard_views.xml',
         'views/menu.xml',

@@ -107,7 +107,8 @@
                                    name="group_project_details">
                                 <field name="business_activity" widget="radio"
                                        options="{'horizontal': true}"/>
-                                <field name="lifecycle_stage_id"/>
+                                <field name="lifecycle_stage_id"
+                                       domain="[('business_activity', '=', business_activity)]"/>
                                 <field name="analytic_account_id"
                                        options="{'no_create': True}"/>
                                 <field name="start_date"/>
