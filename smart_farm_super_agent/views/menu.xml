@@ -7,7 +7,7 @@
     id="menu_sf_construction_ai_command_center"
     name="AI Command Center"
     parent="smart_farm_construction.menu_sf_construction_root"
-    action="smart_farm_super_agent.action_smart_super_agent"
+    action="smart_farm_super_agent.action_open_ai_command_center"
     sequence="5"
 />
 

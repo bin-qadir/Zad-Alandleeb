@@ -165,6 +165,33 @@ class SmartSuperAgent(models.Model):
             },
         }
 
+    # ── Singleton opener (used by menu server action) ─────────────────────────
+
+    @api.model
+    def action_open_command_center(self):
+        """Return an act_window pointing to the existing Construction singleton.
+
+        This guarantees the menu always opens the SAME record instead of an
+        empty new-record form.  The record is created with default values only
+        when it does not exist yet (e.g. fresh install before demo data loads).
+        """
+        agent = self.search(
+            [('business_activity', '=', 'construction')], limit=1
+        )
+        if not agent:
+            agent = self.create({
+                'name': 'Construction AI Brain',
+                'business_activity': 'construction',
+            })
+        return {
+            'type':      'ir.actions.act_window',
+            'name':      _('AI Command Center'),
+            'res_model': 'smart.super.agent',
+            'res_id':    agent.id,
+            'view_mode': 'form',
+            'target':    'current',
+        }
+
     # ── Cron entrypoint ───────────────────────────────────────────────────────
 
     @api.model

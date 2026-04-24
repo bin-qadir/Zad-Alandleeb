@@ -20,7 +20,8 @@
                         <div class="saa-header-info">
                             <h2 class="saa-header-title">AI Command Center</h2>
                             <div class="saa-header-meta">
-                                Business Activity: <field name="business_activity" readonly="1" nolabel="1"/>
+                                Agent: <field name="name" readonly="1" nolabel="1"/>
+                                &#183; Business Activity: <field name="business_activity" readonly="1" nolabel="1"/>
                                 &#183; Last Run: <field name="last_run" readonly="1" nolabel="1"/>
                                 &#183; Projects Analyzed: <field name="last_run_projects" readonly="1" nolabel="1"/>
                             </div>
@@ -147,7 +148,9 @@
     </field>
 </record>
 
-<!-- ══ Window action ════════════════════════════════════════════════════ -->
+<!-- ══ Legacy act_window — kept so existing XMLID references don't break ═
+     Menu now uses action_open_ai_command_center (server action) instead.
+═══════════════════════════════════════════════════════════════════════ -->
 <record id="action_smart_super_agent" model="ir.actions.act_window">
     <field name="name">AI Command Center</field>
     <field name="res_model">smart.super.agent</field>
@@ -155,6 +158,18 @@
     <field name="domain">[('business_activity','=','construction')]</field>
     <field name="context">{'default_business_activity': 'construction'}</field>
     <field name="target">current</field>
+</record>
+
+<!-- ══ Server action — singleton opener ═════════════════════════════════
+     Uses action_open_command_center() to locate (or create) the existing
+     Construction AI Brain record and return an act_window with res_id set.
+     This prevents Odoo from opening a blank new-record form on every click.
+═══════════════════════════════════════════════════════════════════════ -->
+<record id="action_open_ai_command_center" model="ir.actions.server">
+    <field name="name">AI Command Center</field>
+    <field name="model_id" ref="smart_farm_super_agent.model_smart_super_agent"/>
+    <field name="state">code</field>
+    <field name="code">action = model.action_open_command_center()</field>
 </record>
 
 </data>
