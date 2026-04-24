@@ -31,6 +31,7 @@
     <field name="domain">[('business_activity', '=', 'construction')]</field>
     <field name="context">{
         'default_business_activity': 'construction',
+        'search_default_business_activity': 'construction',
         'search_default_filter_construction': 1
     }</field>
     <field name="help" type="html">

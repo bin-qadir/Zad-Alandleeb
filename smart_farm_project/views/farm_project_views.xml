@@ -105,8 +105,14 @@
                         <group>
                             <group string="Activity &amp; Classification"
                                    name="group_project_details">
+                                <!--
+                                    business_activity is editable in Smart Farm (no context default).
+                                    When opened from an activity app (default_business_activity set in
+                                    context) it becomes readonly — the app enforces its own activity.
+                                -->
                                 <field name="business_activity" widget="radio"
-                                       options="{'horizontal': true}"/>
+                                       options="{'horizontal': true}"
+                                       readonly="context.get('default_business_activity', False) != False"/>
                                 <field name="lifecycle_stage_id"
                                        domain="[('business_activity', '=', business_activity)]"/>
                                 <field name="analytic_account_id"
@@ -257,6 +263,8 @@
             <field name="arch" type="xml">
                 <search string="Farm Projects">
                     <field name="name"/>
+                    <field name="business_activity" string="Business Activity"/>
+                    <field name="project_type" string="Project Type"/>
                     <field name="project_manager_id"/>
                     <field name="analytic_account_id"/>
                     <!-- Activity filters -->

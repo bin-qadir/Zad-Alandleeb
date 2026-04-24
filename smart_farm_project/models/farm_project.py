@@ -186,6 +186,24 @@ class FarmProject(models.Model):
     # Dynamic project_type filtering
     # ────────────────────────────────────────────────────────────────────────
 
+    @api.onchange('project_type')
+    def _onchange_project_type_sync_activity(self):
+        """
+        Auto-sync business_activity from project_type when the type is selected.
+
+        This enables the "type-first" workflow:
+          1. User picks Project Type  → business_activity auto-fills from type.activity
+          2. lifecycle_stage_id is cleared if it no longer matches the new activity
+        The reverse (activity-first) is handled by _onchange_business_activity_clear_type.
+        """
+        if self.project_type:
+            new_activity = self.project_type.activity
+            if self.business_activity != new_activity:
+                self.business_activity = new_activity
+                if (self.lifecycle_stage_id
+                        and self.lifecycle_stage_id.business_activity != new_activity):
+                    self.lifecycle_stage_id = False
+
     @api.onchange('business_activity')
     def _onchange_business_activity_clear_type(self):
         """Clear project_type and lifecycle_stage_id when business_activity changes."""
@@ -218,8 +236,35 @@ class FarmProject(models.Model):
     # ORM overrides
     # ────────────────────────────────────────────────────────────────────────
 
+    # ────────────────────────────────────────────────────────────────────────
+    # Bidirectional project_type ↔ business_activity sync (ORM level)
+    # ────────────────────────────────────────────────────────────────────────
+
+    def _sync_project_type_and_activity(self, vals):
+        """
+        Derive business_activity from project_type when project_type is being set.
+
+        Called from create() and write() before the ORM super() call so that
+        database records are always consistent.
+
+        Rules:
+          • project_type is set (>0)    → business_activity = type.activity  (type wins)
+          • project_type is cleared (0) → business_activity left unchanged
+          • project_type absent in vals → no change
+        The existing _check_project_type_matches_activity constraint validates
+        the final state and blocks any remaining mismatches.
+        """
+        ptype_id = vals.get('project_type')
+        if ptype_id:
+            ptype = self.env['farm.project.type'].browse(ptype_id)
+            if ptype.exists():
+                vals['business_activity'] = ptype.activity
+        return vals
+
     @api.model_create_multi
     def create(self, vals_list):
+        for vals in vals_list:
+            self._sync_project_type_and_activity(vals)
         records = super().create(vals_list)
         for proj in records:
             # 1. Auto-create a linked Odoo project (project.project) if not set
@@ -227,6 +272,10 @@ class FarmProject(models.Model):
             # 2. Auto-create analytic account if not set
             proj._ensure_analytic_account()
         return records
+
+    def write(self, vals):
+        self._sync_project_type_and_activity(vals)
+        return super().write(vals)
 
     # ────────────────────────────────────────────────────────────────────────
     # Auto-creation helpers

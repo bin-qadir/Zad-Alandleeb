@@ -29,6 +29,7 @@
     <field name="domain">[('business_activity', '=', 'agriculture')]</field>
     <field name="context">{
         'default_business_activity': 'agriculture',
+        'search_default_business_activity': 'agriculture',
         'search_default_filter_agriculture': 1
     }</field>
     <field name="help" type="html">
