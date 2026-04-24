@@ -155,6 +155,46 @@ class FarmProject(models.Model):
         string='Fields',
     )
 
+    # ── Master Project (parent-child hierarchy) ───────────────────────────────
+
+    master_project_id = fields.Many2one(
+        comodel_name='farm.project',
+        string='Master Project',
+        ondelete='set null',
+        index=True,
+        tracking=True,
+        help=(
+            'Parent / umbrella project that this Activity Project belongs to.\n'
+            'Example: a "Site A Development" master project can have separate\n'
+            'Construction, Agriculture, Manufacturing, and Livestock sub-projects.'
+        ),
+    )
+    activity_project_ids = fields.One2many(
+        comodel_name='farm.project',
+        inverse_name='master_project_id',
+        string='Activity Projects',
+        help='Activity-specific sub-projects linked to this master project.',
+    )
+
+    # ── Activity sub-project counts ───────────────────────────────────────────
+
+    construction_project_count = fields.Integer(
+        string='Construction Projects',
+        compute='_compute_activity_project_counts',
+    )
+    agriculture_project_count = fields.Integer(
+        string='Agriculture Projects',
+        compute='_compute_activity_project_counts',
+    )
+    manufacturing_project_count = fields.Integer(
+        string='Manufacturing Projects',
+        compute='_compute_activity_project_counts',
+    )
+    livestock_project_count = fields.Integer(
+        string='Livestock Projects',
+        compute='_compute_activity_project_counts',
+    )
+
     # ── Stat buttons ──────────────────────────────────────────────────────────
     field_count = fields.Integer(
         string='Field Count',
@@ -181,6 +221,15 @@ class FarmProject(models.Model):
                 ])
             else:
                 rec.task_count = 0
+
+    @api.depends('activity_project_ids', 'activity_project_ids.business_activity')
+    def _compute_activity_project_counts(self):
+        for rec in self:
+            sub = rec.activity_project_ids
+            rec.construction_project_count  = sum(1 for p in sub if p.business_activity == 'construction')
+            rec.agriculture_project_count   = sum(1 for p in sub if p.business_activity == 'agriculture')
+            rec.manufacturing_project_count = sum(1 for p in sub if p.business_activity == 'manufacturing')
+            rec.livestock_project_count     = sum(1 for p in sub if p.business_activity == 'livestock')
 
     # ────────────────────────────────────────────────────────────────────────
     # Dynamic project_type filtering
@@ -231,6 +280,55 @@ class FarmProject(models.Model):
                         rec._fields['business_activity'].selection
                     ).get(rec.business_activity, rec.business_activity),
                 ))
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Master Project onchange + constraint
+    # ────────────────────────────────────────────────────────────────────────
+
+    @api.onchange('master_project_id')
+    def _onchange_master_project_id(self):
+        """Warn the user if the master project has an incompatible business activity."""
+        if (self.master_project_id
+                and self.business_activity
+                and self.master_project_id.business_activity
+                and self.master_project_id.business_activity == self.business_activity
+                and self.master_project_id.id != self._origin.id):
+            # Same activity type — unusual but not blocked; just a UI nudge
+            return {
+                'warning': {
+                    'title':   _('Activity Match'),
+                    'message': _(
+                        'The selected Master Project has the same business activity (%s).\n'
+                        'Typically a master project has no specific activity or a different one.',
+                        dict(self._fields['business_activity'].selection).get(
+                            self.business_activity, self.business_activity
+                        ),
+                    ),
+                }
+            }
+
+    @api.constrains('master_project_id')
+    def _check_master_project_id(self):
+        """Prevent circular references (project linking to itself or its descendants)."""
+        for rec in self:
+            if not rec.master_project_id:
+                continue
+            if rec.master_project_id.id == rec.id:
+                raise ValidationError(_(
+                    'A project cannot be its own master project.'
+                ))
+            # Walk up the ancestor chain to detect cycles
+            ancestor = rec.master_project_id.master_project_id
+            visited = {rec.id, rec.master_project_id.id}
+            while ancestor:
+                if ancestor.id in visited:
+                    raise ValidationError(_(
+                        'Circular reference detected in the Master Project hierarchy.\n'
+                        'Project "%s" is already an ancestor of this project.',
+                        ancestor.name,
+                    ))
+                visited.add(ancestor.id)
+                ancestor = ancestor.master_project_id
 
     # ────────────────────────────────────────────────────────────────────────
     # ORM overrides
@@ -346,3 +444,41 @@ class FarmProject(models.Model):
             'domain': [('project_id', '=', self.odoo_project_id.id)],
             'context': {'default_project_id': self.odoo_project_id.id},
         }
+
+    # ── Activity sub-project navigation ──────────────────────────────────────
+
+    def _action_view_activity_projects(self, activity):
+        """Open Activity Projects filtered by business_activity under this master."""
+        self.ensure_one()
+        activity_labels = {
+            'construction':  _('Construction Projects'),
+            'agriculture':   _('Agriculture Projects'),
+            'manufacturing': _('Manufacturing Projects'),
+            'livestock':     _('Livestock Projects'),
+        }
+        return {
+            'type': 'ir.actions.act_window',
+            'name': '%s — %s' % (activity_labels.get(activity, activity), self.name),
+            'res_model': 'farm.project',
+            'view_mode': 'list,form',
+            'domain': [
+                ('master_project_id', '=', self.id),
+                ('business_activity', '=', activity),
+            ],
+            'context': {
+                'default_master_project_id': self.id,
+                'default_business_activity': activity,
+            },
+        }
+
+    def action_view_construction_projects(self):
+        return self._action_view_activity_projects('construction')
+
+    def action_view_agriculture_projects(self):
+        return self._action_view_activity_projects('agriculture')
+
+    def action_view_manufacturing_projects(self):
+        return self._action_view_activity_projects('manufacturing')
+
+    def action_view_livestock_projects(self):
+        return self._action_view_activity_projects('livestock')
