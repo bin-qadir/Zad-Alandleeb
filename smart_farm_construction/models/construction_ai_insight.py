@@ -138,7 +138,6 @@ class ConstructionAiInsight(models.Model):
         default='open',
         required=True,
         index=True,
-        tracking=True,
     )
     responsible_id = fields.Many2one(
         'res.users',

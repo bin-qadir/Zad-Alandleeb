@@ -46,7 +46,7 @@
 
                                     <button name="action_view_all_jos" type="object"
                                             class="cd-kpi cd-kpi--indigo">
-                                        <div class="cd-kpi-icon"><i class="fa fa-briefcase"/></div>
+                                        <div class="cd-kpi-icon"><i class="fa fa-briefcase" title="Total Jobs"/></div>
                                         <div class="cd-kpi-val">
                                             <field name="total_jos" readonly="1" nolabel="1"/>
                                         </div>
@@ -136,7 +136,7 @@
                                         (<field name="active_projects" readonly="1" nolabel="1"/> active)
                                     </span>
                                     <span>
-                                        <i class="fa fa-briefcase me-1"/>
+                                        <i class="fa fa-briefcase me-1" title="Job Orders"/>
                                         <field name="total_jos" readonly="1" nolabel="1"/>
                                         Job Orders
                                     </span>
@@ -298,7 +298,7 @@
 
                                     <button name="action_view_civil_jos" type="object"
                                             class="cd-dept-card cd-dept--civil">
-                                        <div class="cd-dept-icon"><i class="fa fa-road"/></div>
+                                        <div class="cd-dept-icon"><i class="fa fa-road" title="Civil"/></div>
                                         <div class="cd-dept-info">
                                             <div class="cd-dept-num">
                                                 <field name="dept_civil" readonly="1" nolabel="1"/>
@@ -309,7 +309,7 @@
 
                                     <button name="action_view_structure_jos" type="object"
                                             class="cd-dept-card cd-dept--struct">
-                                        <div class="cd-dept-icon"><i class="fa fa-columns"/></div>
+                                        <div class="cd-dept-icon"><i class="fa fa-columns" title="Structure"/></div>
                                         <div class="cd-dept-info">
                                             <div class="cd-dept-num">
                                                 <field name="dept_structure" readonly="1" nolabel="1"/>
@@ -320,7 +320,7 @@
 
                                     <button name="action_view_arch_jos" type="object"
                                             class="cd-dept-card cd-dept--arch">
-                                        <div class="cd-dept-icon"><i class="fa fa-home"/></div>
+                                        <div class="cd-dept-icon"><i class="fa fa-home" title="Architectural"/></div>
                                         <div class="cd-dept-info">
                                             <div class="cd-dept-num">
                                                 <field name="dept_arch" readonly="1" nolabel="1"/>
@@ -331,7 +331,7 @@
 
                                     <button name="action_view_mech_jos" type="object"
                                             class="cd-dept-card cd-dept--mech">
-                                        <div class="cd-dept-icon"><i class="fa fa-cogs"/></div>
+                                        <div class="cd-dept-icon"><i class="fa fa-cogs" title="Mechanical"/></div>
                                         <div class="cd-dept-info">
                                             <div class="cd-dept-num">
                                                 <field name="dept_mechanical" readonly="1" nolabel="1"/>
@@ -342,7 +342,7 @@
 
                                     <button name="action_view_elec_jos" type="object"
                                             class="cd-dept-card cd-dept--elec">
-                                        <div class="cd-dept-icon"><i class="fa fa-bolt"/></div>
+                                        <div class="cd-dept-icon"><i class="fa fa-bolt" title="Electrical"/></div>
                                         <div class="cd-dept-info">
                                             <div class="cd-dept-num">
                                                 <field name="dept_electrical" readonly="1" nolabel="1"/>
@@ -380,7 +380,7 @@
 
                                     <button name="action_view_new_projects" type="object"
                                             class="cd-status-card cd-status--new">
-                                        <div class="cd-status-icon"><i class="fa fa-star-o"/></div>
+                                        <div class="cd-status-icon"><i class="fa fa-star-o" title="New Projects"/></div>
                                         <div class="cd-status-count">
                                             <field name="status_new" readonly="1" nolabel="1"/>
                                         </div>
@@ -392,7 +392,7 @@
 
                                     <button name="action_view_in_progress_projects" type="object"
                                             class="cd-status-card cd-status--progress">
-                                        <div class="cd-status-icon"><i class="fa fa-play-circle"/></div>
+                                        <div class="cd-status-icon"><i class="fa fa-play-circle" title="In Progress"/></div>
                                         <div class="cd-status-count">
                                             <field name="status_in_progress" readonly="1" nolabel="1"/>
                                         </div>
@@ -412,7 +412,7 @@
 
                                     <button name="action_view_on_hold_projects" type="object"
                                             class="cd-status-card cd-status--hold">
-                                        <div class="cd-status-icon"><i class="fa fa-pause-circle"/></div>
+                                        <div class="cd-status-icon"><i class="fa fa-pause-circle" title="On Hold"/></div>
                                         <div class="cd-status-count">
                                             <field name="status_on_hold" readonly="1" nolabel="1"/>
                                         </div>
@@ -421,7 +421,7 @@
 
                                     <button name="action_view_completed_projects" type="object"
                                             class="cd-status-card cd-status--done">
-                                        <div class="cd-status-icon"><i class="fa fa-check-circle"/></div>
+                                        <div class="cd-status-icon"><i class="fa fa-check-circle" title="Completed"/></div>
                                         <div class="cd-status-count">
                                             <field name="status_completed" readonly="1" nolabel="1"/>
                                         </div>
@@ -430,7 +430,7 @@
 
                                     <button name="action_view_cancelled_projects" type="object"
                                             class="cd-status-card cd-status--cancel">
-                                        <div class="cd-status-icon"><i class="fa fa-times-circle"/></div>
+                                        <div class="cd-status-icon"><i class="fa fa-times-circle" title="Cancelled"/></div>
                                         <div class="cd-status-count">
                                             <field name="status_cancelled" readonly="1" nolabel="1"/>
                                         </div>
@@ -496,7 +496,7 @@
 
                                     <button name="action_view_delayed_execution" type="object"
                                             class="cd-ai-card cd-ai--delay">
-                                        <div class="cd-ai-icon"><i class="fa fa-clock-o"/></div>
+                                        <div class="cd-ai-icon"><i class="fa fa-clock-o" title="Delayed Execution"/></div>
                                         <div class="cd-ai-count">
                                             <field name="ai_delay_count" readonly="1" nolabel="1"/>
                                         </div>
@@ -506,7 +506,7 @@
 
                                     <button name="action_view_claim_ready" type="object"
                                             class="cd-ai-card cd-ai--claim">
-                                        <div class="cd-ai-icon"><i class="fa fa-file-text-o"/></div>
+                                        <div class="cd-ai-icon"><i class="fa fa-file-text-o" title="Claim Ready"/></div>
                                         <div class="cd-ai-count">
                                             <field name="ai_claim_ready_count" readonly="1" nolabel="1"/>
                                         </div>
