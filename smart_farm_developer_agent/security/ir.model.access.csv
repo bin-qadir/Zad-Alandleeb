@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mythos_developer_task_admin,mythos.developer.task admin,model_mythos_developer_task,base.group_system,1,1,1,1
+access_mythos_developer_task_user,mythos.developer.task user,model_mythos_developer_task,base.group_user,1,0,0,0

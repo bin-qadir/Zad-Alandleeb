@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     Developer Agent sub-section under Mythos AI
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<!-- Developer Agent parent menu (under Mythos AI root) -->
+<menuitem
+    id="menu_developer_agent_root"
+    name="Developer Agent"
+    parent="smart_farm_mythos_agents.menu_mythos_ai_root"
+    sequence="10"
+    groups="base.group_user"
+/>
+
+<!-- Developer Tasks — full task list -->
+<menuitem
+    id="menu_developer_tasks"
+    name="Developer Tasks"
+    parent="menu_developer_agent_root"
+    action="action_developer_tasks"
+    sequence="1"
+    groups="base.group_user"
+/>
+
+<!-- Scan Code — triggers module scan + creates tasks -->
+<menuitem
+    id="menu_scan_code"
+    name="Scan Code"
+    parent="menu_developer_agent_root"
+    action="action_scan_code"
+    sequence="2"
+    groups="base.group_system"
+/>
+
+<!-- Studio Review — filtered view of Studio customization tasks -->
+<menuitem
+    id="menu_studio_review"
+    name="Studio Review"
+    parent="menu_developer_agent_root"
+    action="action_studio_review"
+    sequence="3"
+    groups="base.group_user"
+/>
+
+</data>
+</odoo>

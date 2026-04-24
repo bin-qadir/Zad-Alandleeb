@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     mythos.developer.task — Views
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<!-- ── List view ──────────────────────────────────────────────────────── -->
+<record id="view_mythos_developer_task_list" model="ir.ui.view">
+    <field name="name">mythos.developer.task.list</field>
+    <field name="model">mythos.developer.task</field>
+    <field name="arch" type="xml">
+        <list string="Developer Tasks"
+              decoration-muted="state in ('applied','rejected')"
+              decoration-warning="state == 'reviewed'"
+              decoration-success="state == 'approved'">
+            <field name="name"/>
+            <field name="task_type" widget="badge"
+                   decoration-danger="task_type in ('python_fix','xml_view_fix')"
+                   decoration-warning="task_type == 'studio_cleanup'"
+                   decoration-info="task_type in ('ui_layout','menu_action_fix')"/>
+            <field name="target_module" optional="show"/>
+            <field name="target_model"  optional="show"/>
+            <field name="state" widget="badge"
+                   decoration-muted="state in ('applied','rejected')"
+                   decoration-warning="state == 'reviewed'"
+                   decoration-success="state == 'approved'"
+                   decoration-info="state == 'draft'"/>
+            <field name="is_protected_module" optional="show" string="Protected"/>
+            <field name="create_date" string="Found" optional="show"/>
+        </list>
+    </field>
+</record>
+
+<!-- ── Form view ──────────────────────────────────────────────────────── -->
+<record id="view_mythos_developer_task_form" model="ir.ui.view">
+    <field name="name">mythos.developer.task.form</field>
+    <field name="model">mythos.developer.task</field>
+    <field name="arch" type="xml">
+        <form string="Developer Task">
+            <header>
+                <button name="action_mark_reviewed" type="object"
+                        string="Mark Reviewed"
+                        class="btn-secondary"
+                        invisible="state != 'draft'"
+                        groups="base.group_system"/>
+                <button name="action_approve" type="object"
+                        string="Approve"
+                        class="btn-primary"
+                        invisible="state != 'reviewed'"
+                        groups="base.group_system"/>
+                <button name="action_mark_applied" type="object"
+                        string="Mark Applied"
+                        class="btn-success"
+                        invisible="state != 'approved'"
+                        groups="base.group_system"/>
+                <button name="action_reject" type="object"
+                        string="Reject"
+                        class="btn-danger"
+                        invisible="state in ('applied','rejected')"
+                        groups="base.group_system"/>
+                <button name="action_reset_draft" type="object"
+                        string="Reset to Draft"
+                        class="btn-secondary"
+                        invisible="state not in ('reviewed','rejected')"
+                        groups="base.group_system"/>
+                <field name="state" widget="statusbar"
+                       statusbar_visible="draft,reviewed,approved,applied"/>
+            </header>
+            <sheet>
+
+                <!-- ── Protected module warning ────────────────────────── -->
+                <div class="alert alert-danger d-flex align-items-center gap-2"
+                     invisible="not is_protected_module">
+                    <i class="fa fa-exclamation-triangle fa-lg" title="Protected Module"/>
+                    <div>
+                        <strong>Protected Module</strong> —
+                        <field name="target_module" nolabel="1" readonly="1"
+                               class="d-inline fw-bold"/>
+                        is a protected BOQ/Costing/Execution module.
+                        Do NOT apply this task without explicit user approval.
+                    </div>
+                </div>
+
+                <!-- ── Title ───────────────────────────────────────────── -->
+                <div class="oe_title">
+                    <h1>
+                        <field name="name" placeholder="Task name…"/>
+                    </h1>
+                </div>
+
+                <!-- ── Generate Claude Prompt button ───────────────────── -->
+                <div class="d-flex gap-2 mb-4" groups="base.group_system">
+                    <button name="action_generate_claude_prompt" type="object"
+                            string="Generate Claude Prompt"
+                            icon="fa-magic"
+                            class="btn btn-primary btn-sm"/>
+                </div>
+
+                <!-- ── Classification ──────────────────────────────────── -->
+                <group col="2">
+                    <group string="Classification">
+                        <field name="task_type" widget="radio"
+                               options="{'horizontal': false}"/>
+                    </group>
+                    <group string="Target">
+                        <field name="target_module"
+                               placeholder="e.g. smart_farm_boq"/>
+                        <field name="target_model"
+                               placeholder="e.g. farm.boq"/>
+                        <field name="target_view_id"
+                               options="{'no_create': True}"
+                               placeholder="Select view (optional)…"/>
+                        <field name="is_protected_module" readonly="1"/>
+                    </group>
+                </group>
+
+                <!-- ── Issue + Solution ────────────────────────────────── -->
+                <group string="Issue Description">
+                    <field name="issue_description" nolabel="1"
+                           placeholder="Describe the problem the Developer Agent found…"/>
+                </group>
+                <group string="Proposed Solution">
+                    <field name="proposed_solution" nolabel="1"
+                           placeholder="Describe the fix required. This is reviewed by a human before any action."/>
+                </group>
+
+                <!-- ── Claude Prompt ───────────────────────────────────── -->
+                <group string="Claude Prompt" invisible="not claude_prompt">
+                    <div class="alert alert-info" style="font-size:12px">
+                        <i class="fa fa-info-circle me-1" title="Claude Prompt Info"/>
+                        Copy this prompt and paste it into Claude Code on branch
+                        <strong>Dev-ai-work-rev-00</strong>.
+                    </div>
+                    <field name="claude_prompt" nolabel="1"
+                           widget="text"
+                           style="font-family:monospace; font-size:12px;"/>
+                </group>
+
+            </sheet>
+            <chatter/>
+        </form>
+    </field>
+</record>
+
+<!-- ── Search view ────────────────────────────────────────────────────── -->
+<record id="view_mythos_developer_task_search" model="ir.ui.view">
+    <field name="name">mythos.developer.task.search</field>
+    <field name="model">mythos.developer.task</field>
+    <field name="arch" type="xml">
+        <search string="Developer Tasks">
+            <field name="name"/>
+            <field name="target_module"/>
+            <field name="target_model"/>
+            <!-- Filters -->
+            <filter string="Draft"    name="f_draft"    domain="[('state','=','draft')]"/>
+            <filter string="Reviewed" name="f_reviewed" domain="[('state','=','reviewed')]"/>
+            <filter string="Approved" name="f_approved" domain="[('state','=','approved')]"/>
+            <filter string="Applied"  name="f_applied"  domain="[('state','=','applied')]"/>
+            <filter string="Rejected" name="f_rejected" domain="[('state','=','rejected')]"/>
+            <separator/>
+            <filter string="Protected Modules" name="f_protected"
+                    domain="[('is_protected_module','=',True)]"/>
+            <filter string="Studio Tasks" name="f_studio"
+                    domain="[('task_type','=','studio_cleanup')]"/>
+            <separator/>
+            <!-- Group by -->
+            <group expand="0" string="Group By">
+                <filter string="Type"   name="g_type"   context="{'group_by':'task_type'}"/>
+                <filter string="State"  name="g_state"  context="{'group_by':'state'}"/>
+                <filter string="Module" name="g_module" context="{'group_by':'target_module'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<!-- ── Actions ────────────────────────────────────────────────────────── -->
+
+<!-- Developer Tasks list -->
+<record id="action_developer_tasks" model="ir.actions.act_window">
+    <field name="name">Developer Tasks</field>
+    <field name="res_model">mythos.developer.task</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_mythos_developer_task_search"/>
+    <field name="context">{'search_default_f_draft': 1}</field>
+</record>
+
+<!-- Scan Code — server action calls action_scan_modules() -->
+<record id="action_scan_code" model="ir.actions.server">
+    <field name="name">Scan Code</field>
+    <field name="model_id" ref="base.model_ir_ui_view"/>
+    <field name="state">code</field>
+    <field name="code">
+action = env['mythos.developer.task'].action_scan_modules()
+    </field>
+</record>
+
+<!-- Studio Review — filtered view of studio tasks -->
+<record id="action_studio_review" model="ir.actions.act_window">
+    <field name="name">Studio Review</field>
+    <field name="res_model">mythos.developer.task</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_mythos_developer_task_search"/>
+    <field name="domain">[('task_type','=','studio_cleanup')]</field>
+    <field name="context">{'search_default_f_draft': 1}</field>
+</record>
+
+<!-- Scan Studio Views — server action -->
+<record id="action_scan_studio" model="ir.actions.server">
+    <field name="name">Scan Studio Views</field>
+    <field name="model_id" ref="base.model_ir_ui_view"/>
+    <field name="state">code</field>
+    <field name="code">
+action = env['mythos.developer.task'].action_scan_studio_views()
+    </field>
+</record>
+
+</data>
+</odoo>

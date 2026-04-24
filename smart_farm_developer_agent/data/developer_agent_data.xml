@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     Developer Agent — seed record (created once, never overwritten)
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="mythos_agent_developer" model="mythos.agent">
+    <field name="name">Developer Agent</field>
+    <field name="code">MYTHOS-DEV</field>
+    <field name="business_activity">construction</field>
+    <field name="agent_layer">risk_control</field>
+    <field name="agent_function">code_ui_development</field>
+    <field name="sequence">72</field>
+    <field name="active">True</field>
+    <field name="description">
+Scans custom modules and Studio customizations, produces reviewable
+developer tasks, and generates Claude-ready prompts for safe code fixes.
+
+Capabilities:
+  • Scan Python models, XML views, menus, actions, security files, manifests
+  • Detect Studio-created ir.ui.view records (module = studio_customization)
+  • Create mythos.developer.task records for human review
+  • Generate structured Claude prompts with branch, target, issue, fix, and warnings
+
+Safety rules:
+  • Never auto-writes code
+  • Never modifies Studio views automatically
+  • Never touches BOQ/Costing/Execution without explicit task approval
+  • All tasks start in Draft state and require human review before any action
+    </field>
+</record>
+
+</data>
+</odoo>
