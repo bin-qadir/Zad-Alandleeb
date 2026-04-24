@@ -1,6 +1,6 @@
 {
     'name': 'Smart Farm — Construction',
-    'version': '18.0.2.0.0',
+    'version': '18.0.2.1.0',
     'summary': 'Construction activity — project-driven enterprise workflow',
     'description': (
         'Smart Farm Construction — Project-driven Enterprise Module\n\n'

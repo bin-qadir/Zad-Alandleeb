@@ -1,3 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_construction_dashboard_user,farm.construction.dashboard user,model_farm_construction_dashboard,base.group_user,1,1,1,0
 access_construction_ai_insight_user,construction.ai.insight user,model_construction_ai_insight,base.group_user,1,1,1,0
+access_construction_project_building_user,construction.project.building user,model_construction_project_building,base.group_user,1,1,1,1
+access_construction_project_building_floor_user,construction.project.building.floor user,model_construction_project_building_floor,base.group_user,1,1,1,1
+access_construction_project_zone_user,construction.project.zone user,model_construction_project_zone,base.group_user,1,1,1,1

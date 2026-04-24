@@ -92,6 +92,40 @@ class FarmProjectConstructionExt(models.Model):
         compute='_compute_purchase_order_count',
     )
 
+    # ── Building / Zone relationships ─────────────────────────────────────────
+
+    building_ids = fields.One2many(
+        comodel_name='construction.project.building',
+        inverse_name='project_id',
+        string='Buildings',
+    )
+    zone_ids = fields.One2many(
+        comodel_name='construction.project.zone',
+        inverse_name='project_id',
+        string='Zones',
+    )
+
+    # ── Area totals ───────────────────────────────────────────────────────────
+
+    total_building_area = fields.Float(
+        string='Buildings Total Area (m²)',
+        digits=(16, 2),
+        compute='_compute_construction_area_totals',
+        help='Sum of all floor areas across all buildings.',
+    )
+    total_zone_area = fields.Float(
+        string='Zones Total Area (m²)',
+        digits=(16, 2),
+        compute='_compute_construction_area_totals',
+        help='Sum of all zone areas.',
+    )
+    construction_total_area = fields.Float(
+        string='Grand Total Area (m²)',
+        digits=(16, 2),
+        compute='_compute_construction_area_totals',
+        help='Buildings + Zones combined area.',
+    )
+
     # ── AI Insight linkage ────────────────────────────────────────────────────
 
     ai_insight_ids = fields.One2many(
@@ -130,6 +164,25 @@ class FarmProjectConstructionExt(models.Model):
     # ────────────────────────────────────────────────────────────────────────
     # Compute
     # ────────────────────────────────────────────────────────────────────────
+
+    @api.depends(
+        'building_ids',
+        'building_ids.floor_ids',
+        'building_ids.floor_ids.area',
+        'zone_ids',
+        'zone_ids.area',
+    )
+    def _compute_construction_area_totals(self):
+        for rec in self:
+            building_area = sum(
+                floor.area
+                for bldg in rec.building_ids
+                for floor in bldg.floor_ids
+            )
+            zone_area = sum(z.area for z in rec.zone_ids)
+            rec.total_building_area   = building_area
+            rec.total_zone_area       = zone_area
+            rec.construction_total_area = building_area + zone_area
 
     @api.depends('material_request_ids')
     def _compute_material_request_count(self):

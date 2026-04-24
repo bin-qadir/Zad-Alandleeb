@@ -7,7 +7,9 @@
      ║  Adds:                                                             ║
      ║    1. Construction Phase field in the main info group             ║
      ║    2. Smart button strip: Material Requests, Procurement, POs     ║
-     ║    3. Notebook with 9 operational tabs                            ║
+     ║    3. Project Definition tabs: Buildings, Building Structure,     ║
+     ║       Zones (construction-only, replaces generic text tabs)       ║
+     ║    4. Operational notebook: Scope/BOQ, Tasks, Materials, etc.     ║
      ╚══════════════════════════════════════════════════════════════════════╝ -->
 
 <record id="view_farm_project_construction_form_inherit" model="ir.ui.view">
@@ -23,6 +25,32 @@
                    invisible="business_activity != 'construction'"
                    options="{'horizontal': true}"/>
         </field>
+
+        <!-- ── STEP 1: Hide "Project Type" field for construction ──────── -->
+        <!--  Business Activity already classifies the project — no need   -->
+        <!--  to show the extra project_type field in construction context. -->
+        <xpath expr="//field[@name='project_type']" position="attributes">
+            <attribute name="invisible">business_activity == 'construction'</attribute>
+        </xpath>
+
+        <!-- ── STEP 2: Hide generic text-only base tabs for construction  -->
+        <!--  Construction replaces them with structured data tabs below.  -->
+        <xpath expr="//page[@name='tab_consists']" position="attributes">
+            <attribute name="invisible">business_activity == 'construction'</attribute>
+        </xpath>
+        <xpath expr="//page[@name='tab_fields']" position="attributes">
+            <attribute name="invisible">business_activity == 'construction'</attribute>
+        </xpath>
+        <xpath expr="//page[@name='tab_zones']" position="attributes">
+            <attribute name="invisible">business_activity == 'construction'</attribute>
+        </xpath>
+
+        <!-- ── STEP 5: Hide generic Area tab for construction ─────────── -->
+        <!--  Construction gets its own Area tab in the construction       -->
+        <!--  notebook below, with computed buildings + zones totals.      -->
+        <xpath expr="//page[@name='tab_area']" position="attributes">
+            <attribute name="invisible">business_activity == 'construction'</attribute>
+        </xpath>
 
         <!-- ── 2. Smart buttons: Material Requests, Procurement, POs ──── -->
         <xpath expr="//div[@name='button_box']" position="inside">
@@ -74,11 +102,105 @@
 
         </xpath>
 
-        <!-- ── 3. Notebook — inject before description field ─────────── -->
-        <!-- We append the notebook after the last group in sheet -->
+        <!-- ── 3. Construction Notebook ─────────────────────────────────── -->
         <xpath expr="//sheet/div[@name='main_action_buttons']" position="after">
 
             <notebook invisible="business_activity != 'construction'">
+
+                <!-- ════════════════════════════════════════════════════════ -->
+                <!--  PROJECT DEFINITION TABS  (Phase 1 — before BOQ)       -->
+                <!-- ════════════════════════════════════════════════════════ -->
+
+                <!-- ── Tab: Buildings ──────────────────────────────────── -->
+                <page string="Buildings" name="tab_buildings">
+                    <field name="building_ids" nolabel="1"
+                           context="{'default_project_id': id}">
+                        <list string="Buildings" editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name" placeholder="Building name…"/>
+                            <field name="floor_count"     readonly="1" string="Floors"/>
+                            <field name="total_floor_area" readonly="1" string="Total Floor Area (m²)"/>
+                        </list>
+                    </field>
+                </page>
+
+                <!-- ── Tab: Building Structure ─────────────────────────── -->
+                <page string="Building Structure" name="tab_building_structure">
+                    <p class="text-muted" style="font-size:13px; margin-bottom:12px">
+                        <i class="fa fa-info-circle me-1"/>
+                        Click a building row to open it and add / edit its floors.
+                    </p>
+                    <field name="building_ids" nolabel="1"
+                           context="{'default_project_id': id}">
+                        <list string="Building Structure">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name" string="Building"/>
+                            <field name="floor_count" readonly="1" string="Floors"/>
+                            <field name="total_floor_area" readonly="1" string="Total Area (m²)"/>
+                        </list>
+                        <form string="Building Detail">
+                            <group>
+                                <field name="name" placeholder="Building name…"/>
+                                <field name="sequence"/>
+                            </group>
+                            <separator string="Floors"/>
+                            <field name="floor_ids" nolabel="1">
+                                <list string="Floors" editable="bottom">
+                                    <field name="floor_no" string="Level"
+                                           help="-1 = Basement · 0 = Ground · 1 = First…"/>
+                                    <field name="name" placeholder="e.g. Ground Floor, Mezzanine…"/>
+                                    <field name="area" string="Area (m²)"/>
+                                </list>
+                            </field>
+                        </form>
+                    </field>
+                </page>
+
+                <!-- ── Tab: Zones ──────────────────────────────────────── -->
+                <page string="Zones" name="tab_zones_construction">
+                    <field name="zone_ids" nolabel="1"
+                           context="{'default_project_id': id}">
+                        <list string="Zones" editable="bottom">
+                            <field name="name"      placeholder="Zone name…"/>
+                            <field name="zone_type" string="Type"
+                                   widget="badge"
+                                   decoration-info="zone_type == 'residential'"
+                                   decoration-success="zone_type == 'amenity'"
+                                   decoration-warning="zone_type == 'commercial'"
+                                   decoration-danger="zone_type == 'industrial'"/>
+                            <field name="area"      string="Area (m²)"/>
+                        </list>
+                    </field>
+                </page>
+
+                <!-- ── Tab: Area Summary ───────────────────────────────── -->
+                <page string="Area" name="tab_area_construction">
+                    <group string="Area Summary">
+                        <group string="Buildings">
+                            <field name="total_building_area" readonly="1"
+                                   string="Buildings Total (m²)"/>
+                        </group>
+                        <group string="Zones">
+                            <field name="total_zone_area" readonly="1"
+                                   string="Zones Total (m²)"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Grand Total">
+                            <field name="construction_total_area" readonly="1"
+                                   string="Total Project Area (m²)"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info mt-2" style="font-size:13px"
+                         invisible="construction_total_area > 0">
+                        <i class="fa fa-info-circle me-1"/>
+                        Add buildings with floors or zones above to compute area totals.
+                    </div>
+                </page>
+
+                <!-- ════════════════════════════════════════════════════════ -->
+                <!--  OPERATIONAL TABS  (keep untouched)                     -->
+                <!-- ════════════════════════════════════════════════════════ -->
 
                 <!-- ── Tab 1: Scope (BOQ) ──────────────────────────────── -->
                 <page string="Scope (BOQ)" name="tab_boq">
