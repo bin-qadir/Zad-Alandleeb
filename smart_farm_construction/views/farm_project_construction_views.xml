@@ -118,8 +118,9 @@
                         <list string="Buildings" editable="bottom">
                             <field name="sequence" widget="handle"/>
                             <field name="name" placeholder="Building name…"/>
-                            <field name="floor_count"     readonly="1" string="Floors"/>
-                            <field name="total_floor_area" readonly="1" string="Total Floor Area (m²)"/>
+                            <field name="floor_count"      readonly="1" string="Floors"/>
+                            <field name="total_floor_area"  readonly="1" string="Total Floor Area (m²)"/>
+                            <field name="boq_count"         readonly="1" string="BOQs" optional="show"/>
                         </list>
                     </field>
                 </page>
@@ -152,6 +153,18 @@
                                     <field name="area" string="Area (m²)"/>
                                 </list>
                             </field>
+                            <separator string="BOQs (optional)"/>
+                            <field name="boq_ids" nolabel="1"
+                                   context="{'default_building_id': id, 'default_project_id': project_id}">
+                                <list string="BOQs" editable="bottom">
+                                    <field name="name"  readonly="1"/>
+                                    <field name="state" widget="badge"
+                                           decoration-info="state == 'draft'"
+                                           decoration-warning="state == 'submitted'"
+                                           decoration-success="state == 'approved'"/>
+                                    <field name="total" optional="show" string="Amount"/>
+                                </list>
+                            </field>
                         </form>
                     </field>
                 </page>
@@ -169,7 +182,27 @@
                                    decoration-warning="zone_type == 'commercial'"
                                    decoration-danger="zone_type == 'industrial'"/>
                             <field name="area"      string="Area (m²)"/>
+                            <field name="boq_count" readonly="1" string="BOQs" optional="show"/>
                         </list>
+                        <form string="Zone Detail">
+                            <group>
+                                <field name="name" placeholder="Zone name…"/>
+                                <field name="zone_type"/>
+                                <field name="area" string="Area (m²)"/>
+                            </group>
+                            <separator string="BOQs (optional)"/>
+                            <field name="boq_ids" nolabel="1"
+                                   context="{'default_zone_id': id, 'default_project_id': project_id}">
+                                <list string="BOQs" editable="bottom">
+                                    <field name="name"  readonly="1"/>
+                                    <field name="state" widget="badge"
+                                           decoration-info="state == 'draft'"
+                                           decoration-warning="state == 'submitted'"
+                                           decoration-success="state == 'approved'"/>
+                                    <field name="total" optional="show" string="Amount"/>
+                                </list>
+                            </field>
+                        </form>
                     </field>
                 </page>
 
@@ -220,6 +253,8 @@
                            context="{'default_project_id': id}">
                         <list string="Cost Structures">
                             <field name="name"/>
+                            <field name="building_id" optional="hide" string="Building"/>
+                            <field name="zone_id"     optional="hide" string="Zone"/>
                             <field name="date" string="Date" optional="show"/>
                             <field name="state" widget="badge"
                                    decoration-info="state == 'draft'"

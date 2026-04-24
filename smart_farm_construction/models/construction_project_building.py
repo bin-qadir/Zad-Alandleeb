@@ -10,7 +10,7 @@ construction project at the Project Definition stage (before BOQ).
 
   construction.project.zone
 """
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -38,6 +38,17 @@ class ConstructionProjectBuilding(models.Model):
         string='Floors',
     )
 
+    # ── BOQ reverse relation ──────────────────────────────────────────────────
+    boq_ids = fields.One2many(
+        comodel_name='farm.boq',
+        inverse_name='building_id',
+        string='BOQs',
+    )
+    boq_count = fields.Integer(
+        string='BOQs',
+        compute='_compute_boq_count',
+    )
+
     # ── Computed ──────────────────────────────────────────────────────────────
 
     floor_count = fields.Integer(
@@ -55,6 +66,27 @@ class ConstructionProjectBuilding(models.Model):
         for rec in self:
             rec.floor_count      = len(rec.floor_ids)
             rec.total_floor_area = sum(rec.floor_ids.mapped('area'))
+
+    @api.depends('boq_ids')
+    def _compute_boq_count(self):
+        for rec in self:
+            rec.boq_count = len(rec.boq_ids)
+
+    # ── Actions ───────────────────────────────────────────────────────────────
+
+    def action_view_boqs(self):
+        self.ensure_one()
+        return {
+            'type':      'ir.actions.act_window',
+            'name':      _('BOQs — %s') % self.name,
+            'res_model': 'farm.boq',
+            'view_mode': 'list,form',
+            'domain':    [('building_id', '=', self.id)],
+            'context':   {
+                'default_building_id': self.id,
+                'default_project_id':  self.project_id.id,
+            },
+        }
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -135,3 +167,35 @@ class ConstructionProjectZone(models.Model):
         string='Area (m²)',
         digits=(16, 2),
     )
+
+    # ── BOQ reverse relation ──────────────────────────────────────────────────
+    boq_ids = fields.One2many(
+        comodel_name='farm.boq',
+        inverse_name='zone_id',
+        string='BOQs',
+    )
+    boq_count = fields.Integer(
+        string='BOQs',
+        compute='_compute_boq_count',
+    )
+
+    @api.depends('boq_ids')
+    def _compute_boq_count(self):
+        for rec in self:
+            rec.boq_count = len(rec.boq_ids)
+
+    # ── Actions ───────────────────────────────────────────────────────────────
+
+    def action_view_boqs(self):
+        self.ensure_one()
+        return {
+            'type':      'ir.actions.act_window',
+            'name':      _('BOQs — %s') % self.name,
+            'res_model': 'farm.boq',
+            'view_mode': 'list,form',
+            'domain':    [('zone_id', '=', self.id)],
+            'context':   {
+                'default_zone_id':    self.id,
+                'default_project_id': self.project_id.id,
+            },
+        }

@@ -1,6 +1,6 @@
 {
     'name': 'Smart Farm — Construction',
-    'version': '18.0.2.1.0',
+    'version': '18.0.2.2.0',
     'summary': 'Construction activity — project-driven enterprise workflow',
     'description': (
         'Smart Farm Construction — Project-driven Enterprise Module\n\n'
@@ -36,6 +36,7 @@
         'views/actions.xml',
         'views/construction_dashboard_views.xml',
         'views/construction_ai_insight_views.xml',
+        'views/farm_boq_construction_views.xml',
         'views/farm_project_construction_views.xml',
         'views/farm_job_order_construction_inherit.xml',
         'views/menu.xml',

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!--
+    farm.boq — Construction Project Definition link
+    ================================================
+    Adds optional building_id / zone_id fields to the BOQ form and list.
+    No BOQ logic, costing, templates, or quantity fields are touched.
+-->
+
+<!-- ── BOQ list: add Building + Zone as optional columns ──────────────── -->
+<record id="view_farm_boq_list_construction_inherit" model="ir.ui.view">
+    <field name="name">farm.boq.list.construction.inherit</field>
+    <field name="model">farm.boq</field>
+    <field name="inherit_id" ref="smart_farm_boq.view_farm_boq_list"/>
+    <field name="arch" type="xml">
+        <field name="project_id" position="after">
+            <field name="building_id" optional="hide"
+                   invisible="business_activity != 'construction'"/>
+            <field name="zone_id"     optional="hide"
+                   invisible="business_activity != 'construction'"/>
+        </field>
+    </field>
+</record>
+
+<!-- ── BOQ form: add Building + Zone inside the Details group ─────────── -->
+<record id="view_farm_boq_form_construction_inherit" model="ir.ui.view">
+    <field name="name">farm.boq.form.construction.inherit</field>
+    <field name="model">farm.boq</field>
+    <field name="inherit_id" ref="smart_farm_boq.view_farm_boq_form"/>
+    <field name="arch" type="xml">
+        <!-- Inject after project_id inside the Details group -->
+        <field name="project_id" position="after">
+            <field name="building_id"
+                   string="Building"
+                   invisible="business_activity != 'construction'"
+                   domain="[('project_id', '=', project_id)]"
+                   options="{'no_create': True}"
+                   placeholder="Optional: link to a building…"/>
+            <field name="zone_id"
+                   string="Zone"
+                   invisible="business_activity != 'construction'"
+                   domain="[('project_id', '=', project_id)]"
+                   options="{'no_create': True}"
+                   placeholder="Optional: link to a zone…"/>
+        </field>
+    </field>
+</record>
+
+</data>
+</odoo>
