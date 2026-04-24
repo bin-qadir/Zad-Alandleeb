@@ -27,7 +27,7 @@
                     </button>
                 </xpath>
 
-                <!-- ── 2. Sales Order + Contract Line after contract_id ── -->
+                <!-- ── 2. Sales Order + Contract Line + Template after contract_id ── -->
                 <xpath expr="//field[@name='contract_id']" position="after">
                     <field name="sale_order_id"
                            options="{'no_create': True}"
@@ -36,6 +36,9 @@
                            options="{'no_create': True}"
                            readonly="1"
                            domain="[('order_id', '=', sale_order_id)]"/>
+                    <field name="boq_item_template_id"
+                           options="{'no_create': True}"
+                           readonly="1"/>
                 </xpath>
 
             </field>

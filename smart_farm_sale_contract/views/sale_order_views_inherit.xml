@@ -128,10 +128,14 @@
                     </button>
                 </xpath>
 
-                <!-- ── 4. BOQ Analysis Line column in order lines ── -->
+                <!-- ── 4. BOQ Analysis Line + Template + Job Order columns ── -->
                 <xpath expr="//field[@name='order_line']//field[@name='product_id']" position="after">
                     <field name="boq_analysis_line_id"
                            string="Analysis Line"
+                           optional="show"
+                           options="{'no_create': True}"/>
+                    <field name="boq_item_template_id"
+                           string="BOQ Template"
                            optional="show"
                            options="{'no_create': True}"/>
                     <field name="boq_line_display_code"

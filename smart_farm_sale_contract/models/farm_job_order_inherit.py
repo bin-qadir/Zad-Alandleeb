@@ -6,6 +6,7 @@ class FarmJobOrderSaleContract(models.Model):
 
     Adds:
     - sale_order_id / sale_order_line_id  — commercial contract traceability
+    - boq_item_template_id                — template used to load components
     - task_count + action_view_tasks()    — link to Odoo project.task records
     """
 
@@ -28,6 +29,20 @@ class FarmJobOrderSaleContract(models.Model):
         ondelete='set null',
         index=True,
         help='The specific Sales Order line that this Job Order was created from.',
+    )
+
+    # ── BOQ Item Template link ────────────────────────────────────────────────
+
+    boq_item_template_id = fields.Many2one(
+        'farm.boq.line.template',
+        string='BOQ Item Template',
+        ondelete='set null',
+        index=True,
+        help=(
+            'BOQ template used as the component source for this Job Order.\n'
+            'Materials, labour notes, equipment/tool/subcontractor notes are\n'
+            'populated from this template when the Job Order is auto-created.'
+        ),
     )
 
     # ── Odoo Task link ────────────────────────────────────────────────────────
