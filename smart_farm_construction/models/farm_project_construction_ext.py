@@ -4,9 +4,11 @@ farm.project — Construction extension
 
 Adds construction-specific fields to farm.project:
   - construction_phase  — Pre-Tender / Tender / Post-Tender / Execution / Closure
-  - material_request_ids / material_request_count  — O2M to farm.material.request
-  - Procurement count (farm.boq.analysis via search)
-  - Action methods for all project form tabs
+  - construction_status — First Ideas / New / In Progress / On Hold / Completed / Cancelled
+  - material_request_ids / material_request_count
+  - procurement_count, purchase_order_count
+  - AI Insight linkage (latest insight, risk score, AI status)
+  - Action methods for all project form tabs + AI recompute
 """
 from odoo import api, fields, models, _
 
@@ -38,6 +40,32 @@ class FarmProjectConstructionExt(models.Model):
         ),
     )
 
+    # ── Construction Status (operational) ────────────────────────────────────
+
+    construction_status = fields.Selection(
+        selection=[
+            ('first_ideas',  'First Ideas'),
+            ('new',          'New Project'),
+            ('in_progress',  'In Progress'),
+            ('on_hold',      'On Hold'),
+            ('completed',    'Completed'),
+            ('cancelled',    'Cancelled'),
+        ],
+        string='Project Status',
+        default='first_ideas',
+        index=True,
+        tracking=True,
+        help=(
+            'Operational status of this construction project.\n'
+            '• First Ideas  — early concept, not yet committed\n'
+            '• New Project  — contract awarded, mobilisation pending\n'
+            '• In Progress  — active on-site execution\n'
+            '• On Hold      — temporarily suspended\n'
+            '• Completed    — all works done, closure in progress\n'
+            '• Cancelled    — project cancelled'
+        ),
+    )
+
     # ── Material Requests ─────────────────────────────────────────────────────
 
     material_request_ids = fields.One2many(
@@ -64,6 +92,41 @@ class FarmProjectConstructionExt(models.Model):
         compute='_compute_purchase_order_count',
     )
 
+    # ── AI Insight linkage ────────────────────────────────────────────────────
+
+    ai_insight_ids = fields.One2many(
+        'construction.ai.insight',
+        'project_id',
+        string='AI Insights',
+    )
+    latest_ai_insight_id = fields.Many2one(
+        'construction.ai.insight',
+        compute='_compute_latest_ai_insight',
+        string='Latest AI Insight',
+        store=False,
+    )
+    ai_risk_score = fields.Float(
+        compute='_compute_latest_ai_insight',
+        string='AI Risk Score',
+        digits=(16, 1),
+        store=False,
+    )
+    ai_status = fields.Selection(
+        selection=[
+            ('healthy',  'Healthy'),
+            ('warning',  'Warning'),
+            ('critical', 'Critical'),
+        ],
+        compute='_compute_latest_ai_insight',
+        string='AI Status',
+        store=False,
+    )
+    ai_recommendation = fields.Text(
+        compute='_compute_latest_ai_insight',
+        string='AI Recommendation',
+        store=False,
+    )
+
     # ────────────────────────────────────────────────────────────────────────
     # Compute
     # ────────────────────────────────────────────────────────────────────────
@@ -87,6 +150,55 @@ class FarmProjectConstructionExt(models.Model):
                 [('farm_project_id', '=', rec.id)]
             )
 
+    @api.depends('ai_insight_ids', 'ai_insight_ids.date_generated')
+    def _compute_latest_ai_insight(self):
+        Insight = self.env['construction.ai.insight']
+        for rec in self:
+            latest = Insight.search(
+                [('project_id', '=', rec.id)],
+                order='date_generated desc',
+                limit=1,
+            )
+            rec.latest_ai_insight_id = latest.id if latest else False
+            rec.ai_risk_score        = latest.risk_score        if latest else 0.0
+            rec.ai_status            = latest.status            if latest else False
+            rec.ai_recommendation    = latest.recommended_action if latest else False
+
+    # ────────────────────────────────────────────────────────────────────────
+    # AI Insight action
+    # ────────────────────────────────────────────────────────────────────────
+
+    def action_recompute_ai_insight(self):
+        """Button: recompute AI insight for this project."""
+        self.ensure_one()
+        Insight = self.env['construction.ai.insight']
+        insight = Insight.generate_for_project(self)
+        return {
+            'type': 'ir.actions.client',
+            'tag':  'display_notification',
+            'params': {
+                'title':   _('AI Insight Updated'),
+                'message': _(
+                    '%(status)s — Risk score: %(score)s%%',
+                    status=dict(insight._fields['status'].selection).get(insight.status, ''),
+                    score=int(insight.risk_score),
+                ),
+                'type':    'success' if insight.status == 'healthy' else 'warning',
+                'sticky':  False,
+            },
+        }
+
+    def action_open_ai_insights(self):
+        self.ensure_one()
+        return {
+            'type':      'ir.actions.act_window',
+            'name':      _('AI Insights — %s') % self.name,
+            'res_model': 'construction.ai.insight',
+            'view_mode': 'list,form',
+            'domain':    [('project_id', '=', self.id)],
+            'context':   {'default_project_id': self.id},
+        }
+
     # ────────────────────────────────────────────────────────────────────────
     # Tab action buttons
     # ────────────────────────────────────────────────────────────────────────
@@ -100,8 +212,8 @@ class FarmProjectConstructionExt(models.Model):
             'view_mode': 'list,form',
             'domain':    [('project_id', '=', self.id)],
             'context':   {
-                'default_project_id':          self.id,
-                'default_business_activity':   'construction',
+                'default_project_id':        self.id,
+                'default_business_activity': 'construction',
             },
         }
 

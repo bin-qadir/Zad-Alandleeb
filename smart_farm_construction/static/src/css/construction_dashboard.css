@@ -203,3 +203,73 @@
     .cd-dept-grid    { grid-template-columns: 1fr 1fr; }
     .cd-header { flex-direction: column; align-items: flex-start; gap: 12px; }
 }
+
+/* ── Smart KPI Status Cards (§ 6) ────────────────────────────── */
+.cd-status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+}
+.cd-status-card {
+    border-radius: 12px;
+    padding: 18px 16px;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    transition: all .15s;
+    width: 100%;
+    position: relative;
+}
+.cd-status-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.14); }
+.cd-status--ideas    { background: linear-gradient(135deg,#4f46e5,#818cf8); color:#fff; }
+.cd-status--new      { background: linear-gradient(135deg,#0891b2,#22d3ee); color:#fff; }
+.cd-status--progress { background: linear-gradient(135deg,#15803d,#4ade80); color:#fff; }
+.cd-status--hold     { background: linear-gradient(135deg,#b45309,#fbbf24); color:#fff; }
+.cd-status--done     { background: linear-gradient(135deg,#166534,#86efac); color:#fff; }
+.cd-status--cancel   { background: linear-gradient(135deg,#64748b,#94a3b8); color:#fff; }
+.cd-status-icon  { font-size: 22px; opacity: .85; margin-bottom: 8px; }
+.cd-status-count { font-size: 36px; font-weight: 800; line-height: 1; }
+.cd-status-lbl   { font-size: 12px; opacity: .9; margin-top: 4px; font-weight: 500; }
+.cd-status-trend { font-size: 11px; opacity: .75; margin-top: 4px; }
+.cd-status-risk  { display: flex; justify-content: center; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+.cd-risk-badge   { border-radius: 10px; padding: 2px 8px; font-size: 11px; font-weight: 600; }
+.cd-risk--critical { background: rgba(239,68,68,.9); color:#fff; }
+.cd-risk--warning  { background: rgba(245,158,11,.9); color:#fff; }
+
+/* ── AI Decision Center (§ 7) ─────────────────────────────────── */
+.cd-ai-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+}
+.cd-ai-card {
+    border-radius: 12px;
+    padding: 20px 16px;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    transition: all .15s;
+    width: 100%;
+    color: #fff;
+}
+.cd-ai-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+.cd-ai--critical    { background: linear-gradient(135deg,#991b1b,#ef4444); }
+.cd-ai--warning     { background: linear-gradient(135deg,#92400e,#f59e0b); }
+.cd-ai--procurement { background: linear-gradient(135deg,#1e3a5f,#2563eb); }
+.cd-ai--cost        { background: linear-gradient(135deg,#312e81,#6366f1); }
+.cd-ai--delay       { background: linear-gradient(135deg,#7c2d12,#ea580c); }
+.cd-ai--claim       { background: linear-gradient(135deg,#134e4a,#0d9488); }
+.cd-ai-icon  { font-size: 24px; opacity: .85; margin-bottom: 8px; }
+.cd-ai-count { font-size: 38px; font-weight: 800; line-height: 1; }
+.cd-ai-lbl   { font-size: 13px; font-weight: 600; margin-top: 6px; }
+.cd-ai-sub   { font-size: 11px; opacity: .75; margin-top: 3px; }
+
+/* ── AI Insight form badges ───────────────────────────────────── */
+.ai-status-healthy  { color: #15803d; font-weight: 700; }
+.ai-status-warning  { color: #b45309; font-weight: 700; }
+.ai-status-critical { color: #991b1b; font-weight: 700; }
+
+@media (max-width: 768px) {
+    .cd-status-grid { grid-template-columns: 1fr 1fr; }
+    .cd-ai-grid     { grid-template-columns: 1fr 1fr; }
+}

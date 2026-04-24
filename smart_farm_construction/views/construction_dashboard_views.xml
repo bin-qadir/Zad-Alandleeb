@@ -355,6 +355,169 @@
                             </div>
                         </div>
 
+                        <!-- ── § 6  SMART KPI STATUS CARDS ────────────── -->
+                        <div class="cd-section">
+                            <div class="cd-section-hdr">
+                                <i class="fa fa-th"/> Project Status Overview
+                                <span class="ms-auto text-muted" style="font-size:11px;font-weight:400">
+                                    Click any card to open filtered projects
+                                </span>
+                            </div>
+                            <div class="cd-section-body">
+                                <div class="cd-status-grid">
+
+                                    <button name="action_view_first_ideas" type="object"
+                                            class="cd-status-card cd-status--ideas">
+                                        <div class="cd-status-icon"><i class="fa fa-lightbulb-o"/></div>
+                                        <div class="cd-status-count">
+                                            <field name="status_first_ideas" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-status-lbl">First Ideas</div>
+                                        <div class="cd-status-trend">
+                                            +<field name="trend_first_ideas" readonly="1" nolabel="1"/> this month
+                                        </div>
+                                    </button>
+
+                                    <button name="action_view_new_projects" type="object"
+                                            class="cd-status-card cd-status--new">
+                                        <div class="cd-status-icon"><i class="fa fa-star-o"/></div>
+                                        <div class="cd-status-count">
+                                            <field name="status_new" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-status-lbl">New Projects</div>
+                                        <div class="cd-status-trend">
+                                            +<field name="trend_new" readonly="1" nolabel="1"/> this month
+                                        </div>
+                                    </button>
+
+                                    <button name="action_view_in_progress_projects" type="object"
+                                            class="cd-status-card cd-status--progress">
+                                        <div class="cd-status-icon"><i class="fa fa-play-circle"/></div>
+                                        <div class="cd-status-count">
+                                            <field name="status_in_progress" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-status-lbl">In Progress</div>
+                                        <div class="cd-status-risk" invisible="ip_critical_count == 0 and ip_warning_count == 0">
+                                            <span invisible="ip_critical_count == 0" class="cd-risk-badge cd-risk--critical">
+                                                <field name="ip_critical_count" readonly="1" nolabel="1"/> Critical
+                                            </span>
+                                            <span invisible="ip_warning_count == 0" class="cd-risk-badge cd-risk--warning">
+                                                <field name="ip_warning_count" readonly="1" nolabel="1"/> Warning
+                                            </span>
+                                        </div>
+                                        <div class="cd-status-trend">
+                                            +<field name="trend_in_progress" readonly="1" nolabel="1"/> this month
+                                        </div>
+                                    </button>
+
+                                    <button name="action_view_on_hold_projects" type="object"
+                                            class="cd-status-card cd-status--hold">
+                                        <div class="cd-status-icon"><i class="fa fa-pause-circle"/></div>
+                                        <div class="cd-status-count">
+                                            <field name="status_on_hold" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-status-lbl">On Hold</div>
+                                    </button>
+
+                                    <button name="action_view_completed_projects" type="object"
+                                            class="cd-status-card cd-status--done">
+                                        <div class="cd-status-icon"><i class="fa fa-check-circle"/></div>
+                                        <div class="cd-status-count">
+                                            <field name="status_completed" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-status-lbl">Completed</div>
+                                    </button>
+
+                                    <button name="action_view_cancelled_projects" type="object"
+                                            class="cd-status-card cd-status--cancel">
+                                        <div class="cd-status-icon"><i class="fa fa-times-circle"/></div>
+                                        <div class="cd-status-count">
+                                            <field name="status_cancelled" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-status-lbl">Cancelled</div>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── § 7  AI DECISION CENTER ──────────────────── -->
+                        <div class="cd-section">
+                            <div class="cd-section-hdr" style="background:#1a2e4a;color:#fff;border-bottom-color:rgba(255,255,255,0.15)">
+                                <i class="fa fa-brain"/> AI Decision Center
+                                <button name="action_run_ai_all" type="object"
+                                        class="ms-auto btn btn-sm"
+                                        style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);font-size:11px;padding:3px 10px">
+                                    <i class="fa fa-refresh me-1"/> Refresh AI
+                                </button>
+                            </div>
+                            <div class="cd-section-body">
+                                <div class="cd-ai-grid">
+
+                                    <button name="action_view_critical_projects" type="object"
+                                            class="cd-ai-card cd-ai--critical">
+                                        <div class="cd-ai-icon"><i class="fa fa-exclamation-circle"/></div>
+                                        <div class="cd-ai-count">
+                                            <field name="ai_critical_count" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-ai-lbl">Critical Projects</div>
+                                        <div class="cd-ai-sub">Risk score ≥ 71%</div>
+                                    </button>
+
+                                    <button name="action_view_warning_projects" type="object"
+                                            class="cd-ai-card cd-ai--warning">
+                                        <div class="cd-ai-icon"><i class="fa fa-exclamation-triangle"/></div>
+                                        <div class="cd-ai-count">
+                                            <field name="ai_warning_count" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-ai-lbl">Warning Projects</div>
+                                        <div class="cd-ai-sub">Risk score 41–70%</div>
+                                    </button>
+
+                                    <button name="action_view_procurement_risks" type="object"
+                                            class="cd-ai-card cd-ai--procurement">
+                                        <div class="cd-ai-icon"><i class="fa fa-shopping-cart"/></div>
+                                        <div class="cd-ai-count">
+                                            <field name="ai_procurement_risk_count" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-ai-lbl">Procurement Risks</div>
+                                        <div class="cd-ai-sub">Material requests pending</div>
+                                    </button>
+
+                                    <button name="action_view_cost_overruns" type="object"
+                                            class="cd-ai-card cd-ai--cost">
+                                        <div class="cd-ai-icon"><i class="fa fa-usd"/></div>
+                                        <div class="cd-ai-count">
+                                            <field name="ai_cost_risk_count" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-ai-lbl">Cost Overruns</div>
+                                        <div class="cd-ai-sub">Budget risk detected</div>
+                                    </button>
+
+                                    <button name="action_view_delayed_execution" type="object"
+                                            class="cd-ai-card cd-ai--delay">
+                                        <div class="cd-ai-icon"><i class="fa fa-clock-o"/></div>
+                                        <div class="cd-ai-count">
+                                            <field name="ai_delay_count" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-ai-lbl">Delayed Execution</div>
+                                        <div class="cd-ai-sub">Past planned end date</div>
+                                    </button>
+
+                                    <button name="action_view_claim_ready" type="object"
+                                            class="cd-ai-card cd-ai--claim">
+                                        <div class="cd-ai-icon"><i class="fa fa-file-text-o"/></div>
+                                        <div class="cd-ai-count">
+                                            <field name="ai_claim_ready_count" readonly="1" nolabel="1"/>
+                                        </div>
+                                        <div class="cd-ai-lbl">Claim Ready</div>
+                                        <div class="cd-ai-sub">Approved qty unclaimed</div>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+
                     </div><!-- /cd-body -->
                 </div><!-- /cd-root -->
             </sheet>

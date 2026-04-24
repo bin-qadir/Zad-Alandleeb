@@ -82,6 +82,33 @@ class FarmConstructionDashboard(models.Model):
     dept_electrical = fields.Integer(compute='_compute_departments', string='Electrical')
     dept_other      = fields.Integer(compute='_compute_departments', string='Other')
 
+    # ── Smart KPI Cards — project status distribution ──────────────────────────
+
+    status_first_ideas  = fields.Integer(compute='_compute_status_cards', string='First Ideas')
+    status_new          = fields.Integer(compute='_compute_status_cards', string='New Projects')
+    status_in_progress  = fields.Integer(compute='_compute_status_cards', string='In Progress')
+    status_on_hold      = fields.Integer(compute='_compute_status_cards', string='On Hold')
+    status_completed    = fields.Integer(compute='_compute_status_cards', string='Completed')
+    status_cancelled    = fields.Integer(compute='_compute_status_cards', string='Cancelled')
+
+    # Risk badges on status cards
+    ip_critical_count   = fields.Integer(compute='_compute_status_cards', string='In Progress Critical')
+    ip_warning_count    = fields.Integer(compute='_compute_status_cards', string='In Progress Warning')
+
+    # Trend (projects created/moved in last 30 days)
+    trend_first_ideas   = fields.Integer(compute='_compute_status_cards', string='New First Ideas (30d)')
+    trend_new           = fields.Integer(compute='_compute_status_cards', string='New in Tender (30d)')
+    trend_in_progress   = fields.Integer(compute='_compute_status_cards', string='Newly In Progress (30d)')
+
+    # ── AI Decision Center ────────────────────────────────────────────────────
+
+    ai_critical_count         = fields.Integer(compute='_compute_ai_center', string='Critical Projects')
+    ai_warning_count          = fields.Integer(compute='_compute_ai_center', string='Warning Projects')
+    ai_procurement_risk_count = fields.Integer(compute='_compute_ai_center', string='Procurement Risks')
+    ai_cost_risk_count        = fields.Integer(compute='_compute_ai_center', string='Cost Overruns')
+    ai_delay_count            = fields.Integer(compute='_compute_ai_center', string='Delayed Execution')
+    ai_claim_ready_count      = fields.Integer(compute='_compute_ai_center', string='Claim Ready')
+
     # ────────────────────────────────────────────────────────────────────────
     # Internal helpers
     # ────────────────────────────────────────────────────────────────────────
@@ -178,6 +205,58 @@ class FarmConstructionDashboard(models.Model):
                 1 for j in jos
                 if not j.department or j.department == 'other'
             )
+
+    def _compute_status_cards(self):
+        from datetime import timedelta
+        cutoff = date.today() - timedelta(days=30)
+        for rec in self:
+            projects = rec._projects()
+            rec.status_first_ideas = sum(1 for p in projects if p.construction_status == 'first_ideas')
+            rec.status_new         = sum(1 for p in projects if p.construction_status == 'new')
+            rec.status_in_progress = sum(1 for p in projects if p.construction_status == 'in_progress')
+            rec.status_on_hold     = sum(1 for p in projects if p.construction_status == 'on_hold')
+            rec.status_completed   = sum(1 for p in projects if p.construction_status == 'completed')
+            rec.status_cancelled   = sum(1 for p in projects if p.construction_status == 'cancelled')
+
+            # Trend — created in last 30 days
+            rec.trend_first_ideas  = sum(1 for p in projects if p.construction_status == 'first_ideas'  and p.create_date and p.create_date.date() >= cutoff)
+            rec.trend_new          = sum(1 for p in projects if p.construction_status == 'new'           and p.create_date and p.create_date.date() >= cutoff)
+            rec.trend_in_progress  = sum(1 for p in projects if p.construction_status == 'in_progress'  and p.create_date and p.create_date.date() >= cutoff)
+
+            # Risk badges for In Progress
+            ip_ids = [p.id for p in projects if p.construction_status == 'in_progress']
+            if ip_ids:
+                insights = self.env['construction.ai.insight'].search([
+                    ('project_id', 'in', ip_ids),
+                    ('state', '!=', 'resolved'),
+                ])
+                rec.ip_critical_count = sum(1 for i in insights if i.status == 'critical')
+                rec.ip_warning_count  = sum(1 for i in insights if i.status == 'warning')
+            else:
+                rec.ip_critical_count = 0
+                rec.ip_warning_count  = 0
+
+    def _compute_ai_center(self):
+        for rec in self:
+            proj_ids = rec._projects().ids
+            if not proj_ids:
+                rec.ai_critical_count         = 0
+                rec.ai_warning_count          = 0
+                rec.ai_procurement_risk_count = 0
+                rec.ai_cost_risk_count        = 0
+                rec.ai_delay_count            = 0
+                rec.ai_claim_ready_count      = 0
+                continue
+            insights = self.env['construction.ai.insight'].search([
+                ('project_id', 'in', proj_ids),
+                ('state', '!=', 'resolved'),
+            ])
+            rec.ai_critical_count         = sum(1 for i in insights if i.status == 'critical')
+            rec.ai_warning_count          = sum(1 for i in insights if i.status == 'warning')
+            rec.ai_procurement_risk_count = sum(1 for i in insights if i.procurement_risk >= 50)
+            rec.ai_cost_risk_count        = sum(1 for i in insights if i.cost_risk >= 50)
+            rec.ai_delay_count            = sum(1 for i in insights if i.delay_score >= 50)
+            rec.ai_claim_ready_count      = sum(1 for i in insights if i.claim_risk >= 30)
 
     # ────────────────────────────────────────────────────────────────────────
     # UI Actions — refresh
@@ -304,3 +383,62 @@ class FarmConstructionDashboard(models.Model):
 
     def action_view_elec_jos(self):
         return self._open_jos('Electrical Job Orders', [('department', '=', 'electrical')])
+
+    # ── Smart KPI status card drill-downs ────────────────────────────────────
+
+    def action_view_first_ideas(self):
+        return self._open_projects('First Ideas', [('construction_status', '=', 'first_ideas')])
+
+    def action_view_new_projects(self):
+        return self._open_projects('New Projects', [('construction_status', '=', 'new')])
+
+    def action_view_in_progress_projects(self):
+        return self._open_projects('In Progress Projects', [('construction_status', '=', 'in_progress')])
+
+    def action_view_on_hold_projects(self):
+        return self._open_projects('On Hold Projects', [('construction_status', '=', 'on_hold')])
+
+    def action_view_completed_projects(self):
+        return self._open_projects('Completed Projects', [('construction_status', '=', 'completed')])
+
+    def action_view_cancelled_projects(self):
+        return self._open_projects('Cancelled Projects', [('construction_status', '=', 'cancelled')])
+
+    # ── AI Decision Center drill-downs ────────────────────────────────────────
+
+    def _open_ai_insights(self, name, extra_domain=None):
+        """Open AI insights list filtered to construction + extra_domain."""
+        proj_ids = self._projects().ids
+        domain   = [('project_id', 'in', proj_ids), ('state', '!=', 'resolved')]
+        if extra_domain:
+            domain += extra_domain
+        return {
+            'type':      'ir.actions.act_window',
+            'name':      _(name),
+            'res_model': 'construction.ai.insight',
+            'view_mode': 'list,form',
+            'domain':    domain,
+        }
+
+    def action_view_critical_projects(self):
+        return self._open_ai_insights('Critical Projects', [('status', '=', 'critical')])
+
+    def action_view_warning_projects(self):
+        return self._open_ai_insights('Warning Projects', [('status', '=', 'warning')])
+
+    def action_view_procurement_risks(self):
+        return self._open_ai_insights('Procurement Risks', [('procurement_risk', '>=', 50)])
+
+    def action_view_cost_overruns(self):
+        return self._open_ai_insights('Cost Overruns', [('cost_risk', '>=', 50)])
+
+    def action_view_delayed_execution(self):
+        return self._open_ai_insights('Delayed Execution', [('delay_score', '>=', 50)])
+
+    def action_view_claim_ready(self):
+        return self._open_ai_insights('Claim Ready', [('claim_risk', '>=', 30)])
+
+    def action_run_ai_all(self):
+        """Refresh AI insights for all construction projects from dashboard."""
+        self.env['construction.ai.insight'].run_daily_construction_insights()
+        return self.action_refresh()

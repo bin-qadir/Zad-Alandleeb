@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_construction_dashboard_user,farm.construction.dashboard user,model_farm_construction_dashboard,base.group_user,1,1,1,0
+access_construction_ai_insight_user,construction.ai.insight user,model_construction_ai_insight,base.group_user,1,1,1,0

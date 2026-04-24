@@ -17,7 +17,10 @@
         '  Stage Distribution · Department Breakdown\n\n'
         'PROJECT FORM TABS\n'
         '  Scope (BOQ) · Tasks · Materials · Procurement · Resources ·\n'
-        '  Execution · Inspection · Claims · Financial\n'
+        '  Execution · Inspection · Claims · Financial · AI Insights\n\n'
+        'AI DECISION ENGINE\n'
+        '  construction.ai.insight — weighted risk scoring (delay, execution,\n'
+        '  procurement, cost, claim) · smart KPI cards · daily cron automation\n'
     ),
     'category': 'Smart Farm',
     'author': 'bin-qadir',
@@ -29,8 +32,10 @@
     'data': [
         'security/ir.model.access.csv',
         'data/construction_dashboard_data.xml',
+        'data/construction_cron.xml',
         'views/actions.xml',
         'views/construction_dashboard_views.xml',
+        'views/construction_ai_insight_views.xml',
         'views/farm_project_construction_views.xml',
         'views/menu.xml',
     ],
