@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══ AI Action List ══════════════════════════════════════════════════ -->
+<record id="view_smart_ai_action_list" model="ir.ui.view">
+    <field name="name">smart.ai.action.list</field>
+    <field name="model">smart.ai.action</field>
+    <field name="arch" type="xml">
+        <list string="AI Proposed Actions"
+              decoration-danger="impact_level=='high'"
+              decoration-warning="state=='waiting_approval'">
+            <field name="project_id"/>
+            <field name="action_type" widget="badge"/>
+            <field name="title"/>
+            <field name="impact_level" widget="badge"
+                   decoration-danger="impact_level=='high'"/>
+            <field name="state" widget="badge"
+                   decoration-info="state=='draft'"
+                   decoration-warning="state=='waiting_approval'"
+                   decoration-success="state in ('approved','executed')"
+                   decoration-danger="state=='rejected'"/>
+            <field name="created_by"/>
+            <field name="create_date" string="Created"/>
+            <button name="action_submit_for_approval" type="object" string="Submit"
+                    invisible="state != 'draft'"/>
+            <button name="action_approve" type="object" string="Approve"
+                    invisible="state != 'waiting_approval'"/>
+            <button name="action_reject" type="object" string="Reject"
+                    invisible="state != 'waiting_approval'"/>
+        </list>
+    </field>
+</record>
+
+<!-- ══ AI Action Form ══════════════════════════════════════════════════ -->
+<record id="view_smart_ai_action_form" model="ir.ui.view">
+    <field name="name">smart.ai.action.form</field>
+    <field name="model">smart.ai.action</field>
+    <field name="arch" type="xml">
+        <form string="AI Proposed Action">
+            <header>
+                <button name="action_submit_for_approval" type="object"
+                        string="Submit for Approval"
+                        class="btn-primary"
+                        invisible="state != 'draft'"/>
+                <button name="action_approve" type="object"
+                        string="Approve"
+                        class="btn-primary"
+                        invisible="state != 'waiting_approval'"/>
+                <button name="action_reject" type="object"
+                        string="Reject"
+                        class="btn-secondary"
+                        invisible="state != 'waiting_approval'"/>
+                <button name="action_execute" type="object"
+                        string="Execute"
+                        class="btn-warning"
+                        invisible="state != 'approved' or impact_level != 'low'"/>
+                <field name="state" widget="statusbar"
+                       statusbar_visible="draft,waiting_approval,approved,executed"/>
+            </header>
+            <sheet>
+
+                <!-- Safety warning for high-impact -->
+                <div class="alert alert-danger mb-3" invisible="impact_level != 'high'">
+                    <strong><i class="fa fa-exclamation-circle me-2" title="High Impact"/> HIGH IMPACT ACTION</strong>
+                    — Requires manual approval and execution.
+                    AI will never auto-execute financial transactions.
+                </div>
+
+                <group>
+                    <group string="Action">
+                        <field name="name"/>
+                        <field name="title"/>
+                        <field name="project_id"/>
+                        <field name="business_activity"/>
+                        <field name="action_type"/>
+                        <field name="impact_level" widget="badge"
+                               decoration-danger="impact_level=='high'"/>
+                        <field name="is_reversible"/>
+                    </group>
+                    <group string="Linkage">
+                        <field name="risk_score_id"/>
+                        <field name="triggered_rule_id"/>
+                        <field name="created_by" readonly="1"/>
+                    </group>
+                </group>
+
+                <group string="Details">
+                    <field name="description" nolabel="1" string="Description"/>
+                    <field name="reason"      nolabel="1" string="AI Reasoning"/>
+                </group>
+
+                <group string="Audit Trail">
+                    <group string="Approval">
+                        <field name="approved_by"      readonly="1"/>
+                        <field name="approved_at"      readonly="1"/>
+                        <field name="rejected_by"      readonly="1"/>
+                        <field name="rejected_at"      readonly="1"/>
+                        <field name="rejection_reason" readonly="1"/>
+                    </group>
+                    <group string="Execution">
+                        <field name="executed_at"   readonly="1"/>
+                        <field name="execution_log" readonly="1"/>
+                    </group>
+                </group>
+
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- ══ Window action ════════════════════════════════════════════════════ -->
+<record id="action_smart_ai_action" model="ir.actions.act_window">
+    <field name="name">AI Actions</field>
+    <field name="res_model">smart.ai.action</field>
+    <field name="view_mode">list,form</field>
+</record>
+
+</data>
+</odoo>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     SMART AI RULES — Construction seed rules
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<!-- 1. Critical Delay — 14+ Days -->
+<record id="rule_delay_critical" model="smart.ai.rule">
+    <field name="name">Critical Delay — 14+ Days</field>
+    <field name="business_activity">construction</field>
+    <field name="metric">delay_days</field>
+    <field name="operator">&gt;=</field>
+    <field name="threshold">14</field>
+    <field name="severity">critical</field>
+    <field name="sequence">10</field>
+    <field name="active" eval="True"/>
+    <field name="recommended_action">Mobilise additional resources immediately. Review critical path and compress non-essential activities.</field>
+</record>
+
+<!-- 2. Delay Warning — 7+ Days -->
+<record id="rule_delay_warning" model="smart.ai.rule">
+    <field name="name">Delay Warning — 7+ Days</field>
+    <field name="business_activity">construction</field>
+    <field name="metric">delay_days</field>
+    <field name="operator">&gt;=</field>
+    <field name="threshold">7</field>
+    <field name="severity">high</field>
+    <field name="sequence">20</field>
+    <field name="active" eval="True"/>
+    <field name="recommended_action">Review schedule with PM. Identify bottlenecks and accelerate key activities.</field>
+</record>
+
+<!-- 3. Cost Overrun — 15% Over Budget -->
+<record id="rule_cost_overrun_critical" model="smart.ai.rule">
+    <field name="name">Cost Overrun — 15% Over Budget</field>
+    <field name="business_activity">construction</field>
+    <field name="metric">cost_overrun_pct</field>
+    <field name="operator">&gt;=</field>
+    <field name="threshold">15</field>
+    <field name="severity">critical</field>
+    <field name="sequence">30</field>
+    <field name="active" eval="True"/>
+    <field name="recommended_action">Freeze non-critical spending. Request emergency budget review. Escalate to management.</field>
+</record>
+
+<!-- 4. Cost Overrun — 5% Over Budget -->
+<record id="rule_cost_overrun_warning" model="smart.ai.rule">
+    <field name="name">Cost Overrun — 5% Over Budget</field>
+    <field name="business_activity">construction</field>
+    <field name="metric">cost_overrun_pct</field>
+    <field name="operator">&gt;=</field>
+    <field name="threshold">5</field>
+    <field name="severity">high</field>
+    <field name="sequence">40</field>
+    <field name="active" eval="True"/>
+    <field name="recommended_action">Review cost allocations and identify savings. Alert PM and finance team.</field>
+</record>
+
+<!-- 5. Material Requests Pending -->
+<record id="rule_material_pending" model="smart.ai.rule">
+    <field name="name">Material Requests Pending</field>
+    <field name="business_activity">construction</field>
+    <field name="metric">material_pending_count</field>
+    <field name="operator">&gt;=</field>
+    <field name="threshold">3</field>
+    <field name="severity">medium</field>
+    <field name="sequence">50</field>
+    <field name="active" eval="True"/>
+    <field name="recommended_action">Expedite pending material requests. Assign procurement officer to clear backlog.</field>
+</record>
+
+<!-- 6. Inspection Bottleneck — 3+ JOs Waiting -->
+<record id="rule_inspection_bottleneck" model="smart.ai.rule">
+    <field name="name">Inspection Bottleneck — 3+ JOs Waiting</field>
+    <field name="business_activity">construction</field>
+    <field name="metric">inspection_pending_count</field>
+    <field name="operator">&gt;=</field>
+    <field name="threshold">3</field>
+    <field name="severity">high</field>
+    <field name="sequence">60</field>
+    <field name="active" eval="True"/>
+    <field name="recommended_action">Schedule inspection team immediately. Prioritise oldest handover requests.</field>
+</record>
+
+<!-- 7. High Overall Risk Score -->
+<record id="rule_high_risk_score" model="smart.ai.rule">
+    <field name="name">High Overall Risk Score</field>
+    <field name="business_activity">construction</field>
+    <field name="metric">overall_risk_score</field>
+    <field name="operator">&gt;=</field>
+    <field name="threshold">71</field>
+    <field name="severity">critical</field>
+    <field name="sequence">5</field>
+    <field name="active" eval="True"/>
+    <field name="recommended_action">Trigger full project review. Engage steering committee if score does not improve within 3 days.</field>
+</record>
+
+<!-- 8. Significant Unclaimed Value -->
+<record id="rule_unclaimed_value" model="smart.ai.rule">
+    <field name="name">Significant Unclaimed Value</field>
+    <field name="business_activity">construction</field>
+    <field name="metric">unclaimed_pct</field>
+    <field name="operator">&gt;=</field>
+    <field name="threshold">30</field>
+    <field name="severity">medium</field>
+    <field name="sequence">70</field>
+    <field name="active" eval="True"/>
+    <field name="recommended_action">Prepare and submit interim claim. Approved value must be claimed to maintain project cash flow.</field>
+</record>
+
+</data>
+</odoo>

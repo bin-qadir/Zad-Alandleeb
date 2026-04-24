@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_smart_super_agent_user,smart.super.agent user,model_smart_super_agent,base.group_user,1,1,1,0
+access_smart_ai_context_snapshot_user,smart.ai.context.snapshot user,model_smart_ai_context_snapshot,base.group_user,1,1,1,0
+access_smart_ai_rule_user,smart.ai.rule user,model_smart_ai_rule,base.group_user,1,0,0,0
+access_smart_ai_rule_manager,smart.ai.rule manager,model_smart_ai_rule,base.group_system,1,1,1,1
+access_smart_ai_risk_score_user,smart.ai.risk.score user,model_smart_ai_risk_score,base.group_user,1,1,1,0
+access_smart_ai_prediction_user,smart.ai.prediction user,model_smart_ai_prediction,base.group_user,1,1,1,0
+access_smart_ai_knowledge_document_user,smart.ai.knowledge.document user,model_smart_ai_knowledge_document,base.group_user,1,1,1,1
+access_smart_ai_optimization_suggestion_user,smart.ai.optimization.suggestion user,model_smart_ai_optimization_suggestion,base.group_user,1,1,1,0
+access_smart_ai_action_user,smart.ai.action user,model_smart_ai_action,base.group_user,1,1,1,0

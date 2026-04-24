@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     SMART SUPER AGENT — AI Command Center form view
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_smart_super_agent_form" model="ir.ui.view">
+    <field name="name">smart.super.agent.form</field>
+    <field name="model">smart.super.agent</field>
+    <field name="arch" type="xml">
+        <form string="AI Command Center" create="false" delete="false">
+            <sheet>
+
+                <!-- ── Header ─────────────────────────────────────────── -->
+                <div class="saa-header">
+                    <div class="saa-header-left">
+                        <span class="saa-header-icon">&#x1F916;</span>
+                        <div class="saa-header-info">
+                            <h2 class="saa-header-title">AI Command Center</h2>
+                            <div class="saa-header-meta">
+                                Business Activity: <field name="business_activity" readonly="1" nolabel="1"/>
+                                &#183; Last Run: <field name="last_run" readonly="1" nolabel="1"/>
+                                &#183; Projects Analyzed: <field name="last_run_projects" readonly="1" nolabel="1"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="saa-header-actions">
+                        <button name="action_run_full_analysis" type="object"
+                                string="Run Full Analysis"
+                                class="btn btn-primary saa-run-btn"/>
+                    </div>
+                </div>
+
+                <!-- ── KPI Strip ──────────────────────────────────────── -->
+                <div class="saa-kpi-strip">
+
+                    <div class="saa-kpi-card saa-kpi--total">
+                        <div class="saa-kpi-icon">&#x1F4CA;</div>
+                        <div class="saa-kpi-value">
+                            <field name="total_projects" nolabel="1"/>
+                        </div>
+                        <div class="saa-kpi-label">Total Projects</div>
+                    </div>
+
+                    <button name="action_view_critical_projects" type="object"
+                            class="saa-kpi-card saa-kpi--critical">
+                        <div class="saa-kpi-icon"><i class="fa fa-exclamation-circle" title="Critical"/></div>
+                        <div class="saa-kpi-value">
+                            <field name="critical_count" nolabel="1"/>
+                        </div>
+                        <div class="saa-kpi-label">Critical</div>
+                    </button>
+
+                    <button name="action_view_warning_projects" type="object"
+                            class="saa-kpi-card saa-kpi--warning">
+                        <div class="saa-kpi-icon"><i class="fa fa-exclamation-triangle" title="Warning"/></div>
+                        <div class="saa-kpi-value">
+                            <field name="warning_count" nolabel="1"/>
+                        </div>
+                        <div class="saa-kpi-label">Warning</div>
+                    </button>
+
+                    <div class="saa-kpi-card saa-kpi--healthy">
+                        <div class="saa-kpi-icon"><i class="fa fa-check-circle" title="Healthy"/></div>
+                        <div class="saa-kpi-value">
+                            <field name="healthy_count" nolabel="1"/>
+                        </div>
+                        <div class="saa-kpi-label">Healthy</div>
+                    </div>
+
+                    <button name="action_view_pending_actions" type="object"
+                            class="saa-kpi-card saa-kpi--actions">
+                        <div class="saa-kpi-icon"><i class="fa fa-bolt" title="Pending Actions"/></div>
+                        <div class="saa-kpi-value">
+                            <field name="pending_actions_count" nolabel="1"/>
+                        </div>
+                        <div class="saa-kpi-label">Pending Actions</div>
+                    </button>
+
+                    <button name="action_view_rules" type="object"
+                            class="saa-kpi-card saa-kpi--rules">
+                        <div class="saa-kpi-icon"><i class="fa fa-cog" title="Rules"/></div>
+                        <div class="saa-kpi-value">
+                            <field name="triggered_rule_count" nolabel="1"/>
+                        </div>
+                        <div class="saa-kpi-label">Rules Triggered</div>
+                    </button>
+
+                    <button name="action_view_suggestions" type="object"
+                            class="saa-kpi-card saa-kpi--suggest">
+                        <div class="saa-kpi-icon"><i class="fa fa-lightbulb-o" title="Suggestions"/></div>
+                        <div class="saa-kpi-value">
+                            <field name="pending_suggestions_count" nolabel="1"/>
+                        </div>
+                        <div class="saa-kpi-label">Suggestions</div>
+                    </button>
+
+                </div>
+
+                <!-- ── Risk Overview section ──────────────────────────── -->
+                <div class="saa-section-header">
+                    <i class="fa fa-shield" title="Risk Overview"/> Risk Overview
+                    <button name="action_view_all_risks" type="object"
+                            string="View All" class="btn btn-sm btn-outline-secondary ms-auto"/>
+                </div>
+
+                <!-- ── Pending AI Actions section ─────────────────────── -->
+                <div class="saa-section-header">
+                    <i class="fa fa-bolt" title="Pending Actions"/> Pending AI Actions
+                    <button name="action_view_pending_actions" type="object"
+                            string="View All" class="btn btn-sm btn-outline-secondary ms-auto"/>
+                </div>
+
+                <!-- ── Predictions section ────────────────────────────── -->
+                <div class="saa-section-header">
+                    <i class="fa fa-line-chart" title="Predictions"/> Predictions
+                    <button name="action_view_predictions" type="object"
+                            string="View All" class="btn btn-sm btn-outline-secondary ms-auto"/>
+                </div>
+
+                <!-- ── Rule Engine section ────────────────────────────── -->
+                <div class="saa-section-header">
+                    <i class="fa fa-cog" title="Rule Engine"/> Rule Engine
+                    <button name="action_view_rules" type="object"
+                            string="View Rules" class="btn btn-sm btn-outline-secondary ms-auto"/>
+                </div>
+
+                <!-- ── Optimization Suggestions section ──────────────── -->
+                <div class="saa-section-header">
+                    <i class="fa fa-lightbulb-o" title="Suggestions"/> Optimization Suggestions
+                    <button name="action_view_suggestions" type="object"
+                            string="View All" class="btn btn-sm btn-outline-secondary ms-auto"/>
+                </div>
+
+                <!-- ── Configuration ─────────────────────────────────── -->
+                <group string="Agent Configuration" class="mt-4">
+                    <field name="name"/>
+                    <field name="business_activity"/>
+                    <field name="active"/>
+                    <field name="last_run_duration" string="Last Duration (s)"/>
+                </group>
+
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- ══ Window action ════════════════════════════════════════════════════ -->
+<record id="action_smart_super_agent" model="ir.actions.act_window">
+    <field name="name">AI Command Center</field>
+    <field name="res_model">smart.super.agent</field>
+    <field name="view_mode">form</field>
+    <field name="domain">[('business_activity','=','construction')]</field>
+    <field name="context">{'default_business_activity': 'construction'}</field>
+    <field name="target">current</field>
+</record>
+
+</data>
+</odoo>

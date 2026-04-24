@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══ Rule List ════════════════════════════════════════════════════════ -->
+<record id="view_smart_ai_rule_list" model="ir.ui.view">
+    <field name="name">smart.ai.rule.list</field>
+    <field name="model">smart.ai.rule</field>
+    <field name="arch" type="xml">
+        <list string="AI Rules"
+              decoration-danger="severity=='critical'"
+              decoration-warning="severity=='high'">
+            <field name="sequence" widget="handle"/>
+            <field name="name"/>
+            <field name="business_activity" widget="badge"/>
+            <field name="metric"/>
+            <field name="operator"/>
+            <field name="threshold"/>
+            <field name="severity" widget="badge"
+                   decoration-danger="severity=='critical'"
+                   decoration-warning="severity=='high'"
+                   decoration-info="severity=='medium'"/>
+            <field name="trigger_count" string="Triggered"/>
+            <field name="active" widget="toggle_button" optional="show"/>
+        </list>
+    </field>
+</record>
+
+<!-- ══ Rule Form ════════════════════════════════════════════════════════ -->
+<record id="view_smart_ai_rule_form" model="ir.ui.view">
+    <field name="name">smart.ai.rule.form</field>
+    <field name="model">smart.ai.rule</field>
+    <field name="arch" type="xml">
+        <form string="AI Rule">
+            <sheet>
+                <group>
+                    <group string="Rule Definition">
+                        <field name="name"/>
+                        <field name="business_activity"/>
+                        <field name="active"/>
+                        <field name="sequence"/>
+                    </group>
+                    <group string="Condition">
+                        <field name="metric"/>
+                        <field name="operator"/>
+                        <field name="threshold"/>
+                        <field name="severity"/>
+                    </group>
+                </group>
+                <group string="Action">
+                    <field name="recommended_action" nolabel="1" placeholder="Describe the recommended action when this rule fires..."/>
+                </group>
+                <group string="Statistics">
+                    <field name="trigger_count" readonly="1"/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- ══ Window action ════════════════════════════════════════════════════ -->
+<record id="action_smart_ai_rule" model="ir.actions.act_window">
+    <field name="name">AI Rules</field>
+    <field name="res_model">smart.ai.rule</field>
+    <field name="view_mode">list,form</field>
+    <field name="context">{'default_business_activity': 'construction'}</field>
+</record>
+
+</data>
+</odoo>

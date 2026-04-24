@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+<data>
+
+<!-- ══ Singleton: Construction AI Brain ════════════════════════════════ -->
+<record id="smart_super_agent_construction" model="smart.super.agent">
+    <field name="name">Construction AI Brain</field>
+    <field name="business_activity">construction</field>
+    <field name="active" eval="True"/>
+</record>
+
+</data>
+</odoo>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     CONSTRUCTION DASHBOARD — Super AI Insights section (§8)
+     Inherits: smart_farm_construction.view_construction_dashboard_form
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_construction_dashboard_super_agent_inherit" model="ir.ui.view">
+    <field name="name">farm.construction.dashboard.super.agent.inherit</field>
+    <field name="model">farm.construction.dashboard</field>
+    <field name="inherit_id" ref="smart_farm_construction.view_construction_dashboard_form"/>
+    <field name="arch" type="xml">
+
+        <xpath expr="//div[contains(@class,'cd-ai-grid')]" position="after">
+
+            <!-- ── §8 Super AI Insights ──────────────────────────────── -->
+            <div class="cd-section-hdr" style="margin-top:24px;background:#0f172a;color:#fff;border-bottom-color:rgba(255,255,255,0.15)">
+                <i class="fa fa-robot me-2" title="Super AI"/> Super AI Insights
+                <button name="action_sai_pending_actions" type="object"
+                        class="ms-auto btn btn-sm"
+                        style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);font-size:11px;padding:3px 10px">
+                    All AI Actions
+                </button>
+            </div>
+            <div class="cd-section-body">
+                <div class="cd-ai-grid">
+
+                    <button name="action_sai_critical" type="object"
+                            class="cd-ai-card cd-ai--critical">
+                        <div class="cd-ai-icon"><i class="fa fa-exclamation-circle" title="Critical"/></div>
+                        <div class="cd-ai-count">
+                            <field name="sai_critical_projects" readonly="1" nolabel="1"/>
+                        </div>
+                        <div class="cd-ai-lbl">Critical Projects</div>
+                        <div class="cd-ai-sub">Risk &#x2265; 71% (Super AI)</div>
+                    </button>
+
+                    <button name="action_sai_warning" type="object"
+                            class="cd-ai-card cd-ai--warning">
+                        <div class="cd-ai-icon"><i class="fa fa-exclamation-triangle" title="Warning"/></div>
+                        <div class="cd-ai-count">
+                            <field name="sai_warning_projects" readonly="1" nolabel="1"/>
+                        </div>
+                        <div class="cd-ai-lbl">Warning Projects</div>
+                        <div class="cd-ai-sub">Risk 41&#x2013;70% (Super AI)</div>
+                    </button>
+
+                    <button name="action_sai_procurement" type="object"
+                            class="cd-ai-card cd-ai--procurement">
+                        <div class="cd-ai-icon"><i class="fa fa-shopping-cart" title="Procurement"/></div>
+                        <div class="cd-ai-count">
+                            <field name="sai_procurement_risks" readonly="1" nolabel="1"/>
+                        </div>
+                        <div class="cd-ai-lbl">Procurement Risks</div>
+                        <div class="cd-ai-sub">Score &#x2265; 50</div>
+                    </button>
+
+                    <button name="action_sai_cost" type="object"
+                            class="cd-ai-card cd-ai--cost">
+                        <div class="cd-ai-icon"><i class="fa fa-usd" title="Cost Overruns"/></div>
+                        <div class="cd-ai-count">
+                            <field name="sai_cost_overruns" readonly="1" nolabel="1"/>
+                        </div>
+                        <div class="cd-ai-lbl">Cost Overruns</div>
+                        <div class="cd-ai-sub">Score &#x2265; 50</div>
+                    </button>
+
+                    <button name="action_sai_claim" type="object"
+                            class="cd-ai-card cd-ai--claim">
+                        <div class="cd-ai-icon"><i class="fa fa-money" title="Claim Opportunities"/></div>
+                        <div class="cd-ai-count">
+                            <field name="sai_claim_opportunities" readonly="1" nolabel="1"/>
+                        </div>
+                        <div class="cd-ai-lbl">Claim Opportunities</div>
+                        <div class="cd-ai-sub">Approved but unclaimed</div>
+                    </button>
+
+                    <button name="action_sai_pending_actions" type="object"
+                            class="cd-ai-card cd-ai--delay">
+                        <div class="cd-ai-icon"><i class="fa fa-bolt" title="Pending AI Actions"/></div>
+                        <div class="cd-ai-count">
+                            <field name="sai_pending_ai_actions" readonly="1" nolabel="1"/>
+                        </div>
+                        <div class="cd-ai-lbl">Pending AI Actions</div>
+                        <div class="cd-ai-sub">Awaiting approval/execution</div>
+                    </button>
+
+                </div>
+            </div>
+
+        </xpath>
+
+    </field>
+</record>
+
+</data>
+</odoo>

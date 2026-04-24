@@ -1,0 +1,36 @@
+{
+    'name': 'Smart Farm — Super AI Agent',
+    'version': '18.0.1.0.0',
+    'summary': 'Mythos-style controlled AI brain for Construction — 10-layer architecture',
+    'category': 'Smart Farm',
+    'author': 'bin-qadir',
+    'license': 'LGPL-3',
+    'depends': [
+        'smart_farm_construction',
+    ],
+    'data': [
+        'security/ir.model.access.csv',
+        'data/smart_ai_rules_data.xml',
+        'data/smart_super_agent_data.xml',
+        'data/smart_ai_cron.xml',
+        'views/smart_ai_command_center_views.xml',
+        'views/smart_ai_context_views.xml',
+        'views/smart_ai_rule_views.xml',
+        'views/smart_ai_risk_views.xml',
+        'views/smart_ai_prediction_views.xml',
+        'views/smart_ai_knowledge_views.xml',
+        'views/smart_ai_optimization_views.xml',
+        'views/smart_ai_action_views.xml',
+        'views/farm_project_ai_brain_inherit.xml',
+        'views/construction_dashboard_super_inherit.xml',
+        'views/menu.xml',
+    ],
+    'assets': {
+        'web.assets_backend': [
+            'smart_farm_super_agent/static/src/css/super_agent.css',
+        ],
+    },
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+}

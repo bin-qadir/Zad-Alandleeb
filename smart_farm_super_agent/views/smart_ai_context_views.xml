@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══ Context Snapshot List ════════════════════════════════════════════ -->
+<record id="view_smart_ai_context_snapshot_list" model="ir.ui.view">
+    <field name="name">smart.ai.context.snapshot.list</field>
+    <field name="model">smart.ai.context.snapshot</field>
+    <field name="arch" type="xml">
+        <list string="AI Context Snapshots">
+            <field name="name"/>
+            <field name="project_id"/>
+            <field name="context_type" widget="badge"/>
+            <field name="summary"/>
+            <field name="captured_at"/>
+        </list>
+    </field>
+</record>
+
+<!-- ══ Context Snapshot Form ════════════════════════════════════════════ -->
+<record id="view_smart_ai_context_snapshot_form" model="ir.ui.view">
+    <field name="name">smart.ai.context.snapshot.form</field>
+    <field name="model">smart.ai.context.snapshot</field>
+    <field name="arch" type="xml">
+        <form string="Context Snapshot">
+            <sheet>
+                <group>
+                    <group string="Identity">
+                        <field name="name"/>
+                        <field name="project_id"/>
+                        <field name="business_activity"/>
+                        <field name="context_type"/>
+                        <field name="captured_at"/>
+                    </group>
+                    <group string="Source">
+                        <field name="source_model"/>
+                        <field name="source_record_id"/>
+                    </group>
+                </group>
+                <group string="Content">
+                    <field name="summary"/>
+                    <field name="key_metrics" widget="code" options="{'mode': 'json'}"/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- ══ Window action ════════════════════════════════════════════════════ -->
+<record id="action_smart_ai_context_snapshot" model="ir.actions.act_window">
+    <field name="name">Context Snapshots</field>
+    <field name="res_model">smart.ai.context.snapshot</field>
+    <field name="view_mode">list,form</field>
+</record>
+
+</data>
+</odoo>

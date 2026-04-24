@@ -1,0 +1,203 @@
+/* ============================================================
+   SMART SUPER AGENT — Enterprise AI Command Center CSS
+   ============================================================ */
+
+/* ── Command Center Header ──────────────────────────────────── */
+.saa-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1d4ed8 100%);
+    border-radius: 10px;
+    color: #fff;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.4);
+}
+
+.saa-header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.saa-header-icon {
+    font-size: 32px;
+}
+
+.saa-header-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.saa-header-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #fff;
+}
+
+.saa-header-meta {
+    font-size: 12px;
+    opacity: 0.75;
+    margin-top: 4px;
+}
+
+.saa-header-meta .o_field_widget {
+    display: inline;
+    color: #fff;
+}
+
+.saa-header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.saa-run-btn {
+    background: linear-gradient(90deg, #2563eb, #7c3aed) !important;
+    border: none !important;
+    color: #fff !important;
+    padding: 10px 24px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+    letter-spacing: 0.3px;
+    transition: opacity 0.15s;
+}
+
+.saa-run-btn:hover {
+    opacity: 0.88 !important;
+}
+
+/* ── KPI Strip ──────────────────────────────────────────────── */
+.saa-kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.saa-kpi-card {
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    background: #fff;
+    /* Override button default styles */
+    font-family: inherit;
+    line-height: inherit;
+}
+
+.saa-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.saa-kpi-icon {
+    font-size: 20px;
+    margin-bottom: 6px;
+}
+
+.saa-kpi-value {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.saa-kpi-value .o_field_widget {
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+}
+
+.saa-kpi-label {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* KPI colour variants */
+.saa-kpi--total    { border-color: #94a3b8; }
+.saa-kpi--total .saa-kpi-value    { color: #334155; }
+
+.saa-kpi--critical { border-color: #fca5a5; }
+.saa-kpi--critical .saa-kpi-value { color: #dc2626; }
+
+.saa-kpi--warning  { border-color: #fcd34d; }
+.saa-kpi--warning .saa-kpi-value  { color: #d97706; }
+
+.saa-kpi--healthy  { border-color: #86efac; }
+.saa-kpi--healthy .saa-kpi-value  { color: #16a34a; }
+
+.saa-kpi--actions  { border-color: #93c5fd; }
+.saa-kpi--actions .saa-kpi-value  { color: #2563eb; }
+
+.saa-kpi--rules    { border-color: #c4b5fd; }
+.saa-kpi--rules .saa-kpi-value    { color: #7c3aed; }
+
+.saa-kpi--suggest  { border-color: #99f6e4; }
+.saa-kpi--suggest .saa-kpi-value  { color: #0d9488; }
+
+/* ── Section Headers ────────────────────────────────────────── */
+.saa-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #f1f5f9;
+    border-left: 4px solid #1d4ed8;
+    border-radius: 0 6px 6px 0;
+    font-weight: 600;
+    font-size: 13px;
+    color: #1e293b;
+    margin: 16px 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.saa-section-header i {
+    color: #1d4ed8;
+}
+
+.saa-section-header .btn {
+    margin-left: auto;
+}
+
+/* ── AI Brain tab strip ─────────────────────────────────────── */
+.saa-brain-run-strip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: linear-gradient(90deg, #0f172a, #1e3a5f);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    color: #fff;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+    .saa-kpi-strip {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .saa-kpi-strip {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .saa-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+}

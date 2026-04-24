@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══ Knowledge Document List ═════════════════════════════════════════ -->
+<record id="view_smart_ai_knowledge_document_list" model="ir.ui.view">
+    <field name="name">smart.ai.knowledge.document.list</field>
+    <field name="model">smart.ai.knowledge.document</field>
+    <field name="arch" type="xml">
+        <list string="Knowledge Documents">
+            <field name="name"/>
+            <field name="project_id"      optional="show"/>
+            <field name="business_activity" widget="badge" optional="show"/>
+            <field name="document_type"   widget="badge"/>
+            <field name="created_by"      optional="show"/>
+            <field name="embedding_ready" optional="show"/>
+            <field name="create_date"     string="Created"/>
+        </list>
+    </field>
+</record>
+
+<!-- ══ Knowledge Document Form ══════════════════════════════════════════ -->
+<record id="view_smart_ai_knowledge_document_form" model="ir.ui.view">
+    <field name="name">smart.ai.knowledge.document.form</field>
+    <field name="model">smart.ai.knowledge.document</field>
+    <field name="arch" type="xml">
+        <form string="Knowledge Document">
+            <sheet>
+                <group>
+                    <group string="Identity">
+                        <field name="name"/>
+                        <field name="project_id"/>
+                        <field name="business_activity"/>
+                        <field name="document_type"/>
+                        <field name="created_by"/>
+                        <field name="tags"/>
+                        <field name="embedding_ready"/>
+                    </group>
+                    <group string="Summary">
+                        <field name="summary" nolabel="1"/>
+                    </group>
+                </group>
+                <group string="Key Details">
+                    <group string="Obligations">
+                        <field name="obligations" nolabel="1"/>
+                    </group>
+                    <group string="Deadlines">
+                        <field name="deadlines" nolabel="1"/>
+                    </group>
+                </group>
+                <group string="Risks &amp; Related Records">
+                    <group>
+                        <field name="risks" nolabel="1" string="Identified Risks"/>
+                    </group>
+                    <group>
+                        <field name="related_records" nolabel="1" string="Related Records"/>
+                    </group>
+                </group>
+                <group string="Attachments">
+                    <field name="attachment_ids" nolabel="1" widget="many2many_binary"/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- ══ Window action ════════════════════════════════════════════════════ -->
+<record id="action_smart_ai_knowledge" model="ir.actions.act_window">
+    <field name="name">Knowledge Documents</field>
+    <field name="res_model">smart.ai.knowledge.document</field>
+    <field name="view_mode">list,form</field>
+    <field name="context">{'default_business_activity': 'construction'}</field>
+</record>
+
+</data>
+</odoo>

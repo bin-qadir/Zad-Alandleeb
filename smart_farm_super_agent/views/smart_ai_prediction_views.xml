@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══ Prediction List ══════════════════════════════════════════════════ -->
+<record id="view_smart_ai_prediction_list" model="ir.ui.view">
+    <field name="name">smart.ai.prediction.list</field>
+    <field name="model">smart.ai.prediction</field>
+    <field name="arch" type="xml">
+        <list string="AI Predictions"
+              decoration-danger="alert_level=='high'"
+              decoration-warning="alert_level=='medium'">
+            <field name="project_id"/>
+            <field name="predicted_delay_days"     string="Delay (days)"/>
+            <field name="predicted_budget_overrun" string="Budget Overrun (%)"/>
+            <field name="predicted_material_shortage" string="Material Shortages" optional="show"/>
+            <field name="predicted_claim_value"    string="Claim Value" optional="show"/>
+            <field name="confidence_score"         string="Confidence (%)"/>
+            <field name="alert_level" widget="badge"
+                   decoration-danger="alert_level=='high'"
+                   decoration-warning="alert_level=='medium'"/>
+            <field name="computed_at" string="Computed"/>
+        </list>
+    </field>
+</record>
+
+<!-- ══ Prediction Form ══════════════════════════════════════════════════ -->
+<record id="view_smart_ai_prediction_form" model="ir.ui.view">
+    <field name="name">smart.ai.prediction.form</field>
+    <field name="model">smart.ai.prediction</field>
+    <field name="arch" type="xml">
+        <form string="AI Prediction">
+            <sheet>
+                <group>
+                    <group string="Identity">
+                        <field name="name"/>
+                        <field name="project_id"/>
+                        <field name="business_activity"/>
+                        <field name="computed_at"/>
+                        <field name="method"/>
+                        <field name="confidence_score"/>
+                        <field name="alert_level" widget="badge"
+                               decoration-danger="alert_level=='high'"
+                               decoration-warning="alert_level=='medium'"/>
+                    </group>
+                    <group string="Predictions">
+                        <field name="predicted_delay_days"        string="Predicted Delay (days)"/>
+                        <field name="predicted_budget_overrun"    string="Budget Overrun (%)"/>
+                        <field name="predicted_material_shortage" string="Material Shortages"/>
+                        <field name="predicted_claim_value"       string="Claim Value"/>
+                    </group>
+                </group>
+                <group string="Prediction Basis">
+                    <field name="reason" nolabel="1"/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- ══ Window action ════════════════════════════════════════════════════ -->
+<record id="action_smart_ai_prediction" model="ir.actions.act_window">
+    <field name="name">AI Predictions</field>
+    <field name="res_model">smart.ai.prediction</field>
+    <field name="view_mode">list,form</field>
+</record>
+
+</data>
+</odoo>

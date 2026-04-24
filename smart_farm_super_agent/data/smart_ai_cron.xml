@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+<data>
+
+<!-- ══ Daily Super Agent cron ══════════════════════════════════════════ -->
+<record id="cron_smart_super_agent_daily" model="ir.cron">
+    <field name="name">Super AI Agent: Daily Analysis (Construction)</field>
+    <field name="model_id" ref="smart_farm_super_agent.model_smart_super_agent"/>
+    <field name="state">code</field>
+    <field name="code">model.run_daily_super_agent()</field>
+    <field name="interval_number">1</field>
+    <field name="interval_type">days</field>
+    <field name="active" eval="True"/>
+    <field name="priority">100</field>
+</record>
+
+</data>
+</odoo>

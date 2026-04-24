@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══ AI Command Center (top-level under Construction) ══════════════ -->
+<menuitem
+    id="menu_sf_construction_ai_command_center"
+    name="AI Command Center"
+    parent="smart_farm_construction.menu_sf_construction_root"
+    action="smart_farm_super_agent.action_smart_super_agent"
+    sequence="5"
+/>
+
+<!-- ══ AI Rules (under Configuration) ══════════════════════════════ -->
+<menuitem
+    id="menu_sf_construction_ai_rules"
+    name="AI Rules"
+    parent="smart_farm_construction.menu_sf_construction_config"
+    action="smart_farm_super_agent.action_smart_ai_rule"
+    sequence="50"
+/>
+
+<!-- ══ Knowledge Documents (under Configuration) ═════════════════════ -->
+<menuitem
+    id="menu_sf_construction_ai_knowledge"
+    name="Knowledge Docs"
+    parent="smart_farm_construction.menu_sf_construction_config"
+    action="smart_farm_super_agent.action_smart_ai_knowledge"
+    sequence="60"
+/>
+
+</data>
+</odoo>

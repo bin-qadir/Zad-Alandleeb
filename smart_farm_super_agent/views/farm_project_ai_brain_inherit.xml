@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     FARM PROJECT — Super Agent AI Brain tab
+     Inherits: smart_farm_project.view_farm_project_form
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_farm_project_super_agent_inherit" model="ir.ui.view">
+    <field name="name">farm.project.super.agent.inherit</field>
+    <field name="model">farm.project</field>
+    <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
+    <field name="arch" type="xml">
+
+        <!-- ── 1. Smart button ──────────────────────────────────────── -->
+        <xpath expr="//div[@name='button_box']" position="inside">
+            <button name="action_run_super_agent_analysis" type="object"
+                    class="epd-mini-kpi epd-mini-kpi--purple"
+                    title="Run Super Agent Analysis"
+                    invisible="business_activity != 'construction'">
+                <i class="fa fa-robot epd-mini-icon" title="AI Brain"/>
+                <div class="epd-mini-value">
+                    <field name="sai_latest_risk_score" nolabel="1" widget="float"
+                           options="{'digits': [16, 0]}"/>%
+                </div>
+                <div class="epd-mini-label">AI Brain</div>
+            </button>
+        </xpath>
+
+        <!-- ── 2. AI Brain page (after tab_ai_insights) ─────────────── -->
+        <xpath expr="//page[@name='tab_ai_insights']" position="after">
+            <page string="AI Brain" name="tab_ai_brain"
+                  invisible="business_activity != 'construction'">
+
+                <!-- Action buttons -->
+                <div class="mb-3 d-flex gap-2">
+                    <button name="action_run_super_agent_analysis" type="object"
+                            string="Run Super Agent" class="btn btn-primary btn-sm"
+                            icon="fa-robot"/>
+                </div>
+
+                <!-- Risk Status Banner -->
+                <div class="alert alert-danger mb-3"
+                     invisible="sai_latest_risk_status != 'critical'">
+                    <strong>CRITICAL RISK DETECTED</strong> — Risk Score:
+                    <field name="sai_latest_risk_score" nolabel="1" readonly="1"
+                           widget="float" options="{'digits': [16, 1]}"/>%
+                    &#183;
+                    <field name="sai_pending_actions_count" nolabel="1" readonly="1"/>
+                    pending AI action(s)
+                </div>
+                <div class="alert alert-warning mb-3"
+                     invisible="sai_latest_risk_status != 'warning'">
+                    <strong>WARNING</strong> — Risk Score:
+                    <field name="sai_latest_risk_score" nolabel="1" readonly="1"
+                           widget="float" options="{'digits': [16, 1]}"/>%
+                    &#183;
+                    <field name="sai_open_suggestions_count" nolabel="1" readonly="1"/>
+                    suggestion(s) available
+                </div>
+                <div class="alert alert-success mb-3"
+                     invisible="sai_latest_risk_status != 'healthy'">
+                    <strong>HEALTHY</strong> — All risk indicators within normal range.
+                </div>
+                <div class="alert alert-light mb-3"
+                     invisible="sai_latest_risk_status">
+                    <i class="fa fa-info-circle me-2" title="Info"/>
+                    No Super Agent analysis yet for this project. Click
+                    <em>Run Super Agent</em> to generate insights.
+                </div>
+
+                <!-- Risk Scores inline list -->
+                <separator string="Risk Scores"/>
+                <field name="sai_risk_score_ids" nolabel="1" mode="list" readonly="1"
+                       context="{'default_project_id': id}">
+                    <list string="Risk Scores"
+                          decoration-danger="status=='critical'"
+                          decoration-warning="status=='warning'"
+                          decoration-success="status=='healthy'">
+                        <field name="computed_at" string="Computed"/>
+                        <field name="overall_risk_score" string="Risk %"
+                               widget="float" options="{'digits': [16, 1]}"/>
+                        <field name="status" widget="badge"
+                               decoration-danger="status=='critical'"
+                               decoration-warning="status=='warning'"
+                               decoration-success="status=='healthy'"/>
+                        <field name="delay_risk"       string="Delay"       optional="show"/>
+                        <field name="cost_risk"        string="Cost"        optional="show"/>
+                        <field name="procurement_risk" string="Procurement" optional="show"/>
+                        <field name="execution_risk"   string="Execution"   optional="show"/>
+                        <field name="claim_risk"       string="Claims"      optional="show"/>
+                        <field name="triggered_rule_count" string="Rules Fired" optional="show"/>
+                        <field name="state" widget="badge"
+                               decoration-info="state=='open'"
+                               decoration-warning="state=='acknowledged'"
+                               decoration-success="state=='resolved'"
+                               optional="show"/>
+                    </list>
+                </field>
+
+                <!-- Predictions inline list -->
+                <separator string="AI Predictions"/>
+                <field name="sai_prediction_ids" nolabel="1" mode="list" readonly="1"
+                       context="{'default_project_id': id}">
+                    <list string="Predictions"
+                          decoration-danger="alert_level=='high'"
+                          decoration-warning="alert_level=='medium'">
+                        <field name="computed_at" string="Computed"/>
+                        <field name="predicted_delay_days"     string="Delay (days)"/>
+                        <field name="predicted_budget_overrun" string="Budget Overrun (%)"/>
+                        <field name="predicted_claim_value"    string="Claim Value"   optional="show"/>
+                        <field name="confidence_score"         string="Confidence (%)" optional="show"/>
+                        <field name="alert_level" widget="badge"
+                               decoration-danger="alert_level=='high'"
+                               decoration-warning="alert_level=='medium'"
+                               optional="show"/>
+                    </list>
+                </field>
+
+                <!-- Optimization Suggestions inline list -->
+                <separator string="Optimization Suggestions"/>
+                <field name="sai_suggestion_ids" nolabel="1" mode="list"
+                       domain="[('state','=','pending')]"
+                       context="{'default_project_id': id}">
+                    <list string="Suggestions"
+                          decoration-danger="priority=='high'"
+                          decoration-warning="priority=='medium'">
+                        <field name="title"/>
+                        <field name="suggestion_type" widget="badge"/>
+                        <field name="priority" widget="badge"
+                               decoration-danger="priority=='high'"
+                               decoration-warning="priority=='medium'"/>
+                        <field name="confidence_score" string="Confidence (%)"/>
+                        <field name="expected_impact" optional="show"/>
+                        <button name="action_apply" type="object" string="Apply"
+                                icon="fa-check" invisible="state != 'pending'"/>
+                        <button name="action_dismiss" type="object" string="Dismiss"
+                                icon="fa-times" invisible="state != 'pending'"/>
+                    </list>
+                </field>
+
+                <!-- Pending AI Actions inline list -->
+                <separator string="Pending AI Actions"/>
+                <field name="sai_action_ids" nolabel="1" mode="list"
+                       domain="[('state','in',['draft','waiting_approval','approved'])]"
+                       context="{'default_project_id': id}">
+                    <list string="AI Actions"
+                          decoration-danger="impact_level=='high'"
+                          decoration-warning="state=='waiting_approval'">
+                        <field name="title"/>
+                        <field name="action_type" widget="badge"/>
+                        <field name="impact_level" widget="badge"
+                               decoration-danger="impact_level=='high'"/>
+                        <field name="state" widget="badge"
+                               decoration-info="state=='draft'"
+                               decoration-warning="state=='waiting_approval'"
+                               decoration-success="state=='approved'"/>
+                        <button name="action_submit_for_approval" type="object"
+                                string="Submit" invisible="state != 'draft'"/>
+                        <button name="action_approve" type="object"
+                                string="Approve" invisible="state != 'waiting_approval'"/>
+                        <button name="action_reject" type="object"
+                                string="Reject" invisible="state != 'waiting_approval'"/>
+                    </list>
+                </field>
+
+            </page>
+        </xpath>
+
+    </field>
+</record>
+
+</data>
+</odoo>
