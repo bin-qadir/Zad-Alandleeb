@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS AGENT — List View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_agent_list" model="ir.ui.view">
+    <field name="name">mythos.agent.list</field>
+    <field name="model">mythos.agent</field>
+    <field name="arch" type="xml">
+        <list string="Mythos AI Agents"
+              default_order="sequence,agent_layer,name"
+              decoration-muted="not active">
+            <field name="sequence" widget="handle"/>
+            <field name="name"/>
+            <field name="agent_layer" widget="badge"
+                   decoration-info="agent_layer == 'pre_contract'"
+                   decoration-primary="agent_layer == 'contract'"
+                   decoration-success="agent_layer == 'execution'"
+                   decoration-warning="agent_layer in ('procurement', 'quality_handover')"
+                   decoration-danger="agent_layer in ('risk_control', 'financial_claims')"
+                   decoration-muted="agent_layer == 'executive_dashboard'"/>
+            <field name="agent_function" widget="badge"
+                   decoration-info="True" optional="show"/>
+            <field name="last_status" widget="badge"
+                   decoration-muted="last_status == 'never_run'"
+                   decoration-success="last_status == 'success'"
+                   decoration-warning="last_status == 'warning'"
+                   decoration-danger="last_status == 'failed'"/>
+            <field name="last_run_datetime" string="Last Run" optional="show"/>
+            <field name="run_count" string="Runs" optional="show"/>
+            <field name="insight_count" string="Insights" optional="show"/>
+            <field name="action_count" string="Actions" optional="show"/>
+            <field name="active" column_invisible="True"/>
+        </list>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS AGENT — Form View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_agent_form" model="ir.ui.view">
+    <field name="name">mythos.agent.form</field>
+    <field name="model">mythos.agent</field>
+    <field name="arch" type="xml">
+        <form string="Mythos Agent">
+            <header>
+                <!-- Run Agent placeholder button -->
+                <button name="action_run_agent"
+                        type="object"
+                        string="Run Agent"
+                        class="btn-primary"
+                        icon="fa-play"
+                        confirm="Trigger a run for this agent? (Phase 1 placeholder — logs entry only)"/>
+
+                <!-- Status badge -->
+                <field name="last_status" widget="statusbar"
+                       statusbar_visible="never_run,success,warning,failed"
+                       readonly="1"/>
+            </header>
+            <sheet>
+
+                <!-- ── Stat buttons ───────────────────────────────────────── -->
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_logs"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-list-alt">
+                        <field name="log_count" widget="statinfo" string="Logs"/>
+                    </button>
+                    <div class="oe_stat_button" type="object" icon="fa-play-circle">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="run_count" nolabel="1"/>
+                            </span>
+                            <span class="o_stat_text">Runs</span>
+                        </div>
+                    </div>
+                    <div class="oe_stat_button" type="object" icon="fa-lightbulb-o">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="insight_count" nolabel="1"/>
+                            </span>
+                            <span class="o_stat_text">Insights</span>
+                        </div>
+                    </div>
+                    <div class="oe_stat_button" type="object" icon="fa-bolt">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="action_count" nolabel="1"/>
+                            </span>
+                            <span class="o_stat_text">Actions</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Title ─────────────────────────────────────────────── -->
+                <div class="oe_title">
+                    <h1>
+                        <field name="name"
+                               placeholder="Agent Name…"
+                               style="font-size: 1.4rem;"/>
+                    </h1>
+                    <div class="text-muted small">
+                        <field name="code" readonly="1" nolabel="1"
+                               style="font-family: monospace;"/>
+                    </div>
+                </div>
+
+                <!-- ── KPI strip ─────────────────────────────────────────── -->
+                <div class="row mt-3 mb-4">
+                    <div class="col-md-3 text-center border-end">
+                        <div class="fw-bold fs-4">
+                            <field name="last_status" widget="badge"
+                                   decoration-muted="last_status == 'never_run'"
+                                   decoration-success="last_status == 'success'"
+                                   decoration-warning="last_status == 'warning'"
+                                   decoration-danger="last_status == 'failed'"
+                                   nolabel="1"/>
+                        </div>
+                        <div class="text-muted small">Last Status</div>
+                    </div>
+                    <div class="col-md-3 text-center border-end">
+                        <div class="fw-bold fs-5">
+                            <field name="last_run_datetime" nolabel="1"
+                                   widget="datetime" readonly="1"/>
+                        </div>
+                        <div class="text-muted small">Last Run</div>
+                    </div>
+                    <div class="col-md-3 text-center border-end">
+                        <div class="fw-bold fs-4">
+                            <field name="agent_layer" widget="badge"
+                                   decoration-info="True" nolabel="1"/>
+                        </div>
+                        <div class="text-muted small">Layer</div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="fw-bold fs-4">
+                            <field name="agent_function" widget="badge"
+                                   decoration-primary="True" nolabel="1"/>
+                        </div>
+                        <div class="text-muted small">Function</div>
+                    </div>
+                </div>
+
+                <!-- ── Main fields ───────────────────────────────────────── -->
+                <group>
+                    <group string="Classification">
+                        <field name="business_activity"/>
+                        <field name="agent_layer"/>
+                        <field name="agent_function"/>
+                        <field name="sequence"/>
+                    </group>
+                    <group string="Status">
+                        <field name="active"/>
+                        <field name="last_run_datetime" readonly="1"/>
+                        <field name="last_status" readonly="1"/>
+                        <field name="run_count" readonly="1"/>
+                    </group>
+                </group>
+
+                <group string="Description">
+                    <field name="description" nolabel="1"
+                           placeholder="Describe what this agent monitors and what actions it can take…"/>
+                </group>
+
+                <!-- ── Recent logs tab ───────────────────────────────────── -->
+                <notebook>
+                    <page string="Recent Logs" name="tab_logs">
+                        <field name="log_ids" readonly="1">
+                            <list string="Log Entries" decoration-danger="result == 'failed'"
+                                  decoration-warning="result == 'warning'"
+                                  decoration-success="result == 'success'"
+                                  decoration-muted="result == 'success'">
+                                <field name="datetime"/>
+                                <field name="title"/>
+                                <field name="result" widget="badge"
+                                       decoration-success="result == 'success'"
+                                       decoration-warning="result == 'warning'"
+                                       decoration-danger="result == 'failed'"/>
+                                <field name="user_id" optional="show"/>
+                                <field name="related_model" optional="show"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+
+            </sheet>
+            <chatter/>
+        </form>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS AGENT — Action
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="action_mythos_agent" model="ir.actions.act_window">
+    <field name="name">Construction Agents</field>
+    <field name="res_model">mythos.agent</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('business_activity', '=', 'construction')]</field>
+    <field name="context">{'default_business_activity': 'construction'}</field>
+    <field name="target">current</field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS COMMAND CENTER — layer-grouped overview action
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="action_mythos_command_center" model="ir.actions.act_window">
+    <field name="name">Mythos Command Center</field>
+    <field name="res_model">mythos.agent</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('business_activity', '=', 'construction'), ('active', '=', True)]</field>
+    <field name="context">{'default_business_activity': 'construction', 'group_by': ['agent_layer']}</field>
+    <field name="target">current</field>
+</record>
+
+</data>
+</odoo>

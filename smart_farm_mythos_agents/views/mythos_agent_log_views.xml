@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS AGENT LOG — List View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_agent_log_list" model="ir.ui.view">
+    <field name="name">mythos.agent.log.list</field>
+    <field name="model">mythos.agent.log</field>
+    <field name="arch" type="xml">
+        <list string="Agent Logs"
+              default_order="datetime desc"
+              decoration-danger="result == 'failed'"
+              decoration-warning="result == 'warning'">
+            <field name="datetime" string="Date / Time"/>
+            <field name="agent_id"/>
+            <field name="agent_layer" widget="badge"
+                   decoration-info="agent_layer == 'pre_contract'"
+                   decoration-primary="agent_layer == 'contract'"
+                   decoration-success="agent_layer == 'execution'"
+                   decoration-warning="agent_layer in ('procurement', 'quality_handover')"
+                   decoration-danger="agent_layer in ('risk_control', 'financial_claims')"
+                   decoration-muted="agent_layer == 'executive_dashboard'"
+                   optional="show"/>
+            <field name="agent_function" optional="show"/>
+            <field name="title"/>
+            <field name="result" widget="badge"
+                   decoration-success="result == 'success'"
+                   decoration-warning="result == 'warning'"
+                   decoration-danger="result == 'failed'"/>
+            <field name="user_id" optional="show"/>
+            <field name="related_model" optional="show"/>
+            <field name="related_record_id" optional="hide"/>
+        </list>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS AGENT LOG — Form View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_agent_log_form" model="ir.ui.view">
+    <field name="name">mythos.agent.log.form</field>
+    <field name="model">mythos.agent.log</field>
+    <field name="arch" type="xml">
+        <form string="Agent Log Entry" create="false" delete="false">
+            <sheet>
+                <div class="oe_title">
+                    <h2>
+                        <field name="title" readonly="1"/>
+                    </h2>
+                </div>
+                <group>
+                    <group string="Source">
+                        <field name="agent_id" readonly="1" options="{'no_open': False}"/>
+                        <field name="agent_layer" readonly="1" widget="badge"
+                               decoration-info="True"/>
+                        <field name="agent_function" readonly="1"/>
+                        <field name="datetime" readonly="1"/>
+                        <field name="user_id" readonly="1"/>
+                    </group>
+                    <group string="Outcome">
+                        <field name="result" readonly="1" widget="badge"
+                               decoration-success="result == 'success'"
+                               decoration-warning="result == 'warning'"
+                               decoration-danger="result == 'failed'"/>
+                        <field name="related_model" readonly="1"/>
+                        <field name="related_record_id" readonly="1"
+                               invisible="not related_model"/>
+                    </group>
+                </group>
+                <group string="Details">
+                    <field name="details" nolabel="1" readonly="1"/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS AGENT LOG — Search View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_agent_log_search" model="ir.ui.view">
+    <field name="name">mythos.agent.log.search</field>
+    <field name="model">mythos.agent.log</field>
+    <field name="arch" type="xml">
+        <search string="Search Logs">
+            <field name="title"/>
+            <field name="agent_id"/>
+            <filter string="Success" name="filter_success"
+                    domain="[('result', '=', 'success')]"/>
+            <filter string="Warning" name="filter_warning"
+                    domain="[('result', '=', 'warning')]"/>
+            <filter string="Failed"  name="filter_failed"
+                    domain="[('result', '=', 'failed')]"/>
+            <separator/>
+            <filter string="Today"   name="filter_today"
+                    domain="[('datetime', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+            <group expand="0" string="Group By">
+                <filter string="Agent"  name="group_agent"  context="{'group_by': 'agent_id'}"/>
+                <filter string="Layer"  name="group_layer"  context="{'group_by': 'agent_layer'}"/>
+                <filter string="Result" name="group_result" context="{'group_by': 'result'}"/>
+                <filter string="Date"   name="group_date"   context="{'group_by': 'datetime:day'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS AGENT LOG — Action
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="action_mythos_agent_log" model="ir.actions.act_window">
+    <field name="name">Agent Logs</field>
+    <field name="res_model">mythos.agent.log</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[]</field>
+    <field name="context">{}</field>
+    <field name="target">current</field>
+</record>
+
+</data>
+</odoo>

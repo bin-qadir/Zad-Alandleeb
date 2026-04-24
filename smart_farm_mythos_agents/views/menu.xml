@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS AI — Top-level section under the Construction root menu
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<!-- Parent: Mythos AI separator / group under Construction -->
+<menuitem
+    id="menu_mythos_ai_root"
+    name="Mythos AI"
+    parent="smart_farm_construction.menu_sf_construction_root"
+    sequence="6"
+    groups="base.group_user"
+/>
+
+<!-- Command Center — layer-grouped agent overview -->
+<menuitem
+    id="menu_mythos_command_center"
+    name="Command Center"
+    parent="menu_mythos_ai_root"
+    action="smart_farm_mythos_agents.action_mythos_command_center"
+    sequence="1"
+    groups="base.group_user"
+/>
+
+<!-- Construction Agents — full agent registry -->
+<menuitem
+    id="menu_mythos_construction_agents"
+    name="Construction Agents"
+    parent="menu_mythos_ai_root"
+    action="smart_farm_mythos_agents.action_mythos_agent"
+    sequence="2"
+    groups="base.group_user"
+/>
+
+<!-- Agent Logs — audit trail -->
+<menuitem
+    id="menu_mythos_agent_logs"
+    name="Agent Logs"
+    parent="menu_mythos_ai_root"
+    action="smart_farm_mythos_agents.action_mythos_agent_log"
+    sequence="3"
+    groups="base.group_user"
+/>
+
+</data>
+</odoo>

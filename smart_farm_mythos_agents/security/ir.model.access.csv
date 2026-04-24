@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mythos_agent_manager,mythos.agent manager,model_mythos_agent,base.group_system,1,1,1,1
+access_mythos_agent_user,mythos.agent user,model_mythos_agent,base.group_user,1,0,0,0
+access_mythos_agent_log_manager,mythos.agent.log manager,model_mythos_agent_log,base.group_system,1,1,1,1
+access_mythos_agent_log_user,mythos.agent.log user,model_mythos_agent_log,base.group_user,1,0,0,0

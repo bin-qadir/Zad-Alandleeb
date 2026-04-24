@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Mythos Agent Seed Data
+    ══════════════════════
+    noupdate="1" — default records are created ONCE and never overwritten
+    on module upgrade or reinstall.  User edits to agent names and
+    descriptions are therefore always preserved.
+-->
+<odoo noupdate="1">
+<data>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Layer 1 — Pre-Contract
+         Sequence 10-12
+    ═══════════════════════════════════════════════════════════════════════ -->
+
+    <record id="mythos_agent_boq" model="mythos.agent">
+        <field name="name">BOQ Agent</field>
+        <field name="code">MYTHOS-BOQ</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">pre_contract</field>
+        <field name="agent_function">boq_analysis</field>
+        <field name="sequence">10</field>
+        <field name="description">
+Monitors BOQ documents across all construction projects.
+Validates scope completeness, checks for missing line items,
+flags unit-price anomalies, and alerts when BOQ totals deviate from budget benchmarks.
+        </field>
+    </record>
+
+    <record id="mythos_agent_costing" model="mythos.agent">
+        <field name="name">Costing Agent</field>
+        <field name="code">MYTHOS-COST</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">pre_contract</field>
+        <field name="agent_function">costing_analysis</field>
+        <field name="sequence">11</field>
+        <field name="description">
+Analyses cost sheets attached to BOQ lines.
+Compares planned vs. actual material and labour rates,
+detects cost overruns in pre-contract estimation,
+and recommends adjustments before quotation submission.
+        </field>
+    </record>
+
+    <record id="mythos_agent_quotation" model="mythos.agent">
+        <field name="name">Quotation Agent</field>
+        <field name="code">MYTHOS-QUOT</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">pre_contract</field>
+        <field name="agent_function">quotation_review</field>
+        <field name="sequence">12</field>
+        <field name="description">
+Reviews Sales Order quotations before contract approval.
+Validates line pricing against BOQ benchmarks,
+checks margin thresholds, flags unapproved discounts,
+and confirms all BOQ analysis lines are properly linked.
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Layer 2 — Contract
+         Sequence 20
+    ═══════════════════════════════════════════════════════════════════════ -->
+
+    <record id="mythos_agent_contract" model="mythos.agent">
+        <field name="name">Contract Agent</field>
+        <field name="code">MYTHOS-CONT</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">contract</field>
+        <field name="agent_function">contract_control</field>
+        <field name="sequence">20</field>
+        <field name="description">
+Controls the contract approval pipeline (Sales Order → Approved Contract).
+Tracks contract stage progression, alerts on stalled approvals,
+monitors revision history, and ensures job orders are generated after approval.
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Layer 3 — Execution
+         Sequence 30-31
+    ═══════════════════════════════════════════════════════════════════════ -->
+
+    <record id="mythos_agent_execution" model="mythos.agent">
+        <field name="name">Execution Agent</field>
+        <field name="code">MYTHOS-EXEC</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">execution</field>
+        <field name="agent_function">job_order_monitor</field>
+        <field name="sequence">30</field>
+        <field name="description">
+Monitors active Job Orders across all construction projects.
+Tracks progress percentages, flags overdue or stalled job orders,
+detects quantity variances between planned and approved quantities,
+and alerts on orders approaching handover without inspection requests.
+        </field>
+    </record>
+
+    <record id="mythos_agent_resources" model="mythos.agent">
+        <field name="name">Resources Agent</field>
+        <field name="code">MYTHOS-RES</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">execution</field>
+        <field name="agent_function">resources_monitor</field>
+        <field name="sequence">31</field>
+        <field name="description">
+Monitors material consumption and labour entries on job orders.
+Detects material shortfalls, over-consumption against planned quantities,
+labour hour overruns, and missing material request linkages.
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Layer 4 — Procurement
+         Sequence 40
+    ═══════════════════════════════════════════════════════════════════════ -->
+
+    <record id="mythos_agent_procurement" model="mythos.agent">
+        <field name="name">Procurement Agent</field>
+        <field name="code">MYTHOS-PROC</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">procurement</field>
+        <field name="agent_function">procurement_monitor</field>
+        <field name="sequence">40</field>
+        <field name="description">
+Monitors purchase orders and material requests linked to construction projects.
+Tracks PO approval delays, supplier delivery performance,
+material availability vs. job order demand, and procurement budget utilisation.
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Layer 5 — Quality &amp; Handover
+         Sequence 50-51
+    ═══════════════════════════════════════════════════════════════════════ -->
+
+    <record id="mythos_agent_quality" model="mythos.agent">
+        <field name="name">Quality Inspection Agent</field>
+        <field name="code">MYTHOS-QA</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">quality_handover</field>
+        <field name="agent_function">quality_inspection</field>
+        <field name="sequence">50</field>
+        <field name="description">
+Tracks job orders in the inspection pipeline (handover_requested → under_inspection).
+Flags delayed inspection requests, monitors rejection rates,
+tracks partially accepted quantities, and escalates repeat rejections.
+        </field>
+    </record>
+
+    <record id="mythos_agent_handover" model="mythos.agent">
+        <field name="name">Handover Agent</field>
+        <field name="code">MYTHOS-HAND</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">quality_handover</field>
+        <field name="agent_function">handover_control</field>
+        <field name="sequence">51</field>
+        <field name="description">
+Controls the handover workflow from accepted job orders to final closure.
+Monitors accepted → ready_for_claim → claimed → closed transitions,
+alerts on stalled handover items, and validates that all accepted quantities
+have been properly transferred to the claims stage.
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Layer 6 — Financial Claims
+         Sequence 60-61
+    ═══════════════════════════════════════════════════════════════════════ -->
+
+    <record id="mythos_agent_claims" model="mythos.agent">
+        <field name="name">Claims Agent</field>
+        <field name="code">MYTHOS-CLAM</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">financial_claims</field>
+        <field name="agent_function">claims_control</field>
+        <field name="sequence">60</field>
+        <field name="description">
+Monitors the financial claims pipeline against approved and accepted job order quantities.
+Tracks claimable amounts, submitted claims, and unclaimed balances.
+Flags approved quantities that have not been claimed within SLA windows.
+        </field>
+    </record>
+
+    <record id="mythos_agent_invoicing" model="mythos.agent">
+        <field name="name">Invoicing Agent</field>
+        <field name="code">MYTHOS-INV</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">financial_claims</field>
+        <field name="agent_function">invoicing_control</field>
+        <field name="sequence">61</field>
+        <field name="description">
+Controls the invoicing stage following submitted claims.
+Tracks invoice creation from claimed job orders, monitors payment status,
+flags overdue invoices, and reconciles invoice amounts against contract values.
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Layer 7 — Risk &amp; Control
+         Sequence 70-71
+    ═══════════════════════════════════════════════════════════════════════ -->
+
+    <record id="mythos_agent_risk" model="mythos.agent">
+        <field name="name">Risk Agent</field>
+        <field name="code">MYTHOS-RISK</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">risk_control</field>
+        <field name="agent_function">risk_monitor</field>
+        <field name="sequence">70</field>
+        <field name="description">
+Cross-layer risk aggregator for construction projects.
+Analyses risk scores from AI risk scoring models, monitors triggered rules,
+prioritises critical vs. warning projects, and generates consolidated risk reports
+for project leadership.
+        </field>
+    </record>
+
+    <record id="mythos_agent_compliance" model="mythos.agent">
+        <field name="name">Compliance Agent</field>
+        <field name="code">MYTHOS-COMP</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">risk_control</field>
+        <field name="agent_function">compliance_monitor</field>
+        <field name="sequence">71</field>
+        <field name="description">
+Monitors regulatory and contractual compliance across all active projects.
+Checks BOQ approval states, contract stage gates, required inspection records,
+and documentation completeness before each phase transition.
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Layer 8 — Executive Dashboard
+         Sequence 80
+    ═══════════════════════════════════════════════════════════════════════ -->
+
+    <record id="mythos_agent_executive" model="mythos.agent">
+        <field name="name">Executive Dashboard Agent</field>
+        <field name="code">MYTHOS-EXEC-DASH</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">executive_dashboard</field>
+        <field name="agent_function">executive_summary</field>
+        <field name="sequence">80</field>
+        <field name="description">
+Aggregates KPIs across all construction layers into a single executive summary.
+Reports total contract value, progress %, claimable amounts, outstanding risks,
+procurement status, and team performance metrics in one consolidated view
+for senior management.
+        </field>
+    </record>
+
+</data>
+</odoo>
