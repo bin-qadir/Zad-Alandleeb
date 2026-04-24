@@ -136,21 +136,108 @@ class FarmBoqLine(models.Model):
 
     @api.onchange('template_id')
     def _onchange_template_id_costing(self):
-        """Load margin + material lines from the selected template into cost_ids."""
+        """Load ALL cost types from the selected template into cost_ids.
+
+        Uses the current boq_qty as the main_quantity so child quantities
+        are immediately correct: child.qty = main_qty × base_ratio_qty.
+        The template itself is never modified.
+        """
         if not self.template_id:
             return
         tmpl = self.template_id
-        self.cost_ids = [(5, 0, 0)] + [
-            (0, 0, {
-                'job_type':    'material',
-                'product_id':  m.product_id.id or False,
-                'description': m.description or (m.product_id.name if m.product_id else 'Material'),
-                'uom_id':      m.uom_id.id or False,
-                'quantity':    m.quantity,
-                'unit_cost':   m.unit_price,
-            })
-            for m in tmpl.material_ids
-        ]
+        main_qty = self.boq_qty or 1.0
+        tmpl_qty = max(tmpl.quantity or 1.0, 1e-9)
+
+        lines = [(5, 0, 0)]
+        for m in tmpl.material_ids:
+            ratio = (m.quantity or 0.0) / tmpl_qty
+            lines.append((0, 0, {
+                'job_type':       'material',
+                'product_id':     m.product_id.id or False,
+                'description':    m.description or (m.product_id.name if m.product_id else 'Material'),
+                'uom_id':         m.uom_id.id or False,
+                'base_ratio_qty': ratio,
+                'quantity':       main_qty * ratio,
+                'unit_cost':      m.unit_price,
+            }))
+        for l in tmpl.labor_ids:
+            ratio = (l.hours or 0.0) / tmpl_qty
+            lines.append((0, 0, {
+                'job_type':       'labour',
+                'product_id':     l.product_id.id or False,
+                'description':    l.description or (l.product_id.name if l.product_id else 'Labour'),
+                'uom_id':         l.uom_id.id or False,
+                'base_ratio_qty': ratio,
+                'quantity':       main_qty * ratio,
+                'unit_cost':      l.cost_per_hour,
+            }))
+        for s in tmpl.subcontractor_ids:
+            ratio = (s.quantity or 0.0) / tmpl_qty
+            lines.append((0, 0, {
+                'job_type':       'subcontractor',
+                'product_id':     s.product_id.id or False,
+                'description':    s.description or (s.product_id.name if s.product_id else 'Subcontractor'),
+                'uom_id':         s.uom_id.id or False,
+                'base_ratio_qty': ratio,
+                'quantity':       main_qty * ratio,
+                'unit_cost':      s.unit_price,
+            }))
+        for eq in tmpl.equipment_ids:
+            ratio = (eq.quantity or 0.0) / tmpl_qty
+            lines.append((0, 0, {
+                'job_type':       'equipment',
+                'product_id':     eq.product_id.id or False,
+                'description':    eq.description or (eq.product_id.name if eq.product_id else 'Equipment'),
+                'uom_id':         eq.uom_id.id or False,
+                'base_ratio_qty': ratio,
+                'quantity':       main_qty * ratio,
+                'unit_cost':      eq.unit_price,
+            }))
+        for t in tmpl.tools_ids:
+            ratio = (t.quantity or 0.0) / tmpl_qty
+            lines.append((0, 0, {
+                'job_type':       'tools',
+                'product_id':     t.product_id.id or False,
+                'description':    t.description or (t.product_id.name if t.product_id else 'Tools'),
+                'uom_id':         t.uom_id.id or False,
+                'base_ratio_qty': ratio,
+                'quantity':       main_qty * ratio,
+                'unit_cost':      t.unit_price,
+            }))
+        for o in tmpl.overhead_ids:
+            ratio = (o.quantity or 0.0) / tmpl_qty
+            lines.append((0, 0, {
+                'job_type':       'other',
+                'product_id':     o.product_id.id or False,
+                'description':    o.name or (o.product_id.name if o.product_id else 'Other'),
+                'uom_id':         o.uom_id.id or False,
+                'base_ratio_qty': ratio,
+                'quantity':       main_qty * ratio,
+                'unit_cost':      o.unit_price,
+            }))
+        self.cost_ids = lines
+
+    # ────────────────────────────────────────────────────────────────────────
+    # ORM override: cascade child quantity when parent boq_qty changes
+    # ────────────────────────────────────────────────────────────────────────
+
+    def write(self, vals):
+        """Propagate boq_qty change to linked cost lines that have base_ratio_qty.
+
+        Only cost lines created from a template (base_ratio_qty > 0) are
+        updated. Manually added lines (base_ratio_qty = 0) are left alone.
+        This gives: child.quantity = parent.boq_qty × child.base_ratio_qty
+        """
+        res = super().write(vals)
+        if 'boq_qty' in vals:
+            new_qty = vals['boq_qty'] or 0.0
+            for rec in self:
+                ratio_lines = rec.cost_ids.filtered(
+                    lambda l: (l.base_ratio_qty or 0.0) > 0
+                )
+                for cline in ratio_lines:
+                    cline.quantity = new_qty * cline.base_ratio_qty
+        return res
 
     # ────────────────────────────────────────────────────────────────────────
     # Computed: per-type totals and direct cost

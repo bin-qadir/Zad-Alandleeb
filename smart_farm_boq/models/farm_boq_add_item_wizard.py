@@ -144,15 +144,19 @@ class FarmBoqAddSubitemWizard(models.TransientModel):
         return existing[0] if existing else None
 
     def _create_from_template(self):
-        template     = self.template_id
-        project_qty  = self.boq_qty
-        parent_line  = self._get_sub_subsection_line()
+        """Create a parent BOQ line + ALL cost component lines from the template.
+
+        The template is read-only source — never modified.
+        Each cost line gets base_ratio_qty = component.qty / template.qty so
+        that child.quantity = parent.boq_qty × base_ratio_qty at all times.
+        """
+        template    = self.template_id
+        main_qty    = self.boq_qty
+        parent_line = self._get_sub_subsection_line()
         if not parent_line:
             raise UserError(_('Cannot find the sub-subdivision row in the BOQ.'))
 
-        tmpl_qty = max(template.quantity or 1.0, 1e-9)
-        scale    = project_qty / tmpl_qty
-
+        # ── Create the parent BOQ line ────────────────────────────────────────
         BoqLine = self.env['farm.boq.line']
         subitem_vals = {
             'boq_id':             self.boq_id.id,
@@ -163,29 +167,108 @@ class FarmBoqAddSubitemWizard(models.TransientModel):
             'subdivision_id':     self.subdivision_id.id,
             'sub_subdivision_id': self.sub_subdivision_id.id,
             'quantity':           1.0,
-            'boq_qty':            project_qty,
+            'boq_qty':            main_qty,
             'unit_id':            template.unit_id.id if template.unit_id else False,
         }
         if 'margin_percent' in BoqLine._fields:
             subitem_vals['margin_percent'] = template.margin_percent or 0.0
-        else:
-            subitem_vals['unit_price'] = round(template.unit_price, 2)
 
         subitem = BoqLine.create(subitem_vals)
 
-        if 'cost_ids' in BoqLine._fields:
-            CostLine = self.env.get('farm.boq.line.cost')
-            if CostLine:
-                for mat in template.material_ids:
-                    CostLine.create({
-                        'boq_line_id': subitem.id,
-                        'job_type':    'material',
-                        'product_id':  mat.product_id.id if mat.product_id else False,
-                        'description': mat.description or (mat.product_id.name if mat.product_id else 'Material'),
-                        'uom_id':      mat.uom_id.id if mat.uom_id else False,
-                        'quantity':    mat.quantity * scale,
-                        'unit_cost':   round(mat.unit_price, 2),
-                    })
+        # ── Create child cost lines from ALL template types ───────────────────
+        CostLine = self.env.get('farm.boq.line.cost')
+        if CostLine is not None:
+            for vals in self._template_to_cost_vals(template, subitem.id, main_qty):
+                CostLine.create(vals)
+
+    def _template_to_cost_vals(self, template, boq_line_id, main_qty):
+        """Return a list of farm.boq.line.cost creation dicts from ALL template types.
+
+        base_ratio_qty is normalised to per-unit (component.qty / template.qty)
+        so quantity = main_qty × base_ratio_qty is always correct.
+        """
+        tmpl_qty = max(template.quantity or 1.0, 1e-9)
+        lines = []
+
+        for m in template.material_ids:
+            ratio = (m.quantity or 0.0) / tmpl_qty
+            lines.append({
+                'boq_line_id':    boq_line_id,
+                'job_type':       'material',
+                'product_id':     m.product_id.id if m.product_id else False,
+                'description':    m.description or (m.product_id.name if m.product_id else 'Material'),
+                'uom_id':         m.uom_id.id if m.uom_id else False,
+                'base_ratio_qty': ratio,
+                'quantity':       main_qty * ratio,
+                'unit_cost':      m.unit_price,
+            })
+
+        for l in template.labor_ids:
+            ratio = (l.hours or 0.0) / tmpl_qty
+            lines.append({
+                'boq_line_id':    boq_line_id,
+                'job_type':       'labour',
+                'product_id':     l.product_id.id if l.product_id else False,
+                'description':    l.description or (l.product_id.name if l.product_id else 'Labour'),
+                'uom_id':         l.uom_id.id if l.uom_id else False,
+                'base_ratio_qty': ratio,
+                'quantity':       main_qty * ratio,
+                'unit_cost':      l.cost_per_hour,
+            })
+
+        for s in template.subcontractor_ids:
+            ratio = (s.quantity or 0.0) / tmpl_qty
+            lines.append({
+                'boq_line_id':    boq_line_id,
+                'job_type':       'subcontractor',
+                'product_id':     s.product_id.id if s.product_id else False,
+                'description':    s.description or (s.product_id.name if s.product_id else 'Subcontractor'),
+                'uom_id':         s.uom_id.id if s.uom_id else False,
+                'base_ratio_qty': ratio,
+                'quantity':       main_qty * ratio,
+                'unit_cost':      s.unit_price,
+            })
+
+        for eq in template.equipment_ids:
+            ratio = (eq.quantity or 0.0) / tmpl_qty
+            lines.append({
+                'boq_line_id':    boq_line_id,
+                'job_type':       'equipment',
+                'product_id':     eq.product_id.id if eq.product_id else False,
+                'description':    eq.description or (eq.product_id.name if eq.product_id else 'Equipment'),
+                'uom_id':         eq.uom_id.id if eq.uom_id else False,
+                'base_ratio_qty': ratio,
+                'quantity':       main_qty * ratio,
+                'unit_cost':      eq.unit_price,
+            })
+
+        for t in template.tools_ids:
+            ratio = (t.quantity or 0.0) / tmpl_qty
+            lines.append({
+                'boq_line_id':    boq_line_id,
+                'job_type':       'tools',
+                'product_id':     t.product_id.id if t.product_id else False,
+                'description':    t.description or (t.product_id.name if t.product_id else 'Tools'),
+                'uom_id':         t.uom_id.id if t.uom_id else False,
+                'base_ratio_qty': ratio,
+                'quantity':       main_qty * ratio,
+                'unit_cost':      t.unit_price,
+            })
+
+        for o in template.overhead_ids:
+            ratio = (o.quantity or 0.0) / tmpl_qty
+            lines.append({
+                'boq_line_id':    boq_line_id,
+                'job_type':       'other',
+                'product_id':     o.product_id.id if o.product_id else False,
+                'description':    o.name or (o.product_id.name if o.product_id else 'Other'),
+                'uom_id':         o.uom_id.id if o.uom_id else False,
+                'base_ratio_qty': ratio,
+                'quantity':       main_qty * ratio,
+                'unit_cost':      o.unit_price,
+            })
+
+        return lines
 
     def _create_new_subitem(self):
         parent_line = self._get_sub_subsection_line()

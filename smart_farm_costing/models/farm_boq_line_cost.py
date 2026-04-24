@@ -63,6 +63,18 @@ class FarmBoqLineCost(models.Model):
         string='Unit',
         ondelete='restrict',
     )
+    # ── Template ratio (set when line was created from a template) ───────────
+    base_ratio_qty = fields.Float(
+        string='Base Ratio',
+        digits=(16, 4),
+        default=0.0,
+        help=(
+            'Per-unit quantity from the BOQ template.\n'
+            'When > 0: Quantity = Parent BOQ Qty × Base Ratio.\n'
+            'Auto-set on template insert; zero for manually added lines.'
+        ),
+    )
+
     quantity   = fields.Float(string='Quantity',  default=1.0)
     unit_cost  = fields.Float(string='Unit Cost')
     total_cost = fields.Float(

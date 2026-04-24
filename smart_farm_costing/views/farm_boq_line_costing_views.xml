@@ -71,22 +71,26 @@
                         <field name="material_cost_ids"
                                context="{'default_job_type': 'material'}">
                             <list editable="bottom">
-                                <field name="job_type"   string="Job Type | نوع العمل"
+                                <field name="job_type"       string="Job Type | نوع العمل"
                                        widget="badge"
                                        readonly="1"
                                        decoration-success="job_type == 'material'"
                                        options="{'no_open': True}"/>
-                                <field name="product_id"  string="Product"
+                                <field name="product_id"     string="Product"
                                        optional="show"
                                        domain="[('job_type', '=', 'material')]"/>
-                                <field name="description" string="Description"/>
-                                <field name="uom_id"      string="Unit" optional="show"/>
-                                <field name="quantity"    string="Qty"/>
-                                <field name="unit_cost"   string="Unit Cost"
+                                <field name="description"    string="Description"/>
+                                <field name="uom_id"         string="Unit" optional="show"/>
+                                <field name="base_ratio_qty" string="Base Ratio"
+                                       optional="show"
+                                       readonly="1"
+                                       help="Per-unit ratio from template. Qty = Parent BOQ Qty × Base Ratio."/>
+                                <field name="quantity"       string="Qty"/>
+                                <field name="unit_cost"      string="Unit Cost"
                                        widget="monetary"
                                        options="{'currency_field': 'currency_id'}"/>
-                                <field name="currency_id" column_invisible="1"/>
-                                <field name="total_cost"  string="Total" readonly="1"
+                                <field name="currency_id"    column_invisible="1"/>
+                                <field name="total_cost"     string="Total" readonly="1"
                                        widget="monetary"
                                        options="{'currency_field': 'currency_id'}"/>
                             </list>
@@ -101,22 +105,26 @@
                         <field name="labor_cost_ids"
                                context="{'default_job_type': 'labour'}">
                             <list editable="bottom">
-                                <field name="job_type"   string="Job Type | نوع العمل"
+                                <field name="job_type"       string="Job Type | نوع العمل"
                                        widget="badge"
                                        readonly="1"
                                        decoration-info="job_type == 'labour'"
                                        options="{'no_open': True}"/>
-                                <field name="product_id"  string="Resource"
+                                <field name="product_id"     string="Resource"
                                        optional="show"
                                        domain="[('job_type', '=', 'labour')]"/>
-                                <field name="description" string="Description"/>
-                                <field name="uom_id"      string="Unit" optional="show"/>
-                                <field name="quantity"    string="Qty"/>
-                                <field name="unit_cost"   string="Rate"
+                                <field name="description"    string="Description"/>
+                                <field name="uom_id"         string="Unit" optional="show"/>
+                                <field name="base_ratio_qty" string="Base Ratio"
+                                       optional="show"
+                                       readonly="1"
+                                       help="Per-unit ratio from template. Qty = Parent BOQ Qty × Base Ratio."/>
+                                <field name="quantity"       string="Qty"/>
+                                <field name="unit_cost"      string="Rate"
                                        widget="monetary"
                                        options="{'currency_field': 'currency_id'}"/>
-                                <field name="currency_id" column_invisible="1"/>
-                                <field name="total_cost"  string="Total" readonly="1"
+                                <field name="currency_id"    column_invisible="1"/>
+                                <field name="total_cost"     string="Total" readonly="1"
                                        widget="monetary"
                                        options="{'currency_field': 'currency_id'}"/>
                             </list>
@@ -131,22 +139,26 @@
                         <field name="subcontractor_cost_ids"
                                context="{'default_job_type': 'subcontractor'}">
                             <list editable="bottom">
-                                <field name="job_type"   string="Job Type | نوع العمل"
+                                <field name="job_type"       string="Job Type | نوع العمل"
                                        widget="badge"
                                        readonly="1"
                                        decoration-warning="job_type == 'subcontractor'"
                                        options="{'no_open': True}"/>
-                                <field name="product_id"  string="Vendor / Service"
+                                <field name="product_id"     string="Vendor / Service"
                                        optional="show"
                                        domain="[('job_type', '=', 'subcontractor')]"/>
-                                <field name="description" string="Description"/>
-                                <field name="uom_id"      string="Unit" optional="show"/>
-                                <field name="quantity"    string="Qty"/>
-                                <field name="unit_cost"   string="Unit Cost"
+                                <field name="description"    string="Description"/>
+                                <field name="uom_id"         string="Unit" optional="show"/>
+                                <field name="base_ratio_qty" string="Base Ratio"
+                                       optional="show"
+                                       readonly="1"
+                                       help="Per-unit ratio from template. Qty = Parent BOQ Qty × Base Ratio."/>
+                                <field name="quantity"       string="Qty"/>
+                                <field name="unit_cost"      string="Unit Cost"
                                        widget="monetary"
                                        options="{'currency_field': 'currency_id'}"/>
-                                <field name="currency_id" column_invisible="1"/>
-                                <field name="total_cost"  string="Total" readonly="1"
+                                <field name="currency_id"    column_invisible="1"/>
+                                <field name="total_cost"     string="Total" readonly="1"
                                        widget="monetary"
                                        options="{'currency_field': 'currency_id'}"/>
                             </list>
@@ -161,22 +173,26 @@
                         <field name="tools_cost_ids"
                                context="{'default_job_type': 'tools'}">
                             <list editable="bottom">
-                                <field name="job_type"   string="Job Type | نوع العمل"
+                                <field name="job_type"       string="Job Type | نوع العمل"
                                        widget="badge"
                                        readonly="1"
                                        decoration-warning="job_type == 'tools'"
                                        options="{'no_open': True}"/>
-                                <field name="product_id"  string="Tool"
+                                <field name="product_id"     string="Tool"
                                        optional="show"
                                        domain="[('job_type', '=', 'tools')]"/>
-                                <field name="description" string="Description"/>
-                                <field name="uom_id"      string="Unit" optional="show"/>
-                                <field name="quantity"    string="Qty"/>
-                                <field name="unit_cost"   string="Unit Cost"
+                                <field name="description"    string="Description"/>
+                                <field name="uom_id"         string="Unit" optional="show"/>
+                                <field name="base_ratio_qty" string="Base Ratio"
+                                       optional="show"
+                                       readonly="1"
+                                       help="Per-unit ratio from template. Qty = Parent BOQ Qty × Base Ratio."/>
+                                <field name="quantity"       string="Qty"/>
+                                <field name="unit_cost"      string="Unit Cost"
                                        widget="monetary"
                                        options="{'currency_field': 'currency_id'}"/>
-                                <field name="currency_id" column_invisible="1"/>
-                                <field name="total_cost"  string="Total" readonly="1"
+                                <field name="currency_id"    column_invisible="1"/>
+                                <field name="total_cost"     string="Total" readonly="1"
                                        widget="monetary"
                                        options="{'currency_field': 'currency_id'}"/>
                             </list>
@@ -191,22 +207,26 @@
                         <field name="equipment_cost_ids"
                                context="{'default_job_type': 'equipment'}">
                             <list editable="bottom">
-                                <field name="job_type"   string="Job Type | نوع العمل"
+                                <field name="job_type"       string="Job Type | نوع العمل"
                                        widget="badge"
                                        readonly="1"
                                        decoration-warning="job_type == 'equipment'"
                                        options="{'no_open': True}"/>
-                                <field name="product_id"  string="Equipment"
+                                <field name="product_id"     string="Equipment"
                                        optional="show"
                                        domain="[('job_type', '=', 'equipment')]"/>
-                                <field name="description" string="Description"/>
-                                <field name="uom_id"      string="Unit" optional="show"/>
-                                <field name="quantity"    string="Qty"/>
-                                <field name="unit_cost"   string="Unit Cost"
+                                <field name="description"    string="Description"/>
+                                <field name="uom_id"         string="Unit" optional="show"/>
+                                <field name="base_ratio_qty" string="Base Ratio"
+                                       optional="show"
+                                       readonly="1"
+                                       help="Per-unit ratio from template. Qty = Parent BOQ Qty × Base Ratio."/>
+                                <field name="quantity"       string="Qty"/>
+                                <field name="unit_cost"      string="Unit Cost"
                                        widget="monetary"
                                        options="{'currency_field': 'currency_id'}"/>
-                                <field name="currency_id" column_invisible="1"/>
-                                <field name="total_cost"  string="Total" readonly="1"
+                                <field name="currency_id"    column_invisible="1"/>
+                                <field name="total_cost"     string="Total" readonly="1"
                                        widget="monetary"
                                        options="{'currency_field': 'currency_id'}"/>
                             </list>
@@ -221,22 +241,26 @@
                         <field name="other_cost_ids"
                                context="{'default_job_type': 'other'}">
                             <list editable="bottom">
-                                <field name="job_type"   string="Job Type | نوع العمل"
+                                <field name="job_type"       string="Job Type | نوع العمل"
                                        widget="badge"
                                        readonly="1"
                                        decoration-muted="job_type == 'other'"
                                        options="{'no_open': True}"/>
-                                <field name="product_id"  string="Item"
+                                <field name="product_id"     string="Item"
                                        optional="show"
                                        domain="[('job_type', '=', 'other')]"/>
-                                <field name="description" string="Description"/>
-                                <field name="uom_id"      string="Unit" optional="show"/>
-                                <field name="quantity"    string="Qty"/>
-                                <field name="unit_cost"   string="Unit Cost"
+                                <field name="description"    string="Description"/>
+                                <field name="uom_id"         string="Unit" optional="show"/>
+                                <field name="base_ratio_qty" string="Base Ratio"
+                                       optional="show"
+                                       readonly="1"
+                                       help="Per-unit ratio from template. Qty = Parent BOQ Qty × Base Ratio."/>
+                                <field name="quantity"       string="Qty"/>
+                                <field name="unit_cost"      string="Unit Cost"
                                        widget="monetary"
                                        options="{'currency_field': 'currency_id'}"/>
-                                <field name="currency_id" column_invisible="1"/>
-                                <field name="total_cost"  string="Total" readonly="1"
+                                <field name="currency_id"    column_invisible="1"/>
+                                <field name="total_cost"     string="Total" readonly="1"
                                        widget="monetary"
                                        options="{'currency_field': 'currency_id'}"/>
                             </list>
