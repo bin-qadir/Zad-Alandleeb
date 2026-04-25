@@ -9,8 +9,8 @@
             <field name="model">farm.project</field>
             <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
             <field name="arch" type="xml">
-                <!-- Job Orders — card IS the button -->
-                <xpath expr="//div[@name='button_box']" position="inside">
+                <!-- Job Orders — EXECUTION group, inserted before anchor_execution_end -->
+                <xpath expr="//div[@name='anchor_execution_end']" position="before">
                     <button name="action_open_job_orders" type="object"
                             class="epd-mini-kpi epd-mini-kpi--amber"
                             title="Open Job Orders">

@@ -16,7 +16,8 @@
                      for smart_farm_sale_contract (which inserts Sales Orders after it).
                      class="epd-kpi-anchor" → display:contents, so the div is invisible
                      to the flex layout and the inner button is a direct flex item. -->
-                <xpath expr="//div[@name='button_box']" position="inside">
+                <!-- BOQ Analysis — PLANNING group, inserted before anchor_planning_end -->
+                <xpath expr="//div[@name='anchor_planning_end']" position="before">
                     <div name="btn_boq_analysis" class="epd-kpi-anchor">
                         <button name="action_open_project_analysis" type="object"
                                 class="epd-mini-kpi epd-mini-kpi--purple"

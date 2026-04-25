@@ -48,8 +48,8 @@
             <attribute name="invisible">business_activity == 'construction'</attribute>
         </xpath>
 
-        <!-- ── 2. Smart buttons: Material Requests, Procurement, POs ──── -->
-        <xpath expr="//div[@name='button_box']" position="inside">
+        <!-- ── 2a. Smart buttons: PROCUREMENT group (Materials, Procurement, POs) ── -->
+        <xpath expr="//div[@name='anchor_procurement_end']" position="before">
 
             <button name="action_open_material_requests" type="object"
                     class="epd-mini-kpi epd-mini-kpi--blue"
@@ -83,6 +83,11 @@
                 </div>
                 <div class="epd-mini-label">POs</div>
             </button>
+
+        </xpath>
+
+        <!-- ── 2b. Smart button: AI group (AI Risk) ──────────────────────── -->
+        <xpath expr="//div[@name='anchor_ai_end']" position="before">
 
             <button name="action_open_ai_insights" type="object"
                     class="epd-mini-kpi epd-mini-kpi--red"

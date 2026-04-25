@@ -127,6 +127,20 @@
                                 <div class="epd-mini-label">Livestock</div>
                             </button>
 
+                            <!-- ── Positional anchors (display:none) ─────────────
+                                 Used by inherited modules to inject buttons in the
+                                 correct logical group instead of always appending.
+                                 Group order:
+                                   Execution  → Job Orders, Contracts
+                                   Planning   → Cost Structures, BOQ Analysis
+                                   Procurement → Materials, Procurement, POs
+                                   AI         → AI Risk, AI Brain
+                            ──────────────────────────────────────────────────── -->
+                            <div name="anchor_execution_end"  class="d-none"/>
+                            <div name="anchor_planning_end"   class="d-none"/>
+                            <div name="anchor_procurement_end" class="d-none"/>
+                            <div name="anchor_ai_end"         class="d-none"/>
+
                         </div>
 
                         <!-- ── PROJECT TITLE ──────────────────────────────── -->

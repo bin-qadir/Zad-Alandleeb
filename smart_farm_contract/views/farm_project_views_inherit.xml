@@ -46,8 +46,8 @@
                            statusbar_visible="pre_tender,tender,contract,execution"/>
                 </xpath>
 
-                <!-- ── 2. Contracts — card IS the button ── -->
-                <xpath expr="//div[@name='button_box']" position="inside">
+                <!-- ── 2. Contracts — EXECUTION group, inserted before anchor_execution_end ── -->
+                <xpath expr="//div[@name='anchor_execution_end']" position="before">
                     <button name="action_open_contracts" type="object"
                             class="epd-mini-kpi epd-mini-kpi--teal"
                             title="Open Contracts">

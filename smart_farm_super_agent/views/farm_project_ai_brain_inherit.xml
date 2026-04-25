@@ -13,8 +13,8 @@
     <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
     <field name="arch" type="xml">
 
-        <!-- ── 1. Smart button ──────────────────────────────────────── -->
-        <xpath expr="//div[@name='button_box']" position="inside">
+        <!-- ── 1. Smart button — AI group, inserted before anchor_ai_end ── -->
+        <xpath expr="//div[@name='anchor_ai_end']" position="before">
             <button name="action_run_super_agent_analysis" type="object"
                     class="epd-mini-kpi epd-mini-kpi--purple"
                     title="Run Super Agent Analysis"

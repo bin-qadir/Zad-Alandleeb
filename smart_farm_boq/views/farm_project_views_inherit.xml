@@ -24,8 +24,8 @@
                             class="btn btn-primary btn-lg px-4"/>
                 </xpath>
 
-                <!-- Cost Structures — card IS the button -->
-                <xpath expr="//div[@name='button_box']" position="inside">
+                <!-- Cost Structures — PLANNING group, inserted before anchor_planning_end -->
+                <xpath expr="//div[@name='anchor_planning_end']" position="before">
                     <button name="action_open_boqs" type="object"
                             class="epd-mini-kpi epd-mini-kpi--navy"
                             title="Open Cost Structures">
