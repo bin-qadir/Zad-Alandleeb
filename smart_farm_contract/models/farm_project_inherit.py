@@ -18,6 +18,7 @@ class FarmProjectContractPhase(models.Model):
             ('tender',     'Tender'),
             ('contract',   'Contract'),
             ('execution',  'Execution'),
+            ('closing',    'Closing'),
         ],
         string='Lifecycle Phase',
         default='pre_tender',
@@ -27,7 +28,8 @@ class FarmProjectContractPhase(models.Model):
             'Pre-Tender: BOQ preparation and analysis.\n'
             'Tender: RFQ, pricing negotiation.\n'
             'Contract: Contract creation and approval.\n'
-            'Execution: Job Orders, Materials, Labour, Progress.'
+            'Execution: Job Orders, Materials, Labour, Progress.\n'
+            'Closing: Final handover, punch list, financial close-out.'
         ),
     )
 
@@ -85,10 +87,16 @@ class FarmProjectContractPhase(models.Model):
                 ))
             rec.project_phase = 'execution'
 
+    def action_phase_to_closing(self):
+        """Execution → Closing."""
+        self.filtered(
+            lambda r: r.project_phase == 'execution'
+        ).write({'project_phase': 'closing'})
+
     def action_phase_reset(self):
         """Execution → Contract (correction by manager)."""
         self.filtered(
-            lambda r: r.project_phase == 'execution'
+            lambda r: r.project_phase in ('execution', 'closing')
         ).write({'project_phase': 'contract'})
 
     # ────────────────────────────────────────────────────────────────────────

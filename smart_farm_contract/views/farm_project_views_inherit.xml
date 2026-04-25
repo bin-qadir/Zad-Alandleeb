@@ -34,16 +34,21 @@
                             class="btn-primary"
                             invisible="project_phase != 'contract'"
                             confirm="Move project to Execution phase? An approved contract is required."/>
+                    <button name="action_phase_to_closing"
+                            type="object"
+                            string="Close Project"
+                            class="btn-secondary"
+                            invisible="project_phase != 'execution'"/>
                     <button name="action_phase_reset"
                             type="object"
                             string="Reset to Contract Phase"
                             class="btn-secondary"
-                            invisible="project_phase != 'execution'"
+                            invisible="project_phase not in ('execution', 'closing')"
                             groups="smart_farm_base.group_smart_farm_manager"/>
                     <!-- Phase statusbar -->
                     <field name="project_phase"
                            widget="statusbar"
-                           statusbar_visible="pre_tender,tender,contract,execution"/>
+                           statusbar_visible="pre_tender,tender,contract,execution,closing"/>
                 </xpath>
 
                 <!-- ── 2. Contracts — EXECUTION group, inserted before anchor_execution_end ── -->
