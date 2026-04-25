@@ -6,11 +6,11 @@
      MYTHOS AI — Top-level section under the Construction root menu
      ══════════════════════════════════════════════════════════════════════ -->
 
-<!-- Parent: Mythos AI separator / group under Construction -->
+<!-- Parent: Mythos AI under Smart Farm root -->
 <menuitem
     id="menu_mythos_ai_root"
     name="Mythos AI"
-    parent="smart_farm_construction.menu_sf_construction_root"
+    parent="smart_farm_base.menu_smart_farm_root"
     sequence="6"
     groups="base.group_user"
 />
