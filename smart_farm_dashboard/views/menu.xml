@@ -106,13 +106,9 @@
         </record>
 
         <!--
-            Deactivate Agriculture / Manufacturing / Livestock dashboard menus.
-            These activities are not yet built — placeholder only.
-            Re-enable once each activity workflow is complete.
+            Agriculture / Manufacturing / Livestock dashboards are now enabled.
+            All four activity dashboards are accessible under Executive Dashboard.
         -->
-        <record id="menu_farm_dashboard_agriculture"   model="ir.ui.menu"><field name="active" eval="False"/></record>
-        <record id="menu_farm_dashboard_manufacturing" model="ir.ui.menu"><field name="active" eval="False"/></record>
-        <record id="menu_farm_dashboard_livestock"     model="ir.ui.menu"><field name="active" eval="False"/></record>
 
     </data>
 </odoo>

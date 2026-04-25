@@ -125,5 +125,8 @@
     sequence="120"
 />
 
+<!-- ══ Hide standalone Livestock app root — accessed via Smart Farm → Executive Dashboard ══ -->
+<record id="menu_sf_livestock_root" model="ir.ui.menu"><field name="active" eval="False"/></record>
+
 </data>
 </odoo>

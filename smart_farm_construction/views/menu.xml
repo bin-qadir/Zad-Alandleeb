@@ -76,6 +76,9 @@
     Records preserved; menus hidden at DB level (active=False).
     ══════════════════════════════════════════════════════════════════
 -->
+<!-- ══ Hide standalone Construction app root — accessed via Smart Farm → Executive Dashboard ══ -->
+<record id="menu_sf_construction_root"        model="ir.ui.menu"><field name="active" eval="False"/></record>
+
 <record id="menu_sf_construction_boq"         model="ir.ui.menu"><field name="active" eval="False"/></record>
 <record id="menu_sf_construction_material"    model="ir.ui.menu"><field name="active" eval="False"/></record>
 <record id="menu_sf_construction_procurement" model="ir.ui.menu"><field name="active" eval="False"/></record>
