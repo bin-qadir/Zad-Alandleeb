@@ -26,6 +26,6 @@
         'views/menu.xml',
     ],
     'installable': True,
-    'application': True,
+    'application': False,  # Hidden from Apps dashboard; managed via smart_farm_construction
     'auto_install': False,
 }
