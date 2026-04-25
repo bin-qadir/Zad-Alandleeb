@@ -1974,3 +1974,143 @@
 .civil-project-ctx__back:hover { background: #1e3a8a; }
 .civil-project-ctx .o_field_many2one { display: inline !important; }
 .civil-project-ctx strong { color: #1e3a8a; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   CPD — SMART FILTER STRIP
+   Horizontal pill row below KPI cards, above the dataset section.
+   Active pill shows a ✓ check icon (toggled via Odoo invisible attr).
+   ════════════════════════════════════════════════════════════════════════ */
+
+.cpd-filter-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: #fff;
+    border-bottom: 1.5px solid #e2e8f0;
+    flex-wrap: wrap;
+}
+
+.cpd-filter-strip__label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-right: 4px;
+    flex-shrink: 0;
+}
+
+/* Thin vertical separator between project filters and JO filters */
+.cpd-filter-strip__sep {
+    width: 1px;
+    height: 24px;
+    background: #e2e8f0;
+    margin: 0 4px;
+    flex-shrink: 0;
+}
+
+/* ── Base pill ── */
+.cpd-filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 14px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 20px;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
+    white-space: nowrap;
+}
+.cpd-filter-pill:hover {
+    background: #e2e8f0;
+    border-color: #94a3b8;
+    color: #1e293b;
+}
+.cpd-filter-pill:active {
+    box-shadow: inset 0 2px 4px rgba(0,0,0,.10);
+}
+
+/* Active tick icon — shown only when filter matches (Odoo invisible="...") */
+.cpd-filter-pill__tick {
+    color: #10b981;
+    font-size: 11px;
+}
+
+/* ── Variant colours ── */
+.cpd-filter-pill--delayed {
+    border-color: #fca5a5;
+    color: #991b1b;
+    background: #fff5f5;
+}
+.cpd-filter-pill--delayed:hover {
+    background: #fee2e2;
+    border-color: #f87171;
+}
+
+.cpd-filter-pill--overbudget {
+    border-color: #fcd34d;
+    color: #78350f;
+    background: #fffbeb;
+}
+.cpd-filter-pill--overbudget:hover {
+    background: #fef3c7;
+    border-color: #fbbf24;
+}
+
+.cpd-filter-pill--claimable {
+    border-color: #86efac;
+    color: #14532d;
+    background: #f0fdf4;
+}
+.cpd-filter-pill--claimable:hover {
+    background: #dcfce7;
+    border-color: #4ade80;
+}
+
+.cpd-filter-pill--claimed {
+    border-color: #6ee7b7;
+    color: #065f46;
+    background: #ecfdf5;
+}
+.cpd-filter-pill--claimed:hover {
+    background: #d1fae5;
+    border-color: #34d399;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   CPD — SECTION LABEL VARIANTS (filter-aware headings)
+   ════════════════════════════════════════════════════════════════════════ */
+
+.cpd-section-label--delayed  { color: #991b1b; }
+.cpd-section-label--delayed  .cpd-section-label__count { background: #fee2e2; color: #991b1b; }
+
+.cpd-section-label--overbudget { color: #78350f; }
+.cpd-section-label--overbudget .cpd-section-label__count { background: #fef3c7; color: #78350f; }
+
+.cpd-section-label--claimable { color: #14532d; }
+.cpd-section-label--claimable .cpd-section-label__count { background: #dcfce7; color: #14532d; }
+
+.cpd-section-label--claimed   { color: #065f46; }
+.cpd-section-label--claimed   .cpd-section-label__count { background: #d1fae5; color: #065f46; }
+
+.cpd-section-label__hint {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 400;
+    margin-left: 6px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   CPD — JO LIST SECTION
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* Give the embedded JO list some breathing room */
+.o_form_view .o_field_many2many .o_list_view {
+    border-radius: 8px;
+    overflow: hidden;
+}
