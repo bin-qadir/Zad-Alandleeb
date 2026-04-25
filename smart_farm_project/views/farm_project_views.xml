@@ -173,11 +173,6 @@
                             </group>
                             <group string="Responsibility &amp; Type"
                                    name="group_project_link">
-                                <field name="master_project_id"
-                                       string="Master Project"
-                                       options="{'no_create': True}"
-                                       domain="[('id', '!=', id)]"
-                                       placeholder="Link to parent / master project…"/>
                                 <field name="odoo_project_id"
                                        options="{'no_create': True}"/>
                                 <field name="project_manager_id"
@@ -186,11 +181,6 @@
                                        widget="many2many_tags"
                                        options="{'no_create': True, 'no_open': True}"
                                        placeholder="Tags…"/>
-                                <field name="project_type"
-                                       string="Project Type"
-                                       domain="[('activity', '=', business_activity)]"
-                                       options="{'no_create': True, 'no_open': True}"
-                                       placeholder="Select a type…"/>
                             </group>
                         </group>
 

@@ -26,12 +26,8 @@
                    options="{'horizontal': true}"/>
         </field>
 
-        <!-- ── STEP 1: Hide "Project Type" field for construction ──────── -->
-        <!--  Business Activity already classifies the project — no need   -->
-        <!--  to show the extra project_type field in construction context. -->
-        <xpath expr="//field[@name='project_type']" position="attributes">
-            <attribute name="invisible">business_activity == 'construction'</attribute>
-        </xpath>
+        <!-- ── STEP 1 (removed): project_type no longer in form view ────── -->
+        <!--  Field was removed from the base form view directly.           -->
 
         <!-- ── STEP 2: Hide generic text-only base tabs for construction  -->
         <!--  Construction replaces them with structured data tabs below.  -->
