@@ -91,5 +91,9 @@
         <record id="menu_holding_dashboard"       model="ir.ui.menu"><field name="active" eval="False"/></record>
         <record id="menu_holding_cross_company"   model="ir.ui.menu"><field name="active" eval="False"/></record>
 
+        <!-- ══ Deactivate Configuration entries not needed in day-to-day use ══ -->
+        <record id="menu_company_activity_setup"      model="ir.ui.menu"><field name="active" eval="False"/></record>
+        <record id="menu_holding_config_security"     model="ir.ui.menu"><field name="active" eval="False"/></record>
+
     </data>
 </odoo>
