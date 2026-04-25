@@ -25,10 +25,10 @@
     groups="base.group_user"
 />
 
-<!-- Construction Agents — full agent registry -->
+<!-- Agents by Domain — grouped by agent_layer -->
 <menuitem
     id="menu_mythos_construction_agents"
-    name="Construction Agents"
+    name="Agents by Domain"
     parent="menu_mythos_ai_root"
     action="smart_farm_mythos_agents.action_mythos_agent"
     sequence="2"

@@ -199,11 +199,11 @@
      ══════════════════════════════════════════════════════════════════════ -->
 
 <record id="action_mythos_agent" model="ir.actions.act_window">
-    <field name="name">Construction Agents</field>
+    <field name="name">Agents by Domain</field>
     <field name="res_model">mythos.agent</field>
     <field name="view_mode">list,form</field>
     <field name="domain">[('business_activity', '=', 'construction')]</field>
-    <field name="context">{'default_business_activity': 'construction'}</field>
+    <field name="context">{'default_business_activity': 'construction', 'group_by': ['agent_layer']}</field>
     <field name="target">current</field>
 </record>
 
