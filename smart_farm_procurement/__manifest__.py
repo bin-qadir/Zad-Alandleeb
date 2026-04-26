@@ -22,6 +22,7 @@
         'security/ir.model.access.csv',
         'views/farm_boq_analysis_procurement_inherit.xml',
         'views/purchase_order_inherit.xml',
+        'views/farm_project_views_inherit.xml',
         'views/menu.xml',
     ],
     'installable': True,

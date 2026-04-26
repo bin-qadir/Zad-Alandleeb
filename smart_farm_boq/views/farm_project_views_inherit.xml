@@ -34,16 +34,20 @@
                             class="btn btn-primary btn-lg px-4"/>
                 </xpath>
 
-                <!-- Cost Structures — PLANNING group, inserted before anchor_planning_end -->
+                <!-- Phases — slot 2, inserted before anchor_phases_end -->
+                <xpath expr="//div[@name='anchor_phases_end']" position="before">
+                    <button name="action_open_phases" type="object"
+                            class="oe_stat_button" icon="fa-flag"
+                            invisible="phase_count == 0">
+                        <field name="phase_count" widget="statinfo" string="Phases"/>
+                    </button>
+                </xpath>
+
+                <!-- B.O.Q — slot 4, inserted before anchor_planning_end -->
                 <xpath expr="//div[@name='anchor_planning_end']" position="before">
                     <button name="action_open_boqs" type="object"
-                            class="epd-mini-kpi epd-mini-kpi--navy"
-                            title="Open Cost Structures">
-                        <i class="fa fa-sitemap epd-mini-icon" title="Cost Structures"/>
-                        <div class="epd-mini-value">
-                            <field name="boq_count" nolabel="1"/>
-                        </div>
-                        <div class="epd-mini-label">Cost Structures</div>
+                            class="oe_stat_button" icon="fa-sitemap">
+                        <field name="boq_count" widget="statinfo" string="B.O.Q"/>
                     </button>
                 </xpath>
 

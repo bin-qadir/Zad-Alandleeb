@@ -52,6 +52,13 @@ class FarmProjectSaleContract(models.Model):
         help='Number of Sales Orders (Contracts) linked to this project.',
     )
 
+    # ── Offers count (alias of sale_order_count for command bar button) ───────
+    offer_count = fields.Integer(
+        string='Offers',
+        compute='_compute_offer_count',
+        help='Number of Sales Orders (Offers) linked to this project.',
+    )
+
     # ── Cost control ──────────────────────────────────────────────────────────
 
     estimated_cost = fields.Float(
@@ -114,6 +121,23 @@ class FarmProjectSaleContract(models.Model):
     def _compute_sale_order_count(self):
         for rec in self:
             rec.sale_order_count = len(rec.sale_order_ids)
+
+    @api.depends('sale_order_ids')
+    def _compute_offer_count(self):
+        for rec in self:
+            rec.offer_count = len(rec.sale_order_ids)
+
+    def action_open_offers(self):
+        """Open Sales Orders (Offers) for this project."""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Offers — %s') % self.name,
+            'res_model': 'sale.order',
+            'view_mode': 'list,form',
+            'domain': [('farm_project_id', '=', self.id)],
+            'context': {'default_farm_project_id': self.id},
+        }
 
     @api.depends(
         'job_order_ids.actual_material_cost',

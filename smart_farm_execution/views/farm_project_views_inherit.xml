@@ -9,16 +9,19 @@
             <field name="model">farm.project</field>
             <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
             <field name="arch" type="xml">
-                <!-- Job Orders — EXECUTION group, inserted before anchor_execution_end -->
+                <!-- Job Orders — slot 7, inserted before anchor_execution_end -->
                 <xpath expr="//div[@name='anchor_execution_end']" position="before">
                     <button name="action_open_job_orders" type="object"
-                            class="epd-mini-kpi epd-mini-kpi--amber"
-                            title="Open Job Orders">
-                        <i class="fa fa-tasks epd-mini-icon" title="Job Orders"/>
-                        <div class="epd-mini-value">
-                            <field name="job_order_count" nolabel="1"/>
-                        </div>
-                        <div class="epd-mini-label">Job Orders</div>
+                            class="oe_stat_button" icon="fa-tasks">
+                        <field name="job_order_count" widget="statinfo" string="Job Orders"/>
+                    </button>
+                </xpath>
+
+                <!-- Materials — slot 8, inserted before anchor_materials_end -->
+                <xpath expr="//div[@name='anchor_materials_end']" position="before">
+                    <button name="action_open_materials" type="object"
+                            class="oe_stat_button" icon="fa-cubes">
+                        <field name="material_consumption_count" widget="statinfo" string="Materials"/>
                     </button>
                 </xpath>
             </field>

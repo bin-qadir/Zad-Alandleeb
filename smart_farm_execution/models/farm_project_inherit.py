@@ -66,6 +66,34 @@ class FarmProjectExecution(models.Model):
              'across all Job Orders, weighted by planned_qty (contract qty).',
     )
 
+    # ── Material Consumption count ────────────────────────────────────────────
+
+    material_consumption_count = fields.Integer(
+        string='Materials',
+        compute='_compute_material_consumption_count',
+        help='Total material consumption records across all Job Orders on this project.',
+    )
+
+    def _compute_material_consumption_count(self):
+        MaterialConsumption = self.env['farm.material.consumption']
+        for rec in self:
+            rec.material_consumption_count = (
+                MaterialConsumption.search_count([('project_id', '=', rec.id)])
+                if rec.id else 0
+            )
+
+    def action_open_materials(self):
+        """Open Material Consumption records for this project."""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Materials — %s') % self.name,
+            'res_model': 'farm.material.consumption',
+            'view_mode': 'list,form',
+            'domain': [('project_id', '=', self.id)],
+            'context': {'default_project_id': self.id},
+        }
+
     # ── Stage-based JO counts ─────────────────────────────────────────────────
 
     jo_count_in_progress = fields.Integer(

@@ -43,102 +43,102 @@
                     </header>
                     <sheet>
 
-                        <!-- ── KPI SMART BUTTON STRIP ────────────────────────
-                             Modern KPI card row (replaces oe_button_box).
-                             Placed as the FIRST element inside <sheet> — the
-                             standard Odoo position for stat-button containers.
-                             name="button_box" kept for xpath compatibility:
-                             all inherited modules (boq, execution, contract…)
-                             still inject via //div[@name='button_box'].
+                        <!-- ── STAT BUTTON BOX ───────────────────────────────
+                             Standard Odoo enterprise oe_button_box pattern.
+                             First ~8 buttons are visible; overflow goes into a
+                             "More" dropdown automatically.
+                             name="button_box" kept for xpath compatibility.
+
+                             Button order (injected by each module):
+                               1  Fields           (base)
+                               2  Phases            (smart_farm_boq → anchor_phases_end)
+                               3  Tasks             (base)
+                               4  B.O.Q             (smart_farm_boq → anchor_planning_end)
+                               5  Offers            (smart_farm_sale_contract → anchor_offers_end)
+                               6  Contracts         (smart_farm_contract → anchor_contracts_end)
+                               7  Job Orders        (smart_farm_execution → anchor_execution_end)
+                               8  Materials         (smart_farm_execution → anchor_materials_end)
+                               9  Material Requests (smart_farm_construction → anchor_procurement_end)
+                              10  Purchase Orders   (smart_farm_construction → anchor_procurement_end)
+                              11  Vendor Bills      (smart_farm_procurement → anchor_bills_end)
+                              12  AI                (smart_farm_construction → anchor_ai_end)
                         ──────────────────────────────────────────────────── -->
-                        <div class="epd-mini-kpi-strip" name="button_box">
+                        <div class="oe_button_box" name="button_box">
 
-                            <!-- Fields — card IS the button -->
+                            <!-- 1 · Fields -->
                             <button name="action_open_fields" type="object"
-                                    class="epd-mini-kpi epd-mini-kpi--green"
-                                    title="Open Fields">
-                                <i class="fa fa-map-marker epd-mini-icon" title="Fields"/>
-                                <div class="epd-mini-value">
-                                    <field name="field_count" nolabel="1"/>
-                                </div>
-                                <div class="epd-mini-label">Fields</div>
+                                    class="oe_stat_button" icon="fa-map-marker">
+                                <field name="field_count" widget="statinfo" string="Fields"/>
                             </button>
 
-                            <!-- Tasks — only when linked to an Odoo project -->
+                            <!-- anchor: Phases (slot 2) injected by smart_farm_boq -->
+                            <div name="anchor_phases_end" class="d-none"/>
+
+                            <!-- 3 · Tasks (only when linked to an Odoo project) -->
                             <button name="action_open_tasks" type="object"
-                                    class="epd-mini-kpi epd-mini-kpi--blue"
-                                    title="Open Tasks"
+                                    class="oe_stat_button" icon="fa-check-square-o"
                                     invisible="not odoo_project_id">
-                                <i class="fa fa-check-square-o epd-mini-icon" title="Tasks"/>
-                                <div class="epd-mini-value">
-                                    <field name="task_count" nolabel="1"/>
-                                </div>
-                                <div class="epd-mini-label">Tasks</div>
+                                <field name="task_count" widget="statinfo" string="Tasks"/>
                             </button>
 
-                            <!-- ── Activity Sub-Project smart buttons ──────── -->
+                            <!-- anchor: B.O.Q (slot 4) injected by smart_farm_boq -->
+                            <div name="anchor_planning_end" class="d-none"/>
 
-                            <!-- Construction Projects -->
-                            <button name="action_view_construction_projects" type="object"
-                                    class="epd-mini-kpi epd-mini-kpi--blue"
-                                    title="Construction Projects"
-                                    invisible="construction_project_count == 0">
-                                <i class="fa fa-building-o epd-mini-icon" title="Construction Projects"/>
-                                <div class="epd-mini-value">
-                                    <field name="construction_project_count" nolabel="1"/>
-                                </div>
-                                <div class="epd-mini-label">Construction</div>
-                            </button>
+                            <!-- anchor: Offers (slot 5) injected by smart_farm_sale_contract -->
+                            <div name="anchor_offers_end" class="d-none"/>
 
-                            <!-- Agriculture Projects -->
-                            <button name="action_view_agriculture_projects" type="object"
-                                    class="epd-mini-kpi epd-mini-kpi--green"
-                                    title="Agriculture Projects"
-                                    invisible="agriculture_project_count == 0">
-                                <i class="fa fa-leaf epd-mini-icon" title="Agriculture Projects"/>
-                                <div class="epd-mini-value">
-                                    <field name="agriculture_project_count" nolabel="1"/>
-                                </div>
-                                <div class="epd-mini-label">Agriculture</div>
-                            </button>
+                            <!-- anchor: Contracts (slot 6) injected by smart_farm_contract -->
+                            <div name="anchor_contracts_end" class="d-none"/>
 
-                            <!-- Manufacturing Projects -->
-                            <button name="action_view_manufacturing_projects" type="object"
-                                    class="epd-mini-kpi epd-mini-kpi--orange"
-                                    title="Manufacturing Projects"
-                                    invisible="manufacturing_project_count == 0">
-                                <i class="fa fa-industry epd-mini-icon" title="Manufacturing Projects"/>
-                                <div class="epd-mini-value">
-                                    <field name="manufacturing_project_count" nolabel="1"/>
-                                </div>
-                                <div class="epd-mini-label">Manufacturing</div>
-                            </button>
+                            <!-- anchor: Job Orders (slot 7) injected by smart_farm_execution -->
+                            <div name="anchor_execution_end" class="d-none"/>
 
-                            <!-- Livestock Projects -->
-                            <button name="action_view_livestock_projects" type="object"
-                                    class="epd-mini-kpi epd-mini-kpi--red"
-                                    title="Livestock Projects"
-                                    invisible="livestock_project_count == 0">
-                                <i class="fa fa-paw epd-mini-icon" title="Livestock Projects"/>
-                                <div class="epd-mini-value">
-                                    <field name="livestock_project_count" nolabel="1"/>
-                                </div>
-                                <div class="epd-mini-label">Livestock</div>
-                            </button>
+                            <!-- anchor: Materials (slot 8) injected by smart_farm_execution -->
+                            <div name="anchor_materials_end" class="d-none"/>
 
-                            <!-- ── Positional anchors (display:none) ─────────────
-                                 Used by inherited modules to inject buttons in the
-                                 correct logical group instead of always appending.
-                                 Group order:
-                                   Execution  → Job Orders, Contracts
-                                   Planning   → Cost Structures, BOQ Analysis
-                                   Procurement → Materials, Procurement, POs
-                                   AI         → AI Risk, AI Brain
-                            ──────────────────────────────────────────────────── -->
-                            <div name="anchor_execution_end"  class="d-none"/>
-                            <div name="anchor_planning_end"   class="d-none"/>
+                            <!-- anchor: Material Requests + POs (slots 9-10)
+                                 injected by smart_farm_construction -->
                             <div name="anchor_procurement_end" class="d-none"/>
-                            <div name="anchor_ai_end"         class="d-none"/>
+
+                            <!-- anchor: Vendor Bills (slot 11) injected by smart_farm_procurement -->
+                            <div name="anchor_bills_end" class="d-none"/>
+
+                            <!-- anchor: AI (slot 12) injected by smart_farm_construction -->
+                            <div name="anchor_ai_end" class="d-none"/>
+
+                            <!-- ── Activity Sub-Project stat buttons ──────────
+                                 Only visible when matching sub-projects exist.
+                                 Placed after the workflow buttons so they don't
+                                 crowd the primary business slots.
+                            ──────────────────────────────────────────────────── -->
+
+                            <button name="action_view_construction_projects" type="object"
+                                    class="oe_stat_button" icon="fa-building-o"
+                                    invisible="construction_project_count == 0">
+                                <field name="construction_project_count" widget="statinfo"
+                                       string="Construction"/>
+                            </button>
+
+                            <button name="action_view_agriculture_projects" type="object"
+                                    class="oe_stat_button" icon="fa-leaf"
+                                    invisible="agriculture_project_count == 0">
+                                <field name="agriculture_project_count" widget="statinfo"
+                                       string="Agriculture"/>
+                            </button>
+
+                            <button name="action_view_manufacturing_projects" type="object"
+                                    class="oe_stat_button" icon="fa-industry"
+                                    invisible="manufacturing_project_count == 0">
+                                <field name="manufacturing_project_count" widget="statinfo"
+                                       string="Manufacturing"/>
+                            </button>
+
+                            <button name="action_view_livestock_projects" type="object"
+                                    class="oe_stat_button" icon="fa-paw"
+                                    invisible="livestock_project_count == 0">
+                                <field name="livestock_project_count" widget="statinfo"
+                                       string="Livestock"/>
+                            </button>
 
                         </div>
 

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+            Extend the Farm Project form with a Vendor Bills stat button.
+
+            Vendor bills are derived from Purchase Orders linked to this project
+            (purchase.order.farm_project_id), accessed via purchase.order.invoice_ids.
+            The count field and action are defined in
+            smart_farm_procurement/models/farm_project_inherit.py.
+        -->
+        <record id="view_farm_project_procurement_form_inherit" model="ir.ui.view">
+            <field name="name">farm.project.procurement.form.inherit</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Vendor Bills — slot 11, inserted before anchor_bills_end -->
+                <xpath expr="//div[@name='anchor_bills_end']" position="before">
+                    <button name="action_open_vendor_bills" type="object"
+                            class="oe_stat_button" icon="fa-credit-card">
+                        <field name="vendor_bill_count" widget="statinfo"
+                               string="Vendor Bills"/>
+                    </button>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

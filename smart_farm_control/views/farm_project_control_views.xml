@@ -312,13 +312,8 @@
                     <attribute name="invisible">project_phase not in ('pre_tender', 'tender')</attribute>
                 </xpath>
 
-                <!-- ── BOQ Analysis button: Planning phases only ── -->
-                <xpath expr="//button[@name='action_open_project_analysis']" position="attributes">
-                    <attribute name="invisible">project_phase not in ('pre_tender', 'tender')</attribute>
-                </xpath>
-
-                <!-- ── Sales Orders button: Commercial + Closing phases ── -->
-                <xpath expr="//button[@name='action_open_sale_orders']" position="attributes">
+                <!-- ── Offers button: Commercial + Closing phases ── -->
+                <xpath expr="//button[@name='action_open_offers']" position="attributes">
                     <attribute name="invisible">project_phase not in ('tender', 'contract', 'execution', 'closing')</attribute>
                 </xpath>
 

@@ -34,6 +34,30 @@ class FarmProjectBoqInherit(models.Model):
         help='Number of Cost Structures (BOQs) linked to this project.',
     )
 
+    # ── Phase count (distinct phases used across BOQs) ───────────────────────
+    phase_count = fields.Integer(
+        string='Phases',
+        compute='_compute_phase_count',
+        help='Number of distinct project phases used across BOQs on this project.',
+    )
+
+    @api.depends('boq_ids.project_phase_id')
+    def _compute_phase_count(self):
+        for rec in self:
+            rec.phase_count = len(rec.boq_ids.mapped('project_phase_id'))
+
+    def action_open_phases(self):
+        """Open project phases used in BOQs for this project."""
+        self.ensure_one()
+        phase_ids = self.boq_ids.mapped('project_phase_id').ids
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Project Phases — %s') % self.name,
+            'res_model': 'project.phase.master',
+            'view_mode': 'list,form',
+            'domain': [('id', 'in', phase_ids)],
+        }
+
     @api.depends('boq_ids')
     def _compute_boq_count(self):
         for rec in self:

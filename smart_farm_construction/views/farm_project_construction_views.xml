@@ -52,57 +52,37 @@
             <attribute name="invisible">business_activity == 'construction'</attribute>
         </xpath>
 
-        <!-- ── 2a. Smart buttons: PROCUREMENT group (Materials, Procurement, POs) ── -->
+        <!-- ── 2a. Stat buttons: slots 9-10 (Material Requests, POs) ── -->
+        <!--  "Procurement" (BOQ Analysis link) removed from header strip  -->
+        <!--  as part of command-bar redesign; still accessible via menus. -->
         <xpath expr="//div[@name='anchor_procurement_end']" position="before">
 
+            <!-- slot 9 · Material Requests (construction only) -->
             <button name="action_open_material_requests" type="object"
-                    class="epd-mini-kpi epd-mini-kpi--blue"
-                    title="Open Material Requests"
+                    class="oe_stat_button" icon="fa-truck"
                     invisible="business_activity != 'construction'">
-                <i class="fa fa-truck epd-mini-icon" title="Material Requests"/>
-                <div class="epd-mini-value">
-                    <field name="material_request_count" nolabel="1"/>
-                </div>
-                <div class="epd-mini-label">Materials</div>
+                <field name="material_request_count" widget="statinfo"
+                       string="Mat. Requests"/>
             </button>
 
-            <button name="action_open_procurement" type="object"
-                    class="epd-mini-kpi epd-mini-kpi--amber"
-                    title="Open Procurement Documents"
-                    invisible="business_activity != 'construction'">
-                <i class="fa fa-shopping-cart epd-mini-icon" title="Procurement"/>
-                <div class="epd-mini-value">
-                    <field name="procurement_count" nolabel="1"/>
-                </div>
-                <div class="epd-mini-label">Procurement</div>
-            </button>
-
+            <!-- slot 10 · Purchase Orders (construction only) -->
             <button name="action_open_purchase_orders" type="object"
-                    class="epd-mini-kpi epd-mini-kpi--green"
-                    title="Open Purchase Orders"
+                    class="oe_stat_button" icon="fa-file-text-o"
                     invisible="business_activity != 'construction'">
-                <i class="fa fa-file-text-o epd-mini-icon" title="Purchase Orders"/>
-                <div class="epd-mini-value">
-                    <field name="purchase_order_count" nolabel="1"/>
-                </div>
-                <div class="epd-mini-label">POs</div>
+                <field name="purchase_order_count" widget="statinfo"
+                       string="Purch. Orders"/>
             </button>
 
         </xpath>
 
-        <!-- ── 2b. Smart button: AI group (AI Risk) ──────────────────────── -->
+        <!-- ── 2b. Stat button: slot 12 (AI Risk) ──────────────────────── -->
         <xpath expr="//div[@name='anchor_ai_end']" position="before">
 
+            <!-- slot 12 · AI Risk (construction only, only when insight exists) -->
             <button name="action_open_ai_insights" type="object"
-                    class="epd-mini-kpi epd-mini-kpi--red"
-                    title="AI Risk Insights"
+                    class="oe_stat_button" icon="fa-robot"
                     invisible="business_activity != 'construction' or not ai_status">
-                <i class="fa fa-robot epd-mini-icon" title="AI Insights"/>
-                <div class="epd-mini-value">
-                    <field name="ai_risk_score" nolabel="1"
-                           widget="float" options="{'digits':[16,0]}"/>%
-                </div>
-                <div class="epd-mini-label">AI Risk</div>
+                <field name="ai_risk_score" widget="statinfo" string="AI Risk"/>
             </button>
 
         </xpath>

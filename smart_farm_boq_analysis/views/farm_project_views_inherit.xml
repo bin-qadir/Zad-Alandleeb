@@ -2,36 +2,15 @@
 <odoo>
     <data>
         <!--
-            BOQ Analysis stat button — injected into the Farm Project button_box.
-            Opens all Analysis documents for this project (filtered by project_id).
+            BOQ Analysis stat button removed from the project header strip.
+            The analysis_count field and action_open_project_analysis() are
+            still available on farm.project but are no longer surfaced as a
+            header button following the command-bar redesign
+            (feat: reorganize Lavandula project command bar).
+
+            BOQ Analyses are accessible via:
+              • Cost Structure → Project Cost Structure (smart_farm_boq_analysis menu)
+              • smart_farm_boq "B.O.Q" header button → open a BOQ → Analysis tab
         -->
-        <record id="view_farm_project_form_analysis_inherit" model="ir.ui.view">
-            <field name="name">farm.project.form.analysis.inherit</field>
-            <field name="model">farm.project</field>
-            <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
-            <field name="arch" type="xml">
-
-                <!-- BOQ Analysis — card IS the button.
-                     The outer div carries name="btn_boq_analysis" as an xpath anchor
-                     for smart_farm_sale_contract (which inserts Sales Orders after it).
-                     class="epd-kpi-anchor" → display:contents, so the div is invisible
-                     to the flex layout and the inner button is a direct flex item. -->
-                <!-- BOQ Analysis — PLANNING group, inserted before anchor_planning_end -->
-                <xpath expr="//div[@name='anchor_planning_end']" position="before">
-                    <div name="btn_boq_analysis" class="epd-kpi-anchor">
-                        <button name="action_open_project_analysis" type="object"
-                                class="epd-mini-kpi epd-mini-kpi--purple"
-                                title="Open BOQ Analysis">
-                            <i class="fa fa-bar-chart epd-mini-icon" title="BOQ Analysis"/>
-                            <div class="epd-mini-value">
-                                <field name="analysis_count" nolabel="1"/>
-                            </div>
-                            <div class="epd-mini-label">BOQ Analysis</div>
-                        </button>
-                    </div>
-                </xpath>
-
-            </field>
-        </record>
     </data>
 </odoo>
