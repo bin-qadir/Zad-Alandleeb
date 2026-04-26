@@ -23,6 +23,10 @@
             <field name="name">farm.project.holding.form.inherit</field>
             <field name="model">farm.project</field>
             <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
+            <!-- priority=162 ensures this inherit is applied AFTER Odoo Studio
+                 customisations (which default to priority=160), so the conditional
+                 readonly expression wins over any Studio-level readonly="False". -->
+            <field name="priority">162</field>
             <field name="arch" type="xml">
 
                 <!-- 1. Allow editing on draft/new; lock when activity-app context OR after draft -->
