@@ -16,7 +16,6 @@
                            decoration-warning="business_activity == 'manufacturing'"
                            decoration-danger="business_activity == 'livestock'"
                            optional="show"/>
-                    <field name="lifecycle_stage_id" optional="show"/>
                     <field name="project_type" optional="show"/>
                     <field name="project_manager_id" optional="show"/>
                     <field name="start_date"/>
@@ -177,8 +176,6 @@
                                 <field name="business_activity" widget="radio"
                                        options="{'horizontal': true}"
                                        readonly="context.get('default_business_activity', False) != False"/>
-                                <field name="lifecycle_stage_id"
-                                       domain="[('business_activity', '=', business_activity)]"/>
                                 <field name="analytic_account_id"
                                        options="{'no_create': True}"/>
                                 <field name="start_date"/>

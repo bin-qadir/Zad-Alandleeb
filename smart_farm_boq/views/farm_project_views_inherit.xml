@@ -3,8 +3,11 @@
     <data>
 
         <!--
-            Extend the Farm Project form — adds the Project Phase field to the
-            project header area.
+            Extend the Farm Project form — adds the Project Phase statusbar and BOQ buttons.
+
+            project_phase_id is injected as a header statusbar so users see:
+              Pre-Tender → Tender → Contract → Execution → Closing
+            alongside the operational state bar.
 
             BOQ structure is accessed via Cost Structure → Project Cost Structure,
             not from within the Farm Project form.
@@ -14,6 +17,13 @@
             <field name="model">farm.project</field>
             <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
             <field name="arch" type="xml">
+
+                <!-- Project Phase — statusbar in header (before state statusbar) -->
+                <field name="state" position="before">
+                    <field name="project_phase_id"
+                           widget="statusbar"
+                           options="{'clickable': '1'}"/>
+                </field>
 
                 <!-- "New BOQ" action button in main_action_buttons -->
                 <xpath expr="//div[@name='main_action_buttons']" position="inside">
@@ -37,13 +47,18 @@
                     </button>
                 </xpath>
 
-                <!-- Project Phase — inserted into the Project Details group (left column) -->
-                <xpath expr="//group[@name='group_project_details']" position="inside">
-                    <field name="project_phase_id"
-                           string="Project Phase"
-                           options="{'no_create': True, 'no_open': True}"/>
-                </xpath>
+            </field>
+        </record>
 
+        <!-- Inject project_phase_id into the project list view -->
+        <record id="view_farm_project_list_boq_inherit" model="ir.ui.view">
+            <field name="name">farm.project.list.boq.inherit</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_project.view_farm_project_list"/>
+            <field name="arch" type="xml">
+                <field name="project_type" position="before">
+                    <field name="project_phase_id" optional="show"/>
+                </field>
             </field>
         </record>
 

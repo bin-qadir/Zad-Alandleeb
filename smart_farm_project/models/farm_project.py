@@ -51,6 +51,7 @@ class FarmProject(models.Model):
         help='Current lifecycle stage of this project. Filtered by the selected business activity.',
     )
 
+
     # ── Project Classification ─────────────────────────────────────────────────
     project_type = fields.Many2one(
         comodel_name='farm.project.type',

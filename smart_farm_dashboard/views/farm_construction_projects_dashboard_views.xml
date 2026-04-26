@@ -212,7 +212,7 @@
                         <field name="name"/>
                         <field name="state"/>
                         <field name="business_activity"/>
-                        <field name="project_phase"/>
+                        <field name="project_phase_id"/>
                         <field name="project_health"/>
                         <field name="contract_value"/>
                         <field name="currency_id"/>
@@ -244,9 +244,9 @@
                                     <div class="cpd-proj-card__name" t-esc="record.name.value"/>
 
                                     <div class="cpd-proj-card__meta">
-                                        <span class="cpd-proj-card__meta-item" t-if="record.project_phase.value">
+                                        <span class="cpd-proj-card__meta-item" t-if="record.project_phase_id.value">
                                             <i class="fa fa-sitemap me-1 text-muted"/>
-                                            <t t-esc="record.project_phase.value"/>
+                                            <t t-esc="record.project_phase_id.value"/>
                                         </span>
                                         <span class="cpd-proj-card__meta-item" t-if="record.project_manager_id.value">
                                             <i class="fa fa-user me-1 text-muted"/>

@@ -1,22 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
+    <data noupdate="0">
+
+        <!-- ── Project lifecycle phases (project.phase.master) ─────────────────
+             Full five-phase lifecycle used in:
+               • farm.project → project_phase_id statusbar
+               • farm.boq → phase classification
+               • farm.boq.line → line-level phase
+             noupdate="0" so names/sequences stay correct on every upgrade.
+        ──────────────────────────────────────────────────────────────────── -->
 
         <record id="phase_pre_tender" model="project.phase.master">
-            <field name="name">Pre-Tender Phase</field>
-            <field name="sequence">0</field>
+            <field name="name">Pre-Tender</field>
+            <field name="sequence">10</field>
             <field name="active">True</field>
         </record>
 
         <record id="phase_tender" model="project.phase.master">
-            <field name="name">Tender Phase</field>
-            <field name="sequence">1</field>
+            <field name="name">Tender</field>
+            <field name="sequence">20</field>
             <field name="active">True</field>
         </record>
 
         <record id="phase_post_tender" model="project.phase.master">
-            <field name="name">Post Tender Phase</field>
-            <field name="sequence">2</field>
+            <field name="name">Contract</field>
+            <field name="sequence">30</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="phase_execution" model="project.phase.master">
+            <field name="name">Execution</field>
+            <field name="sequence">40</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="phase_closing" model="project.phase.master">
+            <field name="name">Closing</field>
+            <field name="sequence">50</field>
             <field name="active">True</field>
         </record>
 

@@ -19,20 +19,15 @@
     <field name="arch" type="xml">
 
         <!-- ── 1. Inject Construction Phase into the main info group ──── -->
-        <!--  Also hide lifecycle_stage_id for construction:              -->
-        <!--  it holds Job Order workflow stages (Planning, Material Req, -->
-        <!--  Procurement…) which are irrelevant at project level.       -->
-        <!--  construction_phase (body radio) and project_phase (header  -->
-        <!--  statusbar) already cover the construction project lifecycle.-->
-        <field name="lifecycle_stage_id" position="before">
+        <!--  lifecycle_stage_id was removed from the project form in     -->
+        <!--  v18.0.1.3.0 (replaced by project_phase_id statusbar).      -->
+        <!--  Construction Phase radio is injected after business_activity-->
+        <!--  which is the first field in group_project_details.          -->
+        <field name="business_activity" position="after">
             <field name="construction_phase"
                    widget="radio"
                    invisible="business_activity != 'construction'"
                    options="{'horizontal': true}"/>
-        </field>
-
-        <field name="lifecycle_stage_id" position="attributes">
-            <attribute name="invisible">business_activity == 'construction'</attribute>
         </field>
 
         <!-- ── STEP 1 (removed): project_type no longer in form view ────── -->
