@@ -2,29 +2,29 @@
 <odoo>
 <data>
 
-<!-- ══ AI Command Center (top-level under Construction) ══════════════ -->
+<!-- ══ AI Command Center — under Mythos AI (was orphaned under Construction root) ══ -->
 <menuitem
     id="menu_sf_construction_ai_command_center"
     name="AI Command Center"
-    parent="smart_farm_construction.menu_sf_construction_root"
+    parent="smart_farm_mythos_agents.menu_mythos_ai_root"
     action="smart_farm_super_agent.action_open_ai_command_center"
     sequence="5"
 />
 
-<!-- ══ AI Rules (under Configuration) ══════════════════════════════ -->
+<!-- ══ AI Rules — under Mythos AI (was orphaned under Construction config) ══ -->
 <menuitem
     id="menu_sf_construction_ai_rules"
     name="AI Rules"
-    parent="smart_farm_construction.menu_sf_construction_config"
+    parent="smart_farm_mythos_agents.menu_mythos_ai_root"
     action="smart_farm_super_agent.action_smart_ai_rule"
     sequence="50"
 />
 
-<!-- ══ Knowledge Documents (under Configuration) ═════════════════════ -->
+<!-- ══ Knowledge Docs — under Mythos AI (was orphaned under Construction config) ══ -->
 <menuitem
     id="menu_sf_construction_ai_knowledge"
     name="Knowledge Docs"
-    parent="smart_farm_construction.menu_sf_construction_config"
+    parent="smart_farm_mythos_agents.menu_mythos_ai_root"
     action="smart_farm_super_agent.action_smart_ai_knowledge"
     sequence="60"
 />
