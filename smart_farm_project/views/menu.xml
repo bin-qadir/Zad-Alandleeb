@@ -10,10 +10,10 @@
             sequence="10"
         />
 
-        <!-- Farm Projects -->
+        <!-- Lavandula Projects -->
         <menuitem
             id="menu_farm_project"
-            name="Farm Projects"
+            name="Lavandula Projects"
             parent="menu_smart_farm_projects"
             action="action_farm_project"
             sequence="10"
