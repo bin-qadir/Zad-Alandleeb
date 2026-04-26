@@ -76,6 +76,14 @@ class FarmJobOrder(models.Model):
         index=True,
         domain="[('analysis_id', '=', analysis_id)]",
     )
+    # Alias kept for API / external callers that reference the longer name.
+    # Reads/writes flow through to analysis_line_id — no separate DB column.
+    boq_analysis_line_id = fields.Many2one(
+        related='analysis_line_id',
+        string='BOQ Analysis Line',
+        readonly=False,
+        store=False,
+    )
 
     # ── Classification (mirrored from BOQ line) ───────────────────────────────
     display_code = fields.Char(
@@ -187,6 +195,18 @@ class FarmJobOrder(models.Model):
         digits=(16, 2),
         required=True,
         default=1.0,
+        help=(
+            'Scope quantity agreed in the BOQ / Contract.  '
+            'Aliased as "contract_qty" in lifecycle reporting.\n'
+            'progress_percent = approved_qty / contract_qty × 100'
+        ),
+    )
+    # Alias — maps "contract_qty" name to planned_qty (same value, no DB column).
+    contract_qty = fields.Float(
+        related='planned_qty',
+        string='Contract Qty (alias)',
+        readonly=False,
+        store=False,
     )
     unit_id = fields.Many2one('uom.uom', string='Unit', ondelete='set null')
     unit_price = fields.Float(
