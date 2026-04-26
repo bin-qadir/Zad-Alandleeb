@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm Costing',
+    'name': 'Lavandula Costing',
     'version': '18.0.1.1.0',
     'summary': 'Material, labor and overhead costing for BOQ lines',
     'description': (

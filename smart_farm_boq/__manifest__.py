@@ -1,7 +1,7 @@
 {
-    'name': 'Smart Farm BOQ',
+    'name': 'Lavandula BOQ',
     'version': '18.0.2.2.0',
-    'summary': 'Bill of Quantities for the Smart Farm system',
+    'summary': 'Bill of Quantities for the Lavandula system',
     'description': (
         'Manage BOQ documents with template loading, manual entry, '
         'hierarchical auto-numbering, and revision tracking.'

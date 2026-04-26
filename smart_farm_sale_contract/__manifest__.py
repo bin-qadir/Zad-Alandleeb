@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm Sale Contract',
+    'name': 'Lavandula Sale Contract',
     'version': '18.0.1.0.0',
     'summary': 'Sales Order as the approved contract backbone for Job Order execution',
     'description': (

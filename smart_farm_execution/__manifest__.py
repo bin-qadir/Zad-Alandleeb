@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm Execution',
+    'name': 'Lavandula Execution',
     'version': '18.0.2.0.0',
     'summary': 'Execution layer: Job Orders → Materials + Labour → Progress → Actual Costs',
     'description': (

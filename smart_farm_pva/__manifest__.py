@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm — Planned vs Actual Engine',
+    'name': 'Lavandula — Planned vs Actual Engine',
     'version': '18.0.1.0.0',
     'summary': 'Qty, cost, revenue, and profit variance engine for construction projects',
     'description': (

@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm — Mythos AI Agents',
+    'name': 'Lavandula — Mythos AI Agents',
     'version': '18.0.1.0.0',
     'summary': 'Construction Mythos Agent Registry: classify, layer, and log all AI agents',
     'description': (

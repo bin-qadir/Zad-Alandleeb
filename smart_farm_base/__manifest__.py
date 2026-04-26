@@ -1,8 +1,8 @@
 {
-    'name': 'Smart Farm Base',
+    'name': 'Lavandula Base',
     'version': '18.0.1.0.0',
-    'summary': 'Base module for the Smart Farm system',
-    'description': 'Provides the foundational models and configuration for the Smart Farm system.',
+    'summary': 'Base module for the Lavandula system',
+    'description': 'Provides the foundational models and configuration for the Lavandula system.',
     'category': 'Agriculture',
     'author': 'Smart Farm',
     'license': 'LGPL-3',

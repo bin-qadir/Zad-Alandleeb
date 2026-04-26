@@ -8,7 +8,7 @@
 
         <record id="module_category_agriculture" model="ir.module.category">
             <field name="name">Agriculture</field>
-            <field name="description">Smart Farm — Agriculture Company operational module.</field>
+            <field name="description">Lavandula — Agriculture Company operational module.</field>
             <field name="sequence">60</field>
         </record>
 

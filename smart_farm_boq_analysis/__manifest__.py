@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm BOQ Analysis',
+    'name': 'Lavandula BOQ Analysis',
     'version': '18.0.1.1.0',
     'summary': 'Professional BOQ analysis: cost comparison, pricing strategy, approval workflow',
     'description': (

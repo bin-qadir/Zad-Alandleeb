@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm — BOQ Lifecycle Tracking',
+    'name': 'Lavandula — BOQ Lifecycle Tracking',
     'version': '18.0.1.0.0',
     'summary': 'Full quantity lifecycle tracking across procurement, inspection, and claims',
     'category': 'Construction',

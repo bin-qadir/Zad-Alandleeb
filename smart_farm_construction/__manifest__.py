@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm — Construction',
+    'name': 'Lavandula — Construction',
     'version': '18.0.2.2.0',
     'summary': 'Construction activity — project-driven enterprise workflow',
     'description': (
@@ -22,7 +22,7 @@
         '  construction.ai.insight — weighted risk scoring (delay, execution,\n'
         '  procurement, cost, claim) · smart KPI cards · daily cron automation\n'
     ),
-    'category': 'Smart Farm',
+    'category': 'Lavandula',
     'author': 'bin-qadir',
     'license': 'LGPL-3',
     'depends': [

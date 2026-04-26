@@ -1,8 +1,8 @@
 {
-    'name': 'Smart Farm Master',
+    'name': 'Lavandula Master',
     'version': '18.0.1.0.0',
-    'summary': 'Master data module for the Smart Farm system',
-    'description': 'Provides master data (lookup) models for the Smart Farm system.',
+    'summary': 'Master data module for the Lavandula system',
+    'description': 'Provides master data (lookup) models for the Lavandula system.',
     'category': 'Agriculture',
     'author': 'Smart Farm',
     'license': 'LGPL-3',

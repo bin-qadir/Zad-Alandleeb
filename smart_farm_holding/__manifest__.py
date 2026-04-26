@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm Holding — Enterprise Platform',
+    'name': 'Lavandula Holding — Enterprise Platform',
     'version': '18.0.1.0.0',
     'summary': (
         'SAP/Oracle-style master holding platform — '
@@ -29,7 +29,7 @@
         '   Smart Farm Configuration → Company Activity Setup.\n'
         '   Controls which menus each company sees.\n'
     ),
-    'category': 'Smart Farm',
+    'category': 'Lavandula',
     'author': 'bin-qadir',
     'license': 'LGPL-3',
     'depends': [

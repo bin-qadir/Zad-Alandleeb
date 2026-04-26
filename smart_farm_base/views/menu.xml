@@ -3,12 +3,12 @@
     <data>
 
         <!-- ══════════════════════════════════════════════════
-             ROOT APP MENU — Smart Farm
+             ROOT APP MENU — Lavandula
              Sequence 100 keeps it after standard Odoo apps.
         ══════════════════════════════════════════════════ -->
         <menuitem
             id="menu_smart_farm_root"
-            name="Smart Farm"
+            name="Lavandula"
             sequence="100"
             web_icon="smart_farm_base,static/description/icon.png"
         />

@@ -1,7 +1,7 @@
 {
-    'name': 'Smart Farm Project',
+    'name': 'Lavandula Project',
     'version': '18.0.1.2.0',
-    'summary': 'Farm project management for the Smart Farm system',
+    'summary': 'Farm project management for the Lavandula system',
     'description': 'Manage farm projects and fields, linked to Odoo project tasks.',
     'category': 'Agriculture',
     'author': 'Smart Farm',

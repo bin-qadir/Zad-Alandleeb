@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm Material Request',
+    'name': 'Lavandula Material Request',
     'version': '18.0.1.0.0',
     'summary': 'Material Request → RFQ → PO → Receipt cost tracking linked to BOQ and Job Orders',
     'description': (

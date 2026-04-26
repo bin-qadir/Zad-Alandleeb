@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm Control',
+    'name': 'Lavandula Control',
     'version': '18.0.1.3.0',
     'summary': 'Enterprise project control: phase locking, committed cost, profit/variance engine',
     'description': (

@@ -11,7 +11,7 @@
         -->
 
         <record id="action_smart_farm_analytics" model="ir.actions.client">
-            <field name="name">Smart Farm — Analytics</field>
+            <field name="name">Lavandula — Analytics</field>
             <field name="tag">smart_farm_analytics</field>
             <field name="target">current</field>
         </record>

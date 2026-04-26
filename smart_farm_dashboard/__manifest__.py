@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm Executive Dashboard',
+    'name': 'Lavandula Executive Dashboard',
     'version': '18.0.1.0.0',
     'summary': 'PMO portfolio dashboard: phase distribution, KPIs, health, financials',
     'description': (

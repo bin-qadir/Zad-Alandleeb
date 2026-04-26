@@ -72,21 +72,18 @@
 
 <!--
     ══════════════════════════════════════════════════════════════════
-    DEACTIVATED — operational menus moved inside Project form tabs
-    Records preserved; menus hidden at DB level (active=False).
+    HIDDEN — standalone Construction app root suppressed.
+    Operational flows (BOQ, Materials, Procurement, Execution,
+    Inspection, Approval, Claims, Invoices) live inside the Project
+    form tabs and have NO standalone menu definitions — do NOT add
+    bare <record> blocks for them here, as that would attempt to
+    INSERT ir.ui.menu rows with a NULL name and crash the ORM.
     ══════════════════════════════════════════════════════════════════
 -->
-<!-- ══ Hide standalone Construction app root — accessed via Smart Farm → Executive Dashboard ══ -->
-<record id="menu_sf_construction_root"        model="ir.ui.menu"><field name="active" eval="False"/></record>
-
-<record id="menu_sf_construction_boq"         model="ir.ui.menu"><field name="active" eval="False"/></record>
-<record id="menu_sf_construction_material"    model="ir.ui.menu"><field name="active" eval="False"/></record>
-<record id="menu_sf_construction_procurement" model="ir.ui.menu"><field name="active" eval="False"/></record>
-<record id="menu_sf_construction_execution"   model="ir.ui.menu"><field name="active" eval="False"/></record>
-<record id="menu_sf_construction_inspection"  model="ir.ui.menu"><field name="active" eval="False"/></record>
-<record id="menu_sf_construction_approval"    model="ir.ui.menu"><field name="active" eval="False"/></record>
-<record id="menu_sf_construction_claims"      model="ir.ui.menu"><field name="active" eval="False"/></record>
-<record id="menu_sf_construction_invoices"    model="ir.ui.menu"><field name="active" eval="False"/></record>
+<!-- ══ Hide standalone Construction app root — restrict to group_no_one (safe; name defined above) ══ -->
+<record id="menu_sf_construction_root" model="ir.ui.menu">
+    <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+</record>
 
 </data>
 </odoo>

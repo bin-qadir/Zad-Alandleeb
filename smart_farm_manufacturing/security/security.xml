@@ -3,8 +3,8 @@
     <data>
 
         <record id="module_category_manufacturing_sf" model="ir.module.category">
-            <field name="name">Manufacturing (Smart Farm)</field>
-            <field name="description">Smart Farm — Manufacturing &amp; Packing operational module.</field>
+            <field name="name">Manufacturing (Lavandula)</field>
+            <field name="description">Lavandula — Manufacturing &amp; Packing operational module.</field>
             <field name="sequence">70</field>
         </record>
 

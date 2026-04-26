@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm Procurement',
+    'name': 'Lavandula Procurement',
     'version': '18.0.1.0.0',
     'summary': 'Procurement layer: BOQ Analysis → RFQ → Purchase Orders → Actual Cost Tracking',
     'description': (

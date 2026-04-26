@@ -4,7 +4,7 @@
 
         <record id="module_category_livestock" model="ir.module.category">
             <field name="name">Livestock</field>
-            <field name="description">Smart Farm — Livestock operational module.</field>
+            <field name="description">Lavandula — Livestock operational module.</field>
             <field name="sequence">80</field>
         </record>
 

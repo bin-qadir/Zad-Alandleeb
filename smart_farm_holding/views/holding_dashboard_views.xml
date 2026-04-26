@@ -10,7 +10,7 @@
             <field name="name">smartfarm.holding.dashboard.form</field>
             <field name="model">smartfarm.holding.dashboard</field>
             <field name="arch" type="xml">
-                <form string="Smart Farm Holding — Executive Dashboard"
+                <form string="Lavandula Holding — Executive Dashboard"
                       create="false" delete="false">
                     <sheet>
                         <field name="currency_id" invisible="True"/>
@@ -24,7 +24,7 @@
                                         <i class="fa fa-building"/>
                                     </div>
                                     <div>
-                                        <div class="hd-title">Smart Farm Holding</div>
+                                        <div class="hd-title">Lavandula Holding</div>
                                         <div class="hd-subtitle">
                                             Enterprise Executive Dashboard
                                             — <field name="holding_company_name" readonly="True"/>

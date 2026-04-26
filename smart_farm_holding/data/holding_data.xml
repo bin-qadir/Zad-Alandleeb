@@ -4,7 +4,7 @@
 
         <!-- Create the singleton Holding Dashboard record -->
         <record id="holding_dashboard_singleton" model="smartfarm.holding.dashboard">
-            <field name="name">Smart Farm Holding — Executive Dashboard</field>
+            <field name="name">Lavandula Holding — Executive Dashboard</field>
         </record>
 
     </data>

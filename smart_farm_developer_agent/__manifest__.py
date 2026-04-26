@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm — Developer Agent',
+    'name': 'Lavandula — Developer Agent',
     'version': '18.0.1.0.0',
     'summary': 'Mythos AI Developer Agent: scan code, review Studio views, generate Claude prompts',
     'description': (
@@ -14,7 +14,7 @@
         '  • Tasks are produced for human review before any action\n'
         '  • BOQ / Costing / Execution never touched without explicit approval\n'
     ),
-    'category': 'Smart Farm',
+    'category': 'Lavandula',
     'author': 'bin-qadir',
     'license': 'LGPL-3',
     'depends': [

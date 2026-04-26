@@ -1,7 +1,7 @@
 {
-    'name': 'Smart Farm — Livestock',
+    'name': 'Lavandula — Livestock',
     'version': '18.0.2.0.0',
-    'summary': 'Livestock activity — filtered mirror of Smart Farm engine',
+    'summary': 'Livestock activity — filtered mirror of Lavandula engine',
     'description': (
         'Standalone application for the Livestock business activity.\n\n'
         'This module is a FILTERED MIRROR of the Smart Farm engine.\n'
@@ -11,7 +11,7 @@
         'Menu: Dashboard · Projects · Divisions · Subdivisions · BOQ · '
         'Material · Procurement · Execution · Inspection · Approval · Claims · Invoices'
     ),
-    'category': 'Smart Farm/Livestock',
+    'category': 'Lavandula/Livestock',
     'author': 'bin-qadir',
     'license': 'LGPL-3',
     'depends': [

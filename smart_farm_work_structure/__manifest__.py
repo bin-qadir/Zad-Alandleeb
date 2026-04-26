@@ -1,7 +1,7 @@
 {
-    'name': 'Smart Farm Work Structure',
+    'name': 'Lavandula Work Structure',
     'version': '18.0.1.0.0',
-    'summary': 'Work classification structure for the Smart Farm system',
+    'summary': 'Work classification structure for the Lavandula system',
     'description': 'Defines division and subdivision work categories used before BOQ.',
     'category': 'Agriculture',
     'author': 'Smart Farm',

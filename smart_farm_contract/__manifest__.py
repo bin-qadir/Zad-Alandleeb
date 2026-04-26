@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm Contract',
+    'name': 'Lavandula Contract',
     'version': '18.0.1.0.0',
     'summary': 'Contract layer between BOQ Analysis and Job Order execution',
     'description': (

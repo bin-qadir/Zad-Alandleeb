@@ -3,13 +3,13 @@
     <data>
 
         <!-- ══════════════════════════════════════════════════════════════════
-             MODULE CATEGORY — Smart Farm Enterprise
+             MODULE CATEGORY — Lavandula Enterprise
         ══════════════════════════════════════════════════════════════════ -->
 
         <record id="module_category_smartfarm_enterprise" model="ir.module.category">
-            <field name="name">Smart Farm Enterprise</field>
+            <field name="name">Lavandula Enterprise</field>
             <field name="description">
-                Enterprise-wide roles for the Smart Farm Holding platform.
+                Enterprise-wide roles for the Lavandula Holding platform.
                 Covers all companies: Construction, Agriculture, Manufacturing, Livestock.
             </field>
             <field name="sequence">10</field>

@@ -2,9 +2,9 @@
 <odoo>
     <data>
 
-        <!-- Smart Farm category -->
+        <!-- Lavandula category -->
         <record id="module_category_smart_farm" model="ir.module.category">
-            <field name="name">Smart Farm</field>
+            <field name="name">Lavandula</field>
             <field name="sequence">100</field>
         </record>
 

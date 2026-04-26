@@ -1,8 +1,8 @@
 {
-    'name': 'Smart Farm — Super AI Agent',
+    'name': 'Lavandula — Super AI Agent',
     'version': '18.0.1.0.0',
     'summary': 'Mythos-style controlled AI brain for Construction — 10-layer architecture',
-    'category': 'Smart Farm',
+    'category': 'Lavandula',
     'author': 'bin-qadir',
     'license': 'LGPL-3',
     'depends': [

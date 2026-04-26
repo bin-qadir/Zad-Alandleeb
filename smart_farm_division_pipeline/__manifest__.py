@@ -1,5 +1,5 @@
 {
-    'name': 'Smart Farm Division Pipeline',
+    'name': 'Lavandula Division Pipeline',
     'version': '18.0.1.0.0',
     'summary': 'Division-level workflow pipeline engine: Pre-Execution → Execution → Control → Financial',
     'description': (
