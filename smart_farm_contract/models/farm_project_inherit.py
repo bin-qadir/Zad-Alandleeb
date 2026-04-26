@@ -11,6 +11,27 @@ class FarmProjectContractPhase(models.Model):
 
     _inherit = 'farm.project'
 
+    # ── TECHNICAL NOTE: Two parallel phase fields exist on farm.project ─────────
+    #
+    #   project_phase  (Selection)                             — defined HERE
+    #     Origin  : smart_farm_contract
+    #     Purpose : Drives the project LIFECYCLE gate (Pre-Tender → Tender →
+    #               Contract → Execution → Closing). Controls button visibility,
+    #               permitted actions, phase banners, and the Job Order approval
+    #               gate (requires has_approved_contract in Execution phase).
+    #     Values  : pre_tender | tender | contract | execution | closing
+    #
+    #   project_phase_id  (Many2one → project.phase.master)   — defined in
+    #                                                            smart_farm_boq
+    #     Origin  : smart_farm_boq
+    #     Purpose : Tracks the BOQ/procurement phase master record used to tag
+    #               BOQs and BOQ lines with a named phase. Displayed as a
+    #               statusbar in the project form header.
+    #
+    #   These two fields are INDEPENDENT. No automatic sync exists between them.
+    #   Do not attempt to unify them without a full migration plan.
+    # ─────────────────────────────────────────────────────────────────────────────
+
     # ── Project lifecycle phase ────────────────────────────────────────────────
     project_phase = fields.Selection(
         selection=[

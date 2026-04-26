@@ -14,6 +14,30 @@ class FarmProjectBoqInherit(models.Model):
 
     _inherit = 'farm.project'
 
+    # ── TECHNICAL NOTE: Two parallel phase fields exist on farm.project ─────────
+    #
+    #   project_phase_id  (Many2one → project.phase.master)   — defined HERE
+    #     Origin  : smart_farm_boq
+    #     Purpose : Tracks the BOQ/procurement phase master record. Used to tag
+    #               BOQs and their lines with a named phase (e.g. "Phase 1 –
+    #               Foundation"). Shown as a statusbar in the form header by
+    #               smart_farm_boq's inject view.
+    #     Relation: farm.boq.project_phase_id also points to project.phase.master.
+    #
+    #   project_phase  (Selection field)                       — defined in
+    #                                                            smart_farm_contract
+    #     Origin  : smart_farm_contract
+    #     Purpose : Drives the project LIFECYCLE gate (Pre-Tender → Tender →
+    #               Contract → Execution → Closing). Controls which header buttons
+    #               are visible, which actions are permitted, and which phase
+    #               banners are shown.
+    #     Relation: No link to project.phase.master; fully self-contained.
+    #
+    #   These two fields are INDEPENDENT. No automatic sync exists between them.
+    #   Do not attempt to unify them without a full migration plan:
+    #     - project_phase_id is a Many2one with stored BOQ/line relations
+    #     - project_phase is a Selection driving execution-gate business logic
+    # ─────────────────────────────────────────────────────────────────────────────
     project_phase_id = fields.Many2one(
         comodel_name='project.phase.master',
         string='Project Phase',

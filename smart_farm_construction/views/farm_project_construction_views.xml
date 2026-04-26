@@ -18,11 +18,8 @@
     <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
     <field name="arch" type="xml">
 
-        <!-- ── 1. Inject Construction Phase into the main info group ──── -->
-        <!--  lifecycle_stage_id was removed from the project form in     -->
-        <!--  v18.0.1.3.0 (replaced by project_phase_id statusbar).      -->
-        <!--  Construction Phase radio is injected after business_activity-->
-        <!--  which is the first field in group_project_details.          -->
+        <!-- ── 1. Construction Phase — injected after business_activity ── -->
+        <!--  Placed as the first field in group_project_details.         -->
         <field name="business_activity" position="after">
             <field name="construction_phase"
                    widget="radio"
