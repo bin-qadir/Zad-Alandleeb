@@ -62,5 +62,18 @@
             </field>
         </record>
 
+        <!-- Inject project_phase_id Group By into the project search view -->
+        <record id="view_farm_project_search_boq_inherit" model="ir.ui.view">
+            <field name="name">farm.project.search.boq.inherit</field>
+            <field name="model">farm.project</field>
+            <field name="inherit_id" ref="smart_farm_project.view_farm_project_search"/>
+            <field name="arch" type="xml">
+                <filter name="group_manager" position="before">
+                    <filter string="Project Phase" name="group_phase"
+                            context="{'group_by': 'project_phase_id'}"/>
+                </filter>
+            </field>
+        </record>
+
     </data>
 </odoo>

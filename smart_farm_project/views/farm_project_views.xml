@@ -346,8 +346,7 @@
                     <group expand="0" string="Group By">
                         <filter string="Business Activity" name="group_activity"
                                 context="{'group_by': 'business_activity'}"/>
-                        <filter string="Lifecycle Stage" name="group_stage"
-                                context="{'group_by': 'lifecycle_stage_id'}"/>
+                        <!-- project_phase_id group-by injected by smart_farm_boq search inherit -->
                         <filter string="Status" name="group_state"
                                 context="{'group_by': 'state'}"/>
                         <filter string="Project Manager" name="group_manager"
