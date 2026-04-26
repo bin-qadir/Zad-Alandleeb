@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Mythos Basic Monitor — Scheduled Action
+    ════════════════════════════════════════
+    Runs every 60 minutes.
+    Calls mythos.agent._run_basic_monitor() which performs three checks:
+      1. BOQ Agent   — actual_cost > estimated_cost * 1.10
+      2. Exec Agent  — execution_progress_pct < 50% in execution phase
+      3. Fin Agent   — actual_total_cost > contract_value
+
+    Safety: only creates mythos.alert records. No emails, no external APIs,
+    no modification of existing farm.project or farm.boq data.
+-->
+<odoo noupdate="1">
+<data>
+
+    <record id="ir_cron_mythos_basic_monitor" model="ir.cron">
+        <field name="name">Mythos Basic Monitor</field>
+        <field name="model_id" ref="smart_farm_mythos_agents.model_mythos_agent"/>
+        <field name="state">code</field>
+        <field name="code">model._run_basic_monitor()</field>
+        <field name="interval_number">60</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+        <field name="priority">10</field>
+    </record>
+
+</data>
+</odoo>

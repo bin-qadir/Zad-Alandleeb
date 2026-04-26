@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Mythos Basic Monitor Agents — Step 1 Seed Data
+    ═══════════════════════════════════════════════
+    noupdate="1" — created once, never overwritten on upgrade.
+
+    These three agents are the entry points for the Mythos Basic Monitor
+    cron (_run_basic_monitor).  Their codes are referenced by the cron
+    method; do not rename the codes without updating the cron logic.
+
+    They coexist with the full-layer agents (mythos_agent_data.xml)
+    and are assigned to the most appropriate existing layer + function.
+-->
+<odoo noupdate="1">
+<data>
+
+    <!-- ── BOQ Agent ─────────────────────────────────────────────────────── -->
+    <record id="mythos_agent_basic_boq" model="mythos.agent">
+        <field name="name">BOQ Monitor Agent</field>
+        <field name="code">boq_agent</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">pre_contract</field>
+        <field name="agent_function">boq_analysis</field>
+        <field name="state">active</field>
+        <field name="priority">1</field>
+        <field name="sequence">5</field>
+        <field name="description">
+Basic monitor agent for BOQ cost tracking.
+Reads all farm.boq records and compares the related project's estimated_cost
+to actual_total_cost. Creates a High-severity alert if actual_total_cost
+exceeds estimated_cost by more than 10%.
+
+Code: boq_agent — referenced by the Mythos Basic Monitor cron.
+        </field>
+    </record>
+
+    <!-- ── Execution Agent ───────────────────────────────────────────────── -->
+    <record id="mythos_agent_basic_execution" model="mythos.agent">
+        <field name="name">Execution Monitor Agent</field>
+        <field name="code">execution_agent</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">execution</field>
+        <field name="agent_function">job_order_monitor</field>
+        <field name="state">active</field>
+        <field name="priority">1</field>
+        <field name="sequence">5</field>
+        <field name="description">
+Basic monitor agent for execution progress tracking.
+Reads all farm.project records in Execution phase (project_phase = 'execution').
+Creates a Medium-severity Execution Delay alert if execution_progress_pct &lt; 50%.
+
+Code: execution_agent — referenced by the Mythos Basic Monitor cron.
+        </field>
+    </record>
+
+    <!-- ── Financial Agent ───────────────────────────────────────────────── -->
+    <record id="mythos_agent_basic_financial" model="mythos.agent">
+        <field name="name">Financial Monitor Agent</field>
+        <field name="code">financial_agent</field>
+        <field name="business_activity">construction</field>
+        <field name="agent_layer">financial_claims</field>
+        <field name="agent_function">invoicing_control</field>
+        <field name="state">active</field>
+        <field name="priority">1</field>
+        <field name="sequence">5</field>
+        <field name="description">
+Basic monitor agent for financial budget control.
+Reads all farm.project records and compares actual_total_cost to contract_value.
+Creates a Critical-severity alert if actual_total_cost exceeds contract_value.
+
+Code: financial_agent — referenced by the Mythos Basic Monitor cron.
+        </field>
+    </record>
+
+</data>
+</odoo>

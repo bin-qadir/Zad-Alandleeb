@@ -118,6 +118,30 @@ class MythosAgent(models.Model):
         help='Lower sequence = displayed first within the same layer.',
     )
 
+    # ── Lifecycle state (Step 1 — basic monitor integration) ──────────────────
+
+    state = fields.Selection(
+        selection=[
+            ('draft',  'Draft'),
+            ('active', 'Active'),
+            ('paused', 'Paused'),
+        ],
+        string='State',
+        default='active',
+        required=True,
+        tracking=True,
+        help=(
+            'Draft: agent defined but not yet enabled.\n'
+            'Active: agent is enabled and will run on the cron schedule.\n'
+            'Paused: agent is temporarily disabled.'
+        ),
+    )
+    priority = fields.Integer(
+        string='Priority',
+        default=5,
+        help='Lower number = higher priority (1 = highest, 10 = lowest).',
+    )
+
     # ── Run metadata ──────────────────────────────────────────────────────────
 
     last_run_datetime = fields.Datetime(
@@ -170,6 +194,18 @@ class MythosAgent(models.Model):
         compute='_compute_log_count',
     )
 
+    # ── Alerts (from mythos.alert via agent_id) ───────────────────────────────
+
+    alert_ids = fields.One2many(
+        'mythos.alert',
+        'agent_id',
+        string='Alerts',
+    )
+    alert_count = fields.Integer(
+        string='Open Alerts',
+        compute='_compute_alert_count',
+    )
+
     # ────────────────────────────────────────────────────────────────────────
     # Computed
     # ────────────────────────────────────────────────────────────────────────
@@ -178,6 +214,13 @@ class MythosAgent(models.Model):
     def _compute_log_count(self):
         for rec in self:
             rec.log_count = len(rec.log_ids)
+
+    @api.depends('alert_ids.state')
+    def _compute_alert_count(self):
+        for rec in self:
+            rec.alert_count = len(rec.alert_ids.filtered(
+                lambda a: a.state != 'resolved'
+            ))
 
     # ────────────────────────────────────────────────────────────────────────
     # Constraints
@@ -248,3 +291,125 @@ class MythosAgent(models.Model):
             'domain':    [('agent_id', '=', self.id)],
             'context':   {'default_agent_id': self.id},
         }
+
+    def action_view_alerts(self):
+        """Open open alerts for this agent."""
+        self.ensure_one()
+        return {
+            'type':      'ir.actions.act_window',
+            'name':      _('Alerts — %s') % self.name,
+            'res_model': 'mythos.alert',
+            'view_mode': 'list,form',
+            'domain':    [('agent_id', '=', self.id)],
+            'context':   {'default_agent_id': self.id},
+        }
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Mythos Basic Monitor — cron entry point (Step 1)
+    # ────────────────────────────────────────────────────────────────────────
+
+    @api.model
+    def _run_basic_monitor(self):
+        """Cron: Mythos Basic Monitor (runs every 60 minutes).
+
+        Three lightweight checks using the three basic monitor agents
+        (codes: boq_agent, execution_agent, financial_agent).
+
+        SAFETY:
+          - Never sends emails or external messages
+          - Never calls external APIs
+          - Never modifies existing farm.project / farm.boq data
+          - Only creates mythos.alert records
+          - Duplicate-safe: skips if an open alert already exists for the
+            same agent + related record combination
+        """
+        Alert = self.env['mythos.alert']
+
+        def _get_agent(code):
+            return self.search([('code', '=', code), ('state', '=', 'active')], limit=1)
+
+        def _alert_exists(agent, related_model, related_id):
+            return bool(Alert.search([
+                ('agent_id',      '=', agent.id),
+                ('related_model', '=', related_model),
+                ('related_id',    '=', related_id),
+                ('state',         '!=', 'resolved'),
+            ], limit=1))
+
+        # ── 1. BOQ Agent — actual cost > 110% of estimated cost ───────────────
+        boq_agent = _get_agent('boq_agent')
+        if boq_agent:
+            for boq in self.env['farm.boq'].search([]):
+                proj = boq.project_id
+                if not proj:
+                    continue
+                estimated = proj.estimated_cost or 0.0
+                actual    = proj.actual_total_cost or 0.0
+                if estimated and actual and actual > estimated * 1.1:
+                    if not _alert_exists(boq_agent, 'farm.boq', boq.id):
+                        Alert.create({
+                            'name':          _('BOQ Cost Overrun — %s') % boq.name,
+                            'agent_id':      boq_agent.id,
+                            'severity':      'high',
+                            'message':       _(
+                                'Actual cost (%(actual).2f) exceeds estimated cost '
+                                '(%(estimated).2f) by more than 10%% on BOQ %(boq)s '
+                                '(Project: %(project)s).',
+                                actual=actual,
+                                estimated=estimated,
+                                boq=boq.name,
+                                project=proj.name,
+                            ),
+                            'related_model': 'farm.boq',
+                            'related_id':    boq.id,
+                        })
+            _logger.info('MythosBasicMonitor: BOQ Agent check complete.')
+
+        # ── 2. Execution Agent — progress < 50% in execution phase ────────────
+        exec_agent = _get_agent('execution_agent')
+        if exec_agent:
+            for proj in self.env['farm.project'].search([
+                ('project_phase', '=', 'execution'),
+            ]):
+                if (proj.execution_progress_pct or 0.0) < 50.0:
+                    if not _alert_exists(exec_agent, 'farm.project', proj.id):
+                        Alert.create({
+                            'name':          _('Execution Delay — %s') % proj.name,
+                            'agent_id':      exec_agent.id,
+                            'severity':      'medium',
+                            'message':       _(
+                                'Project %(project)s is in Execution phase but only '
+                                '%(pct).1f%% complete — below the 50%% threshold.',
+                                project=proj.name,
+                                pct=proj.execution_progress_pct or 0.0,
+                            ),
+                            'related_model': 'farm.project',
+                            'related_id':    proj.id,
+                        })
+            _logger.info('MythosBasicMonitor: Execution Agent check complete.')
+
+        # ── 3. Financial Agent — actual total cost > contract value ───────────
+        fin_agent = _get_agent('financial_agent')
+        if fin_agent:
+            for proj in self.env['farm.project'].search([]):
+                contract_val = proj.contract_value or 0.0
+                actual_cost  = proj.actual_total_cost or 0.0
+                if contract_val and actual_cost > contract_val:
+                    if not _alert_exists(fin_agent, 'farm.project', proj.id):
+                        Alert.create({
+                            'name':          _('Cost Exceeds Contract — %s') % proj.name,
+                            'agent_id':      fin_agent.id,
+                            'severity':      'critical',
+                            'message':       _(
+                                'Actual total cost (%(actual).2f) has exceeded the '
+                                'contract value (%(contract).2f) on project %(project)s.',
+                                actual=actual_cost,
+                                contract=contract_val,
+                                project=proj.name,
+                            ),
+                            'related_model': 'farm.project',
+                            'related_id':    proj.id,
+                        })
+            _logger.info('MythosBasicMonitor: Financial Agent check complete.')
+
+        _logger.info('MythosBasicMonitor: full run complete.')

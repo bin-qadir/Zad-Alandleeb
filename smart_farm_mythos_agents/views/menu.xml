@@ -45,5 +45,15 @@
     groups="base.group_user"
 />
 
+<!-- Alerts — created by the Basic Monitor cron and future agents -->
+<menuitem
+    id="menu_mythos_alerts"
+    name="Alerts"
+    parent="menu_mythos_ai_root"
+    action="smart_farm_mythos_agents.action_mythos_alert"
+    sequence="4"
+    groups="base.group_user"
+/>
+
 </data>
 </odoo>

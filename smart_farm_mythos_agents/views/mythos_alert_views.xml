@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS ALERT — List View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_alert_list" model="ir.ui.view">
+    <field name="name">mythos.alert.list</field>
+    <field name="model">mythos.alert</field>
+    <field name="arch" type="xml">
+        <list string="Mythos Alerts"
+              default_order="date desc, severity desc"
+              decoration-danger="severity == 'critical'"
+              decoration-warning="severity == 'high'"
+              decoration-info="severity == 'medium'"
+              decoration-muted="state == 'resolved'">
+            <field name="date" string="Date" width="150"/>
+            <field name="name" string="Alert"/>
+            <field name="agent_id" string="Agent" optional="show"/>
+            <field name="severity" widget="badge"
+                   decoration-danger="severity == 'critical'"
+                   decoration-warning="severity == 'high'"
+                   decoration-info="severity == 'medium'"
+                   decoration-muted="severity == 'low'"/>
+            <field name="state" widget="badge"
+                   decoration-danger="state == 'new'"
+                   decoration-warning="state == 'acknowledged'"
+                   decoration-success="state == 'resolved'"/>
+            <field name="related_model" string="Source Model" optional="show"/>
+            <field name="related_id"    string="Source ID"    optional="show"/>
+            <!-- Row actions -->
+            <button name="action_acknowledge" type="object"
+                    string="Acknowledge" icon="fa-eye"
+                    invisible="state != 'new'"/>
+            <button name="action_resolve" type="object"
+                    string="Resolve" icon="fa-check"
+                    invisible="state == 'resolved'"/>
+        </list>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS ALERT — Form View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_alert_form" model="ir.ui.view">
+    <field name="name">mythos.alert.form</field>
+    <field name="model">mythos.alert</field>
+    <field name="arch" type="xml">
+        <form string="Mythos Alert">
+            <header>
+                <button name="action_acknowledge" type="object"
+                        string="Acknowledge"
+                        class="btn-warning"
+                        icon="fa-eye"
+                        invisible="state != 'new'"/>
+                <button name="action_resolve" type="object"
+                        string="Mark Resolved"
+                        class="btn-success"
+                        icon="fa-check"
+                        invisible="state == 'resolved'"/>
+                <field name="state" widget="statusbar"
+                       statusbar_visible="new,acknowledged,resolved"/>
+            </header>
+            <sheet>
+                <div class="oe_title">
+                    <h1><field name="name" placeholder="Alert description…"/></h1>
+                </div>
+
+                <group>
+                    <group string="Source">
+                        <field name="agent_id"/>
+                        <field name="severity" widget="badge"
+                               decoration-danger="severity == 'critical'"
+                               decoration-warning="severity == 'high'"
+                               decoration-info="severity == 'medium'"
+                               decoration-muted="severity == 'low'"/>
+                        <field name="date" string="Detected"/>
+                    </group>
+                    <group string="Related Record">
+                        <field name="related_model" string="Model"/>
+                        <field name="related_id"    string="Record ID"/>
+                    </group>
+                </group>
+
+                <group string="Message">
+                    <field name="message" nolabel="1"
+                           placeholder="Alert details will appear here…"/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS ALERT — Search View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_alert_search" model="ir.ui.view">
+    <field name="name">mythos.alert.search</field>
+    <field name="model">mythos.alert</field>
+    <field name="arch" type="xml">
+        <search string="Alerts">
+            <field name="name"/>
+            <field name="agent_id"/>
+            <!-- Severity filters -->
+            <filter string="Critical" name="filter_critical"
+                    domain="[('severity','=','critical')]"/>
+            <filter string="High" name="filter_high"
+                    domain="[('severity','=','high')]"/>
+            <separator/>
+            <!-- State filters -->
+            <filter string="New" name="filter_new"
+                    domain="[('state','=','new')]"/>
+            <filter string="Acknowledged" name="filter_ack"
+                    domain="[('state','=','acknowledged')]"/>
+            <filter string="Resolved" name="filter_resolved"
+                    domain="[('state','=','resolved')]"/>
+            <filter string="Open" name="filter_open"
+                    domain="[('state','!=','resolved')]"/>
+            <separator/>
+            <group expand="0" string="Group By">
+                <filter string="Agent"    name="group_agent"
+                        context="{'group_by':'agent_id'}"/>
+                <filter string="Severity" name="group_severity"
+                        context="{'group_by':'severity'}"/>
+                <filter string="State"    name="group_state"
+                        context="{'group_by':'state'}"/>
+                <filter string="Date"     name="group_date"
+                        context="{'group_by':'date:day'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS ALERT — Window Action
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="action_mythos_alert" model="ir.actions.act_window">
+    <field name="name">Alerts</field>
+    <field name="res_model">mythos.alert</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_mythos_alert_search"/>
+    <field name="context">{'search_default_filter_open': 1}</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            No alerts yet
+        </p>
+        <p>
+            Mythos AI alerts are generated automatically by the Basic Monitor
+            cron (every 60 minutes). Alerts are created when BOQ costs exceed
+            estimates, execution progress falls behind, or actual costs exceed
+            contract values.
+        </p>
+    </field>
+</record>
+
+</data>
+</odoo>
