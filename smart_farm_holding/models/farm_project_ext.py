@@ -45,7 +45,7 @@ class FarmProjectHoldingExt(models.Model):
     business_activity = fields.Selection(
         compute='_compute_business_activity',
         store=True,
-        readonly=True,
+        readonly=False,   # Allow manual override on draft/new projects (view controls editability)
         # Keep tracking so chatter logs if company changes
         tracking=True,
     )
