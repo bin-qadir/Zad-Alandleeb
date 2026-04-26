@@ -4,11 +4,17 @@
 
         <!-- ===== farm.project form — holding overlay ===== -->
         <!--
-            When smart_farm_holding is installed, business_activity is computed
-            from the company and must not be user-editable.
+            When smart_farm_holding is installed, business_activity is derived
+            from the company-activity mapping on existing (non-draft) projects.
+
+            Rules:
+              - Draft / new project: user may freely select the activity (radio).
+              - Activity-app context (default_business_activity in ctx): readonly
+                regardless of state — the app enforces its own activity.
+              - Running / done project: readonly — activity is fixed at this point.
 
             This view:
-              1. Replaces the radio widget with a readonly badge.
+              1. Makes business_activity readonly only when appropriate.
               2. Injects project_label above it so users see "Construction Project" etc.
               3. Injects company_id into the right group.
         -->
@@ -19,15 +25,9 @@
             <field name="inherit_id" ref="smart_farm_project.view_farm_project_form"/>
             <field name="arch" type="xml">
 
-                <!-- 1. Replace the manual radio with a readonly badge -->
-                <field name="business_activity" position="replace">
-                    <field name="business_activity" widget="badge"
-                           decoration-info="business_activity == 'construction'"
-                           decoration-success="business_activity == 'agriculture'"
-                           decoration-warning="business_activity == 'manufacturing'"
-                           decoration-danger="business_activity == 'livestock'"
-                           readonly="1"
-                           string="Business Activity"/>
+                <!-- 1. Allow editing on draft/new; lock when activity-app context OR after draft -->
+                <field name="business_activity" position="attributes">
+                    <attribute name="readonly">context.get('default_business_activity', False) != False or state not in ('draft', False)</attribute>
                 </field>
 
                 <!-- 2. Inject project_label above business_activity -->

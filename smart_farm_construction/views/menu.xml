@@ -73,16 +73,16 @@
 <!--
     ══════════════════════════════════════════════════════════════════
     HIDDEN — standalone Construction app root suppressed.
-    Operational flows (BOQ, Materials, Procurement, Execution,
-    Inspection, Approval, Claims, Invoices) live inside the Project
-    form tabs and have NO standalone menu definitions — do NOT add
-    bare <record> blocks for them here, as that would attempt to
-    INSERT ir.ui.menu rows with a NULL name and crash the ORM.
+    active=False is safe here because menu_sf_construction_root is
+    DEFINED WITH A NAME above — this is NOT an orphan record.
+    Operational flows live inside Lavandula Project form tabs.
+    Do NOT add bare <record> blocks for menus that have no name
+    definition — that would INSERT ir.ui.menu with NULL name and crash.
     ══════════════════════════════════════════════════════════════════
 -->
-<!-- ══ Hide standalone Construction app root — restrict to group_no_one (safe; name defined above) ══ -->
+<!-- ══ Hide Construction app tile — active=False (safe; name defined above, same as Agriculture/Livestock) ══ -->
 <record id="menu_sf_construction_root" model="ir.ui.menu">
-    <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    <field name="active" eval="False"/>
 </record>
 
 </data>
