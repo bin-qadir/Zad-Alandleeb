@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS TELEGRAM BOT — List View
+     bot_token is intentionally excluded.
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_telegram_bot_list" model="ir.ui.view">
+    <field name="name">mythos.telegram.bot.list</field>
+    <field name="model">mythos.telegram.bot</field>
+    <field name="arch" type="xml">
+        <list string="Telegram Bots"
+              default_order="domain_type,name"
+              decoration-muted="not active or state == 'paused'"
+              decoration-success="state == 'active'"
+              decoration-warning="state == 'draft'">
+            <field name="name"/>
+            <field name="code" optional="show"/>
+            <field name="domain_type" widget="badge"
+                   decoration-info="domain_type == 'pre_contract'"
+                   decoration-primary="domain_type == 'contract'"
+                   decoration-success="domain_type == 'execution'"
+                   decoration-danger="domain_type == 'financial'"
+                   decoration-warning="domain_type == 'quality_risk'"
+                   decoration-muted="domain_type in ('system','developer')"/>
+            <field name="agent_id" optional="show"/>
+            <field name="bot_username" optional="show"/>
+            <field name="state" widget="badge"
+                   decoration-success="state == 'active'"
+                   decoration-warning="state == 'draft'"
+                   decoration-muted="state == 'paused'"/>
+            <field name="active" column_invisible="True"/>
+            <field name="last_message_date" optional="show"/>
+            <!-- bot_token is NEVER shown in list view -->
+        </list>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS TELEGRAM BOT — Form View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_telegram_bot_form" model="ir.ui.view">
+    <field name="name">mythos.telegram.bot.form</field>
+    <field name="model">mythos.telegram.bot</field>
+    <field name="arch" type="xml">
+        <form string="Telegram Bot">
+            <header>
+                <!-- Connection / message buttons — no external API calls (Step 3) -->
+                <button name="action_test_connection"
+                        type="object"
+                        string="Test Connection"
+                        class="btn-secondary"
+                        icon="fa-plug"/>
+                <button name="action_send_test_message"
+                        type="object"
+                        string="Send Test Message"
+                        class="btn-secondary"
+                        icon="fa-paper-plane"
+                        invisible="state != 'active'"/>
+                <button name="action_activate"
+                        type="object"
+                        string="Activate Bot"
+                        class="btn-primary"
+                        icon="fa-play"
+                        invisible="state == 'active'"/>
+                <button name="action_pause"
+                        type="object"
+                        string="Pause Bot"
+                        class="btn-warning"
+                        icon="fa-pause"
+                        invisible="state != 'active'"/>
+
+                <!-- State bar -->
+                <field name="state" widget="statusbar"
+                       statusbar_visible="draft,active,paused"
+                       readonly="1"/>
+            </header>
+            <sheet>
+
+                <!-- ── Stat buttons ─────────────────────────────────────────── -->
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_messages"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-comment">
+                        <field name="message_count" widget="statinfo" string="Messages"/>
+                    </button>
+                </div>
+
+                <!-- ── Title ────────────────────────────────────────────────── -->
+                <div class="oe_title">
+                    <h1>
+                        <field name="name" placeholder="Bot Name…"/>
+                    </h1>
+                    <div class="text-muted small" style="font-family:monospace">
+                        <field name="code" readonly="1" nolabel="1"/>
+                    </div>
+                </div>
+
+                <!-- ── Basic Info + Telegram Settings ───────────────────────── -->
+                <group>
+                    <group string="Basic Info">
+                        <field name="domain_type"/>
+                        <field name="agent_id"/>
+                        <field name="active"/>
+                    </group>
+                    <group string="Telegram Settings">
+                        <field name="bot_username"/>
+                        <field name="chat_id"/>
+                        <!-- bot_token: masked display, visible to system admins only -->
+                        <field name="bot_token"
+                               password="True"
+                               groups="base.group_system"
+                               placeholder="Paste token from @BotFather (admin only)"/>
+                        <field name="webhook_url"
+                               placeholder="https://yourserver.com/mythos/webhook/… (Step 4+)"/>
+                        <field name="last_message_date" readonly="1"/>
+                    </group>
+                </group>
+
+                <!-- ── Notes ─────────────────────────────────────────────────── -->
+                <group string="Notes">
+                    <field name="notes" nolabel="1"
+                           placeholder="Internal notes: purpose, pending tasks, known issues…"/>
+                </group>
+
+                <!-- ── Messages tab ─────────────────────────────────────────── -->
+                <notebook>
+                    <page string="Messages" name="tab_messages">
+                        <field name="message_ids" readonly="1">
+                            <list string="Messages"
+                                  default_order="message_date desc"
+                                  decoration-danger="state == 'failed'"
+                                  decoration-success="direction == 'outgoing' and state == 'processed'"
+                                  decoration-info="direction == 'incoming'">
+                                <field name="message_date" string="Date"/>
+                                <field name="direction" widget="badge"
+                                       decoration-primary="direction == 'outgoing'"
+                                       decoration-info="direction == 'incoming'"/>
+                                <field name="telegram_username" optional="show"/>
+                                <field name="message_text"/>
+                                <field name="state" widget="badge"
+                                       decoration-success="state == 'processed'"
+                                       decoration-warning="state == 'received'"
+                                       decoration-danger="state == 'failed'"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+
+            </sheet>
+            <chatter/>
+        </form>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS TELEGRAM BOT — Search View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_telegram_bot_search" model="ir.ui.view">
+    <field name="name">mythos.telegram.bot.search</field>
+    <field name="model">mythos.telegram.bot</field>
+    <field name="arch" type="xml">
+        <search string="Search Bots">
+            <field name="name"/>
+            <field name="code"/>
+            <field name="agent_id"/>
+            <separator/>
+            <filter string="Pre-Contract"       name="domain_pre_contract"
+                    domain="[('domain_type','=','pre_contract')]"/>
+            <filter string="Contract"           name="domain_contract"
+                    domain="[('domain_type','=','contract')]"/>
+            <filter string="Execution"          name="domain_execution"
+                    domain="[('domain_type','=','execution')]"/>
+            <filter string="Financial"          name="domain_financial"
+                    domain="[('domain_type','=','financial')]"/>
+            <filter string="Quality &amp; Risk" name="domain_quality_risk"
+                    domain="[('domain_type','=','quality_risk')]"/>
+            <filter string="System"             name="domain_system"
+                    domain="[('domain_type','=','system')]"/>
+            <filter string="Developer"          name="domain_developer"
+                    domain="[('domain_type','=','developer')]"/>
+            <separator/>
+            <filter string="Active" name="state_active"
+                    domain="[('state','=','active')]"/>
+            <filter string="Draft"  name="state_draft"
+                    domain="[('state','=','draft')]"/>
+            <filter string="Paused" name="state_paused"
+                    domain="[('state','=','paused')]"/>
+            <group expand="0" string="Group By">
+                <filter string="Domain" name="group_domain"
+                        context="{'group_by':'domain_type'}"/>
+                <filter string="State"  name="group_state"
+                        context="{'group_by':'state'}"/>
+                <filter string="Agent"  name="group_agent"
+                        context="{'group_by':'agent_id'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS TELEGRAM BOT — Action
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="action_mythos_telegram_bot" model="ir.actions.act_window">
+    <field name="name">Telegram Bots</field>
+    <field name="res_model">mythos.telegram.bot</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_mythos_telegram_bot_search"/>
+    <field name="context">{'search_default_group_domain': 1}</field>
+    <field name="target">current</field>
+</record>
+
+</data>
+</odoo>

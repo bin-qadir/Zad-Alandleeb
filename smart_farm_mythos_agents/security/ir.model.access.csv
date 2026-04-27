@@ -5,3 +5,7 @@ access_mythos_agent_log_manager,mythos.agent.log manager,model_mythos_agent_log,
 access_mythos_agent_log_user,mythos.agent.log user,model_mythos_agent_log,base.group_user,1,0,0,0
 access_mythos_alert_manager,mythos.alert manager,model_mythos_alert,base.group_system,1,1,1,1
 access_mythos_alert_user,mythos.alert user,model_mythos_alert,base.group_user,1,1,1,0
+access_mythos_telegram_bot_manager,mythos.telegram.bot manager,model_mythos_telegram_bot,base.group_system,1,1,1,1
+access_mythos_telegram_bot_user,mythos.telegram.bot user,model_mythos_telegram_bot,base.group_user,1,1,1,0
+access_mythos_telegram_message_manager,mythos.telegram.message manager,model_mythos_telegram_message,base.group_system,1,1,1,1
+access_mythos_telegram_message_user,mythos.telegram.message user,model_mythos_telegram_message,base.group_user,1,1,1,0

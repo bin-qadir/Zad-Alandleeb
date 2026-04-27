@@ -55,5 +55,25 @@
     groups="base.group_user"
 />
 
+<!-- Telegram Bots — bot registry per domain (Step 3) -->
+<menuitem
+    id="menu_mythos_telegram_bots"
+    name="Telegram Bots"
+    parent="menu_mythos_ai_root"
+    action="smart_farm_mythos_agents.action_mythos_telegram_bot"
+    sequence="5"
+    groups="base.group_user"
+/>
+
+<!-- Telegram Messages — message log (Step 3) -->
+<menuitem
+    id="menu_mythos_telegram_messages"
+    name="Telegram Messages"
+    parent="menu_mythos_ai_root"
+    action="smart_farm_mythos_agents.action_mythos_telegram_message"
+    sequence="6"
+    groups="base.group_user"
+/>
+
 </data>
 </odoo>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS TELEGRAM MESSAGE — List View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_telegram_message_list" model="ir.ui.view">
+    <field name="name">mythos.telegram.message.list</field>
+    <field name="model">mythos.telegram.message</field>
+    <field name="arch" type="xml">
+        <list string="Telegram Messages"
+              default_order="message_date desc"
+              decoration-danger="state == 'failed'"
+              decoration-success="direction == 'outgoing' and state == 'processed'"
+              decoration-info="direction == 'incoming' and state == 'received'">
+            <field name="message_date" string="Date"/>
+            <field name="bot_id"/>
+            <field name="domain_type" widget="badge"
+                   decoration-info="domain_type == 'pre_contract'"
+                   decoration-primary="domain_type == 'contract'"
+                   decoration-success="domain_type == 'execution'"
+                   decoration-danger="domain_type == 'financial'"
+                   decoration-warning="domain_type == 'quality_risk'"
+                   decoration-muted="domain_type in ('system','developer')"/>
+            <field name="direction" widget="badge"
+                   decoration-primary="direction == 'outgoing'"
+                   decoration-info="direction == 'incoming'"/>
+            <field name="telegram_username" optional="show"/>
+            <field name="state" widget="badge"
+                   decoration-success="state == 'processed'"
+                   decoration-warning="state == 'received'"
+                   decoration-danger="state == 'failed'"/>
+            <field name="message_text" optional="show"/>
+        </list>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS TELEGRAM MESSAGE — Form View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_telegram_message_form" model="ir.ui.view">
+    <field name="name">mythos.telegram.message.form</field>
+    <field name="model">mythos.telegram.message</field>
+    <field name="arch" type="xml">
+        <form string="Telegram Message" create="false">
+            <sheet>
+                <group>
+                    <group string="Source">
+                        <field name="bot_id" readonly="1"/>
+                        <field name="agent_id" readonly="1"/>
+                        <field name="domain_type" readonly="1" widget="badge"/>
+                        <field name="direction" readonly="1" widget="badge"/>
+                        <field name="message_date" readonly="1"/>
+                        <field name="state" readonly="1" widget="badge"
+                               decoration-success="state == 'processed'"
+                               decoration-warning="state == 'received'"
+                               decoration-danger="state == 'failed'"/>
+                    </group>
+                    <group string="Telegram Context">
+                        <field name="telegram_user_id" readonly="1"
+                               invisible="not telegram_user_id"/>
+                        <field name="telegram_username" readonly="1"
+                               invisible="not telegram_username"/>
+                        <field name="chat_id" readonly="1"
+                               invisible="not chat_id"/>
+                        <field name="related_model" readonly="1"
+                               invisible="not related_model"/>
+                        <field name="related_id" readonly="1"
+                               invisible="not related_model"/>
+                    </group>
+                </group>
+                <group string="Message">
+                    <field name="message_text" nolabel="1" readonly="1"/>
+                </group>
+                <group string="Error" invisible="state != 'failed'">
+                    <field name="error_message" nolabel="1" readonly="1"/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS TELEGRAM MESSAGE — Search View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_telegram_message_search" model="ir.ui.view">
+    <field name="name">mythos.telegram.message.search</field>
+    <field name="model">mythos.telegram.message</field>
+    <field name="arch" type="xml">
+        <search string="Search Messages">
+            <field name="bot_id"/>
+            <field name="telegram_username"/>
+            <field name="message_text"/>
+            <separator/>
+            <filter string="Incoming"  name="dir_incoming"
+                    domain="[('direction','=','incoming')]"/>
+            <filter string="Outgoing"  name="dir_outgoing"
+                    domain="[('direction','=','outgoing')]"/>
+            <separator/>
+            <filter string="Received"  name="state_received"
+                    domain="[('state','=','received')]"/>
+            <filter string="Processed" name="state_processed"
+                    domain="[('state','=','processed')]"/>
+            <filter string="Failed"    name="state_failed"
+                    domain="[('state','=','failed')]"/>
+            <separator/>
+            <filter string="Today" name="filter_today"
+                    domain="[('message_date', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+            <group expand="0" string="Group By">
+                <filter string="Bot"       name="group_bot"
+                        context="{'group_by':'bot_id'}"/>
+                <filter string="Domain"    name="group_domain"
+                        context="{'group_by':'domain_type'}"/>
+                <filter string="Direction" name="group_direction"
+                        context="{'group_by':'direction'}"/>
+                <filter string="State"     name="group_state"
+                        context="{'group_by':'state'}"/>
+                <filter string="Date"      name="group_date"
+                        context="{'group_by':'message_date:day'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS TELEGRAM MESSAGE — Action
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="action_mythos_telegram_message" model="ir.actions.act_window">
+    <field name="name">Telegram Messages</field>
+    <field name="res_model">mythos.telegram.message</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_mythos_telegram_message_search"/>
+    <field name="context">{}</field>
+    <field name="target">current</field>
+</record>
+
+</data>
+</odoo>

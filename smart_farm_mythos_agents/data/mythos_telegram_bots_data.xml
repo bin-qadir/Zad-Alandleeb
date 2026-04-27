@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Mythos Telegram Bots — Step 3 Placeholder Records
+    ══════════════════════════════════════════════════
+    noupdate="1" — created once, never overwritten on upgrade.
+
+    All bots are in state="draft" with NO bot_token set.
+    Tokens must be obtained from @BotFather and entered manually
+    by a system administrator before any bot is activated.
+
+    Linked agents are set via ref() to the Step 1 and Step 2 xmlids.
+    Developer bot has no linked agent (leave empty — no developer agent yet).
+-->
+<odoo noupdate="1">
+<data>
+
+    <!-- ── 1. Pre-Contract Bot ───────────────────────────────────────── -->
+    <record id="mythos_telegram_bot_pre_contract" model="mythos.telegram.bot">
+        <field name="name">Pre-Contract Bot</field>
+        <field name="code">pre_contract_bot</field>
+        <field name="domain_type">pre_contract</field>
+        <field name="agent_id" ref="mythos_agent_basic_boq"/>
+        <field name="state">draft</field>
+        <field name="notes">
+Handles BOQ analysis alerts and pre-contract monitoring notifications.
+Linked to the BOQ Monitor Agent.
+Configure bot_token and chat_id before activation.
+        </field>
+    </record>
+
+    <!-- ── 2. Contract Bot ───────────────────────────────────────────── -->
+    <record id="mythos_telegram_bot_contract" model="mythos.telegram.bot">
+        <field name="name">Contract Bot</field>
+        <field name="code">contract_bot</field>
+        <field name="domain_type">contract</field>
+        <field name="agent_id" ref="mythos_agent_domain_contract"/>
+        <field name="state">draft</field>
+        <field name="notes">
+Handles contract approval and lifecycle notifications.
+Linked to the Contract Agent.
+Configure bot_token and chat_id before activation.
+        </field>
+    </record>
+
+    <!-- ── 3. Execution Bot ──────────────────────────────────────────── -->
+    <record id="mythos_telegram_bot_execution" model="mythos.telegram.bot">
+        <field name="name">Execution Bot</field>
+        <field name="code">execution_bot</field>
+        <field name="domain_type">execution</field>
+        <field name="agent_id" ref="mythos_agent_basic_execution"/>
+        <field name="state">draft</field>
+        <field name="notes">
+Handles job order progress alerts and execution phase monitoring.
+Linked to the Execution Monitor Agent.
+Configure bot_token and chat_id before activation.
+        </field>
+    </record>
+
+    <!-- ── 4. Financial Bot ──────────────────────────────────────────── -->
+    <record id="mythos_telegram_bot_financial" model="mythos.telegram.bot">
+        <field name="name">Financial Bot</field>
+        <field name="code">financial_bot</field>
+        <field name="domain_type">financial</field>
+        <field name="agent_id" ref="mythos_agent_basic_financial"/>
+        <field name="state">draft</field>
+        <field name="notes">
+Handles cost overrun alerts, invoice and claims notifications.
+Linked to the Financial Monitor Agent.
+Configure bot_token and chat_id before activation.
+        </field>
+    </record>
+
+    <!-- ── 5. Quality &amp; Risk Bot ─────────────────────────────────── -->
+    <record id="mythos_telegram_bot_quality_risk" model="mythos.telegram.bot">
+        <field name="name">Quality &amp; Risk Bot</field>
+        <field name="code">quality_risk_bot</field>
+        <field name="domain_type">quality_risk</field>
+        <field name="agent_id" ref="mythos_agent_domain_quality_risk"/>
+        <field name="state">draft</field>
+        <field name="notes">
+Handles quality inspection results and risk escalation alerts.
+Linked to the Quality &amp; Risk Agent.
+Configure bot_token and chat_id before activation.
+        </field>
+    </record>
+
+    <!-- ── 6. System Bot ─────────────────────────────────────────────── -->
+    <record id="mythos_telegram_bot_system" model="mythos.telegram.bot">
+        <field name="name">System Bot</field>
+        <field name="code">system_bot</field>
+        <field name="domain_type">system</field>
+        <field name="agent_id" ref="mythos_agent_domain_system"/>
+        <field name="state">draft</field>
+        <field name="notes">
+Handles platform health, cron failure alerts, and system-level notifications.
+Linked to the System Agent.
+Configure bot_token and chat_id before activation.
+        </field>
+    </record>
+
+    <!-- ── 7. Developer Bot (no agent linked yet) ────────────────────── -->
+    <record id="mythos_telegram_bot_developer" model="mythos.telegram.bot">
+        <field name="name">Developer Bot</field>
+        <field name="code">developer_bot</field>
+        <field name="domain_type">developer</field>
+        <!-- agent_id intentionally empty: no developer agent exists yet -->
+        <field name="state">draft</field>
+        <field name="notes">
+Internal developer / debugging bot for Mythos AI platform team.
+No linked agent — a Developer Agent will be added in a future step.
+Configure bot_token and chat_id before activation.
+        </field>
+    </record>
+
+</data>
+</odoo>
