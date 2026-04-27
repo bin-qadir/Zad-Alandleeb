@@ -130,7 +130,7 @@
                 <!-- ── Messages tab ─────────────────────────────────────────── -->
                 <notebook>
                     <page string="Messages" name="tab_messages">
-                        <field name="message_ids" readonly="1">
+                        <field name="telegram_message_ids" readonly="1">
                             <list string="Messages"
                                   default_order="message_date desc"
                                   decoration-danger="state == 'failed'"

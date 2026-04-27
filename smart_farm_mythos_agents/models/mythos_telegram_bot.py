@@ -125,8 +125,12 @@ class MythosTelearamBot(models.Model):
     )
 
     # ── Messages (One2many) ───────────────────────────────────────────────────
+    # NOTE: Named telegram_message_ids (not message_ids) to avoid inheriting
+    # the domain [('message_type', '!=', 'user_notification')] from
+    # mail.thread.message_ids, which would be applied to mythos.telegram.message
+    # and raise "Invalid field mythos.telegram.message.message_type".
 
-    message_ids = fields.One2many(
+    telegram_message_ids = fields.One2many(
         'mythos.telegram.message',
         'bot_id',
         string='Messages',
@@ -148,10 +152,10 @@ class MythosTelearamBot(models.Model):
 
     # ── Computed ──────────────────────────────────────────────────────────────
 
-    @api.depends('message_ids')
+    @api.depends('telegram_message_ids')
     def _compute_message_count(self):
         for rec in self:
-            rec.message_count = len(rec.message_ids)
+            rec.message_count = len(rec.telegram_message_ids)
 
     # ── Actions — stat button ─────────────────────────────────────────────────
 
