@@ -37,6 +37,8 @@
         'data/mythos_agent_data.xml',
         'data/mythos_basic_agents_data.xml',
         'data/mythos_basic_monitor_cron.xml',
+        'data/mythos_step2_update_agents.xml',
+        'data/mythos_step2_main_agents.xml',
     ],
     'installable': True,
     'application': False,

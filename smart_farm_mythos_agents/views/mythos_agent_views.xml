@@ -71,6 +71,20 @@
                             icon="fa-list-alt">
                         <field name="log_count" widget="statinfo" string="Logs"/>
                     </button>
+                    <button name="action_view_alerts"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-bell"
+                            invisible="alert_count == 0">
+                        <field name="alert_count" widget="statinfo" string="Alerts"/>
+                    </button>
+                    <button type="object"
+                            name="action_view_logs"
+                            class="oe_stat_button"
+                            icon="fa-users"
+                            invisible="child_count == 0">
+                        <field name="child_count" widget="statinfo" string="Sub-Agents"/>
+                    </button>
                     <div class="oe_stat_button" type="object" icon="fa-play-circle">
                         <div class="o_field_widget o_stat_info">
                             <span class="o_stat_value">
@@ -150,11 +164,17 @@
                 <group>
                     <group string="Classification">
                         <field name="business_activity"/>
+                        <field name="domain_type"/>
+                        <field name="agent_type"/>
+                        <field name="parent_id"
+                               invisible="agent_type != 'employee'"/>
                         <field name="agent_layer"/>
                         <field name="agent_function"/>
                         <field name="sequence"/>
+                        <field name="priority"/>
                     </group>
                     <group string="Status">
+                        <field name="state"/>
                         <field name="active"/>
                         <field name="last_run_datetime" readonly="1"/>
                         <field name="last_status" readonly="1"/>
@@ -167,8 +187,33 @@
                            placeholder="Describe what this agent monitors and what actions it can take…"/>
                 </group>
 
-                <!-- ── Recent logs tab ───────────────────────────────────── -->
+                <!-- ── Tabs ──────────────────────────────────────────────── -->
                 <notebook>
+                    <!-- Employee sub-agents — only shown for main agents -->
+                    <page string="Employee Agents" name="tab_children"
+                          invisible="agent_type != 'main'">
+                        <field name="child_ids">
+                            <list string="Employee Agents"
+                                  decoration-muted="state == 'paused'">
+                                <field name="name"/>
+                                <field name="code" optional="show"
+                                       style="font-family:monospace"/>
+                                <field name="domain_type" widget="badge"
+                                       decoration-info="domain_type == 'pre_contract'"
+                                       decoration-primary="domain_type == 'contract'"
+                                       decoration-success="domain_type == 'execution'"
+                                       decoration-danger="domain_type == 'financial'"
+                                       decoration-warning="domain_type == 'quality_risk'"
+                                       decoration-muted="domain_type == 'system'"/>
+                                <field name="state" widget="badge"
+                                       decoration-success="state == 'active'"
+                                       decoration-warning="state == 'draft'"
+                                       decoration-muted="state == 'paused'"/>
+                                <field name="priority" optional="show"/>
+                            </list>
+                        </field>
+                    </page>
+                    <!-- ── Recent logs tab ─────────────────────────────── -->
                     <page string="Recent Logs" name="tab_logs">
                         <field name="log_ids" readonly="1">
                             <list string="Log Entries" decoration-danger="result == 'failed'"
@@ -195,6 +240,97 @@
 </record>
 
 <!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS AGENT — Domain List View
+     Focused columns for "Agents by Domain" — name, code, domain, type,
+     parent, state, priority.  General list (view_mythos_agent_list) keeps
+     its layer/function columns and is used by the Command Center.
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_agent_domain_list" model="ir.ui.view">
+    <field name="name">mythos.agent.domain.list</field>
+    <field name="model">mythos.agent</field>
+    <field name="arch" type="xml">
+        <list string="Agents by Domain"
+              default_order="domain_type,agent_type,sequence,name"
+              decoration-muted="not active">
+            <field name="sequence" widget="handle"/>
+            <field name="name"/>
+            <field name="code" optional="show"/>
+            <field name="domain_type" widget="badge"
+                   decoration-info="domain_type == 'pre_contract'"
+                   decoration-primary="domain_type == 'contract'"
+                   decoration-success="domain_type == 'execution'"
+                   decoration-danger="domain_type == 'financial'"
+                   decoration-warning="domain_type == 'quality_risk'"
+                   decoration-muted="domain_type == 'system'"/>
+            <field name="agent_type" widget="badge"
+                   decoration-primary="agent_type == 'main'"
+                   decoration-info="agent_type == 'employee'"/>
+            <field name="parent_id" optional="show"/>
+            <field name="state" widget="badge"
+                   decoration-success="state == 'active'"
+                   decoration-warning="state == 'draft'"
+                   decoration-muted="state == 'paused'"/>
+            <field name="priority" optional="show"/>
+            <field name="active" column_invisible="True"/>
+        </list>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS AGENT — Search View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_agent_search" model="ir.ui.view">
+    <field name="name">mythos.agent.search</field>
+    <field name="model">mythos.agent</field>
+    <field name="arch" type="xml">
+        <search string="Search Agents">
+            <field name="name"/>
+            <field name="code"/>
+            <field name="parent_id"/>
+            <!-- ── Domain filters ─────────────────────────────────── -->
+            <separator/>
+            <filter string="Pre-Contract"   name="domain_pre_contract"
+                    domain="[('domain_type','=','pre_contract')]"/>
+            <filter string="Contract"       name="domain_contract"
+                    domain="[('domain_type','=','contract')]"/>
+            <filter string="Execution"      name="domain_execution"
+                    domain="[('domain_type','=','execution')]"/>
+            <filter string="Financial"      name="domain_financial"
+                    domain="[('domain_type','=','financial')]"/>
+            <filter string="Quality &amp; Risk" name="domain_quality_risk"
+                    domain="[('domain_type','=','quality_risk')]"/>
+            <filter string="System"         name="domain_system"
+                    domain="[('domain_type','=','system')]"/>
+            <!-- ── Agent type filters ─────────────────────────────── -->
+            <separator/>
+            <filter string="Main Agents"     name="type_main"
+                    domain="[('agent_type','=','main')]"/>
+            <filter string="Employee Agents" name="type_employee"
+                    domain="[('agent_type','=','employee')]"/>
+            <!-- ── State filters ──────────────────────────────────── -->
+            <separator/>
+            <filter string="Active" name="state_active"
+                    domain="[('state','=','active')]"/>
+            <filter string="Paused" name="state_paused"
+                    domain="[('state','=','paused')]"/>
+            <!-- ── Group By ───────────────────────────────────────── -->
+            <group expand="0" string="Group By">
+                <filter string="Domain"     name="group_domain"
+                        context="{'group_by':'domain_type'}"/>
+                <filter string="Agent Type" name="group_type"
+                        context="{'group_by':'agent_type'}"/>
+                <filter string="Layer"      name="group_layer"
+                        context="{'group_by':'agent_layer'}"/>
+                <filter string="State"      name="group_state"
+                        context="{'group_by':'state'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
      MYTHOS AGENT — Action
      ══════════════════════════════════════════════════════════════════════ -->
 
@@ -202,8 +338,13 @@
     <field name="name">Agents by Domain</field>
     <field name="res_model">mythos.agent</field>
     <field name="view_mode">list,form</field>
+    <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'list', 'view_id': ref('view_mythos_agent_domain_list')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('view_mythos_agent_form')}),
+    ]"/>
+    <field name="search_view_id" ref="view_mythos_agent_search"/>
     <field name="domain">[('business_activity', '=', 'construction')]</field>
-    <field name="context">{'default_business_activity': 'construction', 'group_by': ['agent_layer']}</field>
+    <field name="context">{'default_business_activity': 'construction', 'search_default_group_domain': 1}</field>
     <field name="target">current</field>
 </record>
 
@@ -215,8 +356,9 @@
     <field name="name">Mythos Command Center</field>
     <field name="res_model">mythos.agent</field>
     <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_mythos_agent_search"/>
     <field name="domain">[('business_activity', '=', 'construction'), ('active', '=', True)]</field>
-    <field name="context">{'default_business_activity': 'construction', 'group_by': ['agent_layer']}</field>
+    <field name="context">{'default_business_activity': 'construction', 'search_default_group_layer': 1}</field>
     <field name="target">current</field>
 </record>
 

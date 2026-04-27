@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Step 2 — New Main Domain Agents
+    ════════════════════════════════
+    noupdate="1" — created once, never overwritten on upgrade.
+    These three agents cover the Contract, Quality & Risk, and System
+    domains that were not present in the Step 1 basic monitor set.
+
+    Codes: contract_agent, quality_risk_agent, system_agent.
+    These codes are distinct from the Layer-1 seed agents (MYTHOS-CONT etc.)
+    which remain untouched in mythos_agent_data.xml.
+-->
+<odoo noupdate="1">
+<data>
+
+    <!-- ── Contract Domain — Main Agent ─────────────────────────────── -->
+    <record id="mythos_agent_domain_contract" model="mythos.agent">
+        <field name="name">Contract Agent</field>
+        <field name="code">contract_agent</field>
+        <field name="business_activity">construction</field>
+        <field name="domain_type">contract</field>
+        <field name="agent_type">main</field>
+        <field name="agent_layer">contract</field>
+        <field name="agent_function">contract_control</field>
+        <field name="state">active</field>
+        <field name="priority">1</field>
+        <field name="sequence">20</field>
+        <field name="description">
+Main domain agent for contract management.
+Monitors the full contract lifecycle: draft → approved → active → closed.
+Tracks contract stage progression, flags stalled approvals, monitors
+revision history, and ensures job orders are issued after contract approval.
+
+Code: contract_agent — domain entry point for the Contract domain.
+        </field>
+    </record>
+
+    <!-- ── Quality &amp; Risk Domain — Main Agent ────────────────────── -->
+    <record id="mythos_agent_domain_quality_risk" model="mythos.agent">
+        <field name="name">Quality &amp; Risk Agent</field>
+        <field name="code">quality_risk_agent</field>
+        <field name="business_activity">construction</field>
+        <field name="domain_type">quality_risk</field>
+        <field name="agent_type">main</field>
+        <field name="agent_layer">risk_control</field>
+        <field name="agent_function">risk_monitor</field>
+        <field name="state">active</field>
+        <field name="priority">1</field>
+        <field name="sequence">50</field>
+        <field name="description">
+Main domain agent for quality inspection and risk control.
+Aggregates signals from quality inspection, handover, and compliance layers.
+Monitors inspection rejection rates, overdue handover items, and cross-layer
+risk scores. Generates consolidated quality and risk summaries.
+
+Code: quality_risk_agent — domain entry point for the Quality &amp; Risk domain.
+        </field>
+    </record>
+
+    <!-- ── System Domain — Main Agent ───────────────────────────────── -->
+    <record id="mythos_agent_domain_system" model="mythos.agent">
+        <field name="name">System Agent</field>
+        <field name="code">system_agent</field>
+        <field name="business_activity">construction</field>
+        <field name="domain_type">system</field>
+        <field name="agent_type">main</field>
+        <field name="agent_layer">executive_dashboard</field>
+        <field name="agent_function">executive_summary</field>
+        <field name="state">active</field>
+        <field name="priority">1</field>
+        <field name="sequence">90</field>
+        <field name="description">
+Main system-level agent for platform health and coordination.
+Monitors cron execution health, agent run counts and failure rates,
+orphaned alert records, and overall Mythos AI system status.
+Provides the executive dashboard with cross-domain KPI aggregation.
+
+Code: system_agent — domain entry point for the System domain.
+        </field>
+    </record>
+
+</data>
+</odoo>

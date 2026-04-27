@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Step 2 — Set domain_type + agent_type on Step 1 basic monitor agents
+    ══════════════════════════════════════════════════════════════════════
+    The three Step 1 agents (boq_agent, execution_agent, financial_agent)
+    were created with noupdate="1" so their xmlids cannot be updated via
+    a <record> block.  We use a <function> call instead — this runs the
+    _step2_update_domain_types() method directly on the model, which
+    searches by code and only writes fields that are currently empty.
+
+    Safe to run on every upgrade: already-set values are never overwritten.
+-->
+<odoo>
+<data>
+
+    <function model="mythos.agent" name="_step2_update_domain_types"/>
+
+</data>
+</odoo>

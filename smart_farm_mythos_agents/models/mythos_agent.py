@@ -142,6 +142,54 @@ class MythosAgent(models.Model):
         help='Lower number = higher priority (1 = highest, 10 = lowest).',
     )
 
+    # ── Domain & Hierarchy (Step 2 — Agents by Domain) ────────────────────────
+
+    domain_type = fields.Selection(
+        selection=[
+            ('pre_contract',  'Pre-Contract'),
+            ('contract',      'Contract'),
+            ('execution',     'Execution'),
+            ('financial',     'Financial'),
+            ('quality_risk',  'Quality & Risk'),
+            ('system',        'System'),
+        ],
+        string='Domain',
+        index=True,
+        tracking=True,
+        help='Business domain this agent belongs to.',
+    )
+    agent_type = fields.Selection(
+        selection=[
+            ('main',     'Main'),
+            ('employee', 'Employee'),
+        ],
+        string='Agent Type',
+        default='main',
+        index=True,
+        tracking=True,
+        help=(
+            'Main: top-level domain agent.\n'
+            'Employee: sub-agent reporting to a main agent.'
+        ),
+    )
+    parent_id = fields.Many2one(
+        'mythos.agent',
+        string='Parent Agent',
+        ondelete='set null',
+        index=True,
+        domain=[('agent_type', '=', 'main')],
+        help='Main agent this employee agent reports to (employee agents only).',
+    )
+    child_ids = fields.One2many(
+        'mythos.agent',
+        'parent_id',
+        string='Employee Agents',
+    )
+    child_count = fields.Integer(
+        string='Employee Agents',
+        compute='_compute_child_count',
+    )
+
     # ── Run metadata ──────────────────────────────────────────────────────────
 
     last_run_datetime = fields.Datetime(
@@ -221,6 +269,11 @@ class MythosAgent(models.Model):
             rec.alert_count = len(rec.alert_ids.filtered(
                 lambda a: a.state != 'resolved'
             ))
+
+    @api.depends('child_ids')
+    def _compute_child_count(self):
+        for rec in self:
+            rec.child_count = len(rec.child_ids)
 
     # ────────────────────────────────────────────────────────────────────────
     # Constraints
@@ -413,3 +466,36 @@ class MythosAgent(models.Model):
             _logger.info('MythosBasicMonitor: Financial Agent check complete.')
 
         _logger.info('MythosBasicMonitor: full run complete.')
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Step 2 — migration helper: set domain_type / agent_type on Step 1 agents
+    # Called via <function> in mythos_step2_update_agents.xml so it runs on
+    # both install and upgrade without depending on noupdate flags.
+    # ────────────────────────────────────────────────────────────────────────
+
+    @api.model
+    def _step2_update_domain_types(self):
+        """Set domain_type and agent_type on the three Step 1 basic monitor
+        agents.  Only writes fields that are currently empty so user edits
+        made after Step 1 are never overwritten.
+        """
+        updates = [
+            ('boq_agent',       'pre_contract', 'main'),
+            ('execution_agent', 'execution',    'main'),
+            ('financial_agent', 'financial',    'main'),
+        ]
+        for code, domain, atype in updates:
+            agent = self.search([('code', '=', code)], limit=1)
+            if not agent:
+                continue
+            vals = {}
+            if not agent.domain_type:
+                vals['domain_type'] = domain
+            if not agent.agent_type:
+                vals['agent_type'] = atype
+            if vals:
+                agent.write(vals)
+                _logger.info(
+                    'MythosStep2: updated agent %s → domain_type=%s agent_type=%s',
+                    code, vals.get('domain_type', '(kept)'), vals.get('agent_type', '(kept)'),
+                )
