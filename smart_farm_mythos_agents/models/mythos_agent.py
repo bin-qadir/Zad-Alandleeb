@@ -400,7 +400,7 @@ class MythosAgent(models.Model):
                 actual    = proj.actual_total_cost or 0.0
                 if estimated and actual and actual > estimated * 1.1:
                     if not _alert_exists(boq_agent, 'farm.boq', boq.id):
-                        Alert.create({
+                        alert = Alert.create({
                             'name':          _('BOQ Cost Overrun — %s') % boq.name,
                             'agent_id':      boq_agent.id,
                             'severity':      'high',
@@ -416,6 +416,7 @@ class MythosAgent(models.Model):
                             'related_model': 'farm.boq',
                             'related_id':    boq.id,
                         })
+                        alert._send_to_telegram()
             _logger.info('MythosBasicMonitor: BOQ Agent check complete.')
 
         # ── 2. Execution Agent — progress < 50% in execution phase ────────────
@@ -426,7 +427,7 @@ class MythosAgent(models.Model):
             ]):
                 if (proj.execution_progress_pct or 0.0) < 50.0:
                     if not _alert_exists(exec_agent, 'farm.project', proj.id):
-                        Alert.create({
+                        alert = Alert.create({
                             'name':          _('Execution Delay — %s') % proj.name,
                             'agent_id':      exec_agent.id,
                             'severity':      'medium',
@@ -439,6 +440,7 @@ class MythosAgent(models.Model):
                             'related_model': 'farm.project',
                             'related_id':    proj.id,
                         })
+                        alert._send_to_telegram()
             _logger.info('MythosBasicMonitor: Execution Agent check complete.')
 
         # ── 3. Financial Agent — actual total cost > contract value ───────────
@@ -449,7 +451,7 @@ class MythosAgent(models.Model):
                 actual_cost  = proj.actual_total_cost or 0.0
                 if contract_val and actual_cost > contract_val:
                     if not _alert_exists(fin_agent, 'farm.project', proj.id):
-                        Alert.create({
+                        alert = Alert.create({
                             'name':          _('Cost Exceeds Contract — %s') % proj.name,
                             'agent_id':      fin_agent.id,
                             'severity':      'critical',
@@ -463,6 +465,7 @@ class MythosAgent(models.Model):
                             'related_model': 'farm.project',
                             'related_id':    proj.id,
                         })
+                        alert._send_to_telegram()
             _logger.info('MythosBasicMonitor: Financial Agent check complete.')
 
         _logger.info('MythosBasicMonitor: full run complete.')

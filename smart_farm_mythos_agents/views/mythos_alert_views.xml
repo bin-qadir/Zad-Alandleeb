@@ -30,6 +30,8 @@
                    decoration-success="state == 'resolved'"/>
             <field name="related_model" string="Source Model" optional="show"/>
             <field name="related_id"    string="Source ID"    optional="show"/>
+            <field name="telegram_sent" string="Telegram" widget="boolean_favorite"
+                   optional="show" readonly="1"/>
             <!-- Row actions -->
             <button name="action_acknowledge" type="object"
                     string="Acknowledge" icon="fa-eye"
@@ -85,6 +87,12 @@
                     </group>
                 </group>
 
+                <group string="Telegram">
+                    <field name="telegram_sent" readonly="1"/>
+                    <field name="telegram_bot_id" readonly="1"
+                           invisible="not telegram_bot_id"/>
+                </group>
+
                 <group string="Message">
                     <field name="message" nolabel="1"
                            placeholder="Alert details will appear here…"/>
@@ -120,6 +128,11 @@
                     domain="[('state','=','resolved')]"/>
             <filter string="Open" name="filter_open"
                     domain="[('state','!=','resolved')]"/>
+            <separator/>
+            <filter string="Sent to Telegram" name="filter_telegram_sent"
+                    domain="[('telegram_sent','=',True)]"/>
+            <filter string="Not Sent"         name="filter_telegram_not_sent"
+                    domain="[('telegram_sent','=',False),('state','!=','resolved')]"/>
             <separator/>
             <group expand="0" string="Group By">
                 <filter string="Agent"    name="group_agent"

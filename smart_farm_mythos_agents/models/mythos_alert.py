@@ -8,6 +8,10 @@ Safety rules (enforced by design):
   - No emails, no external messages, no API calls
   - Only creates records — never modifies existing operational data
   - Duplicate-safe: cron checks for open alerts before creating a new one
+
+Step 4 addition:
+  - _send_to_telegram(): finds matching active bot by domain_type and logs
+    an outgoing mythos.telegram.message record. No real Telegram API call.
 """
 import logging
 from odoo import fields, models, _
@@ -82,6 +86,20 @@ class MythosAlert(models.Model):
         help='ID of the record that triggered this alert.',
     )
 
+    # ── Telegram routing (Step 4) ─────────────────────────────────────────────
+
+    telegram_sent = fields.Boolean(
+        string='Sent to Telegram',
+        default=False,
+        help='True when a Telegram message record has been created for this alert.',
+    )
+    telegram_bot_id = fields.Many2one(
+        comodel_name='mythos.telegram.bot',
+        string='Telegram Bot',
+        ondelete='set null',
+        help='The Telegram bot that received the message record for this alert.',
+    )
+
     # ────────────────────────────────────────────────────────────────────────
     # Actions (safe: only write to this model)
     # ────────────────────────────────────────────────────────────────────────
@@ -93,3 +111,96 @@ class MythosAlert(models.Model):
     def action_resolve(self):
         """Mark selected alerts as Resolved."""
         self.write({'state': 'resolved'})
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Step 4 — Telegram routing (internal log only, no external API)
+    # ────────────────────────────────────────────────────────────────────────
+
+    def _send_to_telegram(self):
+        """Find the active Telegram bot for this alert's domain and create an
+        outgoing mythos.telegram.message record.
+
+        Matching rule: bot.domain_type == alert.agent_id.domain_type
+                       AND bot.state == 'active'
+
+        SAFETY (Step 4):
+          - No Telegram API call, no HTTP request, no webhook interaction.
+          - Only creates a mythos.telegram.message record (internal log).
+          - Skips silently if no matching active bot exists.
+          - Never overwrites telegram_sent=True (idempotent).
+        """
+        self.ensure_one()
+
+        # Already sent — do nothing (idempotent guard)
+        if self.telegram_sent:
+            return self.env['mythos.telegram.message']
+
+        domain_type = self.agent_id.domain_type if self.agent_id else False
+        if not domain_type:
+            _logger.debug(
+                'MythosAlert._send_to_telegram: alert "%s" skipped — agent has no domain_type.',
+                self.name,
+            )
+            return self.env['mythos.telegram.message']
+
+        # Find first active bot in the matching domain
+        bot = self.env['mythos.telegram.bot'].search([
+            ('domain_type', '=', domain_type),
+            ('state',       '=', 'active'),
+            ('active',      '=', True),
+        ], limit=1)
+
+        if not bot:
+            _logger.debug(
+                'MythosAlert._send_to_telegram: alert "%s" — no active bot for domain "%s".',
+                self.name, domain_type,
+            )
+            return self.env['mythos.telegram.message']
+
+        # ── Format message (spec Part 3) ──────────────────────────────────────
+        _SEVERITY_LABEL = {
+            'low':      'Low',
+            'medium':   'Medium',
+            'high':     'High',
+            'critical': 'Critical',
+        }
+        text = (
+            '[ALERT]\n'
+            'Agent: {agent}\n'
+            'Severity: {severity}\n\n'
+            'Message:\n{message}\n\n'
+            'Project:\n{model} / {record_id}'
+        ).format(
+            agent      = self.agent_id.name if self.agent_id else 'Unknown',
+            severity   = _SEVERITY_LABEL.get(self.severity, self.severity),
+            message    = self.message or '—',
+            model      = self.related_model or '—',
+            record_id  = self.related_id or '—',
+        )
+
+        # ── Create internal message record ────────────────────────────────────
+        msg = self.env['mythos.telegram.message'].create({
+            'bot_id':        bot.id,
+            'agent_id':      self.agent_id.id if self.agent_id else False,
+            'domain_type':   domain_type,
+            'direction':     'outgoing',
+            'message_text':  text,
+            'related_model': self.related_model,
+            'related_id':    self.related_id or 0,
+            'state':         'processed',
+        })
+
+        # Update bot's last_message_date
+        bot.write({'last_message_date': fields.Datetime.now()})
+
+        # Mark alert as sent and record which bot handled it
+        self.write({
+            'telegram_sent':   True,
+            'telegram_bot_id': bot.id,
+        })
+
+        _logger.info(
+            'MythosAlert._send_to_telegram: alert "%s" → bot "%s" (domain: %s) — message record #%d created.',
+            self.name, bot.name, domain_type, msg.id,
+        )
+        return msg
