@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MYTHOS — TELEGRAM FLOATING WIDGET  (Step 6)
+     Global floating chat panel, mounted via main_components registry.
+     ══════════════════════════════════════════════════════════════════════════ -->
+
+<t t-name="mythos_agents.TelegramFloatingWidget">
+    <div class="mythos-tg-root">
+
+        <!-- ── Floating action button ──────────────────────────────────────── -->
+        <button class="mythos-tg-fab" t-on-click="togglePanel" title="Mythos Telegram">
+            <!-- Telegram paper-plane logo (simplified) -->
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12
+                         12-5.373 12-12S18.627 0 12 0zm5.562 8.248
+                         -2.018 9.504c-.145.658-.537.818-1.084.508
+                         l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295
+                         l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12
+                         l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953
+                         l11.57-4.461c.537-.194 1.006.131.881.717z"/>
+            </svg>
+            <!-- Unread badge (shown when panel is closed and messages exist) -->
+            <t t-if="!state.isOpen and state.messages.length">
+                <span class="mythos-tg-badge" t-esc="state.messages.length"/>
+            </t>
+        </button>
+
+        <!-- ── Chat panel ──────────────────────────────────────────────────── -->
+        <div t-if="state.isOpen" class="mythos-tg-panel">
+
+            <!-- Header -->
+            <div class="mythos-tg-header">
+                <div class="mythos-tg-header-title">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12
+                                 12-5.373 12-12S18.627 0 12 0zm5.562 8.248
+                                 -2.018 9.504c-.145.658-.537.818-1.084.508
+                                 l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295
+                                 l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12
+                                 l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953
+                                 l11.57-4.461c.537-.194 1.006.131.881.717z"/>
+                    </svg>
+                    Mythos Telegram
+                </div>
+                <button class="mythos-tg-close" t-on-click="togglePanel">&#x2715;</button>
+            </div>
+
+            <!-- Message list -->
+            <div class="mythos-tg-messages" t-ref="msgList">
+                <t t-if="!state.hasAccess">
+                    <div class="mythos-tg-empty">Access restricted</div>
+                </t>
+                <t t-elif="state.messages.length === 0">
+                    <div class="mythos-tg-empty">No messages yet</div>
+                </t>
+                <t t-else="">
+                    <t t-foreach="state.messages" t-as="msg" t-key="msg.id">
+                        <div t-attf-class="mythos-tg-msg {{ msg.direction }}">
+                            <div class="mythos-tg-bubble">
+                                <t t-esc="msg.message_text"/>
+                            </div>
+                            <div class="mythos-tg-meta">
+                                <span t-attf-class="mythos-tg-dot {{ msg.state }}"/>
+                                <span t-esc="formatDate(msg.message_date)"/>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </div>
+
+            <!-- Input row -->
+            <div class="mythos-tg-input-row">
+                <input
+                    class="mythos-tg-input"
+                    type="text"
+                    t-model="state.inputText"
+                    t-on-keydown="onKeyDown"
+                    placeholder="Type a message…"
+                    t-att-disabled="state.sending"
+                />
+                <button
+                    class="mythos-tg-send"
+                    t-on-click="sendMessage"
+                    t-att-disabled="state.sending"
+                    title="Send"
+                >
+                    <!-- Send arrow -->
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+
+        </div><!-- /.mythos-tg-panel -->
+    </div><!-- /.mythos-tg-root -->
+</t>
+
+</templates>

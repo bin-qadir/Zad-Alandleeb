@@ -43,6 +43,14 @@
         'data/mythos_step2_main_agents.xml',
         'data/mythos_telegram_bots_data.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            # Step 6 — Telegram floating widget (global, all screens)
+            'smart_farm_mythos_agents/static/src/css/telegram_widget.css',
+            'smart_farm_mythos_agents/static/src/xml/telegram_widget.xml',
+            'smart_farm_mythos_agents/static/src/js/telegram_widget.js',
+        ],
+    },
     'installable': True,
     'application': False,
     'auto_install': False,

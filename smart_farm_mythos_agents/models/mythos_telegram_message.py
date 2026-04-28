@@ -6,7 +6,7 @@ In Step 3 this model is populated only by internal placeholder actions.
 Real webhook-based message ingestion is deferred to Step 4+.
 """
 import logging
-from odoo import fields, models
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -117,3 +117,64 @@ class MythosTelearamMessage(models.Model):
         string='Error',
         help='Error details if processing failed.',
     )
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Step 6 — Widget API (called from the Telegram floating widget)
+    # ────────────────────────────────────────────────────────────────────────
+
+    @api.model
+    def widget_send_message(self, text):
+        """Create a message record and dispatch to Telegram.
+
+        Called by the TelegramFloatingWidget Owl component via call_kw.
+        Picks the first active bot that has credentials; falls back to any
+        active bot for a log-only record if credentials are missing.
+
+        Returns a dict so the frontend can inspect the outcome without
+        parsing exceptions.
+        """
+        if not text or not text.strip():
+            return {'success': False, 'error': 'Empty message'}
+
+        text = text.strip()
+
+        # Prefer an active bot that has real credentials
+        bot = self.env['mythos.telegram.bot'].search([
+            ('state', '=', 'active'),
+            ('active', '=', True),
+            ('bot_token', '!=', False),
+            ('chat_id', '!=', False),
+        ], limit=1)
+
+        if not bot:
+            # Fall back to any active bot (message is logged, not sent)
+            bot = self.env['mythos.telegram.bot'].search([
+                ('state', '=', 'active'),
+                ('active', '=', True),
+            ], limit=1)
+
+        if not bot:
+            return {'success': False, 'error': 'No active bot configured'}
+
+        # Create the message record
+        msg = self.create({
+            'bot_id':       bot.id,
+            'direction':    'outgoing',
+            'message_text': text,
+            'domain_type':  bot.domain_type,
+            'state':        'processed',
+        })
+
+        # Attempt real Telegram send if credentials are available
+        if bot.bot_token and bot.chat_id:
+            success = bot.send_telegram_message(text)
+            msg.state = 'sent' if success else 'failed'
+
+        bot.write({'last_message_date': fields.Datetime.now()})
+
+        return {
+            'success':    True,
+            'message_id': msg.id,
+            'state':      msg.state,
+            'bot_name':   bot.name,
+        }
