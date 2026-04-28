@@ -134,7 +134,7 @@
                             <list string="Messages"
                                   default_order="message_date desc"
                                   decoration-danger="state == 'failed'"
-                                  decoration-success="direction == 'outgoing' and state == 'processed'"
+                                  decoration-success="direction == 'outgoing' and state in ('processed', 'sent')"
                                   decoration-info="direction == 'incoming'">
                                 <field name="message_date" string="Date"/>
                                 <field name="direction" widget="badge"

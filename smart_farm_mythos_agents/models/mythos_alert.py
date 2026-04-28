@@ -190,6 +190,22 @@ class MythosAlert(models.Model):
             'state':         'processed',
         })
 
+        # ── Step 5: attempt real Telegram API dispatch ────────────────────────
+        if bot.bot_token and bot.chat_id:
+            success = bot.send_telegram_message(text)
+            if success:
+                msg.state = 'sent'
+                _logger.info(
+                    'MythosAlert._send_to_telegram: alert "%s" → Telegram SENT via bot "%s".',
+                    self.name, bot.name,
+                )
+            else:
+                msg.state = 'failed'
+                _logger.warning(
+                    'MythosAlert._send_to_telegram: alert "%s" → Telegram send FAILED (bot: %s).',
+                    self.name, bot.name,
+                )
+
         # Update bot's last_message_date
         bot.write({'last_message_date': fields.Datetime.now()})
 

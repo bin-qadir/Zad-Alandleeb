@@ -258,6 +258,47 @@ class MythosTelearamBot(models.Model):
 
     # ── Internal helpers ──────────────────────────────────────────────────────
 
+    def send_telegram_message(self, message):
+        """Send *message* to Telegram via the Bot API (Step 5).
+
+        Returns True when the API accepted the message, False otherwise.
+
+        SAFETY:
+          - bot_token is NEVER written to any log line.
+          - All network/parse exceptions are caught — never crashes the caller.
+          - Timeout: 10 s hard limit per request.
+        """
+        import requests  # stdlib-adjacent; always available in Odoo containers
+
+        self.ensure_one()
+
+        if not self.bot_token or not self.chat_id:
+            return False
+
+        url = f"https://api.telegram.org/bot{self.bot_token}/sendMessage"
+        payload = {
+            "chat_id": self.chat_id,
+            "text": message,
+        }
+
+        try:
+            response = requests.post(url, json=payload, timeout=10)
+            if response.status_code == 200:
+                return True
+            # Log failure details without exposing the token
+            _logger.warning(
+                'MythosBot [%s]: Telegram API returned HTTP %s for chat_id=%s. '
+                'Token not logged.',
+                self.code, response.status_code, self.chat_id,
+            )
+            return False
+        except Exception as exc:
+            _logger.warning(
+                'MythosBot [%s]: Telegram send failed — %s. Token not logged.',
+                self.code, exc,
+            )
+            return False
+
     def _create_internal_message(self, direction, text, state='processed'):
         """Create a mythos.telegram.message record for internal tracking.
         Does NOT call any external API.

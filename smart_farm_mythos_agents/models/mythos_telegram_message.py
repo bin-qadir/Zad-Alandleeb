@@ -99,11 +99,13 @@ class MythosTelearamMessage(models.Model):
     )
 
     # ── Processing state ──────────────────────────────────────────────────────
+    # Step 5: 'sent' added — message was dispatched to Telegram API successfully.
 
     state = fields.Selection(
         selection=[
             ('received',  'Received'),
             ('processed', 'Processed'),
+            ('sent',      'Sent'),
             ('failed',    'Failed'),
         ],
         string='State',

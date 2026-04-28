@@ -13,7 +13,7 @@
         <list string="Telegram Messages"
               default_order="message_date desc"
               decoration-danger="state == 'failed'"
-              decoration-success="direction == 'outgoing' and state == 'processed'"
+              decoration-success="direction == 'outgoing' and state in ('processed', 'sent')"
               decoration-info="direction == 'incoming' and state == 'received'">
             <field name="message_date" string="Date"/>
             <field name="bot_id"/>
@@ -29,7 +29,7 @@
                    decoration-info="direction == 'incoming'"/>
             <field name="telegram_username" optional="show"/>
             <field name="state" widget="badge"
-                   decoration-success="state == 'processed'"
+                   decoration-success="state in ('processed', 'sent')"
                    decoration-warning="state == 'received'"
                    decoration-danger="state == 'failed'"/>
             <field name="message_text" optional="show"/>
@@ -55,7 +55,7 @@
                         <field name="direction" readonly="1" widget="badge"/>
                         <field name="message_date" readonly="1"/>
                         <field name="state" readonly="1" widget="badge"
-                               decoration-success="state == 'processed'"
+                               decoration-success="state in ('processed', 'sent')"
                                decoration-warning="state == 'received'"
                                decoration-danger="state == 'failed'"/>
                     </group>
@@ -105,6 +105,8 @@
                     domain="[('state','=','received')]"/>
             <filter string="Processed" name="state_processed"
                     domain="[('state','=','processed')]"/>
+            <filter string="Sent"      name="state_sent"
+                    domain="[('state','=','sent')]"/>
             <filter string="Failed"    name="state_failed"
                     domain="[('state','=','failed')]"/>
             <separator/>
