@@ -213,6 +213,8 @@ class MythosDiscussBot(models.Model):
                 bot._ensure_channel()
                 if bot.welcome_message and not bot.welcome_sent:
                     bot._post_welcome_message()
+                # Subscribe all internal users so channels appear in Discuss sidebar
+                bot._subscribe_all_internal_users()
             except Exception as exc:
                 _logger.warning(
                     'MythosDiscussBot._setup_all_bots: error for bot "%s" — %s',
@@ -269,24 +271,94 @@ class MythosDiscussBot(models.Model):
         self.sudo().write({'channel_id': channel.id})
         # Add bot partner as channel member
         if self.partner_id:
-            self._add_bot_to_channel(channel)
+            self._add_partner_to_channel(channel, self.partner_id)
 
-    def _add_bot_to_channel(self, channel):
-        """Add bot partner to channel if not already a member (idempotent)."""
-        existing = self.env['discuss.channel.member'].sudo().search([
+    def _add_partner_to_channel(self, channel, partner):
+        """Add *partner* to *channel* with visible settings (idempotent).
+
+        Sets fold_state='open' and is_pinned=True so the channel appears
+        immediately in the user's Discuss sidebar without any manual action.
+        If the member record already exists but is hidden (fold_state='closed'),
+        it is made visible.
+        """
+        Member = self.env['discuss.channel.member'].sudo()
+        existing = Member.search([
             ('channel_id', '=', channel.id),
-            ('partner_id', '=', self.partner_id.id),
+            ('partner_id', '=', partner.id),
         ], limit=1)
         if not existing:
             try:
-                self.env['discuss.channel.member'].sudo().create({
-                    'channel_id': channel.id,
-                    'partner_id': self.partner_id.id,
+                Member.create({
+                    'channel_id':  channel.id,
+                    'partner_id':  partner.id,
+                    'is_pinned':   True,
+                    'fold_state':  'open',
                 })
             except Exception as exc:
                 _logger.warning(
-                    'MythosDiscussBot._add_bot_to_channel: could not add partner — %s', exc
+                    'MythosDiscussBot._add_partner_to_channel: could not add %s — %s',
+                    partner.name, exc,
                 )
+        else:
+            # Fix hidden channel: un-close and pin
+            write_vals = {}
+            if existing.fold_state == 'closed':
+                write_vals['fold_state'] = 'open'
+            if not existing.is_pinned:
+                write_vals['is_pinned'] = True
+            if write_vals:
+                existing.write(write_vals)
+
+    def _subscribe_all_internal_users(self):
+        """Subscribe every active internal user to this bot's channel.
+
+        Called automatically from _setup_all_bots on every install/upgrade.
+        Idempotent — existing members with correct settings are skipped.
+        """
+        self.ensure_one()
+        if not self.channel_id:
+            return
+        users = self.env['res.users'].sudo().search([
+            ('active', '=', True),
+            ('share',  '=', False),   # exclude portal / public
+        ])
+        for user in users:
+            if user.partner_id:
+                self._add_partner_to_channel(self.channel_id, user.partner_id)
+
+    def action_subscribe_all_users(self):
+        """Button: subscribe all active internal users to every bot channel."""
+        bots = self if len(self) > 1 else self.search([])
+        for bot in bots:
+            if bot.channel_id:
+                bot._subscribe_all_internal_users()
+        return {
+            'type':   'ir.actions.client',
+            'tag':    'display_notification',
+            'params': {
+                'title':   _('Channels Updated'),
+                'message': _('All internal users subscribed to Discuss Bot channels.'),
+                'type':    'success',
+                'sticky':  False,
+            },
+        }
+
+    def action_post_ready_message(self):
+        """Button: post 'Bot active — ready' into the bot's channel."""
+        self.ensure_one()
+        if not self.channel_id or not self.partner_id:
+            self.action_setup()
+        self.send_internal_message('✅ Bot active — ready')
+        return {
+            'type':   'ir.actions.client',
+            'tag':    'display_notification',
+            'params': {
+                'title':   _('Message Posted'),
+                'message': _('Ready message posted to %s.') % self.name,
+                'type':    'info',
+                'sticky':  False,
+            },
+        }
 
     def _post_welcome_message(self):
         """Post the welcome message once and mark welcome_sent=True."""
