@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     mythos.bot.command — Telegram Command Registry
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<!-- ── List view ─────────────────────────────────────────────────────── -->
+<record id="view_mythos_bot_command_list" model="ir.ui.view">
+    <field name="name">mythos.bot.command.list</field>
+    <field name="model">mythos.bot.command</field>
+    <field name="arch" type="xml">
+        <list string="Bot Commands" default_order="sequence, command">
+            <field name="sequence" widget="handle"/>
+            <field name="command"/>
+            <field name="name"/>
+            <field name="description"/>
+            <field name="bot_id"/>
+            <field name="domain_type"/>
+            <field name="active" widget="boolean_toggle"/>
+        </list>
+    </field>
+</record>
+
+<!-- ── Form view ─────────────────────────────────────────────────────── -->
+<record id="view_mythos_bot_command_form" model="ir.ui.view">
+    <field name="name">mythos.bot.command.form</field>
+    <field name="model">mythos.bot.command</field>
+    <field name="arch" type="xml">
+        <form string="Bot Command">
+            <sheet>
+                <div class="oe_title">
+                    <label for="command"/>
+                    <h1>
+                        <field name="command" placeholder="/command"/>
+                    </h1>
+                </div>
+                <group>
+                    <group string="Identity">
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                    </group>
+                    <group string="Scope">
+                        <field name="bot_id"/>
+                        <field name="domain_type"/>
+                    </group>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- ── Window action ─────────────────────────────────────────────────── -->
+<record id="action_mythos_bot_command" model="ir.actions.act_window">
+    <field name="name">Bot Commands</field>
+    <field name="res_model">mythos.bot.command</field>
+    <field name="view_mode">list,form</field>
+    <field name="context">{'active_test': False}</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            No commands defined yet.
+        </p>
+        <p>
+            Register the Telegram commands available for each bot here.
+            Commands are dispatched automatically by the webhook controller.
+        </p>
+    </field>
+</record>
+
+</data>
+</odoo>

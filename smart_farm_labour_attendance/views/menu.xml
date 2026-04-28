@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     Labour Attendance — under Execution root menu
+══════════════════════════════════════════════════════════════════════════ -->
+
+<!-- Sub-group: Labour Attendance -->
+<menuitem
+    id="menu_smart_farm_execution_labour_attendance_root"
+    name="Labour Attendance / تحضير العمالة"
+    parent="smart_farm_execution.menu_smart_farm_execution"
+    sequence="35"
+/>
+
+<!-- Daily Attendance sheets -->
+<menuitem
+    id="menu_smart_farm_execution_attendance"
+    name="Daily Attendance / التحضير اليومي"
+    parent="menu_smart_farm_execution_labour_attendance_root"
+    action="smart_farm_labour_attendance.action_farm_labour_attendance"
+    sequence="10"
+/>
+
+<!-- Attendance Lines (per-worker) -->
+<menuitem
+    id="menu_smart_farm_execution_attendance_lines"
+    name="Attendance Lines / سطور التحضير"
+    parent="menu_smart_farm_execution_labour_attendance_root"
+    action="smart_farm_labour_attendance.action_farm_labour_attendance_line"
+    sequence="20"
+/>
+
+<!-- Labour Entries (existing, duplicated under this menu for convenience) -->
+<menuitem
+    id="menu_smart_farm_execution_attendance_labour"
+    name="Labour Entries / إدخالات العمالة"
+    parent="menu_smart_farm_execution_labour_attendance_root"
+    action="smart_farm_execution.action_farm_labour_entry"
+    sequence="30"
+/>
+
+</data>
+</odoo>

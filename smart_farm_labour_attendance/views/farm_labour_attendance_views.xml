@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     SEARCH — farm.labour.attendance
+══════════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_farm_labour_attendance_search" model="ir.ui.view">
+    <field name="name">farm.labour.attendance.search</field>
+    <field name="model">farm.labour.attendance</field>
+    <field name="arch" type="xml">
+        <search string="Attendance">
+            <field name="name"/>
+            <field name="project_id"/>
+            <field name="division_id"/>
+            <field name="responsible_user_id"/>
+            <!-- ── Quick filters ── -->
+            <filter name="today"     string="Today"
+                    domain="[('date','=',context_today().strftime('%Y-%m-%d'))]"/>
+            <filter name="draft"     string="Draft"     domain="[('state','=','draft')]"/>
+            <filter name="open"      string="Open"      domain="[('state','=','open')]"/>
+            <filter name="closed"    string="Closed"    domain="[('state','=','closed')]"/>
+            <filter name="cancelled" string="Cancelled" domain="[('state','=','cancelled')]"/>
+            <separator/>
+            <!-- ── Group by ── -->
+            <group string="Group By">
+                <filter name="by_project"  string="Project"  context="{'group_by':'project_id'}"/>
+                <filter name="by_division" string="Division" context="{'group_by':'division_id'}"/>
+                <filter name="by_date"     string="Date"     context="{'group_by':'date:day'}"/>
+                <filter name="by_state"    string="State"    context="{'group_by':'state'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     LIST — farm.labour.attendance
+══════════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_farm_labour_attendance_list" model="ir.ui.view">
+    <field name="name">farm.labour.attendance.list</field>
+    <field name="model">farm.labour.attendance</field>
+    <field name="arch" type="xml">
+        <list string="Daily Attendance"
+              decoration-success="state=='closed'"
+              decoration-info="state=='open'"
+              decoration-muted="state=='cancelled'">
+            <field name="date"                 string="Date"/>
+            <field name="name"                 string="Reference"/>
+            <field name="project_id"           string="Project"/>
+            <field name="division_id"          string="Division"/>
+            <field name="boq_line_id"          string="Main BOQ Item" optional="hide"/>
+            <field name="job_order_id"         string="Job Order"     optional="hide"/>
+            <field name="responsible_user_id"  string="Responsible"
+                   widget="many2one_avatar_user"/>
+            <field name="worker_count"         string="Workers" optional="show"/>
+            <field name="present_count"        string="Present"/>
+            <field name="absent_count"         string="Absent"/>
+            <field name="total_hours"          string="Hours"  digits="[16,1]"/>
+            <field name="total_labour_cost"    string="Cost"   optional="show"/>
+            <field name="state"                widget="badge"
+                   decoration-success="state=='closed'"
+                   decoration-info="state=='open'"
+                   decoration-warning="state=='draft'"
+                   decoration-danger="state=='cancelled'"/>
+        </list>
+    </field>
+</record>
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     FORM — farm.labour.attendance
+══════════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_farm_labour_attendance_form" model="ir.ui.view">
+    <field name="name">farm.labour.attendance.form</field>
+    <field name="model">farm.labour.attendance</field>
+    <field name="arch" type="xml">
+        <form string="Daily Labour Attendance / تحضير العمالة اليومي">
+
+            <!-- ── Workflow header ── -->
+            <header>
+                <button name="action_open"
+                        string="فتح التحضير / Open Attendance"
+                        type="object" class="oe_highlight"
+                        invisible="state != 'draft'"/>
+
+                <button name="action_close_day"
+                        string="إقفال اليوم / Close Day"
+                        type="object" class="oe_highlight"
+                        invisible="state != 'open'"
+                        confirm="This will close the sheet and create Labour Entries for present workers. Continue?"/>
+
+                <button name="action_create_labour_entries"
+                        string="Create Labour Entries"
+                        type="object"
+                        invisible="state in ('draft','cancelled')"/>
+
+                <button name="action_cancel"
+                        string="Cancel"
+                        type="object"
+                        invisible="state in ('closed','cancelled')"/>
+
+                <button name="action_reset_draft"
+                        string="Reset to Draft"
+                        type="object"
+                        invisible="state != 'cancelled'"/>
+
+                <field name="state" widget="statusbar"
+                       statusbar_visible="draft,open,closed"/>
+            </header>
+
+            <sheet>
+                <!-- ── Smart buttons ── -->
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_labour_entries"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-clock-o"
+                            invisible="labour_entry_count == 0">
+                        <field name="labour_entry_count"
+                               widget="statinfo"
+                               string="Labour Entries"/>
+                    </button>
+                    <button name="action_add_workers"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-users"
+                            invisible="state in ('closed','cancelled')">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Add Workers</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- ── Title ── -->
+                <div class="oe_title">
+                    <label for="name"/>
+                    <h1>
+                        <field name="name" placeholder="Attendance Reference"/>
+                    </h1>
+                </div>
+
+                <group>
+                    <!-- ── 1. Project Scope ── -->
+                    <group string="1. Project Scope / نطاق المشروع">
+                        <field name="date"/>
+                        <field name="project_id"/>
+                        <field name="division_id"/>
+                        <field name="subdivision_id"
+                               domain="[('division_id','=',division_id)]"/>
+                        <field name="boq_line_id"
+                               domain="[('display_type','=',False)]"/>
+                        <field name="sub_boq_line_id"
+                               domain="[('display_type','=',False)]"/>
+                        <field name="job_order_id"
+                               domain="[('project_id','=',project_id)]"
+                               help="Required to auto-create Labour Entries when closing the day."/>
+                    </group>
+
+                    <!-- ── 2. Supervisor ── -->
+                    <group string="2. Supervisor / المشرف المسؤول">
+                        <field name="responsible_user_id"/>
+                        <field name="responsible_employee_id"/>
+                        <field name="check_in_open_time"  readonly="1"/>
+                        <field name="check_out_close_time" readonly="1"/>
+                        <field name="supervisor_gps_lat"/>
+                        <field name="supervisor_gps_lng"/>
+                        <field name="supervisor_gps_address"/>
+                    </group>
+                </group>
+
+                <!-- ── Summary row ── -->
+                <group>
+                    <group string="Summary / الملخص">
+                        <field name="worker_count"/>
+                        <field name="present_count"/>
+                        <field name="absent_count"/>
+                        <field name="total_hours"/>
+                        <field name="total_labour_cost"/>
+                    </group>
+                    <group string="Notes / ملاحظات">
+                        <field name="notes" nolabel="1" placeholder="Site notes…"/>
+                    </group>
+                </group>
+
+                <!-- ── Workers tab ── -->
+                <notebook>
+                    <page string="3. Workers / العمال" name="workers_tab">
+                        <field name="line_ids"
+                               readonly="state in ('closed','cancelled')"
+                               context="{'default_attendance_id': id}">
+                            <list editable="bottom"
+                                  decoration-success="attendance_state=='present'"
+                                  decoration-danger="attendance_state=='absent'"
+                                  decoration-warning="attendance_state in ('late','leave')">
+                                <field name="employee_id"/>
+                                <field name="job_title"         optional="show"/>
+                                <field name="mobile_phone"      optional="hide"/>
+                                <field name="attendance_state"/>
+                                <field name="check_in"/>
+                                <field name="check_out"/>
+                                <field name="hours"       readonly="1"/>
+                                <field name="hourly_rate"   optional="show"/>
+                                <field name="total_cost"    optional="show" readonly="1"/>
+                                <field name="worker_signature"
+                                       optional="show"/>
+                                <field name="worker_signature_date" optional="hide" readonly="1"/>
+                                <field name="worker_gps_lat"    optional="hide"/>
+                                <field name="worker_gps_lng"    optional="hide"/>
+                                <field name="worker_gps_address" optional="hide"/>
+                                <field name="supervisor_gps_lat" optional="hide"/>
+                                <field name="supervisor_gps_lng" optional="hide"/>
+                                <field name="notes"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+            </sheet>
+
+            <chatter/>
+        </form>
+    </field>
+</record>
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     LIST — farm.labour.attendance.line (standalone)
+══════════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_farm_labour_attendance_line_list" model="ir.ui.view">
+    <field name="name">farm.labour.attendance.line.list</field>
+    <field name="model">farm.labour.attendance.line</field>
+    <field name="arch" type="xml">
+        <list string="Attendance Lines"
+              decoration-success="attendance_state=='present'"
+              decoration-danger="attendance_state=='absent'"
+              decoration-warning="attendance_state in ('late','leave')">
+            <field name="date"             string="Date"/>
+            <field name="attendance_id"    string="Sheet"/>
+            <field name="project_id"       string="Project"/>
+            <field name="employee_id"      string="Employee"/>
+            <field name="job_title"        optional="show"/>
+            <field name="attendance_state" string="Status"/>
+            <field name="check_in"/>
+            <field name="check_out"/>
+            <field name="hours"            string="Hours"/>
+            <field name="total_cost"       string="Cost"   optional="show"/>
+            <field name="sheet_state"      string="Sheet State" optional="show"/>
+        </list>
+    </field>
+</record>
+
+<!-- Search for lines -->
+<record id="view_farm_labour_attendance_line_search" model="ir.ui.view">
+    <field name="name">farm.labour.attendance.line.search</field>
+    <field name="model">farm.labour.attendance.line</field>
+    <field name="arch" type="xml">
+        <search>
+            <field name="employee_id"/>
+            <field name="project_id"/>
+            <field name="attendance_id"/>
+            <filter name="present" string="Present" domain="[('attendance_state','=','present')]"/>
+            <filter name="absent"  string="Absent"  domain="[('attendance_state','=','absent')]"/>
+            <filter name="late"    string="Late"    domain="[('attendance_state','=','late')]"/>
+            <filter name="leave"   string="On Leave" domain="[('attendance_state','=','leave')]"/>
+            <filter name="today"   string="Today"
+                    domain="[('date','=',context_today().strftime('%Y-%m-%d'))]"/>
+            <separator/>
+            <group string="Group By">
+                <filter name="by_project"  string="Project"  context="{'group_by':'project_id'}"/>
+                <filter name="by_employee" string="Employee" context="{'group_by':'employee_id'}"/>
+                <filter name="by_state"    string="Status"   context="{'group_by':'attendance_state'}"/>
+                <filter name="by_date"     string="Date"     context="{'group_by':'date:day'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     ACTIONS
+══════════════════════════════════════════════════════════════════════════ -->
+
+<record id="action_farm_labour_attendance" model="ir.actions.act_window">
+    <field name="name">Daily Attendance / التحضير اليومي</field>
+    <field name="res_model">farm.labour.attendance</field>
+    <field name="view_mode">list,form</field>
+    <field name="context">{'search_default_today': 1}</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            No attendance sheets yet.
+        </p>
+        <p>
+            Create a daily attendance sheet to track worker presence
+            on site, capture GPS locations and signatures, and
+            auto-generate Labour Entry records on close.
+        </p>
+    </field>
+</record>
+
+<record id="action_farm_labour_attendance_line" model="ir.actions.act_window">
+    <field name="name">Attendance Lines / سطور التحضير</field>
+    <field name="res_model">farm.labour.attendance.line</field>
+    <field name="view_mode">list</field>
+    <field name="context">{'search_default_today': 1}</field>
+</record>
+
+</data>
+</odoo>

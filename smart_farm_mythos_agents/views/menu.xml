@@ -85,5 +85,15 @@
     groups="base.group_user"
 />
 
+<!-- Bot Commands — Telegram command registry (Step 8) -->
+<menuitem
+    id="menu_mythos_bot_commands"
+    name="Bot Commands"
+    parent="menu_mythos_ai_root"
+    action="smart_farm_mythos_agents.action_mythos_bot_command"
+    sequence="8"
+    groups="base.group_system"
+/>
+
 </data>
 </odoo>

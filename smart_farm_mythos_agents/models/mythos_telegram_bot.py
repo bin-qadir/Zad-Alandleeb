@@ -3,11 +3,10 @@ mythos.telegram.bot — Mythos AI Telegram Bot Registry
 ======================================================
 One record per Telegram bot, each scoped to a business domain.
 
-SAFETY (Step 3):
-  - No external API calls are made here.
-  - bot_token is NEVER written to logs.
-  - Buttons create internal mythos.telegram.message records only.
-  - Webhook and actual Telegram API integration are deferred to later steps.
+SAFETY:
+  - bot_token is NEVER written to any log line.
+  - All Telegram API exceptions are caught — caller never crashes.
+  - Timeout: 10 s hard limit per outbound request.
 """
 import logging
 from odoo import api, fields, models, _
@@ -171,58 +170,182 @@ class MythosTelearamBot(models.Model):
             'context':   {'default_bot_id': self.id, 'default_domain_type': self.domain_type},
         }
 
-    # ── Buttons — NO external API calls (Step 3) ──────────────────────────────
+    # ── Buttons ───────────────────────────────────────────────────────────────
 
     def action_test_connection(self):
-        """Simulate a connection test — creates an internal message record only.
-        No Telegram API call is made here (deferred to Step 4+).
+        """Test the Telegram Bot API token using the getMe endpoint.
+
+        Requires bot_token to be configured (chat_id is not needed here).
+        On success the bot's Telegram username is auto-filled if still empty.
+        On failure a danger notification is shown and a failed message record
+        is created so the incident is traceable.
         """
+        import requests
+
         self.ensure_one()
-        _logger.info('MythosBot [%s]: connection test triggered (no external call, Step 3).', self.code)
+
+        if not self.bot_token:
+            return {
+                'type':   'ir.actions.client',
+                'tag':    'display_notification',
+                'params': {
+                    'title':   _('Connection Test — %s') % self.name,
+                    'message': _('No bot_token configured. Enter the token from @BotFather first.'),
+                    'type':    'warning',
+                    'sticky':  False,
+                },
+            }
+
+        url = f'https://api.telegram.org/bot{self.bot_token}/getMe'
+        try:
+            response = requests.get(url, timeout=10)
+            data = response.json()
+        except Exception as exc:
+            _logger.warning(
+                'MythosBot [%s]: getMe — network error: %s. Token not logged.',
+                self.code, exc,
+            )
+            self._create_internal_message(
+                direction='outgoing',
+                text='[Connection Test] FAILED — network error reaching Telegram API.',
+                state='failed',
+            )
+            return {
+                'type':   'ir.actions.client',
+                'tag':    'display_notification',
+                'params': {
+                    'title':   _('Connection FAILED — %s') % self.name,
+                    'message': _('Network error reaching Telegram API. Check Odoo logs for details.'),
+                    'type':    'danger',
+                    'sticky':  True,
+                },
+            }
+
+        if response.status_code == 200 and data.get('ok'):
+            result      = data.get('result', {})
+            tg_name     = result.get('first_name', '?')
+            tg_username = result.get('username', '?')
+            _logger.info(
+                'MythosBot [%s]: getMe OK — Telegram identity: %s (@%s).',
+                self.code, tg_name, tg_username,
+            )
+            self._create_internal_message(
+                direction='outgoing',
+                text=f'[Connection Test] OK — Telegram bot: {tg_name} (@{tg_username})',
+                state='processed',
+            )
+            # Auto-fill bot_username from Telegram if the field is still empty
+            if not self.bot_username and tg_username:
+                self.write({'bot_username': f'@{tg_username}'})
+            return {
+                'type':   'ir.actions.client',
+                'tag':    'display_notification',
+                'params': {
+                    'title':   _('Connection OK — %s') % self.name,
+                    'message': _('Telegram confirmed: %(name)s (@%(username)s)', name=tg_name, username=tg_username),
+                    'type':    'success',
+                    'sticky':  False,
+                },
+            }
+
+        error_desc = data.get('description', 'Unknown error')
+        _logger.warning(
+            'MythosBot [%s]: getMe returned error — %s. Token not logged.',
+            self.code, error_desc,
+        )
         self._create_internal_message(
             direction='outgoing',
-            text=_(
-                '[Test Connection] Bot configuration check triggered from Odoo.\n'
-                'Bot: %(name)s (%(code)s) | Domain: %(domain)s\n'
-                'Status: Draft only — no Telegram API call (Step 3 structure only).',
-                name=self.name,
-                code=self.code,
-                domain=dict(DOMAIN_TYPE_BOT_SELECTION).get(self.domain_type, self.domain_type),
-            ),
-            state='processed',
+            text=f'[Connection Test] FAILED — Telegram error: {error_desc}',
+            state='failed',
         )
         return {
             'type':   'ir.actions.client',
             'tag':    'display_notification',
             'params': {
-                'title':   _('Connection Test — %s') % self.name,
-                'message': _('Test logged as internal message. No external API call made (Step 3).'),
-                'type':    'info',
-                'sticky':  False,
+                'title':   _('Connection FAILED — %s') % self.name,
+                'message': _('Telegram API error: %s') % error_desc,
+                'type':    'danger',
+                'sticky':  True,
             },
         }
 
     def action_send_test_message(self):
-        """Simulate sending a test message — creates an internal record only."""
+        """Send a real test message to Telegram.
+
+        Requires both bot_token and chat_id to be configured.
+        Creates an internal mythos.telegram.message record (direction=outgoing)
+        and attempts live delivery via the Telegram Bot API.
+        The record state is set to 'sent' on success or 'failed' on error.
+        """
         self.ensure_one()
-        _logger.info('MythosBot [%s]: send test message triggered (no external call, Step 3).', self.code)
-        self._create_internal_message(
+
+        # ── Guard: credentials must be present ────────────────────────────────
+        missing = []
+        if not self.bot_token:
+            missing.append('bot_token')
+        if not self.chat_id:
+            missing.append('chat_id')
+        if missing:
+            return {
+                'type':   'ir.actions.client',
+                'tag':    'display_notification',
+                'params': {
+                    'title':   _('Cannot Send — %s') % self.name,
+                    'message': _('Missing required fields: %s. Configure them before sending.') % ', '.join(missing),
+                    'type':    'warning',
+                    'sticky':  False,
+                },
+            }
+
+        domain_label = dict(DOMAIN_TYPE_BOT_SELECTION).get(self.domain_type, self.domain_type)
+        text = (
+            f'[Mythos AI — Test Message]\n'
+            f'Bot: {self.name} ({self.code})\n'
+            f'Domain: {domain_label}\n'
+            f'Status: Live connection test from Odoo.'
+        )
+
+        # Create internal log record (state updated below based on API result)
+        msg = self._create_internal_message(
             direction='outgoing',
-            text=_(
-                '[Test Message] Hello from Mythos AI — %(name)s!\n'
-                'This is a placeholder test message. Real sending will be enabled in Step 4+.',
-                name=self.name,
-            ),
+            text=text,
             state='processed',
+        )
+
+        # ── Attempt real Telegram API send ────────────────────────────────────
+        _logger.info(
+            'MythosBot [%s]: sending real test message to chat_id=%s.',
+            self.code, self.chat_id,
+        )
+        success = self.send_telegram_message(text)
+
+        if success:
+            msg.state = 'sent'
+            _logger.info('MythosBot [%s]: test message SENT successfully.', self.code)
+            return {
+                'type':   'ir.actions.client',
+                'tag':    'display_notification',
+                'params': {
+                    'title':   _('Message Sent — %s') % self.name,
+                    'message': _('Test message delivered to Telegram successfully.'),
+                    'type':    'success',
+                    'sticky':  False,
+                },
+            }
+
+        msg.state = 'failed'
+        _logger.warning(
+            'MythosBot [%s]: test message FAILED. Verify bot_token and chat_id. Token not logged.',
+            self.code,
         )
         return {
             'type':   'ir.actions.client',
             'tag':    'display_notification',
             'params': {
-                'title':   _('Test Message — %s') % self.name,
-                'message': _('Test message logged internally. No real Telegram message sent (Step 3).'),
-                'type':    'info',
-                'sticky':  False,
+                'title':   _('Send FAILED — %s') % self.name,
+                'message': _('Telegram rejected the message. Verify bot_token and chat_id. See Odoo logs.'),
+                'type':    'danger',
+                'sticky':  True,
             },
         }
 

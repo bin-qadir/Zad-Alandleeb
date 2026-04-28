@@ -36,6 +36,7 @@
         'views/mythos_telegram_bot_views.xml',
         'views/mythos_telegram_message_views.xml',
         'views/mythos_discuss_bot_views.xml',
+        'views/mythos_bot_command_views.xml',
         'views/menu.xml',
         'data/mythos_agent_data.xml',
         'data/mythos_basic_agents_data.xml',
@@ -44,6 +45,7 @@
         'data/mythos_step2_main_agents.xml',
         'data/mythos_telegram_bots_data.xml',
         'data/mythos_discuss_bots_data.xml',
+        'data/mythos_execution_commands_data.xml',
     ],
     'assets': {
         'web.assets_backend': [

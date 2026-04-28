@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     ADD WORKERS WIZARD — farm.labour.attendance.add.workers.wizard
+══════════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_farm_labour_attendance_add_workers_form" model="ir.ui.view">
+    <field name="name">farm.labour.attendance.add.workers.wizard.form</field>
+    <field name="model">farm.labour.attendance.add.workers.wizard</field>
+    <field name="arch" type="xml">
+        <form string="Add Workers / إضافة عمال">
+            <group>
+                <group string="Sheet / الورقة">
+                    <field name="attendance_id" readonly="1"/>
+                    <field name="project_id"   readonly="1"/>
+                    <field name="division_id"  readonly="1"/>
+                </group>
+                <group string="Options / الخيارات">
+                    <field name="attendance_state"/>
+                </group>
+            </group>
+            <group string="Select Employees / اختر العمال">
+                <field name="employee_ids" nolabel="1" widget="many2many_tags"/>
+            </group>
+            <footer>
+                <button name="action_confirm"
+                        string="Confirm / تأكيد"
+                        type="object"
+                        class="oe_highlight"/>
+                <button string="Cancel" class="btn-secondary" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+</data>
+</odoo>

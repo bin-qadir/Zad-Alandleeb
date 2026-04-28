@@ -11,3 +11,7 @@ access_mythos_telegram_message_manager,mythos.telegram.message manager,model_myt
 access_mythos_telegram_message_user,mythos.telegram.message user,model_mythos_telegram_message,base.group_user,1,1,1,0
 access_mythos_discuss_bot_manager,mythos.discuss.bot manager,model_mythos_discuss_bot,base.group_system,1,1,1,1
 access_mythos_discuss_bot_user,mythos.discuss.bot user,model_mythos_discuss_bot,base.group_user,1,0,0,0
+access_mythos_bot_command_manager,mythos.bot.command manager,model_mythos_bot_command,base.group_system,1,1,1,1
+access_mythos_bot_command_user,mythos.bot.command user,model_mythos_bot_command,base.group_user,1,0,0,0
+access_mythos_bot_session_manager,mythos.bot.session manager,model_mythos_bot_session,base.group_system,1,1,1,1
+access_mythos_bot_session_user,mythos.bot.session user,model_mythos_bot_session,base.group_user,1,1,1,1

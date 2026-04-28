@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Mythos Execution Bot — Command Registry Seed Data
+    ══════════════════════════════════════════════════
+    noupdate="1" — created once, never overwritten on upgrade.
+
+    Commands are scoped to the Execution Bot (execution_bot).
+    All five commands are active by default.
+    Sequences control the display order in /help listings.
+-->
+<odoo noupdate="1">
+<data>
+
+    <!-- ── /start ── ────────────────────────────────────────────────────── -->
+    <record id="cmd_execution_start" model="mythos.bot.command">
+        <field name="command">/start</field>
+        <field name="name">Welcome</field>
+        <field name="description">Show welcome message and available commands.</field>
+        <field name="bot_id" ref="mythos_telegram_bot_execution"/>
+        <field name="domain_type">execution</field>
+        <field name="sequence">1</field>
+    </record>
+
+    <!-- ── /tasks ────────────────────────────────────────────────────────── -->
+    <record id="cmd_execution_tasks" model="mythos.bot.command">
+        <field name="command">/tasks</field>
+        <field name="name">Active Job Orders</field>
+        <field name="description">List active job orders for the selected project.</field>
+        <field name="bot_id" ref="mythos_telegram_bot_execution"/>
+        <field name="domain_type">execution</field>
+        <field name="sequence">2</field>
+    </record>
+
+    <!-- ── /progress ─────────────────────────────────────────────────────── -->
+    <record id="cmd_execution_progress" model="mythos.bot.command">
+        <field name="command">/progress</field>
+        <field name="name">Execution Progress</field>
+        <field name="description">Show overall execution progress with division breakdown.</field>
+        <field name="bot_id" ref="mythos_telegram_bot_execution"/>
+        <field name="domain_type">execution</field>
+        <field name="sequence">3</field>
+    </record>
+
+    <!-- ── /delays ───────────────────────────────────────────────────────── -->
+    <record id="cmd_execution_delays" model="mythos.bot.command">
+        <field name="command">/delays</field>
+        <field name="name">Delayed Items</field>
+        <field name="description">Show overdue job orders (planned end date passed).</field>
+        <field name="bot_id" ref="mythos_telegram_bot_execution"/>
+        <field name="domain_type">execution</field>
+        <field name="sequence">4</field>
+    </record>
+
+    <!-- ── /projects ─────────────────────────────────────────────────────── -->
+    <record id="cmd_execution_projects" model="mythos.bot.command">
+        <field name="command">/projects</field>
+        <field name="name">Project List</field>
+        <field name="description">List all active projects with progress overview.</field>
+        <field name="bot_id" ref="mythos_telegram_bot_execution"/>
+        <field name="domain_type">execution</field>
+        <field name="sequence">5</field>
+    </record>
+
+    <!-- ── /help ─────────────────────────────────────────────────────────── -->
+    <record id="cmd_execution_help" model="mythos.bot.command">
+        <field name="command">/help</field>
+        <field name="name">Help</field>
+        <field name="description">Alias for /start — show command overview.</field>
+        <field name="bot_id" ref="mythos_telegram_bot_execution"/>
+        <field name="domain_type">execution</field>
+        <field name="sequence">6</field>
+    </record>
+
+    <!-- ── /attendance ──────────────────────────────────────────────────── -->
+    <record id="cmd_execution_attendance" model="mythos.bot.command">
+        <field name="command">/attendance</field>
+        <field name="name">Daily Attendance</field>
+        <field name="description">Show today's attendance sheets: state, present/absent counts per project.</field>
+        <field name="bot_id" ref="mythos_telegram_bot_execution"/>
+        <field name="domain_type">execution</field>
+        <field name="sequence">7</field>
+    </record>
+
+    <!-- ── /crew ────────────────────────────────────────────────────────── -->
+    <record id="cmd_execution_crew" model="mythos.bot.command">
+        <field name="command">/crew</field>
+        <field name="name">Present Crew</field>
+        <field name="description">Show today's present workers with hours and labour cost per project.</field>
+        <field name="bot_id" ref="mythos_telegram_bot_execution"/>
+        <field name="domain_type">execution</field>
+        <field name="sequence">8</field>
+    </record>
+
+</data>
+</odoo>
