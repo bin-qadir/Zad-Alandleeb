@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS DISCUSS BOT — List View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_discuss_bot_list" model="ir.ui.view">
+    <field name="name">mythos.discuss.bot.list</field>
+    <field name="model">mythos.discuss.bot</field>
+    <field name="arch" type="xml">
+        <list string="Discuss Bots"
+              default_order="sequence,name"
+              decoration-muted="not active"
+              decoration-success="active and channel_id">
+            <field name="sequence" widget="handle"/>
+            <field name="name"/>
+            <field name="domain_type" widget="badge"
+                   decoration-info="domain_type == 'pre_contract'"
+                   decoration-primary="domain_type == 'contract'"
+                   decoration-success="domain_type == 'execution'"
+                   decoration-danger="domain_type == 'financial'"
+                   decoration-warning="domain_type in ('quality_risk', 'general')"
+                   decoration-muted="domain_type in ('system','developer')"/>
+            <field name="agent_id" optional="show"/>
+            <field name="partner_id" optional="show"/>
+            <field name="channel_name" string="Channel" optional="show"/>
+            <field name="active" column_invisible="True"/>
+            <field name="channel_id" column_invisible="True"/>
+            <button name="action_open_discuss_channel"
+                    type="object"
+                    string="Open Chat"
+                    icon="fa-comments"
+                    class="btn-link"
+                    invisible="not channel_id"/>
+        </list>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS DISCUSS BOT — Form View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_discuss_bot_form" model="ir.ui.view">
+    <field name="name">mythos.discuss.bot.form</field>
+    <field name="model">mythos.discuss.bot</field>
+    <field name="arch" type="xml">
+        <form string="Discuss Bot">
+            <header>
+                <button name="action_setup"
+                        type="object"
+                        string="Setup Bot"
+                        class="btn-primary"
+                        icon="fa-cogs"
+                        invisible="channel_id"/>
+                <button name="action_setup"
+                        type="object"
+                        string="Re-Setup"
+                        class="btn-secondary"
+                        icon="fa-refresh"
+                        invisible="not channel_id"/>
+                <button name="action_open_discuss_channel"
+                        type="object"
+                        string="Open Discuss Chat"
+                        class="btn-secondary"
+                        icon="fa-comments"
+                        invisible="not channel_id"/>
+            </header>
+            <sheet>
+
+                <!-- ── Status badges ───────────────────────────────────── -->
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_open_discuss_channel"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-comments"
+                            invisible="not channel_id">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text">Open Chat</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- ── Title ───────────────────────────────────────────── -->
+                <div class="oe_title">
+                    <h1>
+                        <field name="name" placeholder="Bot Name…"/>
+                    </h1>
+                    <div class="text-muted small" style="font-family:monospace">
+                        <field name="code" nolabel="1" readonly="1"/>
+                    </div>
+                </div>
+
+                <!-- ── Config + Discuss identity ───────────────────────── -->
+                <group>
+                    <group string="Configuration">
+                        <field name="domain_type"/>
+                        <field name="agent_id"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                    </group>
+                    <group string="Discuss Identity">
+                        <field name="partner_id" readonly="1"/>
+                        <field name="channel_id" readonly="1"/>
+                        <field name="welcome_sent" readonly="1"/>
+                    </group>
+                </group>
+
+                <!-- ── Welcome message ─────────────────────────────────── -->
+                <group string="Welcome Message">
+                    <field name="welcome_message" nolabel="1"
+                           placeholder="Message posted when the channel is first created…"/>
+                </group>
+
+                <!-- ── Notes ───────────────────────────────────────────── -->
+                <group string="Notes">
+                    <field name="notes" nolabel="1"
+                           placeholder="Internal notes about this bot…"/>
+                </group>
+
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS DISCUSS BOT — Search View
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="view_mythos_discuss_bot_search" model="ir.ui.view">
+    <field name="name">mythos.discuss.bot.search</field>
+    <field name="model">mythos.discuss.bot</field>
+    <field name="arch" type="xml">
+        <search string="Search Discuss Bots">
+            <field name="name"/>
+            <field name="code"/>
+            <field name="agent_id"/>
+            <separator/>
+            <filter string="Active"    name="filter_active"   domain="[('active','=',True)]"/>
+            <filter string="Archived"  name="filter_archived" domain="[('active','=',False)]"/>
+            <separator/>
+            <filter string="General"       name="domain_general"       domain="[('domain_type','=','general')]"/>
+            <filter string="Pre-Contract"  name="domain_pre_contract"  domain="[('domain_type','=','pre_contract')]"/>
+            <filter string="Contract"      name="domain_contract"       domain="[('domain_type','=','contract')]"/>
+            <filter string="Execution"     name="domain_execution"      domain="[('domain_type','=','execution')]"/>
+            <filter string="Financial"     name="domain_financial"      domain="[('domain_type','=','financial')]"/>
+            <filter string="Quality &amp; Risk" name="domain_quality"  domain="[('domain_type','=','quality_risk')]"/>
+            <filter string="System"        name="domain_system"         domain="[('domain_type','=','system')]"/>
+            <filter string="Developer"     name="domain_developer"      domain="[('domain_type','=','developer')]"/>
+            <separator/>
+            <filter string="Channel Ready" name="channel_ready" domain="[('channel_id','!=',False)]"/>
+            <group expand="0" string="Group By">
+                <filter string="Domain"  name="group_domain" context="{'group_by':'domain_type'}"/>
+                <filter string="Active"  name="group_active" context="{'group_by':'active'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MYTHOS DISCUSS BOT — Action
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<record id="action_mythos_discuss_bot" model="ir.actions.act_window">
+    <field name="name">Discuss Bots</field>
+    <field name="res_model">mythos.discuss.bot</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_mythos_discuss_bot_search"/>
+    <field name="context">{'search_default_filter_active': 1}</field>
+    <field name="target">current</field>
+</record>
+
+</data>
+</odoo>

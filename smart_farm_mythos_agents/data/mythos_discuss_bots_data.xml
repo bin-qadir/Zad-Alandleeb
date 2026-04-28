@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Mythos Discuss Bots — Step 7
+    ════════════════════════════
+    8 internal Discuss bots, one per domain + 1 general.
+
+    noupdate="1" block: created once, never overwritten on upgrade.
+    Plain <data> block: _setup_all_bots() runs on every install/upgrade
+    to ensure partners + channels are created (idempotent).
+-->
+<odoo>
+
+<!-- ── Bot records (noupdate: safe to customise after install) ──────────── -->
+<data noupdate="1">
+
+    <!-- 1. MythosBot General ─────────────────────────────────────────────── -->
+    <record id="mythos_discuss_bot_general" model="mythos.discuss.bot">
+        <field name="name">MythosBot General</field>
+        <field name="code">mythosbot_general</field>
+        <field name="domain_type">general</field>
+        <field name="sequence">1</field>
+        <!-- No linked agent — general-purpose bot -->
+        <field name="welcome_message">Welcome to MythosBot General — your Mythos AI hub for all domains. I will surface cross-domain alerts and system-wide notifications here.</field>
+        <field name="notes">General-purpose bot. Receives no automatic alert routing (no domain match). Use for announcements and cross-domain communication.</field>
+    </record>
+
+    <!-- 2. Pre-Contract Bot ──────────────────────────────────────────────── -->
+    <record id="mythos_discuss_bot_pre_contract" model="mythos.discuss.bot">
+        <field name="name">Pre-Contract Bot</field>
+        <field name="code">mythosbot_pre_contract</field>
+        <field name="domain_type">pre_contract</field>
+        <field name="sequence">2</field>
+        <field name="agent_id" ref="mythos_agent_basic_boq"/>
+        <field name="welcome_message">Welcome to the Pre-Contract channel. I will post BOQ cost overrun alerts and pre-contract analysis notifications here automatically.</field>
+        <field name="notes">Routes pre_contract domain alerts (BOQ Monitor Agent). Linked to the BOQ Monitor Agent.</field>
+    </record>
+
+    <!-- 3. Contract Bot ──────────────────────────────────────────────────── -->
+    <record id="mythos_discuss_bot_contract" model="mythos.discuss.bot">
+        <field name="name">Contract Bot</field>
+        <field name="code">mythosbot_contract</field>
+        <field name="domain_type">contract</field>
+        <field name="sequence">3</field>
+        <field name="agent_id" ref="mythos_agent_domain_contract"/>
+        <field name="welcome_message">Welcome to the Contract channel. Contract lifecycle alerts and approval notifications will appear here automatically.</field>
+        <field name="notes">Routes contract domain alerts. Linked to the Contract Agent.</field>
+    </record>
+
+    <!-- 4. Execution Bot ─────────────────────────────────────────────────── -->
+    <record id="mythos_discuss_bot_execution" model="mythos.discuss.bot">
+        <field name="name">Execution Bot</field>
+        <field name="code">mythosbot_execution</field>
+        <field name="domain_type">execution</field>
+        <field name="sequence">4</field>
+        <field name="agent_id" ref="mythos_agent_basic_execution"/>
+        <field name="welcome_message">Welcome to the Execution channel. Execution delay alerts and job order progress notifications will appear here automatically.</field>
+        <field name="notes">Routes execution domain alerts. Linked to the Execution Monitor Agent.</field>
+    </record>
+
+    <!-- 5. Financial Bot ─────────────────────────────────────────────────── -->
+    <record id="mythos_discuss_bot_financial" model="mythos.discuss.bot">
+        <field name="name">Financial Bot</field>
+        <field name="code">mythosbot_financial</field>
+        <field name="domain_type">financial</field>
+        <field name="sequence">5</field>
+        <field name="agent_id" ref="mythos_agent_basic_financial"/>
+        <field name="welcome_message">Welcome to the Financial channel. Cost overrun and contract value breach alerts will appear here automatically.</field>
+        <field name="notes">Routes financial domain alerts. Linked to the Financial Monitor Agent.</field>
+    </record>
+
+    <!-- 6. Quality &amp; Risk Bot ────────────────────────────────────────── -->
+    <record id="mythos_discuss_bot_quality_risk" model="mythos.discuss.bot">
+        <field name="name">Quality &amp; Risk Bot</field>
+        <field name="code">mythosbot_quality_risk</field>
+        <field name="domain_type">quality_risk</field>
+        <field name="sequence">6</field>
+        <field name="agent_id" ref="mythos_agent_domain_quality_risk"/>
+        <field name="welcome_message">Welcome to the Quality &amp; Risk channel. Quality inspection and risk escalation alerts will appear here automatically.</field>
+        <field name="notes">Routes quality_risk domain alerts. Linked to the Quality &amp; Risk Agent.</field>
+    </record>
+
+    <!-- 7. System Bot ────────────────────────────────────────────────────── -->
+    <record id="mythos_discuss_bot_system" model="mythos.discuss.bot">
+        <field name="name">System Bot</field>
+        <field name="code">mythosbot_system</field>
+        <field name="domain_type">system</field>
+        <field name="sequence">7</field>
+        <field name="agent_id" ref="mythos_agent_domain_system"/>
+        <field name="welcome_message">Welcome to the System channel. Platform health, cron failures, and system-level notifications will appear here automatically.</field>
+        <field name="notes">Routes system domain alerts. Linked to the System Agent.</field>
+    </record>
+
+    <!-- 8. Developer Bot ─────────────────────────────────────────────────── -->
+    <record id="mythos_discuss_bot_developer" model="mythos.discuss.bot">
+        <field name="name">Developer Bot</field>
+        <field name="code">mythosbot_developer</field>
+        <field name="domain_type">developer</field>
+        <field name="sequence">8</field>
+        <!-- No linked agent yet — Developer Agent is future work -->
+        <field name="welcome_message">Welcome to the Developer channel. This is the internal channel for Mythos AI platform developers. Debug alerts and platform diagnostics will appear here.</field>
+        <field name="notes">Internal developer bot. No linked agent yet. Developer Agent will be added in a future step.</field>
+    </record>
+
+</data>
+
+<!-- ── Idempotent bootstrap (runs on every install/upgrade) ─────────────── -->
+<data>
+    <!-- Ensure partners + channels are created for all bots -->
+    <function model="mythos.discuss.bot" name="_setup_all_bots"/>
+</data>
+
+</odoo>

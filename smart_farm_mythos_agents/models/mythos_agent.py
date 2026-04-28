@@ -417,6 +417,7 @@ class MythosAgent(models.Model):
                             'related_id':    boq.id,
                         })
                         alert._send_to_telegram()
+                        alert._send_to_discuss_bot()   # Step 7
             _logger.info('MythosBasicMonitor: BOQ Agent check complete.')
 
         # ── 2. Execution Agent — progress < 50% in execution phase ────────────
@@ -441,6 +442,7 @@ class MythosAgent(models.Model):
                             'related_id':    proj.id,
                         })
                         alert._send_to_telegram()
+                        alert._send_to_discuss_bot()   # Step 7
             _logger.info('MythosBasicMonitor: Execution Agent check complete.')
 
         # ── 3. Financial Agent — actual total cost > contract value ───────────
@@ -466,6 +468,7 @@ class MythosAgent(models.Model):
                             'related_id':    proj.id,
                         })
                         alert._send_to_telegram()
+                        alert._send_to_discuss_bot()   # Step 7
             _logger.info('MythosBasicMonitor: Financial Agent check complete.')
 
         _logger.info('MythosBasicMonitor: full run complete.')

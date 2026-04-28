@@ -75,5 +75,15 @@
     groups="base.group_user"
 />
 
+<!-- Discuss Bots — internal Discuss bot registry (Step 7) -->
+<menuitem
+    id="menu_mythos_discuss_bots"
+    name="Discuss Bots"
+    parent="menu_mythos_ai_root"
+    action="smart_farm_mythos_agents.action_mythos_discuss_bot"
+    sequence="7"
+    groups="base.group_user"
+/>
+
 </data>
 </odoo>

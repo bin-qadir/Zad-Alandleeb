@@ -113,6 +113,67 @@ class MythosAlert(models.Model):
         self.write({'state': 'resolved'})
 
     # ────────────────────────────────────────────────────────────────────────
+    # Step 7 — Discuss Bot routing (internal Odoo messaging)
+    # ────────────────────────────────────────────────────────────────────────
+
+    def _send_to_discuss_bot(self):
+        """Post this alert to the matching active Discuss Bot channel.
+
+        Matching rule: bot.domain_type == alert.agent_id.domain_type
+                       AND bot.active == True AND bot.channel_id is set
+
+        SAFETY:
+          - No external API calls.
+          - Only posts to internal Discuss channel.
+          - Skips silently if no matching bot or channel found.
+          - Never raises — any error is caught and logged.
+        """
+        self.ensure_one()
+        domain_type = self.agent_id.domain_type if self.agent_id else False
+        if not domain_type:
+            return False
+
+        bot = self.env['mythos.discuss.bot'].search([
+            ('domain_type', '=', domain_type),
+            ('active',      '=', True),
+            ('channel_id',  '!=', False),
+        ], limit=1)
+
+        if not bot:
+            _logger.debug(
+                'MythosAlert._send_to_discuss_bot: no active Discuss bot for domain "%s".',
+                domain_type,
+            )
+            return False
+
+        _SEVERITY_LABEL = {
+            'low':      '🟡 Low',
+            'medium':   '🟠 Medium',
+            'high':     '🔴 High',
+            'critical': '🚨 Critical',
+        }
+        text = (
+            '[MYTHOS ALERT]\n'
+            'Agent: {agent}\n'
+            'Severity: {severity}\n\n'
+            '{message}\n\n'
+            'Ref: {model} / {record_id}'
+        ).format(
+            agent     = self.agent_id.name if self.agent_id else 'Unknown',
+            severity  = _SEVERITY_LABEL.get(self.severity, self.severity),
+            message   = self.message or '—',
+            model     = self.related_model or '—',
+            record_id = self.related_id or '—',
+        )
+
+        result = bot.send_internal_message(text)
+        _logger.info(
+            'MythosAlert._send_to_discuss_bot: alert "%s" → Discuss bot "%s" — %s.',
+            self.name, bot.name, 'posted' if result else 'FAILED',
+        )
+        return result
+
+    # ────────────────────────────────────────────────────────────────────────
     # Step 4 — Telegram routing (internal log only, no external API)
     # ────────────────────────────────────────────────────────────────────────
 
