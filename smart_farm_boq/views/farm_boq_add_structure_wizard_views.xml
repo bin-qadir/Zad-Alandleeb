@@ -133,7 +133,7 @@
                                invisible="insert_mode != 'subdivision'">
                             <field name="subdivision_ids"
                                    widget="many2many_tags"
-                                   domain="[('division_id', 'in', division_ids)] if division_ids else []"
+                                   domain="[('division_id', 'in', division_ids)]"
                                    options="{'no_create': True, 'no_open': True}"
                                    placeholder="اختر فرعاً أو أكثر…"
                                    nolabel="1"/>
@@ -153,7 +153,7 @@
                                invisible="insert_mode != 'sub_subdivision'">
                             <field name="subdivision_ids"
                                    widget="many2many_tags"
-                                   domain="[('division_id', 'in', division_ids)] if division_ids else []"
+                                   domain="[('division_id', 'in', division_ids)]"
                                    options="{'no_create': True, 'no_open': True}"
                                    placeholder="اختياري — لتضييق نطاق البنود الفرعية"
                                    nolabel="1"/>
@@ -163,7 +163,7 @@
                                invisible="insert_mode != 'sub_subdivision'">
                             <field name="sub_subdivision_ids"
                                    widget="many2many_tags"
-                                   domain="[('subdivision_id', 'in', subdivision_ids)] if subdivision_ids else ([('division_id', 'in', division_ids)] if division_ids else [])"
+                                   domain="[('subdivision_id', 'in', subdivision_ids)]"
                                    options="{'no_create': True, 'no_open': True}"
                                    placeholder="اختر بنداً فرعياً أو أكثر…"
                                    nolabel="1"/>
@@ -183,7 +183,7 @@
                                invisible="insert_mode != 'template'">
                             <field name="subdivision_ids"
                                    widget="many2many_tags"
-                                   domain="[('division_id', 'in', division_ids)] if division_ids else []"
+                                   domain="[('division_id', 'in', division_ids)]"
                                    options="{'no_create': True, 'no_open': True}"
                                    placeholder="اختياري — لتضييق نطاق القوالب"
                                    nolabel="1"/>
@@ -193,7 +193,7 @@
                                invisible="insert_mode != 'template'">
                             <field name="template_ids"
                                    widget="many2many_tags"
-                                   domain="[('division_id', 'in', division_ids)] if division_ids else ([('subdivision_id', 'in', subdivision_ids)] if subdivision_ids else [])"
+                                   domain="[('subdivision_id', 'in', subdivision_ids)]"
                                    options="{'no_create': True, 'no_open': True}"
                                    placeholder="اختر قالباً أو أكثر…"
                                    nolabel="1"/>

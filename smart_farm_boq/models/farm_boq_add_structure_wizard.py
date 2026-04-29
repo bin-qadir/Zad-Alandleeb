@@ -80,7 +80,7 @@ class FarmBoqAddStructureWizard(models.TransientModel):
         'boq_add_struct_wiz_sub_rel',
         'wizard_id', 'subdivision_id',
         string='Subdivisions / الفروع',
-        domain="[('division_id', 'in', division_ids)] if division_ids else []",
+        domain="[('division_id', 'in', division_ids)]",
     )
 
     # ── Sub-Subdivision selector ──────────────────────────────────────────────
@@ -89,7 +89,7 @@ class FarmBoqAddStructureWizard(models.TransientModel):
         'boq_add_struct_wiz_subsub_rel',
         'wizard_id', 'sub_subdivision_id',
         string='Sub-Subdivisions / البنود الفرعية',
-        domain="[('subdivision_id', 'in', subdivision_ids)] if subdivision_ids else ([('division_id', 'in', division_ids)] if division_ids else [])",
+        domain="[('subdivision_id', 'in', subdivision_ids)]",
     )
 
     # ── Template selector ─────────────────────────────────────────────────────
@@ -98,7 +98,7 @@ class FarmBoqAddStructureWizard(models.TransientModel):
         'boq_add_struct_wiz_tmpl_rel',
         'wizard_id', 'template_id',
         string='Templates / القوالب',
-        domain="[('division_id', 'in', division_ids)] if division_ids else ([('subdivision_id', 'in', subdivision_ids)] if subdivision_ids else [])",
+        domain="[('subdivision_id', 'in', subdivision_ids)]",
         help='Required for "By Template". Select the specific items to import.',
     )
 
@@ -128,23 +128,44 @@ class FarmBoqAddStructureWizard(models.TransientModel):
 
     @api.onchange('division_ids')
     def _onchange_division_ids(self):
+        div_ids = self.division_ids.ids
+        _logger.info('BOQ wizard: DIV DOMAIN division_ids=%s', div_ids)
+
         invalid = self.subdivision_ids.filtered(
             lambda s: s.division_id not in self.division_ids
         )
         if invalid:
             self.subdivision_ids -= invalid
+            self.sub_subdivision_ids = False
+
+        return {
+            'domain': {
+                'subdivision_ids':     [('division_id', 'in', div_ids)],
+                'sub_subdivision_ids': [('subdivision_id', 'in', self.subdivision_ids.ids)],
+            }
+        }
 
     @api.onchange('subdivision_ids')
     def _onchange_subdivision_ids(self):
+        sub_ids = self.subdivision_ids.ids
+        _logger.info('BOQ wizard: SUB DOMAIN subdivision_ids=%s', sub_ids)
+
         if not self.subdivision_ids:
             self.sub_subdivision_ids = False
             self.template_ids        = False
-            return
-        invalid_ss = self.sub_subdivision_ids.filtered(
-            lambda ss: ss.subdivision_id not in self.subdivision_ids
-        )
-        if invalid_ss:
-            self.sub_subdivision_ids -= invalid_ss
+        else:
+            invalid_ss = self.sub_subdivision_ids.filtered(
+                lambda ss: ss.subdivision_id not in self.subdivision_ids
+            )
+            if invalid_ss:
+                self.sub_subdivision_ids -= invalid_ss
+
+        return {
+            'domain': {
+                'sub_subdivision_ids': [('subdivision_id', 'in', sub_ids)],
+                'template_ids':        [('subdivision_id', 'in', sub_ids)],
+            }
+        }
 
     # ────────────────────────────────────────────────────────────────────────
     # Public action — entry point from the wizard footer
