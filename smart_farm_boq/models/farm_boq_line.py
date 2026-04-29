@@ -207,6 +207,19 @@ class FarmBoqLine(models.Model):
         ondelete='set null',
     )
 
+    # ── Structure icon (visual badge for row type in list views) ─────────────
+    structure_icon = fields.Char(
+        string='نوع | Type',
+        compute='_compute_structure_icon',
+        store=True,
+        help=(
+            '🟦 قسم / Division\n'
+            '🟩 فرع / Subdivision\n'
+            '🟨 بند فرعي / Sub-Subdivision\n'
+            '⬜ بند / Item'
+        ),
+    )
+
     # ────────────────────────────────────────────────────────────────────────
     # Computed fields
     # ────────────────────────────────────────────────────────────────────────
@@ -234,6 +247,24 @@ class FarmBoqLine(models.Model):
                 rec.row_level = 2
             else:
                 rec.row_level = 3
+
+    @api.depends('display_type')
+    def _compute_structure_icon(self):
+        """Compute a Unicode badge icon for the row's hierarchy level.
+
+        Shown as the first column in the BOQ line list for quick visual scanning:
+          🟦  Division   (line_section)
+          🟩  Subdivision (line_subsection)
+          🟨  Sub-Subdivision (line_sub_subsection)
+          ⬜  Item / subitem (display_type is False)
+        """
+        _ICONS = {
+            'line_section':        '🟦',
+            'line_subsection':     '🟩',
+            'line_sub_subsection': '🟨',
+        }
+        for rec in self:
+            rec.structure_icon = _ICONS.get(rec.display_type, '⬜')
 
     @api.depends('boq_state')
     def _compute_is_editable(self):

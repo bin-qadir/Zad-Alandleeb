@@ -102,6 +102,7 @@
                     <field name="sub_rank" column_invisible="1"/>
                     <field name="sub_sub_rank" column_invisible="1"/>
                     <field name="row_level" column_invisible="1"/>
+                    <field name="structure_icon" string="نوع" readonly="1" width="40px"/>
                     <field name="display_code" string="Code"/>
                     <field name="division_id" optional="show"/>
                     <field name="subdivision_id" optional="show"/>

@@ -4,15 +4,25 @@
 
         <!-- ══════════════════════════════════════════════════════════════════
              Add BOQ Structure Wizard — Flexible Insert Modes
-             6 modes: full / division / subdivision / sub_subdivision /
-                      template / manual
+             ══════════════════════════════════════════════════════════════════
+
+             Modes:
+               full            → كامل الهيكل (all divisions → subs → sub-subs)
+               division        → حسب القسم   (selected divisions + children)
+               subdivision     → حسب الفرع   (selected subdivisions + children)
+               sub_subdivision → حسب البند الفرعي (selected sub-subs + parents)
+               template        → حسب البند/القالب (selected templates as items)
+               manual          → إدخال يدوي (opens Add Item wizard)
+
+             STRICT RULE: Only the exact selected scope is imported.
+             No fallback to full structure if selected IDs exist.
         ══════════════════════════════════════════════════════════════════════ -->
 
         <record id="view_farm_boq_add_structure_wizard_form" model="ir.ui.view">
             <field name="name">farm.boq.add_structure.wizard.form</field>
             <field name="model">farm.boq.add_structure.wizard</field>
             <field name="arch" type="xml">
-                <form string="Add BOQ Structure">
+                <form string="إضافة هيكل BOQ / Add BOQ Structure">
 
                     <sheet>
 
@@ -22,109 +32,170 @@
                         </group>
 
                         <!-- ── Mode selector ──────────────────────────────── -->
-                        <separator string="Choose Insert Mode"/>
+                        <separator string="نمط الإدراج / Choose Insert Mode"/>
                         <group>
                             <field name="insert_mode" widget="radio" nolabel="1"/>
                         </group>
 
-                        <!-- ── Mode help text ─────────────────────────────── -->
+                        <!-- ── Global warning ─────────────────────────────── -->
+                        <div class="alert alert-warning mb-0 mt-2"
+                             invisible="insert_mode in ('full', 'manual')"
+                             role="alert">
+                            <i class="fa fa-exclamation-triangle me-1"/>
+                            <strong>تنبيه:</strong>
+                            سيتم استيراد العناصر المحددة فقط، ولن يتم إدراج أي بنود خارج الاختيار.
+                        </div>
 
+                        <!-- ── Mode help: Full ─────────────────────────────── -->
                         <div class="alert alert-warning mb-0 mt-2"
                              invisible="insert_mode != 'full'"
                              role="alert">
-                            <strong>Full Structure:</strong>
-                            ALL divisions, subdivisions, and sub-subdivisions from the
-                            master catalogue will be imported into this BOQ.
-                            Rows that already exist are safely skipped.
-                            This may create a large number of rows.
+                            <strong>كامل الهيكل / Full Structure:</strong>
+                            سيتم استيراد جميع الأقسام والفروع والبنود الفرعية من الكتالوج.
+                            الصفوف الموجودة مسبقاً تُتخطى تلقائياً.
+                            قد يُنشئ هذا النمط عدداً كبيراً من الصفوف.
                         </div>
 
+                        <!-- ── Mode help: Division ────────────────────────── -->
                         <div class="alert alert-info mb-0 mt-2"
                              invisible="insert_mode != 'division'"
                              role="alert">
-                            <strong>By Division:</strong>
-                            Select one or more Divisions. All their Subdivisions and
-                            Sub-Subdivisions will be imported. Already-existing rows
-                            are skipped.
+                            <strong>حسب القسم / By Division:</strong>
+                            حدد قسماً أو أكثر. سيتم استيراد جميع الفروع والبنود الفرعية
+                            الخاصة بالأقسام المحددة فقط. الأقسام الأخرى تُتجاهل تماماً.
                         </div>
 
+                        <!-- ── Mode help: Subdivision ─────────────────────── -->
                         <div class="alert alert-info mb-0 mt-2"
                              invisible="insert_mode != 'subdivision'"
                              role="alert">
-                            <strong>By Subdivision:</strong>
-                            Select the Subdivision(s) you want. The parent Division row
-                            and all Sub-Subdivisions under each Subdivision are created
-                            automatically. Use the Division filter to narrow the list.
+                            <strong>حسب الفرع / By Subdivision:</strong>
+                            حدد فرعاً أو أكثر. سيتم استيراد الفروع المحددة فقط مع بنودها
+                            الفرعية ورأس القسم الأب تلقائياً. الفروع الشقيقة لا تُستورد.
                         </div>
 
+                        <!-- ── Mode help: Sub-Subdivision ─────────────────── -->
                         <div class="alert alert-info mb-0 mt-2"
                              invisible="insert_mode != 'sub_subdivision'"
                              role="alert">
-                            <strong>By Sub-Subdivision:</strong>
-                            Select specific Sub-Subdivisions only. Parent Division and
-                            Subdivision rows are created automatically if they are
-                            missing. Use the higher-level filters to narrow the picker.
+                            <strong>حسب البند الفرعي / By Sub-Subdivision:</strong>
+                            حدد البنود الفرعية المطلوبة. يتم استيرادها فقط مع رؤوس القسم
+                            والفرع الأب تلقائياً. البنود الفرعية الأخرى لا تُستورد.
                         </div>
 
+                        <!-- ── Mode help: Template ────────────────────────── -->
                         <div class="alert alert-success mb-0 mt-2"
                              invisible="insert_mode != 'template'"
                              role="alert">
-                            <strong>By Template / Item:</strong>
-                            Click <em>Open Add Item Wizard</em> below.  You will be
-                            able to pick a ready-made template and choose exactly where
-                            to place it (Division → Subdivision → Sub-Subdivision).
+                            <strong>حسب البند/القالب / By Template / Item:</strong>
+                            حدد القوالب المطلوبة. سيتم استيرادها كبنود BOQ مباشرة مع
+                            إنشاء رؤوس القسم والفرع الأب تلقائياً إن لم تكن موجودة.
+                            لا يتم استيراد أي قوالب خارج اختيارك.
                         </div>
 
+                        <!-- ── Mode help: Manual ──────────────────────────── -->
                         <div class="alert alert-success mb-0 mt-2"
                              invisible="insert_mode != 'manual'"
                              role="alert">
-                            <strong>Manual (line by line):</strong>
-                            Click <em>Open Add Item Wizard</em> below.  You will fill
-                            in the item details (name, quantity, unit) and choose the
-                            location yourself.
+                            <strong>إدخال يدوي / Manual:</strong>
+                            سيتم فتح نافذة إضافة بند لإدخال التفاصيل يدوياً
+                            (الاسم، الكمية، الوحدة، الموقع في الهيكل).
                         </div>
 
-                        <!-- ── Division selector ──────────────────────────── -->
-                        <!-- Shown for division mode (required) and
-                             subdivision/sub_subdivision modes (optional filter) -->
-                        <group string="Division"
-                               invisible="insert_mode not in ('division', 'subdivision', 'sub_subdivision')">
+                        <!-- ═══════════════════════════════════════════════════
+                             Selectors — shown/hidden strictly per insert_mode
+                        ════════════════════════════════════════════════════ -->
+
+                        <!-- Division selector: shown ONLY in division mode -->
+                        <group string="الأقسام / Divisions"
+                               invisible="insert_mode != 'division'">
                             <field name="division_ids"
                                    widget="many2many_tags"
                                    options="{'no_create': True, 'no_open': True}"
-                                   placeholder="Select division(s)…"
+                                   placeholder="اختر قسماً أو أكثر…"
                                    nolabel="1"/>
-                            <div class="text-muted small"
-                                 invisible="insert_mode == 'division'">
-                                Optional — leave empty to show all subdivisions
+                        </group>
+
+                        <!-- Division filter (optional) + Subdivision: shown in subdivision mode -->
+                        <group string="تصفية حسب القسم (اختياري) / Filter by Division"
+                               invisible="insert_mode != 'subdivision'">
+                            <field name="division_ids"
+                                   widget="many2many_tags"
+                                   options="{'no_create': True, 'no_open': True}"
+                                   placeholder="اختر قسماً لتضييق النطاق (اختياري)…"
+                                   nolabel="1"/>
+                            <div class="text-muted small">
+                                اختياري — اتركه فارغاً لعرض جميع الفروع في القائمة
                             </div>
                         </group>
 
-                        <!-- ── Subdivision selector ───────────────────────── -->
-                        <!-- Shown for subdivision mode (required) and
-                             sub_subdivision mode (optional filter) -->
-                        <group string="Subdivision"
-                               invisible="insert_mode not in ('subdivision', 'sub_subdivision')">
+                        <group string="الفروع / Subdivisions"
+                               invisible="insert_mode != 'subdivision'">
                             <field name="subdivision_ids"
                                    widget="many2many_tags"
                                    domain="[('division_id', 'in', division_ids)] if division_ids else []"
                                    options="{'no_create': True, 'no_open': True}"
-                                   placeholder="Select subdivision(s)…"
+                                   placeholder="اختر فرعاً أو أكثر…"
                                    nolabel="1"/>
-                            <div class="text-muted small"
-                                 invisible="insert_mode == 'subdivision'">
-                                Optional — leave empty to show all sub-subdivisions
-                            </div>
                         </group>
 
-                        <!-- ── Sub-Subdivision selector ───────────────────── -->
-                        <group string="Sub-Subdivision"
+                        <!-- Division + Subdivision filter + Sub-Subdivision: shown in sub_subdivision mode -->
+                        <group string="تصفية حسب القسم (اختياري) / Filter by Division"
+                               invisible="insert_mode != 'sub_subdivision'">
+                            <field name="division_ids"
+                                   widget="many2many_tags"
+                                   options="{'no_create': True, 'no_open': True}"
+                                   placeholder="اختياري — لتضييق نطاق الفروع والبنود"
+                                   nolabel="1"/>
+                        </group>
+
+                        <group string="تصفية حسب الفرع (اختياري) / Filter by Subdivision"
+                               invisible="insert_mode != 'sub_subdivision'">
+                            <field name="subdivision_ids"
+                                   widget="many2many_tags"
+                                   domain="[('division_id', 'in', division_ids)] if division_ids else []"
+                                   options="{'no_create': True, 'no_open': True}"
+                                   placeholder="اختياري — لتضييق نطاق البنود الفرعية"
+                                   nolabel="1"/>
+                        </group>
+
+                        <group string="البنود الفرعية / Sub-Subdivisions"
                                invisible="insert_mode != 'sub_subdivision'">
                             <field name="sub_subdivision_ids"
                                    widget="many2many_tags"
-                                   domain="[('subdivision_id', 'in', subdivision_ids)] if subdivision_ids else (([('division_id', 'in', division_ids)]) if division_ids else [])"
+                                   domain="[('subdivision_id', 'in', subdivision_ids)] if subdivision_ids else ([('division_id', 'in', division_ids)] if division_ids else [])"
                                    options="{'no_create': True, 'no_open': True}"
-                                   placeholder="Select sub-subdivision(s)…"
+                                   placeholder="اختر بنداً فرعياً أو أكثر…"
+                                   nolabel="1"/>
+                        </group>
+
+                        <!-- Template selector: shown ONLY in template mode -->
+                        <group string="تصفية حسب القسم (اختياري) / Filter by Division"
+                               invisible="insert_mode != 'template'">
+                            <field name="division_ids"
+                                   widget="many2many_tags"
+                                   options="{'no_create': True, 'no_open': True}"
+                                   placeholder="اختياري — لتضييق نطاق القوالب"
+                                   nolabel="1"/>
+                        </group>
+
+                        <group string="تصفية حسب الفرع (اختياري) / Filter by Subdivision"
+                               invisible="insert_mode != 'template'">
+                            <field name="subdivision_ids"
+                                   widget="many2many_tags"
+                                   domain="[('division_id', 'in', division_ids)] if division_ids else []"
+                                   options="{'no_create': True, 'no_open': True}"
+                                   placeholder="اختياري — لتضييق نطاق القوالب"
+                                   nolabel="1"/>
+                        </group>
+
+                        <group string="القوالب / Templates"
+                               invisible="insert_mode != 'template'">
+                            <field name="template_ids"
+                                   widget="many2many_tags"
+                                   domain="[('division_id', 'in', division_ids)] if division_ids else ([('subdivision_id', 'in', subdivision_ids)] if subdivision_ids else [])"
+                                   options="{'no_create': True, 'no_open': True}"
+                                   placeholder="اختر قالباً أو أكثر…"
                                    nolabel="1"/>
                         </group>
 
@@ -133,31 +204,50 @@
                     <!-- ── Footer buttons ─────────────────────────────────── -->
                     <footer>
 
-                        <!-- Full structure: confirm dialog because it may create many rows -->
+                        <!-- Full structure: confirm dialog -->
                         <button name="action_import"
                                 type="object"
-                                string="Import Full Structure"
+                                string="استيراد كامل الهيكل"
                                 class="btn-warning"
-                                close="1"
-                                confirm="This will import ALL work structure into the BOQ. Already-existing rows will be skipped. Continue?"
+                                confirm="سيتم استيراد كامل هيكل العمل في وثيقة BOQ. الصفوف الموجودة ستُتخطى. هل تريد المتابعة؟"
                                 invisible="insert_mode != 'full'"/>
 
-                        <!-- Division / Subdivision / Sub-Subdivision modes -->
+                        <!-- Division mode -->
                         <button name="action_import"
                                 type="object"
-                                string="Import Structure"
+                                string="استيراد الأقسام المحددة"
                                 class="btn-primary"
-                                close="1"
-                                invisible="insert_mode not in ('division', 'subdivision', 'sub_subdivision')"/>
+                                invisible="insert_mode != 'division'"/>
 
-                        <!-- Template / Manual modes: open Add Item wizard -->
+                        <!-- Subdivision mode -->
                         <button name="action_import"
                                 type="object"
-                                string="Open Add Item Wizard"
+                                string="استيراد الفروع المحددة"
                                 class="btn-primary"
-                                invisible="insert_mode not in ('template', 'manual')"/>
+                                invisible="insert_mode != 'subdivision'"/>
 
-                        <button string="Cancel"
+                        <!-- Sub-Subdivision mode -->
+                        <button name="action_import"
+                                type="object"
+                                string="استيراد البنود الفرعية المحددة"
+                                class="btn-primary"
+                                invisible="insert_mode != 'sub_subdivision'"/>
+
+                        <!-- Template mode -->
+                        <button name="action_import"
+                                type="object"
+                                string="استيراد القوالب المحددة"
+                                class="btn-primary"
+                                invisible="insert_mode != 'template'"/>
+
+                        <!-- Manual mode -->
+                        <button name="action_import"
+                                type="object"
+                                string="فتح نافذة الإدخال اليدوي"
+                                class="btn-primary"
+                                invisible="insert_mode != 'manual'"/>
+
+                        <button string="إلغاء / Cancel"
                                 class="btn-secondary"
                                 special="cancel"/>
 
@@ -170,14 +260,11 @@
 
         <!-- ── Window action ─────────────────────────────────────────────── -->
         <record id="action_farm_boq_add_structure_wizard" model="ir.actions.act_window">
-            <field name="name">Add BOQ Structure</field>
+            <field name="name">إضافة هيكل BOQ / Add BOQ Structure</field>
             <field name="res_model">farm.boq.add_structure.wizard</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
-
-        <!-- "Add BOQ Structure" button lives in the BOQ Structure screen list header.
-             See farm_boq_line_views.xml <header> section. -->
 
     </data>
 </odoo>

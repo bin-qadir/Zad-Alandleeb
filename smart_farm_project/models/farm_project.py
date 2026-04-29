@@ -385,7 +385,7 @@ class FarmProject(models.Model):
         self.ensure_one()
         if self.odoo_project_id:
             return
-        create_vals = {'name': self.name}
+        create_vals = {'name': self.name, 'billing_type': 'not_billable'}
         if self.project_manager_id:
             create_vals['user_id'] = self.project_manager_id.id
         odoo_proj = self.env['project.project'].create(create_vals)
