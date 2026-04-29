@@ -5,3 +5,4 @@ from . import mythos_telegram_bot
 from . import mythos_telegram_message
 from . import mythos_discuss_bot
 from . import mythos_bot_command
+from . import mythos_system_bot_command

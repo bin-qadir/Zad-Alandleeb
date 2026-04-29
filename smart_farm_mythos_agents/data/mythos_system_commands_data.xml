@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Mythos System Bot — Command Registry Seed Data
+    ═══════════════════════════════════════════════
+    noupdate="1" — created once, never overwritten on upgrade.
+
+    Commands are scoped to the System Bot (system_bot).
+    Executive Dashboard — monitoring only, admin-level.
+-->
+<odoo noupdate="1">
+<data>
+
+    <!-- ── /start ── ─────────────────────────────────────────────────────── -->
+    <record id="cmd_system_start" model="mythos.bot.command">
+        <field name="command">/start</field>
+        <field name="name">Executive Dashboard</field>
+        <field name="description">Show the executive dashboard with the main navigation keyboard.</field>
+        <field name="bot_id" ref="mythos_telegram_bot_system"/>
+        <field name="domain_type">system</field>
+        <field name="sequence">1</field>
+    </record>
+
+    <!-- ── /status ─────────────────────────────────────────────────────────── -->
+    <record id="cmd_system_status" model="mythos.bot.command">
+        <field name="command">/status</field>
+        <field name="name">System Status</field>
+        <field name="description">Show system health: bots, projects, open alerts, overdue JOs.</field>
+        <field name="bot_id" ref="mythos_telegram_bot_system"/>
+        <field name="domain_type">system</field>
+        <field name="sequence">2</field>
+    </record>
+
+    <!-- ── /alerts ─────────────────────────────────────────────────────────── -->
+    <record id="cmd_system_alerts" model="mythos.bot.command">
+        <field name="command">/alerts</field>
+        <field name="name">Active Alerts</field>
+        <field name="description">Show recent open and acknowledged Mythos alerts.</field>
+        <field name="bot_id" ref="mythos_telegram_bot_system"/>
+        <field name="domain_type">system</field>
+        <field name="sequence">3</field>
+    </record>
+
+    <!-- ── /projects ───────────────────────────────────────────────────────── -->
+    <record id="cmd_system_projects" model="mythos.bot.command">
+        <field name="command">/projects</field>
+        <field name="name">Project Overview</field>
+        <field name="description">List all projects with state and execution progress.</field>
+        <field name="bot_id" ref="mythos_telegram_bot_system"/>
+        <field name="domain_type">system</field>
+        <field name="sequence">4</field>
+    </record>
+
+    <!-- ── /executive_summary ──────────────────────────────────────────────── -->
+    <record id="cmd_system_executive_summary" model="mythos.bot.command">
+        <field name="command">/executive_summary</field>
+        <field name="name">Executive Summary</field>
+        <field name="description">Cross-project snapshot: progress, delays, JO completion rate.</field>
+        <field name="bot_id" ref="mythos_telegram_bot_system"/>
+        <field name="domain_type">system</field>
+        <field name="sequence">5</field>
+    </record>
+
+    <!-- ── /kpi ────────────────────────────────────────────────────────────── -->
+    <record id="cmd_system_kpi" model="mythos.bot.command">
+        <field name="command">/kpi</field>
+        <field name="name">KPI Dashboard</field>
+        <field name="description">Key performance indicators: completion rate, delay ratio, on-track projects.</field>
+        <field name="bot_id" ref="mythos_telegram_bot_system"/>
+        <field name="domain_type">system</field>
+        <field name="sequence">6</field>
+    </record>
+
+    <!-- ── /risk ───────────────────────────────────────────────────────────── -->
+    <record id="cmd_system_risk" model="mythos.bot.command">
+        <field name="command">/risk</field>
+        <field name="name">Risk Assessment</field>
+        <field name="description">Show overdue projects and high/critical alerts.</field>
+        <field name="bot_id" ref="mythos_telegram_bot_system"/>
+        <field name="domain_type">system</field>
+        <field name="sequence">7</field>
+    </record>
+
+    <!-- ── /help ───────────────────────────────────────────────────────────── -->
+    <record id="cmd_system_help" model="mythos.bot.command">
+        <field name="command">/help</field>
+        <field name="name">Help</field>
+        <field name="description">Alias for /start — show executive dashboard.</field>
+        <field name="bot_id" ref="mythos_telegram_bot_system"/>
+        <field name="domain_type">system</field>
+        <field name="sequence">8</field>
+    </record>
+
+</data>
+</odoo>

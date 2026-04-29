@@ -46,6 +46,7 @@
         'data/mythos_telegram_bots_data.xml',
         'data/mythos_discuss_bots_data.xml',
         'data/mythos_execution_commands_data.xml',
+        'data/mythos_system_commands_data.xml',
     ],
     'assets': {
         'web.assets_backend': [
