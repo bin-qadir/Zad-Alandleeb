@@ -2,21 +2,21 @@
 <odoo>
     <data>
 
-        <!-- ── Submenu under Execution ──────────────────────────────────── -->
-
+        <!-- Material Requests → Materials group -->
         <menuitem
             id="menu_smart_farm_material_request"
             name="Material Requests"
-            parent="smart_farm_execution.menu_smart_farm_execution"
+            parent="smart_farm_execution.menu_execution_materials"
             action="action_farm_material_request"
-            sequence="25"/>
+            sequence="10"/>
 
+        <!-- Pending Approvals → Approvals group -->
         <menuitem
             id="menu_smart_farm_material_request_pending"
             name="Pending Approvals"
-            parent="smart_farm_execution.menu_smart_farm_execution"
+            parent="smart_farm_execution.menu_execution_approvals"
             action="action_farm_material_request_pending"
-            sequence="26"/>
+            sequence="10"/>
 
     </data>
 </odoo>

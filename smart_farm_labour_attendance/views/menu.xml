@@ -3,40 +3,35 @@
 <data>
 
 <!-- ══════════════════════════════════════════════════════════════════════════
-     Labour Attendance — under Execution root menu
+     Labour Attendance — all items placed directly under the Labour group.
+     The old "Labour Attendance" sub-group has been removed and merged into
+     the canonical menu_execution_labour group (smart_farm_execution).
 ══════════════════════════════════════════════════════════════════════════ -->
-
-<!-- Sub-group: Labour Attendance -->
-<menuitem
-    id="menu_smart_farm_execution_labour_attendance_root"
-    name="Labour Attendance / تحضير العمالة"
-    parent="smart_farm_execution.menu_smart_farm_execution"
-    sequence="35"
-/>
 
 <!-- Daily Attendance sheets -->
 <menuitem
     id="menu_smart_farm_execution_attendance"
     name="Daily Attendance / التحضير اليومي"
-    parent="menu_smart_farm_execution_labour_attendance_root"
+    parent="smart_farm_execution.menu_execution_labour"
     action="smart_farm_labour_attendance.action_farm_labour_attendance"
     sequence="10"
 />
 
-<!-- Attendance Lines (per-worker) -->
+<!-- Attendance Lines (per-worker detail) -->
 <menuitem
     id="menu_smart_farm_execution_attendance_lines"
-    name="Attendance Lines / سطور التحضير"
-    parent="menu_smart_farm_execution_labour_attendance_root"
+    name="Attendance Lines / تفاصيل الحضور"
+    parent="smart_farm_execution.menu_execution_labour"
     action="smart_farm_labour_attendance.action_farm_labour_attendance_line"
     sequence="20"
 />
 
-<!-- Labour Entries (existing, duplicated under this menu for convenience) -->
+<!-- Labour Entries — single canonical entry (duplicate removed from
+     smart_farm_execution/views/menu.xml to eliminate the old duplication) -->
 <menuitem
     id="menu_smart_farm_execution_attendance_labour"
     name="Labour Entries / إدخالات العمالة"
-    parent="menu_smart_farm_execution_labour_attendance_root"
+    parent="smart_farm_execution.menu_execution_labour"
     action="smart_farm_execution.action_farm_labour_entry"
     sequence="30"
 />

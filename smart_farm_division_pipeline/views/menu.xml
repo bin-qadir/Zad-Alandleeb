@@ -2,13 +2,13 @@
 <odoo>
 <data>
 
-    <!-- Under Execution parent — Division Pipeline menu -->
+    <!-- Division Pipeline → Operations group (seq=10 inside Operations) -->
     <menuitem
         id="menu_farm_division_pipeline"
         name="Division Pipeline"
-        parent="smart_farm_execution.menu_smart_farm_execution"
+        parent="smart_farm_execution.menu_execution_operations"
         action="smart_farm_division_pipeline.action_farm_division_pipeline"
-        sequence="5"
+        sequence="10"
     />
 
 </data>
