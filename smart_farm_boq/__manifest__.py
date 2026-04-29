@@ -30,6 +30,7 @@
         'views/farm_boq_print_wizard_views.xml',
         'views/farm_boq_excel_import_wizard_views.xml',
         'views/farm_project_views_inherit.xml',
+        'views/project_phase_master_views.xml',
         'views/menu.xml',
     ],
     'assets': {

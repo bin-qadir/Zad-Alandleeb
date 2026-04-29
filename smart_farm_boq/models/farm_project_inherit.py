@@ -100,13 +100,31 @@ class FarmProjectBoqInherit(models.Model):
         }
 
     def action_new_boq(self):
-        """Open a blank BOQ form pre-linked to this project."""
+        """Open a blank BOQ form pre-linked to this project.
+
+        Defaults:
+        - project_id         = current project
+        - project_phase_id   = current project's active phase (if set)
+        - sequence           = max existing BOQ sequence + 10
+        - revision_no        = 0
+        """
         self.ensure_one()
+        last_boq = self.env['farm.boq'].search(
+            [('project_id', '=', self.id)],
+            order='sequence desc',
+            limit=1,
+        )
+        next_seq = (last_boq.sequence + 10) if last_boq else 10
         return {
             'type': 'ir.actions.act_window',
             'name': _('New Cost Structure — %s') % self.name,
             'res_model': 'farm.boq',
             'view_mode': 'form',
             'target': 'current',
-            'context': {'default_project_id': self.id},
+            'context': {
+                'default_project_id':       self.id,
+                'default_project_phase_id': self.project_phase_id.id or False,
+                'default_sequence':         next_seq,
+                'default_revision_no':      0,
+            },
         }

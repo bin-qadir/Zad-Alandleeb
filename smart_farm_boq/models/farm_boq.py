@@ -36,6 +36,15 @@ class FarmBoq(models.Model):
         help='Derived from the linked Farm Project. Used for activity-filtered views.',
     )
     date = fields.Date(string='Date', default=fields.Date.today)
+    description = fields.Char(
+        string='Description / الوصف',
+        help='Short description for this BOQ document.',
+    )
+    sequence = fields.Integer(
+        string='Sequence / التسلسل',
+        default=10,
+        help='Controls display order within the project BOQ list.',
+    )
     note = fields.Text(string='Notes')
 
     # ── Currency ─────────────────────────────────────────────────────────────

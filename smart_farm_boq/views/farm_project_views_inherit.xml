@@ -3,14 +3,11 @@
     <data>
 
         <!--
-            Extend the Farm Project form — adds the Project Phase statusbar and BOQ buttons.
-
-            project_phase_id is injected as a header statusbar so users see:
-              Pre-Tender → Tender → Contract → Execution → Closing
-            alongside the operational state bar.
-
-            BOQ structure is accessed via Cost Structure → Project Cost Structure,
-            not from within the Farm Project form.
+            Extend the Farm Project form — adds:
+              • Project Phase statusbar in header
+              • "New BOQ" action button
+              • Phases + B.O.Q stat buttons
+              • "Scope (BOQ)" notebook tab with embedded BOQ list
         -->
         <record id="view_farm_project_form_boq_inherit" model="ir.ui.view">
             <field name="name">farm.project.form.boq.inherit</field>
@@ -50,6 +47,52 @@
                         <field name="boq_count" widget="statinfo" string="B.O.Q"/>
                     </button>
                 </xpath>
+
+                <!-- ── Scope (BOQ) notebook tab ──────────────────────────── -->
+                <!-- Appended after all existing tabs (after tab_zones) -->
+                <page name="tab_zones" position="after">
+                    <page string="النطاق (BOQ) / Scope" name="tab_boq_scope">
+                        <field name="boq_ids" nolabel="1">
+                            <list string="Cost Structures"
+                                  default_order="sequence"
+                                  create="0"
+                                  delete="0"
+                                  open_form_view="1">
+                                <field name="name"
+                                       string="Reference / المرجع"
+                                       readonly="1"/>
+                                <field name="description"
+                                       string="Description / الوصف"/>
+                                <field name="revision_no"
+                                       string="Rev / المراجعة"
+                                       readonly="1"/>
+                                <field name="project_phase_id"
+                                       string="Phase / المرحلة"
+                                       readonly="1"/>
+                                <field name="sequence"
+                                       string="Seq / التسلسل"/>
+                                <field name="date"
+                                       string="Date / التاريخ"/>
+                                <field name="state"
+                                       string="Status / الحالة"
+                                       widget="badge"
+                                       decoration-success="state == 'approved'"
+                                       decoration-info="state == 'in_progress'"
+                                       decoration-warning="state == 'submitted'"
+                                       decoration-muted="state == 'draft'"/>
+                                <field name="total"
+                                       string="Amount / المبلغ"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="currency_id" column_invisible="1"/>
+                                <button name="action_open_structure"
+                                        type="object"
+                                        icon="fa-sitemap"
+                                        title="Open Structure"/>
+                            </list>
+                        </field>
+                    </page>
+                </page>
 
             </field>
         </record>
